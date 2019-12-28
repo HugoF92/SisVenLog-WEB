@@ -6,6 +6,7 @@
 package util;
 
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -49,5 +50,17 @@ public class DateUtil {
         SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy hh.mm.ss");
         String date = DATE_FORMAT.format(fecha);
         return date;
+    }
+     
+     public static String dateToString(Date fecha) {
+        String resultado = "";
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            resultado = dateFormat.format(fecha);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return resultado;
     }
 }
