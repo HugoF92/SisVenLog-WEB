@@ -131,5 +131,13 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         return respuesta;
     }
     
+    public List<Empleados> getEmpleadosVendedoresActivosPorCodEmp(Integer codEmpr){
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM empleados  WHERE cod_empr = "+codEmpr+
+                " and mestado ='A' AND CTIPO_EMP LIKE 'V%'",Empleados.class);
+        System.out.println(q.toString());
+        List<Empleados> resp = new ArrayList<>();
+        resp = q.getResultList();
+        return resp;
+    }
     
 }
