@@ -2177,6 +2177,10 @@ public class LlamarReportes {
             param.put("zonaDes", zonaDes);
             param.put("usu_imprime", usuImprime);
 
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
+            String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/");
+            param.put("SUBREPORT_DIR", subReportDir);
+            
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte +".jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
