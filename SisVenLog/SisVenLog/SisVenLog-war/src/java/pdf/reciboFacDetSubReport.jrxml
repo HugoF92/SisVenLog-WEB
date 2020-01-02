@@ -1,71 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacSubReport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
 	<property name="ireport.zoom" value="1.1000000000000023"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="297"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="fechaRecDesde" class="java.util.Date">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="fechaRecHasta" class="java.util.Date">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="nroRecDesde" class="java.lang.Long">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="nroRecHasta" class="java.lang.Long">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="cod_cliente_det" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="sql_detalle" class="java.lang.String"/>
+	<parameter name="cod_cliente_det" class="java.lang.Integer"/>
 	<queryString>
-		<![CDATA[;WITH principalCTE
-AS
-(
-SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion,
-r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco,
-r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal
-FROM recibos r , recibos_det d, clientes c, rutas u
-WHERE r.nrecibo = d.nrecibo
-AND r.cod_empr = d.cod_empr
-AND c.cod_ruta = u.cod_ruta
-AND r.cod_empr = 2
-AND r.fanul IS NULL
---AND r.cod_cliente = c.cod_cliente
---AND r.frecibo BETWEEN '20100101' AND '20191227'
---AND r.nrecibo BETWEEN 1 AND 10000
-
---si la lista de clientes es distinto a todos--
---AND r.cod_cliente IN ( --lista de los codigos de clientes--)
-
---si la zona seleccionada es distinto a todos--
---AND a.cod_zona = --codZona--
-
---se hace la union entre las tablas--
-UNION ALL
-SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion,
-r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco,
-r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal
-FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u
-WHERE r.nrecibo = d.nrecibo
-AND r.cod_empr = d.cod_empr
-AND c.cod_ruta = u.cod_ruta
-AND r.cod_empr = 2
-AND d.cod_banco = b.cod_banco
-AND r.cod_cliente = c.cod_cliente
-AND r.fanul IS NULL
---AND r.frecibo BETWEEN ?l_finicial AND ?l_ffinal
---AND r.nrecibo BETWEEN ?l_ninicial AND ?l_nfinal
---AND r.icheques > 0
-
---si la lista de clientes es distinto a todos--
---AND r.cod_cliente IN ( --lista de los codigos de clientes--)
-
---si la zona seleccionada es distinto a todos--
---AND a.cod_zona = --codZona--
-)
-SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irecibo, xnombre, xnombre2, frecibo, mestado, xobs, ctipo_docum, ndocum, xdesc_banco, itotal FROM principalCTE WHERE cod_cliente = $P{cod_cliente_det};]]>
+		<![CDATA[$P!{sql_detalle} + $P{cod_cliente_det}]]>
 	</queryString>
 	<field name="cod_cliente" class="java.lang.Integer"/>
 	<field name="cod_cliente2" class="java.lang.Integer"/>
@@ -193,7 +135,7 @@ SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irec
 				</textElement>
 				<text><![CDATA[TOTAL CLIENTE]]></text>
 			</staticText>
-			<textField evaluationTime="Report" pattern="#,##0.00">
+			<textField evaluationTime="Report" pattern="#,##0">
 				<reportElement x="312" y="9" width="94" height="16" uuid="76957852-77d9-46be-899c-de9115581e16"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>

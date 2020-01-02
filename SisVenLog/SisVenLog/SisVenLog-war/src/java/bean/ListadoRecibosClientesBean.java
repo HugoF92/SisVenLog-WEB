@@ -46,6 +46,7 @@ public class ListadoRecibosClientesBean implements Serializable{
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
     
+    
     private String zonaSeleccionada;
             
     @EJB
@@ -197,6 +198,77 @@ public class ListadoRecibosClientesBean implements Serializable{
         return sql;
     }
     
+    private String armarSqlDetalle(String fechaReciboDesde, 
+                                                  String fechaReciboHasta, 
+                                                  long nroReciboDesde, 
+                                                  long nroReciboHasta, 
+                                                  List<Clientes> listaCodCliente,
+                                                  String codZona){
+            
+        String sqlDetalle = ";WITH principalCTE" +
+        " AS (" +
+        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+        " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+        " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+        " FROM recibos r , recibos_det d, clientes c, rutas u" +
+        " WHERE r.nrecibo = d.nrecibo" +
+        " AND r.cod_empr = d.cod_empr" +
+        " AND c.cod_ruta = u.cod_ruta" +
+        " AND r.cod_empr = 2" +
+        " AND r.fanul IS NULL" +
+        " AND r.cod_cliente = c.cod_cliente" +
+        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+        if (todosClientes) {
+            clientesRepo = "TODOS";
+        }else{
+            if (!listaCodCliente.isEmpty()) {
+                sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+            }
+        }
+        if (codZona != null) {
+            sqlDetalle += " AND a.cod_zona = " + codZona;
+            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+        }else{
+            zonaDes = "TODAS";
+        }
+        sqlDetalle += " UNION ALL" +
+        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+        " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+        " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+        " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+        " WHERE r.nrecibo = d.nrecibo" +
+        " AND r.cod_empr = d.cod_empr" +
+        " AND c.cod_ruta = u.cod_ruta" +
+        " AND r.cod_empr = 2" +
+        " AND d.cod_banco = b.cod_banco" +
+        " AND r.cod_cliente = c.cod_cliente" +
+        " AND r.fanul IS NULL" +
+        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+        " AND r.icheques > 0";
+        
+        if (todosClientes) {
+            clientesRepo = "TODOS";
+        }else{
+            if (!listaCodCliente.isEmpty()) {
+                sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+            }
+        }
+        if (codZona != null) {
+            sqlDetalle += " AND a.cod_zona = " + codZona;
+            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+        }else{
+            zonaDes = "TODAS";
+        }
+        sqlDetalle += ") " +
+        ") SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irecibo, xnombre, xnombre2, frecibo, mestado, xobs, ctipo_docum, ndocum, xdesc_banco, itotal FROM principalCTE WHERE cod_cliente = ";
+           
+        return sqlDetalle;
+    }
+    
     public void ejecutar(String tipo) {        
         if (validar()) {
             try {
@@ -214,7 +286,8 @@ public class ListadoRecibosClientesBean implements Serializable{
                                 "admin",
                                 tipo,
                                 "reciboFac",
-                                "Rrecibos");
+                                "Rrecibos",
+                                null);
                     } else {
                         rep.reporteLiRecibos(
                         armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
@@ -227,7 +300,8 @@ public class ListadoRecibosClientesBean implements Serializable{
                         "admin",
                         tipo,
                         "reciboFacDet",
-                        "RrecibosDet");
+                        "RrecibosDet",
+                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada));
                     }
 
                 } else {
