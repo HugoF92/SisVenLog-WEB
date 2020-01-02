@@ -9,7 +9,6 @@ package bean;
 import dao.ClientesFacade;
 import dao.RecibosFacade;
 import dao.ZonasFacade;
-import dto.ReciboDto;
 import entidad.Clientes;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -409,10 +408,10 @@ public class ListadoRecibosClientesBean implements Serializable{
 
     public void setTodosClientes(Boolean todosClientes) {
         this.todosClientes = todosClientes;
-        if (this.todosClientes) {
+        /*if (this.todosClientes) {
             System.out.println("todosClientes: " + this.todosClientes);
             System.out.println("seleccionarClientes: " + this.seleccionarClientes);
-        }
+        }*/
     }
 
     public Boolean getSeleccionarClientes() {
@@ -421,9 +420,9 @@ public class ListadoRecibosClientesBean implements Serializable{
 
     public void setSeleccionarClientes(Boolean seleccionarClientes) {
         this.seleccionarClientes = seleccionarClientes;
-        if (this.seleccionarClientes) {
+        /*if (this.seleccionarClientes) {
             System.out.println("seleccionarClientes: " + this.seleccionarClientes);
             System.out.println("todosClientes: " + this.todosClientes);
-        }
+        }*/
     }    
 }

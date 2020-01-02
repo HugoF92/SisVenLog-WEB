@@ -2179,7 +2179,7 @@ public class LlamarReportes {
 
             //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
             String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
-            System.out.println("subReportDir: " + subReportDir);
+            System.out.println("    subReportDir: " + subReportDir);
             
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte +".jasper");
 

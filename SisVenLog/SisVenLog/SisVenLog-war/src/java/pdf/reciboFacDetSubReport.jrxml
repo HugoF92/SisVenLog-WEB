@@ -18,6 +18,7 @@
 	<parameter name="cod_cliente_det" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[;WITH principalCTE
 AS

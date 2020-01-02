@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentosReservan" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.1269722013523686"/>
-	<property name="ireport.x" value="118"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
@@ -25,8 +25,8 @@
 	<parameter name="zona" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Users\\jvera\\Documents\\Proyectos\\sisVenLog\\reportes\\"]]></defaultValueExpression>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="clientesRepo" class="java.lang.String"/>
 	<parameter name="zonaDes" class="java.lang.String"/>
@@ -225,6 +225,9 @@
 		<band height="69" splitType="Stretch">
 			<subreport>
 				<reportElement x="18" y="5" width="719" height="59" uuid="a8068f3e-b572-4989-b916-1e3eb338d258"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="nroRecHasta">
 					<subreportParameterExpression><![CDATA[$P{nroReciboHasta}]]></subreportParameterExpression>
 				</subreportParameter>
