@@ -61,8 +61,8 @@ public class LiConCliBean {
         String fhasta = dateToString(hasta);
         String extras = "" , extras2 = "";
         if (this.zonas != null){
-            extras += " AND f.cod_zona = "+this.zonas.getZonasPK().getCodZona()+" ";
-            extras2 += " AND f.cod_zona = "+this.zonas.getZonasPK().getCodZona()+" ";
+            extras += " AND f.cod_zona = '"+this.zonas.getZonasPK().getCodZona()+"' ";
+            extras2 += " AND f.cod_zona = '"+this.zonas.getZonasPK().getCodZona()+"' ";
         }
         if (this.vendedor != null){
             extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
@@ -136,8 +136,8 @@ public class LiConCliBean {
                 columnas[9] = "cant_cajas";
                 columnas[10] = "cant_unid";
                 columnas[11] = "cant_clientes";
-                sql = "SELECT cast(?l_finicial as char) as finicial," +
-                    "cast(?l_ffinal as char) as ffinal, f.cod_zona, f.cod_vendedor," +
+                sql = "SELECT cast('"+fdesde+"' as char) as finicial," +
+                    "cast('"+fhasta+"' as char) as ffinal, f.cod_zona, f.cod_vendedor," +
                     "v.xnombre,d.cod_merca, m.xdesc as xdesc_merca, m.cod_sublinea," +
                     "s.xdesc AS xdesc_sublinea, f.ctipo_vta, c.ctipo_cliente," +
                     "SUM(d.itotal) as itotal, SUM(d.cant_cajas) as cant_cajas ," +
@@ -161,7 +161,7 @@ public class LiConCliBean {
                 columnas[3] = "xnombre";
                 columnas[4] = "cant_clientes";
                 columnas[5] = "ttotal";
-                sql = "SELECT cast(?l_finicial as char) as finicial, cast(?l_ffinal as char) as ffinal," +
+                sql = "SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal," +
                     "f.cod_vendedor, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes," +
                     "SUM(f.ttotal - f.tnotas) AS ttotal " +
                     "FROM facturas f " +
@@ -265,7 +265,7 @@ public class LiConCliBean {
                 columnas[5] = "xnombre";
                 columnas[6] = "cant_clientes";
                 columnas[7] = "ttotal";
-                sql = "SELECT cast(?l_finicial as char) as finicial, cast(?l_ffinal as char) as ffinal, f.cod_vendedor, s.cod_sublinea," +
+                sql = "SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal, f.cod_vendedor, s.cod_sublinea," +
                     "s.xdesc, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes, SUM(f.ttotal - f.tnotas) AS ttotal " +
                     "FROM facturas f INNER JOIN facturas_det d ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur " +
                     " INNER JOIN empleados v ON f.cod_vendedor = v.cod_empleado " +

@@ -75,6 +75,7 @@
                                         <p:selectOneMenu value="#{liConCliBean.zonas}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style=" width: 300px;" converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
                                             <f:selectItems value="#{liConCliBean.listZonas}" var="item"
                                                            itemValue="#{item}"
                                                            itemLabel="#{item.xdesc}"/>
@@ -85,13 +86,15 @@
                                         <p:selectOneMenu value="#{liConCliBean.vendedor}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style=" width: 300px;" converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
                                             <f:selectItems value="#{liConCliBean.listVendedores}" var="item"
                                                            itemValue="#{item}"
                                                            itemLabel="#{item.xnombre}"/>
                                         </p:selectOneMenu>
                                         
                                         <p:outputLabel for="discriminar" value="Discriminar:" />
-                                        <p:selectOneRadio id="discriminar" layout="grid" columns="3" value="#{liConCliBean.seleccion}">
+                                        <p:selectOneRadio id="discriminar" layout="grid" columns="1" value="#{liConCliBean.seleccion}" 
+                                                          style="border: solid;border-width: thin">
                                              <f:selectItem itemLabel="Por Mercaderia" itemValue="1"/>
                                              <f:selectItem itemLabel="Por Sublinea,T.Vta y T.Negocio" itemValue="2"/>
                                              <f:selectItem itemLabel="Con Rango Fecha" itemValue="3"/>
