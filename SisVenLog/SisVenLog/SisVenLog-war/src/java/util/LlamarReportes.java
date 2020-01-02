@@ -2164,7 +2164,7 @@ public class LlamarReportes {
     
     public void reporteLiRecibos(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, String clientesRepo, String zonaDes,
-            String usuImprime, String tipo, String nombreReporte, String filename) {
+            String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle) {
         try {
                     
             Map param = new HashMap();
@@ -2176,7 +2176,16 @@ public class LlamarReportes {
             param.put("clientesRepo", clientesRepo);
             param.put("zonaDes", zonaDes);
             param.put("usu_imprime", usuImprime);
+            
+            //JLVC 02-01-2020; se obtiene sqlDetalle solo si es distinto a null
+            if (sqlDetalle != null) {
+                param.put("sqlDet", sqlDetalle);
+            }
 
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
+            String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+            System.out.println("    subReportDir: " + subReportDir);
+            
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte +".jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
