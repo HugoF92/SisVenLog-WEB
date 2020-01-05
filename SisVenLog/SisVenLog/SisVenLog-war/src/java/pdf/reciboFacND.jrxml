@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentosReservan" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.1269722013523686"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacND" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+	<property name="ireport.zoom" value="1.0245201830476078"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="5"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -19,26 +19,56 @@
 	<parameter name="nroReciboHasta" class="java.lang.Long">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="clientes" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="zona" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
-	</parameter>
 	<parameter name="clientesRepo" class="java.lang.String"/>
 	<parameter name="zonaDes" class="java.lang.String"/>
-	<parameter name="sqlDet" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
+	<field name="cod_empr" class="java.lang.Short"/>
+	<field name="nrecibo" class="java.math.BigDecimal"/>
 	<field name="cod_cliente" class="java.lang.Integer"/>
-	<variable name="totalEfe" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_recibo" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_cheque" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_reten" class="java.lang.Integer" incrementType="Column"/>
+	<field name="frecibo" class="java.sql.Timestamp"/>
+	<field name="irecibo" class="java.math.BigDecimal"/>
+	<field name="iefectivo" class="java.math.BigDecimal"/>
+	<field name="iretencion" class="java.math.BigDecimal"/>
+	<field name="icheques" class="java.math.BigDecimal"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="mestado" class="java.lang.String"/>
+	<field name="cusuario" class="java.lang.String"/>
+	<field name="falta" class="java.sql.Timestamp"/>
+	<field name="fanul" class="java.sql.Timestamp"/>
+	<field name="cod_cliente2" class="java.lang.Integer"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="xnombre2" class="java.lang.String"/>
+	<variable name="estado" class="java.lang.String">
+		<variableExpression><![CDATA[( $F{mestado} == "X" ? "ANULADO" : "ACTIVO" )
+
+]]></variableExpression>
+	</variable>
+	<variable name="efectivo" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{iefectivo} )]]></variableExpression>
+	</variable>
+	<variable name="cheques" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{icheques})]]></variableExpression>
+	</variable>
+	<variable name="retencion" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{iretencion})]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.lang.Integer">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{irecibo})]]></variableExpression>
+	</variable>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{cheques}]]></variableExpression>
+	</variable>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{efectivo}]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{retencion}]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$V{total}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -46,7 +76,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="142" splitType="Stretch">
+		<band height="126" splitType="Stretch">
 			<staticText>
 				<reportElement x="178" y="52" width="101" height="14" uuid="eb89e586-b220-4b75-ba58-bd9a26824a61"/>
 				<textElement textAlignment="Right">
@@ -62,7 +92,7 @@
 				<text><![CDATA[Hasta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="23" y="104" width="68" height="16" uuid="bac79874-c9db-47d6-851f-fba98f676f17"/>
+				<reportElement x="3" y="106" width="68" height="16" uuid="bac79874-c9db-47d6-851f-fba98f676f17"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -104,7 +134,7 @@
 				<textElement textAlignment="Center">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[rrecibosdet]]></text>
+				<text><![CDATA[rrecibos]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="676" y="2" width="44" height="14" uuid="8f32f822-47d9-4e50-b62f-6adc192d9bbe"/>
@@ -142,52 +172,52 @@
 				<text><![CDATA[Zona:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="23" y="121" width="68" height="16" uuid="e5b8c38a-3a50-4441-8d64-9aa24d7fa144"/>
+				<reportElement x="102" y="106" width="68" height="16" uuid="e5b8c38a-3a50-4441-8d64-9aa24d7fa144"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="145" y="104" width="68" height="16" uuid="1befab94-7427-40b2-8f47-ba1bc8dea453"/>
+				<reportElement x="330" y="106" width="68" height="16" uuid="1befab94-7427-40b2-8f47-ba1bc8dea453"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.RECIBO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="238" y="104" width="65" height="16" uuid="e42ce344-3132-48e3-8862-7698928966e8"/>
+				<reportElement x="409" y="106" width="65" height="16" uuid="e42ce344-3132-48e3-8862-7698928966e8"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ESTADO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="467" y="104" width="68" height="16" uuid="26781999-3490-48c6-8f17-bf8dea820256"/>
+				<reportElement x="563" y="106" width="68" height="16" uuid="26781999-3490-48c6-8f17-bf8dea820256"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CHEQUES]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="568" y="104" width="68" height="16" uuid="24488f24-2e7d-4213-a314-4a52a0019afd"/>
+				<reportElement x="639" y="106" width="68" height="16" uuid="24488f24-2e7d-4213-a314-4a52a0019afd"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RETENCION]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="686" y="104" width="78" height="16" uuid="c9099cce-092c-4fc7-a2e8-19f6a3c063c5"/>
+				<reportElement x="717" y="106" width="68" height="16" uuid="c9099cce-092c-4fc7-a2e8-19f6a3c063c5"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOTAL RECIBO]]></text>
+				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 			<line>
-				<reportElement x="4" y="137" width="798" height="4" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
+				<reportElement x="3" y="124" width="799" height="1" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
 			</line>
 			<staticText>
-				<reportElement x="371" y="104" width="68" height="16" uuid="5886303d-6e04-42c3-b415-4882e2f6fbac"/>
+				<reportElement x="486" y="106" width="68" height="16" uuid="5886303d-6e04-42c3-b415-4882e2f6fbac"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -217,59 +247,64 @@
 				<reportElement x="489" y="85" width="100" height="14" uuid="e12efbda-5c8b-4f5e-bc06-7f61bee9cbef"/>
 				<textFieldExpression><![CDATA[$P{zonaDes}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="187" y="120" width="141" height="16" uuid="b5b9bd27-c281-4d82-842f-f87b3db5c7dc"/>
-				<textElement textAlignment="Right">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[NRO.FACT. / NRO.CHEQUE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="406" y="120" width="68" height="16" uuid="2663a7e2-a5e4-4a3f-9831-ca720f3dda5e"/>
-				<textElement textAlignment="Center">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[BANCO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="551" y="120" width="137" height="16" uuid="127a2241-bd54-4955-b422-db322aa21bba"/>
-				<textElement>
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[IMPORTE FACT. / CHEQUE]]></text>
-			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="69" splitType="Stretch">
-			<subreport>
-				<reportElement x="35" y="3" width="729" height="63" uuid="d26c7fae-0c21-4ad2-af6a-f5dc8be7f47f"/>
-				<subreportParameter name="SUBREPORT_DIR">
-					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="sql_detalle">
-					<subreportParameterExpression><![CDATA[$P{sqlDet}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="cod_cliente_det">
-					<subreportParameterExpression><![CDATA[$F{cod_cliente}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<returnValue subreportVariable="iefectivo_1" toVariable="totalEfe" calculation="Sum"/>
-				<returnValue subreportVariable="icheques_1" toVariable="total_cheque" calculation="Sum"/>
-				<returnValue subreportVariable="irecibo_1" toVariable="total_recibo" calculation="Sum"/>
-				<returnValue subreportVariable="iretencion_1" toVariable="total_reten" calculation="Sum"/>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboFacDetSubReport.jasper"]]></subreportExpression>
-			</subreport>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="12" y="0" width="67" height="14" uuid="05ad9a94-d26d-4554-88c9-94e4ebc4cde7"/>
+				<textFieldExpression><![CDATA[$F{nrecibo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="0" width="197" height="14" uuid="ab9bc308-71c6-44f5-b5d2-a9dbea812919"/>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="330" y="0" width="68" height="14" uuid="bf625d46-308c-434b-b181-1299d1340eb1"/>
+				<textFieldExpression><![CDATA[$F{frecibo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="409" y="1" width="65" height="14" uuid="e20b326c-ef39-4d4d-bc12-9684d98cfdf4"/>
+				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="489" y="1" width="65" height="13" uuid="92e38866-070f-43b6-8e63-7371b6bad840">
+					<printWhenExpression><![CDATA[$V{efectivo} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="563" y="1" width="68" height="13" uuid="c31f7a9e-9d89-4373-b67b-4b34510ae0b2">
+					<printWhenExpression><![CDATA[$V{cheques} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{cheques}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="640" y="1" width="68" height="13" uuid="a7d6adb7-9f5c-47e3-90a8-4e646399bfa4">
+					<printWhenExpression><![CDATA[$V{retencion} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{retencion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="717" y="1" width="68" height="13" uuid="f458eeb8-118d-4e4c-9e21-3635dc0912f2">
+					<printWhenExpression><![CDATA[$V{total} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="24" splitType="Stretch">
+		<band height="30" splitType="Stretch">
 			<staticText>
 				<reportElement x="2" y="8" width="63" height="14" uuid="2f32d0d9-5835-43b0-999d-23a930fcf144"/>
 				<textElement textAlignment="Right">
@@ -285,7 +320,7 @@
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="1" width="801" height="1" uuid="642b4c76-c2d8-4f5b-ab24-f0b7fa7db180"/>
+				<reportElement x="3" y="1" width="799" height="1" uuid="642b4c76-c2d8-4f5b-ab24-f0b7fa7db180"/>
 			</line>
 			<textField>
 				<reportElement x="217" y="8" width="100" height="16" uuid="babb5227-57a5-4b63-ae1d-6d0151a40736"/>
@@ -313,14 +348,14 @@
 	<summary>
 		<band height="48" splitType="Stretch">
 			<staticText>
-				<reportElement x="8" y="28" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<reportElement x="9" y="28" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="159" y="14" width="147" height="16" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<reportElement x="307" y="12" width="147" height="16" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -333,37 +368,37 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField pattern="#,##0">
-				<reportElement x="371" y="12" width="68" height="16" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report" pattern="#,##0">
-				<reportElement x="696" y="12" width="68" height="16" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_recibo}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="467" y="12" width="68" height="16" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_cheque}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="568" y="12" width="68" height="16" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_reten}]]></textFieldExpression>
-			</textField>
 			<line>
-				<reportElement x="317" y="2" width="428" height="1" uuid="d41a5751-7490-4012-9469-38d3a533a056"/>
+				<reportElement x="471" y="3" width="331" height="1" uuid="3a8ba28b-1f0d-41f5-96b0-a4e2f6822a0c"/>
 			</line>
+			<textField pattern="#,##0">
+				<reportElement x="563" y="14" width="68" height="14" uuid="716c7752-5b33-4ba5-800b-895d9b9a206f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="489" y="14" width="65" height="14" uuid="73e5b8d2-dffb-4481-b94b-efc982afc25c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="640" y="14" width="67" height="14" uuid="ead39424-4379-48b6-ab8c-09e1204fb56e"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="720" y="14" width="65" height="14" uuid="5606c8ff-b826-4190-b4f1-190be1e6fffc"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
