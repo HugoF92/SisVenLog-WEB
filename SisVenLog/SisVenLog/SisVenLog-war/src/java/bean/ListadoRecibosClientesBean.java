@@ -90,8 +90,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
                                                   String codZona){
-            
-        String sql = ";WITH principalCTE " +
+        String sql = "";
+        if ("PC".equals(discriminar)) {
+           sql = ";WITH principalCTE " +
             "AS " +
             "(" +
             " SELECT r.*,  t.cod_cliente as cod_cliente2, t.xnombre as xnombre, t.xnombre as xnombre2" +
@@ -118,10 +119,31 @@ public class ListadoRecibosClientesBean implements Serializable{
                 zonaDes = "TODAS";
             }
             sql += ") " +
-            "SELECT DISTINCT cod_cliente from principalCTE";
-            if ("PC".equals(discriminar)) {    
-                sql += " ORDER BY cod_cliente;";
+            "SELECT DISTINCT cod_cliente from principalCTE ORDER BY cod_cliente;";
+            
+        }else{ //no discriminar por cliente
+            sql = ";WITH principalCTE" + 
+            " AS(SELECT r.*,  t.cod_cliente as cod_cliente2, t.xnombre as xnombre, t.xnombre as xnombre2" +
+            " FROM recibos r , clientes t, rutas a" + 
+            " WHERE r.cod_empr = 2 AND r.cod_cliente = t.cod_cliente AND t.cod_ruta = a.cod_ruta AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
             }
+            if (codZona != null) {
+                sql += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+           sql += " ) SELECT * from principalCTE ORDER BY nrecibo;";
+        }
         return sql;
     }
     
@@ -131,70 +153,130 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
                                                   String codZona){
-            
-        String sql = ";WITH principalCTE" +
-        " AS (" +
-        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
-        " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
-        " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
-        " FROM recibos r , recibos_det d, clientes c, rutas u" +
-        " WHERE r.nrecibo = d.nrecibo" +
-        " AND r.cod_empr = d.cod_empr" +
-        " AND c.cod_ruta = u.cod_ruta" +
-        " AND r.cod_empr = 2" +
-        " AND r.fanul IS NULL" +
-        " AND r.cod_cliente = c.cod_cliente" +
-        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
-        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
-        if (todosClientes) {
-            clientesRepo = "TODOS";
-        }else{
-            if (!listaCodCliente.isEmpty()) {
-                sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
-                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+        String sql = "";
+        if ("ND".equals(discriminar)) {
+            sql += ";WITH principalCTE" +
+            " AS (" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+            " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+            " FROM recibos r , recibos_det d, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND r.fanul IS NULL" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
             }
-        }
-        if (codZona != null) {
-            sql += " AND a.cod_zona = " + codZona;
-            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
-        }else{
-            zonaDes = "TODAS";
-        }
-        sql += " UNION ALL" +
-        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
-        " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
-        " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
-        " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
-        " WHERE r.nrecibo = d.nrecibo" +
-        " AND r.cod_empr = d.cod_empr" +
-        " AND c.cod_ruta = u.cod_ruta" +
-        " AND r.cod_empr = 2" +
-        " AND d.cod_banco = b.cod_banco" +
-        " AND r.cod_cliente = c.cod_cliente" +
-        " AND r.fanul IS NULL" +
-        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
-        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
-        " AND r.icheques > 0";
-        
-        if (todosClientes) {
-            clientesRepo = "TODOS";
-        }else{
-            if (!listaCodCliente.isEmpty()) {
-                sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
-                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+            if (codZona != null) {
+                sql += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
             }
+            sql += " UNION ALL" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+            " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+            " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND d.cod_banco = b.cod_banco" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+            " AND r.icheques > 0";
+
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sql += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sql += ")" +
+            " SELECT DISTINCT nrecibo, frecibo, mestado, iefectivo, icheques, iretencion, irecibo, xnombre2, cod_cliente2, xobs FROM principalCTE order by nrecibo;";
+        }else{ // discriminar por cliente
+            sql += ";WITH principalCTE" +
+            " AS (" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+            " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+            " FROM recibos r , recibos_det d, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND r.fanul IS NULL" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sql += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sql += " UNION ALL" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+            " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+            " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND d.cod_banco = b.cod_banco" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+            " AND r.icheques > 0";
+
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sql += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sql += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sql += ")" +
+            " SELECT DISTINCT cod_cliente FROM principalCTE ORDER BY cod_cliente;";
         }
-        if (codZona != null) {
-            sql += " AND a.cod_zona = " + codZona;
-            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
-        }else{
-            zonaDes = "TODAS";
-        }
-        sql += ") " +
-        "SELECT DISTINCT cod_cliente FROM principalCTE";
-        if ("PC".equals(discriminar)) {    
-            sql += " ORDER BY cod_cliente;";
-        }    
         return sql;
     }
     
@@ -204,69 +286,205 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
                                                   String codZona){
-            
-        String sqlDetalle = ";WITH principalCTE" +
-        " AS (" +
-        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
-        " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
-        " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
-        " FROM recibos r , recibos_det d, clientes c, rutas u" +
-        " WHERE r.nrecibo = d.nrecibo" +
-        " AND r.cod_empr = d.cod_empr" +
-        " AND c.cod_ruta = u.cod_ruta" +
-        " AND r.cod_empr = 2" +
-        " AND r.fanul IS NULL" +
-        " AND r.cod_cliente = c.cod_cliente" +
-        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
-        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
-        if (todosClientes) {
-            clientesRepo = "TODOS";
-        }else{
-            if (!listaCodCliente.isEmpty()) {
-                sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
-                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+        String sqlDetalle = "";    
+        if ("ND".equals(discriminar)) {
+            sqlDetalle += ";WITH principalCTE" +
+            " AS (" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+            " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+            " FROM recibos r , recibos_det d, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND r.fanul IS NULL" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
             }
-        }
-        if (codZona != null) {
-            sqlDetalle += " AND a.cod_zona = " + codZona;
-            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
-        }else{
-            zonaDes = "TODAS";
-        }
-        sqlDetalle += " UNION ALL" +
-        " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
-        " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
-        " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
-        " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
-        " WHERE r.nrecibo = d.nrecibo" +
-        " AND r.cod_empr = d.cod_empr" +
-        " AND c.cod_ruta = u.cod_ruta" +
-        " AND r.cod_empr = 2" +
-        " AND d.cod_banco = b.cod_banco" +
-        " AND r.cod_cliente = c.cod_cliente" +
-        " AND r.fanul IS NULL" +
-        " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
-        " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
-        " AND r.icheques > 0";
-        
-        if (todosClientes) {
-            clientesRepo = "TODOS";
-        }else{
-            if (!listaCodCliente.isEmpty()) {
-                sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
-                clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+            if (codZona != null) {
+                sqlDetalle += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
             }
+            sqlDetalle += " UNION ALL" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+            " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+            " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND d.cod_banco = b.cod_banco" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+            " AND r.icheques > 0";
+
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sqlDetalle += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sqlDetalle += ") " +
+            " SELECT DISTINCT * FROM principalCTE where nrecibo = ";           
+        }else{  //discrimiar por cliente
+            sqlDetalle += ";WITH principalCTE" +
+            " AS (" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+            " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+            " FROM recibos r , recibos_det d, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND r.fanul IS NULL" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sqlDetalle += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sqlDetalle += " UNION ALL" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+            " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+            " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND d.cod_banco = b.cod_banco" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+            " AND r.icheques > 0";
+
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalle += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sqlDetalle += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sqlDetalle += ") " +
+            " SELECT DISTINCT nrecibo, xnombre, cod_cliente, frecibo, mestado, iefectivo, icheques, iretencion, irecibo, xnombre2, cod_cliente2, xobs FROM principalCTE where cod_cliente = ";           
         }
-        if (codZona != null) {
-            sqlDetalle += " AND a.cod_zona = " + codZona;
-            zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
-        }else{
-            zonaDes = "TODAS";
-        }
-        sqlDetalle += ") " +
-        ") SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irecibo, xnombre, xnombre2, frecibo, mestado, xobs, ctipo_docum, ndocum, xdesc_banco, itotal FROM principalCTE WHERE cod_cliente = ";
-           
         return sqlDetalle;
+    }
+    
+    private String armarSqlDetalleRecibos(String fechaReciboDesde, 
+                                                  String fechaReciboHasta, 
+                                                  long nroReciboDesde, 
+                                                  long nroReciboHasta, 
+                                                  List<Clientes> listaCodCliente,
+                                                  String codZona){
+        String sqlDetalleRec = "";    
+        if ("ND".equals(discriminar)) {  //no existe corte de control por cliente
+            sqlDetalleRec = null;
+        }else{  //discrimiar por cliente
+            sqlDetalleRec += ";WITH principalCTE" +
+            " AS (" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, d.ctipo_docum, d.ndocum, '' as xdesc_banco," +
+            " r.fanul, 'F' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.itotal" +
+            " FROM recibos r , recibos_det d, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND r.fanul IS NULL" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta;
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalleRec += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sqlDetalleRec += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sqlDetalleRec += " UNION ALL" +
+            " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion," +
+            " r.icheques, r.xobs, r.mestado, c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco," +
+            " r.fanul, 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
+            " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas u" +
+            " WHERE r.nrecibo = d.nrecibo" +
+            " AND r.cod_empr = d.cod_empr" +
+            " AND c.cod_ruta = u.cod_ruta" +
+            " AND r.cod_empr = 2" +
+            " AND d.cod_banco = b.cod_banco" +
+            " AND r.cod_cliente = c.cod_cliente" +
+            " AND r.fanul IS NULL" +
+            " AND r.frecibo BETWEEN " + "'" + fechaReciboDesde + "'" + " AND " + "'" + fechaReciboHasta + "'" +
+            " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta + 
+            " AND r.icheques > 0";
+
+            if (todosClientes) {
+                clientesRepo = "TODOS";
+            }else{
+                if (!listaCodCliente.isEmpty()) {
+                    sqlDetalleRec += " AND r.cod_cliente IN (" + StringUtil.convertirListaAString(listaCodCliente) + ")"; 
+                    clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
+                }
+            }
+            if (codZona != null) {
+                sqlDetalleRec += " AND a.cod_zona = " + codZona;
+                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            }else{
+                zonaDes = "TODAS";
+            }
+            sqlDetalleRec += ") " +
+            " SELECT DISTINCT * FROM principalCTE where nrecibo = ";           
+        }
+        return sqlDetalleRec;
     }
     
     public void ejecutar(String tipo) {        
@@ -275,6 +493,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
                     if (!conDetalle) {
+                        String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFac";
                         rep.reporteLiRecibos(
                                 armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
                                 fechaReciboDesde,
@@ -285,10 +504,12 @@ public class ListadoRecibosClientesBean implements Serializable{
                                 zonaDes,
                                 "admin",
                                 tipo,
-                                "reciboFac",
+                                nombreRepo,
                                 "Rrecibos",
+                                null,
                                 null);
                     } else {
+                        String nombreRepoDet = "ND".equals(discriminar) ? "reciboFacDetND" : "reciboFacDetPC";
                         rep.reporteLiRecibos(
                         armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
                         fechaReciboDesde,
@@ -299,9 +520,10 @@ public class ListadoRecibosClientesBean implements Serializable{
                         zonaDes,
                         "admin",
                         tipo,
-                        "reciboFacDet",
+                        nombreRepoDet,
                         "RrecibosDet",
-                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada));
+                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
+                        armarSqlDetalleRecibos(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada));
                     }
 
                 } else {

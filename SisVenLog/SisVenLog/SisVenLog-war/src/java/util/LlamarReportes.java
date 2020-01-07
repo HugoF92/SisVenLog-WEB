@@ -2164,7 +2164,7 @@ public class LlamarReportes {
     
     public void reporteLiRecibos(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, String clientesRepo, String zonaDes,
-            String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle) {
+            String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
         try {
                     
             Map param = new HashMap();
@@ -2180,11 +2180,21 @@ public class LlamarReportes {
             //JLVC 02-01-2020; se obtiene sqlDetalle solo si es distinto a null
             if (sqlDetalle != null) {
                 param.put("sqlDet", sqlDetalle);
+                if ("reciboFacDetPC".equals(nombreReporte) && sqlDetalleRecibo != null) {
+                    param.put("sqlDetRec", sqlDetalleRecibo);
+                }else{
+                    param.put("sqlDetRec", null);
+                }
+            }else{
+                param.put("sqlDet", null);
             }
 
             //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
             String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
             System.out.println("    subReportDir: " + subReportDir);
+            if ("reciboFac".equals(nombreReporte)){
+                param.put("SUBREPORT_DIR", subReportDir);
+            }
             
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte +".jasper");
 

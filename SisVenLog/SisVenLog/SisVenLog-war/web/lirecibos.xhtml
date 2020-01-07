@@ -27,7 +27,7 @@
                 }
 
                 .ui-datalist ul {
-                        padding:0px 0px 20px;
+                        padding:0px 0px 10px;
                         margin: 5px 0;
                 }
 
@@ -41,7 +41,7 @@
                 }
 
                 .ui-selectmanymenu {
-                        width: 175px;
+                        width: 350px;
                 }
             </style>
             
@@ -115,7 +115,11 @@
                                             
                                         <p:selectManyMenu id="clientesId" value="#{listadoRecibosClientesBean.listadoClientesSeleccionados}" converter="#{ClientesConverter}"
                                                           var="t" filter="true" filterMatchMode="contains" showCheckbox="true" style="display: none">
+                                            <f:selectItems id="selectItemsCodCliente" value="#{listadoRecibosClientesBean.listadoClientes}" var="codigo" itemLabel="#{cliente.codCliente}" itemValue="#{cliente}" />
                                             <f:selectItems id="selectItemsClientes" value="#{listadoRecibosClientesBean.listadoClientes}" var="cliente" itemLabel="#{cliente.xnombre}" itemValue="#{cliente}" />
+                                            <p:column>
+                                                <h:outputText value="#{t.codCliente}" />
+                                            </p:column>
                                             <p:column>
                                                 <h:outputText value="#{t.xnombre}" />
                                             </p:column>

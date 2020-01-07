@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentosReservan" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacDetPC" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.1269722013523686"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="5"/>
+	<property name="ireport.x" value="163"/>
+	<property name="ireport.y" value="56"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -31,6 +31,7 @@
 	<parameter name="clientesRepo" class="java.lang.String"/>
 	<parameter name="zonaDes" class="java.lang.String"/>
 	<parameter name="sqlDet" class="java.lang.String"/>
+	<parameter name="sqlDetRec" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -244,9 +245,9 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="69" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<subreport>
-				<reportElement x="35" y="3" width="729" height="63" uuid="d26c7fae-0c21-4ad2-af6a-f5dc8be7f47f"/>
+				<reportElement x="4" y="3" width="795" height="16" uuid="d26c7fae-0c21-4ad2-af6a-f5dc8be7f47f"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -256,12 +257,15 @@
 				<subreportParameter name="cod_cliente_det">
 					<subreportParameterExpression><![CDATA[$F{cod_cliente}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="sql_det_rec">
+					<subreportParameterExpression><![CDATA[$P{sqlDetRec}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="iefectivo_1" toVariable="totalEfe" calculation="Sum"/>
 				<returnValue subreportVariable="icheques_1" toVariable="total_cheque" calculation="Sum"/>
 				<returnValue subreportVariable="irecibo_1" toVariable="total_recibo" calculation="Sum"/>
 				<returnValue subreportVariable="iretencion_1" toVariable="total_reten" calculation="Sum"/>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboFacDetSubReport.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboFacDetPCSubReport.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
@@ -320,7 +324,7 @@
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="159" y="14" width="147" height="16" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<reportElement x="190" y="12" width="147" height="16" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -341,7 +345,7 @@
 				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="#,##0">
-				<reportElement x="696" y="12" width="68" height="16" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
+				<reportElement x="686" y="12" width="78" height="16" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
@@ -362,7 +366,7 @@
 				<textFieldExpression><![CDATA[$V{total_reten}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="317" y="2" width="428" height="1" uuid="d41a5751-7490-4012-9469-38d3a533a056"/>
+				<reportElement x="354" y="2" width="428" height="1" uuid="d41a5751-7490-4012-9469-38d3a533a056"/>
 			</line>
 		</band>
 	</summary>
