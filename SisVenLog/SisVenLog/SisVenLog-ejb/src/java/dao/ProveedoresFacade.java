@@ -7,11 +7,14 @@ package dao;
 
 
 import entidad.Proveedores;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -61,5 +64,13 @@ public class ProveedoresFacade extends AbstractFacade<Proveedores> {
         
         q.execute();
 
+    }
+    
+    public List<Proveedores> getProveedoresActivos(){
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM proveedores where mestado = 'A'",Proveedores.class);
+        System.out.println(q.toString());
+        List<Proveedores> resp = new ArrayList<>();
+        resp = q.getResultList();
+        return resp;
     }
 }
