@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h1 style="color: brown;">GENERACION DATOS CONTABLES</h1>
+
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageImpreOrdCarg" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamImpreOrdCarg" header="Parametros para Generacion de datos contables"
+                                         style="width: 40%;">
+                                    <h:panelGrid columns="2" >
+                                        <p:outputLabel value="Fecha Inicial: " style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liAnudocDesde" value="#{genDatosContables.fechaInicial}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                            <p:ajax event="dateSelect" update="genDatosContablesHasta" />
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha Final: " style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="genDatosContablesHasta" value="#{genDatosContables.fechaFinal}" 
+                                                    showOn="button" style="width: 60px;" locale="es" mindate="#{genDatosContables.fechaInicial}">
+                                        </p:calendar>
+
+                                        <p:selectOneRadio id="genDatosContablesDocumentosAnulados" value="#{genDatosContables.documentosAnulados}" 
+                                                          layout="grid" columns="1" >
+                                            <f:selectItem itemLabel="Datos de Ventas" itemValue="DV" />
+                                            <f:selectItem itemLabel="Datos de Compras" itemValue="DC" />
+                                            <f:selectItem itemLabel="Recibos de Ventas" itemValue="RV" />
+                                            <f:selectItem itemLabel="Recibos de Compras" itemValue="RC" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+                                    <p:commandLink title="report"
+                                                   action="#{genDatosContables.generarDatos()}"
+                                                   ajax="false" immediate="false" update="messageImpreOrdCarg">
+
+                                        <p:commandButton 
+                                            value="Generar Documento" icon="fa fa-print" styleClass="green-btn raised-btn"/>
+
+                                    </p:commandLink>
+
+                                </p:panel>
+
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                      height="500px" width="700px">
+                Message: #{genDatosContables.tituloError} <br/>
+                <h:outputText value="#{genDatosContables.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>
