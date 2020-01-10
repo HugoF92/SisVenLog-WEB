@@ -8,6 +8,10 @@ package dao;
 import entidad.Recibos;
 import dto.RecibosVentasDto;
 import dto.RecibosComprasDto;
+import dto.RecibosFacturasVentasIvaInclNoIncl;
+import dto.RecibosFacturasComprasIvaInclNoIncl;
+import entidad.DatosGenerales;
+import dao.DatosGeneralesFacade;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +38,9 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
     protected EntityManager getEntityManager() {
         return em;
     }
+    
+    @EJB
+    DatosGeneralesFacade datosGeneralesFacade;
 
     public GenDatosContablesFacade() {
         super(Recibos.class);
@@ -44,7 +51,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
         getEntityManager().close();
     }
 
-    public List<RecibosVentasDto> busquedaDatosRecibosVentas(String fechaInicial, String fechaFinal) throws Exception { 
+    public List<Object[]> busquedaDatosRecibosVentas(String fechaInicial, String fechaFinal) throws Exception { 
         Query q = getEntityManager().createNativeQuery(" SELECT 'REC' as ctipo_docum, 1 as nro_cuota,"
                 + " CONVERT(char(10),f.frecibo,103) as frecibo, f.nrecibo, d.ctipo_docum as ctipo, d.ndocum ,   "
                 + " d.ffactur, f.iefectivo AS iefectivo, ch.nro_cheque, ch.ipagado,  0 as moneda, 0 as cotizacion  "
@@ -62,40 +69,41 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
 
         System.out.println(q.toString());
 
-        List<Object[]> resultados = q.getResultList();
-        List<RecibosVentasDto> listadoReciboVentas = new ArrayList<RecibosVentasDto>();
-        for(Object[] resultado: resultados){
-            RecibosVentasDto rvdto = new RecibosVentasDto();
-            rvdto.setCtipoDocum(resultado[0].toString());
-            rvdto.setNcuota(Long.parseLong(resultado[1].toString()));
-            if(resultado[2] != null){
-                Timestamp timeStamp_2 = (Timestamp) resultado[2];
-                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
-                rvdto.setFrecibo(dateResult_2);
-            }else{              
-                rvdto.setFrecibo(null);
-            }
-            rvdto.setNrecibo(Long.parseLong(resultado[3].toString()));
-            rvdto.setCtipo(resultado[4].toString());
-            rvdto.setNdocum(Long.parseLong(resultado[5].toString()));
-            if(resultado[6] != null){
-                Timestamp timeStamp_6 = (Timestamp) resultado[6];
-                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
-                rvdto.setFfactur(dateResult_6);
-            }else{              
-                rvdto.setFfactur(null);
-            }
-            rvdto.setIefectivo(Long.parseLong(resultado[7].toString()));
-            rvdto.setNroCheque(resultado[8].toString());
-            rvdto.setIpagado(Long.parseLong(resultado[9].toString()));
-            rvdto.setMoneda(Long.parseLong(resultado[10].toString()));
-            rvdto.setCotizacion(Long.parseLong(resultado[11].toString()));
-            listadoReciboVentas.add(rvdto);
-        }        
-        return listadoReciboVentas;
+//        List<Object[]> resultados = 
+        return q.getResultList();
+//        List<RecibosVentasDto> listadoReciboVentas = new ArrayList<RecibosVentasDto>();
+//        for(Object[] resultado: resultados){
+//            RecibosVentasDto rvdto = new RecibosVentasDto();
+//            rvdto.setCtipoDocum(resultado[0].toString());
+//            rvdto.setNcuota(Long.parseLong(resultado[1].toString()));
+//            if(resultado[2] != null){
+//                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+//                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+//                rvdto.setFrecibo(dateResult_2);
+//            }else{              
+//                rvdto.setFrecibo(null);
+//            }
+//            rvdto.setNrecibo(Long.parseLong(resultado[3].toString()));
+//            rvdto.setCtipo(resultado[4].toString());
+//            rvdto.setNdocum(Long.parseLong(resultado[5].toString()));
+//            if(resultado[6] != null){
+//                Timestamp timeStamp_6 = (Timestamp) resultado[6];
+//                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
+//                rvdto.setFfactur(dateResult_6);
+//            }else{              
+//                rvdto.setFfactur(null);
+//            }
+//            rvdto.setIefectivo(Long.parseLong(resultado[7].toString()));
+//            rvdto.setNroCheque(resultado[8].toString());
+//            rvdto.setIpagado(Long.parseLong(resultado[9].toString()));
+//            rvdto.setMoneda(Long.parseLong(resultado[10].toString()));
+//            rvdto.setCotizacion(Long.parseLong(resultado[11].toString()));
+//            listadoReciboVentas.add(rvdto);
+//        }        
+        //return listadoReciboVentas;
     }
 
-    public List<RecibosComprasDto> busquedaDatosRecibosCompras(String fechaInicial, String fechaFinal) throws Exception {
+    public List<Object[]> busquedaDatosRecibosCompras(String fechaInicial, String fechaFinal) throws Exception {
         Query q = getEntityManager().createNativeQuery(" SELECT    'REP' as ctipo_docum,  1 as nro_cuota,  CONVERT(char(10),f.frecibo,103) as frecibo, f.nrecibo, d.nrofact , d.ctipo_docum as ctipo,   "
                 + " d.ffactur, 0 AS iefectivo, ch.nro_cheque, ch.ipagado, cb.cod_contable, 0 as moneda, 0 as cotizacion, f.cod_proveed, d.itotal, 0 as ntimbrado, 0 as fact_timbrado, 0 as ntimbrado, 0 as nota_timbrado  "
                 + "	FROM         recibos_prov f  INNER JOIN recibos_prov_det d "
@@ -127,35 +135,777 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
 
         System.out.println(q.toString());
 
-        List<Object[]> resultados = q.getResultList();
-        List<RecibosComprasDto> listadoReciboCompras = new ArrayList<RecibosComprasDto>();
-        for(Object[] resultado: resultados){
-            RecibosComprasDto rcdto = new RecibosComprasDto();
-            rcdto.setCtipoDocum(resultado[0].toString());
-            rcdto.setNcuota(Long.parseLong(resultado[1].toString()));
+//        List<Object[]> resultados = 
+        return q.getResultList();
+//        List<RecibosComprasDto> listadoReciboCompras = new ArrayList<RecibosComprasDto>();
+//        for(Object[] resultado: resultados){
+//            RecibosComprasDto rcdto = new RecibosComprasDto();
+//            rcdto.setCtipoDocum(resultado[0].toString());
+//            rcdto.setNcuota(Long.parseLong(resultado[1].toString()));
+//            if(resultado[2] != null){
+//                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+//                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+//                rcdto.setFrecibo(dateResult_2);
+//            }else{              
+//                rcdto.setFrecibo(null);
+//            }
+//            rcdto.setNrecibo(Long.parseLong(resultado[3].toString()));
+//            rcdto.setCtipo(resultado[4].toString());
+//            if(resultado[6] != null){
+//                Timestamp timeStamp_6 = (Timestamp) resultado[6];
+//                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
+//                rcdto.setFfactur(dateResult_6);
+//            }else{              
+//                rcdto.setFfactur(null);
+//            }
+//            rcdto.setIefectivo(Long.parseLong(resultado[7].toString()));
+//            rcdto.setNroCheque(resultado[8].toString());
+//            rcdto.setIpagado(Long.parseLong(resultado[9].toString()));
+//            rcdto.setMoneda(Long.parseLong(resultado[10].toString()));
+//            rcdto.setCotizacion(Long.parseLong(resultado[11].toString()));
+//            listadoReciboCompras.add(rcdto);
+//        }        
+//        return listadoReciboCompras;
+    }
+
+    public List<RecibosFacturasVentasIvaInclNoIncl> busquedaDatosFacturasVentas(String fechaInicial, String fechaFinal) throws Exception {
+        Query qActivaIvaNoIncl = getEntityManager().createNativeQuery(" SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin,  r.ntimbrado, "
+                + " F.TTOTAL, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + " AS timpuestos_10, 0 AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, F.Xfactura , r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact,  f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado, "
+                + " f.ttotal, f.xruc, f.xfactura,  SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + " AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado  "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado,  "
+                + "  f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 as tgravadas_5, 0 "
+                + " AS timpuestos_10, 0 AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 and r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura, r.ntimbrado  "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,10) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado, "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + " AS timpuestos_10, 0 AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado  "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur, 103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado,  "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + " AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura, r.ntimbrado  "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado, "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 as tgravadas_5, 0 "
+                + " AS timpuestos_10, 0 AS timpuestos_5 "
+                + " FROM         facturas f INNER JOIN "
+                + " rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 and r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura , r.ntimbrado "
+                + " ORDER BY f.ffactur, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin ");
+
+        System.out.println(qActivaIvaNoIncl.toString());
+
+        List<Object[]> resultadoActivaIvaNoIncl = qActivaIvaNoIncl.getResultList();
+        List<RecibosFacturasVentasIvaInclNoIncl> listadoFacturas = new ArrayList<RecibosFacturasVentasIvaInclNoIncl>();
+        
+        for(Object[] resultado: resultadoActivaIvaNoIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
             if(resultado[2] != null){
                 Timestamp timeStamp_2 = (Timestamp) resultado[2];
                 java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
-                rcdto.setFrecibo(dateResult_2);
+                rfvinincldto.setFfactur(dateResult_2);
             }else{              
-                rcdto.setFrecibo(null);
+                rfvinincldto.setFfactur(null);
             }
-            rcdto.setNrecibo(Long.parseLong(resultado[3].toString()));
-            rcdto.setCtipo(resultado[4].toString());
-            if(resultado[6] != null){
-                Timestamp timeStamp_6 = (Timestamp) resultado[6];
-                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
-                rcdto.setFfactur(dateResult_6);
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        Query qInactivaIvaNoIncl = getEntityManager().createNativeQuery(" SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado,   "
+                + " F.TTOTAL, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  F.Xfactura , r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact,  f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado, "
+                + " f.ttotal, f.xruc, f.xfactura,  SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura , r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin,r.ntimbrado,   "
+                + "  f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 as tgravadas_5, 0 "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum  AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 and r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,10) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin,r.ntimbrado,  "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado  "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur, 103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, r.ntimbrado,  "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin,r.ntimbrado,  "
+                + " f.ttotal, f.xruc, f.xfactura, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 as tgravadas_5, 0 "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum  AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 and r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura , r.ntimbrado "
+                + " ORDER BY f.ffactur, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin ");
+
+        System.out.println(qInactivaIvaNoIncl.toString());
+
+        List<Object[]> resultadoInactivaIvaNoIncl = qInactivaIvaNoIncl.getResultList();
+        for(Object[] resultado: resultadoInactivaIvaNoIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfvinincldto.setFfactur(dateResult_2);
             }else{              
-                rcdto.setFfactur(null);
+                rfvinincldto.setFfactur(null);
             }
-            rcdto.setIefectivo(Long.parseLong(resultado[7].toString()));
-            rcdto.setNroCheque(resultado[8].toString());
-            rcdto.setIpagado(Long.parseLong(resultado[9].toString()));
-            rcdto.setMoneda(Long.parseLong(resultado[10].toString()));
-            rcdto.setCotizacion(Long.parseLong(resultado[11].toString()));
-            listadoReciboCompras.add(rcdto);
-        }        
-        return listadoReciboCompras;
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        Query qActivaIvaIncl = getEntityManager().createNativeQuery(" SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura,  r.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact,  f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura , r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur,  f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado,"
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum,  r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura, r.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum  AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura,r.ntimbrado, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum  AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 AND r.mtipo_papel = 'M' "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " ORDER BY f.ffactur, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin ");
+
+        System.out.println(qActivaIvaIncl.toString());
+
+        List<Object[]> resultadoActivaIvaIncl = qActivaIvaIncl.getResultList();
+        for(Object[] resultado: resultadoActivaIvaIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfvinincldto.setFfactur(dateResult_2);
+            }else{              
+                rfvinincldto.setFfactur(null);
+            }
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        Query qInactivaIvaIncl = getEntityManager().createNativeQuery(" SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura,r.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact,  f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur,  f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 AND r.mtipo_papel = 'F' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum,  r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10), f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura, r.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 AND r.mtipo_papel = 'M' "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     f.xrazon_social, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc, f.xfactura, r.ntimbrado, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         facturas f INNER JOIN "
+                + "    rangos_documentos r ON f.ctipo_docum = r.ctipo_docum AND YEAR(f.ffactur) BETWEEN r.nano_inicial AND r.nano_final INNER JOIN facturas_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'X') AND (f.nrofact BETWEEN r.nro_docum_ini AND r.nro_docum_fin) "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 AND r.mtipo_papel = 'M' "
+                + " GROUP BY f.xrazon_social, f.ffactur, f.nrofact, f.ctipo_docum, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin, f.ttotal, f.xruc,  f.xfactura, r.ntimbrado "
+                + " ORDER BY f.ffactur, r.mtipo_papel, r.nro_docum_ini, r.nro_docum_fin ");
+
+        System.out.println(qInactivaIvaIncl.toString());
+
+        List<Object[]> resultadoInactivaIvaIncl = qInactivaIvaIncl.getResultList();
+        for(Object[] resultado: resultadoInactivaIvaIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfvinincldto.setFfactur(dateResult_2);
+            }else{              
+                rfvinincldto.setFfactur(null);
+            }
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        Query qNotasCreditoInactivaIvaNoIncl = getEntityManager().createNativeQuery(" SELECT f.xrazon_social, f.xruc,  n.fac_ctipo_docum, convert(char(10), "
+                + " n.fdocum,103) as ffactur,  n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, 'F' as mtipo_papel, "
+                + " 0 as nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         notas_ventas n INNER JOIN notas_ventas_det d "
+                + " ON N.nro_nota = d.nro_nota and n.ctipo_docum = d.ctipo_docum AND n.fdocum = d.fdocum , facturas f "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 "
+                + " AND f.cod_empr = 2 "
+                + " AND f.nrofact = n.nrofact "
+                + " AND f.ctipo_docum = n.fac_ctipo_docum "
+                + " AND f.ffactur = n.ffactur "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY  f.xrazon_social, f.xruc, n.fac_ctipo_docum, n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, n.xnro_nota "
+                + " UNION ALL "
+                + " SELECT   f.xrazon_social, f.xruc, n.fac_ctipo_docum, CONVERT(char(10),n.fdocum,103) as ffactur, "
+                + " n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, 'F' as mtipo_papel, 0 AS nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         notas_ventas n  INNER JOIN notas_ventas_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.fdocum = d.fdocum, facturas f "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND f.cod_empr = 2 "
+                + " AND f.nrofact = n.nrofact "
+                + " AND f.ctipo_docum = n.fac_ctipo_docum "
+                + " AND f.ffactur = n.ffactur "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 "
+                + " GROUP BY  f.xrazon_social, f.xruc, n.fac_ctipo_docum, n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota,n.ttotal , n.xnro_nota "
+                + " ORDER BY 4, n.ctipo_docum, n.cconc ");
+
+        System.out.println(qNotasCreditoInactivaIvaNoIncl.toString());
+
+        List<Object[]> resultadoNotasCreditoInactivaIvaNoIncl = qNotasCreditoInactivaIvaNoIncl.getResultList();
+        for(Object[] resultado: resultadoNotasCreditoInactivaIvaNoIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfvinincldto.setFfactur(dateResult_2);
+            }else{              
+                rfvinincldto.setFfactur(null);
+            }
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        Query qNotasCreditoInactivaIvaIncl = getEntityManager().createNativeQuery(" SELECT    f.xrazon_social, f.xruc, n.fac_ctipo_docum, CONVERT(char(10), n.fdocum,103)  as ffactur, "
+                + "  n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, 'F' as mtipo_papel, 0 as nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         notas_ventas n INNER JOIN notas_ventas_det d "
+                + " ON N.nro_nota = d.nro_nota AND n.ctipo_docum = d.ctipo_docum AND n.fdocum = d.fdocum, facturas f "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 "
+                + " AND f.cod_empr = 2 "
+                + " AND n.nrofact = f.nrofact "
+                + " AND n.fac_ctipo_docum = f.ctipo_docum "
+                + " AND f.ffactur = n.ffactur "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.xruc, n.fac_ctipo_docum,n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, n.xnro_nota "
+                + " UNION ALL "
+                + " SELECT    f.xrazon_social, f.xruc, n.fac_ctipo_docum, CONVERT(char(10),n.fdocum,103) as ffactur, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, "
+                + " 'F' as mtipo_papel, 0 AS nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         notas_ventas n  INNER JOIN notas_ventas_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.fdocum = d.fdocum, facturas f "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 "
+                + " AND f.cod_empr = 2 "
+                + " AND n.nrofact = f.nrofact "
+                + " AND n.fac_ctipo_docum = f.ctipo_docum "
+                + " AND f.ffactur = n.ffactur "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY f.xrazon_social, f.xruc, n.fac_ctipo_docum,n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota, n.ttotal, n.xnro_nota  "
+                + " UNION ALL "
+                + " SELECT   f.xrazon_social, f.xruc, n.fac_ctipo_docum, CONVERT(char(10),n.fdocum,103) as ffactur, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, "
+                + " 'F' as mtipo_papel, 0 AS nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         notas_ventas n  INNER JOIN notas_ventas_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.fdocum = d.fdocum, facturas f "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 "
+                + " AND f.cod_empr = 2 "
+                + " AND n.nrofact = f.nrofact "
+                + " AND f.ffactur = n.ffactur "
+                + " AND n.fac_ctipo_docum = f.ctipo_docum "
+                + " GROUP BY  f.xrazon_social, f.xruc, n.fac_ctipo_docum,n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota, n.ttotal, n.xnro_nota  "
+                + " ORDER BY 4, n.ctipo_docum, n.cconc ");
+
+        System.out.println(qNotasCreditoInactivaIvaIncl.toString());
+
+        List<Object[]> resultadoNotasCreditoInactivaIvaIncl = qNotasCreditoInactivaIvaIncl.getResultList();
+        for(Object[] resultado: resultadoNotasCreditoInactivaIvaIncl){
+            RecibosFacturasVentasIvaInclNoIncl rfvinincldto = new RecibosFacturasVentasIvaInclNoIncl();
+            rfvinincldto.setCtipoDocum(resultado[0].toString());
+            rfvinincldto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfvinincldto.setFfactur(dateResult_2);
+            }else{              
+                rfvinincldto.setFfactur(null);
+            }
+            rfvinincldto.setNroDocumFin(Long.parseLong(resultado[3].toString()));
+            rfvinincldto.setCtipoDocum(resultado[4].toString());
+            rfvinincldto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfvinincldto.setXfactura(resultado[8].toString());
+            rfvinincldto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfvinincldto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfvinincldto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfvinincldto);
+        }
+        
+        return listadoFacturas;
     }
+    
+    public List<RecibosFacturasComprasIvaInclNoIncl> busquedaDatosFacturasCompras(String fechaInicial, String fechaFinal) throws Exception {
+        Query qIvaNoIncl = getEntityManager().createNativeQuery(" SELECT     p.xnombre, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum,   "
+                + " F.TTOTAL, P.xruc, f.xfactura, f.ntimbrado, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.itotal) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         compras f  INNER JOIN compras_det d "
+                + " ON f.nrofact = d.nrofact AND f.cod_proveed = d.cod_proveed  AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur, proveedores p "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A')  "
+                + " AND f.cod_proveed = p.cod_proveed "
+                + " AND d.impuestos > 0 AND d.pimpues = 10  "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, f.ffactur, f.nrofact, f.ntimbrado,f.ctipo_docum,  f.ttotal, p.xruc,  F.xfactura  "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact,  f.ctipo_docum,  "
+                + " f.ttotal, p.xruc, f.xfactura,  f.ntimbrado, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.itotal) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         compras f  INNER JOIN compras_det d  "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum and f.cod_proveed = d.cod_proveed AND f.ffactur = d.ffactur, PROVEEDORES P "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A')  "
+                + " AND f.cod_proveed = p.cod_proveed "
+                + " AND d.impuestos > 0 AND d.pimpues = 5  "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, f.ffactur, f.nrofact, f.ntimbrado, f.ctipo_docum,  f.ttotal, p.xruc,  f.xfactura "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, CONVERT(char(10), f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum,  "
+                + "  f.ttotal, p.xruc, f.xfactura, f.ntimbrado, SUM(d.itotal) AS texentas, "
+                + " 0 AS tgravadas_10, 0 as tgravadas_5, 0 "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         compras f  INNER JOIN compras_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.cod_proveed = d.cod_proveed AND f.ffactur = d.ffactur, PROVEEDORES P "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND f.cod_proveed = p.cod_proveed "
+                + " AND (f.mestado = 'A')  "
+                + " AND d.impuestos = 0 AND d.pimpues = 0  "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, f.ffactur, f.nrofact, f.ntimbrado, f.ctipo_docum, f.ttotal, p.xruc,  f.xfactura ");
+
+        System.out.println(qIvaNoIncl.toString());
+
+        List<Object[]> resultadoIvaNoIncl = qIvaNoIncl.getResultList();
+        List<RecibosFacturasComprasIvaInclNoIncl> listadoFacturas = new ArrayList<RecibosFacturasComprasIvaInclNoIncl>();
+        
+        for(Object[] resultado: resultadoIvaNoIncl){
+            RecibosFacturasComprasIvaInclNoIncl rfcdto = new RecibosFacturasComprasIvaInclNoIncl();
+            rfcdto.setCtipoDocum(resultado[0].toString());
+            rfcdto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfcdto.setFfactur(dateResult_2);
+            }else{              
+                rfcdto.setFfactur(null);
+            }
+            rfcdto.setXnombre(resultado[3].toString());
+            rfcdto.setCtipoDocum(resultado[4].toString());
+            rfcdto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfcdto.setXfactura(resultado[8].toString());
+            rfcdto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfcdto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfcdto);
+        }
+        
+        Query qIvaIncl = getEntityManager().createNativeQuery(" SELECT     p.xnombre, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact, f.ctipo_docum,   "
+                + " F.TTOTAL, p.xruc, f.xfactura, f.ntimbrado, SUM(d.iexentas) AS texentas, "
+                + " SUM(d.itotal+d.impuestos)AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         compras f  INNER JOIN compras_det d "
+                + " ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.cod_proveed = d.cod_proveed AND f.ffactur = d.ffactur, "
+                + "  proveedores p "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A')  "
+                + " AND f.cod_proveed = p.cod_proveed "
+                + " AND d.impuestos < 0 AND d.pimpues = 10  "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, f.ffactur, f.nrofact, f.ntimbrado, f.ctipo_docum,  f.ttotal, p.xruc,  F.xfactura "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, CONVERT(char(10),f.ffactur,103) as ffactur, f.nrofact,  f.ctipo_docum,  "
+                + " f.ttotal, p.xruc, f.xfactura, f.ntimbrado, SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.itotal+d.impuestos ) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         compras f  INNER JOIN compras_det d  "
+                + " ON f.nrofact = d.nrofact AND f.cod_proveed = d.cod_proveed AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur, proveedores p "
+                + " WHERE     (f.ffactur BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (f.mestado = 'A')  "
+                + " AND f.cod_proveed = p.cod_proveed "
+                + " AND d.impuestos < 0 AND d.pimpues = 5  "
+                + " AND f.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, f.ffactur, f.nrofact, f.ntimbrado, f.ctipo_docum,  f.ttotal, p.xruc,  f.xfactura ");
+
+        System.out.println(qIvaIncl.toString());
+
+        List<Object[]> resultadoIvaIncl = qIvaIncl.getResultList();
+        for(Object[] resultado: resultadoIvaIncl){
+            RecibosFacturasComprasIvaInclNoIncl rfcdto = new RecibosFacturasComprasIvaInclNoIncl();
+            rfcdto.setCtipoDocum(resultado[0].toString());
+            rfcdto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfcdto.setFfactur(dateResult_2);
+            }else{              
+                rfcdto.setFfactur(null);
+            }
+            rfcdto.setXnombre(resultado[3].toString());
+            rfcdto.setCtipoDocum(resultado[4].toString());
+            rfcdto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfcdto.setXfactura(resultado[8].toString());
+            rfcdto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfcdto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfcdto);
+        }
+        
+        Query qNotasCreditoIvaNoIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc, n.ctipo_docum,   convert(char(10), n.fdocum,103) as fdocum,  "
+                + "  n.nro_nota, n.cconc, n.ttotal,   n.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         notas_compras n INNER JOIN notas_compras_det d "
+                + " ON N.nro_nota = d.nro_nota and n.ctipo_docum = d.ctipo_docum AND n.cod_proveed = d.cod_proveed AND n.fdocum = d.fdocum,  proveedores p "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND n.ctipo_docum IN ('NCC','NDC') "
+                + " AND n.cod_proveed = p.cod_proveed "
+                + " AND d.impuestos > 0 AND d.pimpues = 10 "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, n.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, p.xruc, n.ctipo_docum, CONVERT(char(10),n.fdocum,103) as fdocum,  n.nro_nota, n.cconc, n.ttotal,  n.ntimbrado, "
+                + "  SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         notas_compras n  INNER JOIN notas_compras_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.cod_proveed = d.cod_proveed AND n.fdocum = d.fdocum, proveedores p "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND n.ctipo_docum IN ('NCC','NDC') "
+                + " AND p.cod_proveed = n.cod_proveed "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " AND d.impuestos > 0 AND d.pimpues = 5 "
+                + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota,n.ttotal, n.ntimbrado  ");
+
+        System.out.println(qNotasCreditoIvaNoIncl.toString());
+
+        List<Object[]> resultadoNotasCreditoIvaNoIncl = qNotasCreditoIvaNoIncl.getResultList();
+        for(Object[] resultado: resultadoNotasCreditoIvaNoIncl){
+            RecibosFacturasComprasIvaInclNoIncl rfcdto = new RecibosFacturasComprasIvaInclNoIncl();
+            rfcdto.setCtipoDocum(resultado[0].toString());
+            rfcdto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfcdto.setFfactur(dateResult_2);
+            }else{              
+                rfcdto.setFfactur(null);
+            }
+            rfcdto.setXnombre(resultado[3].toString());
+            rfcdto.setCtipoDocum(resultado[4].toString());
+            rfcdto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfcdto.setXfactura(resultado[8].toString());
+            rfcdto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfcdto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfcdto);
+        }
+        
+        Query qNotasCreditoIvaIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc,   convert(char(10), n.fdocum,103) as fdocum,  "
+                + " n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado,  "
+                + " SUM(d.iexentas) AS texentas, "
+                + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
+                + "        AS timpuestos_10, 0 AS timpuestos_5 "
+                + "	FROM         notas_compras n INNER JOIN notas_compras_det d "
+                + " ON N.nro_nota = d.nro_nota AND n.ctipo_docum = d.ctipo_docum AND n.cod_proveed = d.cod_proveed AND n.fdocum = d.fdocum, proveedores p "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND p.cod_proveed = n.cod_proveed "
+                + " AND n.ctipo_docum IN ('NCC','NDC') "
+                + " AND d.impuestos < 0 AND d.pimpues = 10 "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal,n.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, p.xruc,  CONVERT(char(10),n.fdocum,103) as fdocum, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
+                + "	FROM         notas_compras n  INNER JOIN notas_compras_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.cod_proveed = d.cod_proveed AND n.fdocum = d.fdocum, proveedores p "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND d.impuestos < 0 AND d.pimpues = 5 "
+                + " AND n.ctipo_docum IN ('NCC','NDC') "
+                + " AND p.cod_proveed = n.cod_proveed "
+                + " AND n.cod_empr = 2 and d.cod_empr = 2 "
+                + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota, n.ttotal, n.ntimbrado "
+                + " UNION ALL "
+                + " SELECT     p.xnombre, p.xruc, CONVERT(char(10),n.fdocum,103) as fdocum, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
+                + " SUM(d.iexentas) AS texentas, "
+                + " 0 AS tgravadas_10, 0 AS tgravadas_5, 0 "
+                + "        AS timpuestos_10, 0 AS timpuestos_5  "
+                + "	FROM         notas_compras n  INNER JOIN notas_compras_det d "
+                + " ON n.nro_nota = d.nro_nota  AND n.ctipo_docum = d.ctipo_docum AND n.cod_proveed = d.cod_proveed AND n.fdocum = d.fdocum, proveedores p "
+                + " WHERE     (n.fdocum BETWEEN '" + fechaInicial + "' AND '" + fechaFinal + "') "
+                + " AND (n.mestado = 'A')  "
+                + " AND n.ctipo_docum IN ('NCC','NDC') "
+                + " AND p.cod_proveed = n.cod_proveed "
+                + " AND d.impuestos = 0 AND d.pimpues = 0 "
+                + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota, n.ttotal, n.ntimbrado   ");
+
+        System.out.println(qNotasCreditoIvaIncl.toString());
+
+        List<Object[]> resultadoNotasCreditoIvaIncl = qNotasCreditoIvaIncl.getResultList();
+        for(Object[] resultado: resultadoNotasCreditoIvaIncl){
+            RecibosFacturasComprasIvaInclNoIncl rfcdto = new RecibosFacturasComprasIvaInclNoIncl();
+            rfcdto.setCtipoDocum(resultado[0].toString());
+            rfcdto.setNrofact(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rfcdto.setFfactur(dateResult_2);
+            }else{              
+                rfcdto.setFfactur(null);
+            }
+            rfcdto.setXnombre(resultado[3].toString());
+            rfcdto.setCtipoDocum(resultado[4].toString());
+            rfcdto.setTgravadas10(Long.parseLong(resultado[7].toString()));
+            rfcdto.setXfactura(resultado[8].toString());
+            rfcdto.setTexentas(Long.parseLong(resultado[9].toString()));
+            rfcdto.setTtotal(Long.parseLong(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            listadoFacturas.add(rfcdto);
+        }
+        
+        return listadoFacturas;
+    }
+    
+    public String obtenerPath(){
+        return datosGeneralesFacade.findAll().get(0).getTempPath();
+    }
+    
 }
