@@ -66,8 +66,8 @@ public class GenDatosContables implements Serializable {
     public void generarDatos(){
         List<Object[]> listaRecibosVentas;
         List<Object[]> listaRecibosCompras;
-        List<RecibosFacturasVentasIvaInclNoIncl> listaRecibosFacturasVentasIvaInclNoIncl;
-        List<RecibosFacturasComprasIvaInclNoIncl> listaRecibosFacturasComprasIvaInclNoIncl;
+        List<Object[]> listaRecibosFacturasVentasIvaInclNoIncl;
+        List<Object[]> listaRecibosFacturasComprasIvaInclNoIncl;
         try{
             String path = genDatosContablesFacade.obtenerPath();
             if(documentosAnulados.equals("RV")){
@@ -98,18 +98,29 @@ public class GenDatosContables implements Serializable {
                 //}
             }else if(documentosAnulados.equals("DV")){
                 listaRecibosFacturasVentasIvaInclNoIncl = genDatosContablesFacade.busquedaDatosFacturasVentas(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
-                if(listaRecibosFacturasVentasIvaInclNoIncl.isEmpty()){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
-                } else {
-                    FileWritter.guardarDatosFacturasVentas(path, listaRecibosFacturasVentasIvaInclNoIncl);
-                }
+//                if(listaRecibosFacturasVentasIvaInclNoIncl.isEmpty()){
+//                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+//                } else {
+                    String [] columnas = {"xrazon_social","ffactur","nrofact","ctipo_docum","mtipo_papel","nro_docum_ini","nro_docum_fin","ntimbrado","TTOTAL","xruc","xfactura","texentas","tgravadas_10","tgravadas_5","timpuestos_10","timpuestos_5"};
+                    
+                    LlamarReportes rep = new LlamarReportes();
+                    
+                    rep.exportarExcel(columnas, listaRecibosFacturasVentasIvaInclNoIncl, "vtascont");
+                    //FileWritter.guardarDatosFacturasVentas(path, listaRecibosFacturasVentasIvaInclNoIncl);
+                //}
             }else if(documentosAnulados.equals("DC")){
                 listaRecibosFacturasComprasIvaInclNoIncl = genDatosContablesFacade.busquedaDatosFacturasCompras(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
-                if(listaRecibosFacturasComprasIvaInclNoIncl.isEmpty()){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
-                } else {
-                    FileWritter.guardarDatosFacturasCompras(path, listaRecibosFacturasComprasIvaInclNoIncl);
-                }
+                //if(listaRecibosFacturasComprasIvaInclNoIncl.isEmpty()){
+                 //   FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+                //} else {
+                    String[] columnas = {"xnombre","ffactur","nrofact","ctipo_docum","TTOTAL","xruc","xfactura","ntimbrado","texentas","tgravadas_10","tgravadas_5","timpuestos_10","timpuestos_5"};
+
+                    LlamarReportes rep = new LlamarReportes();
+                    
+                    rep.exportarExcel(columnas, listaRecibosFacturasComprasIvaInclNoIncl, "compcont");
+                    
+                    //FileWritter.guardarDatosFacturasCompras(path, listaRecibosFacturasComprasIvaInclNoIncl);
+                //}
             }
         }
         catch (Exception e){
