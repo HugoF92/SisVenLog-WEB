@@ -6,6 +6,7 @@
 package util;
 
 import dto.LiMercaSinDto;
+import entidad.Proveedores;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -2161,12 +2162,12 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
-    
+
     public void reporteLiRecibos(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, String clientesRepo, String zonaDes,
             String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
         try {
-                    
+
             Map param = new HashMap();
             param.put("sql", sql);
             param.put("fechaDesde", fechaDesde);
@@ -2176,27 +2177,27 @@ public class LlamarReportes {
             param.put("clientesRepo", clientesRepo);
             param.put("zonaDes", zonaDes);
             param.put("usu_imprime", usuImprime);
-            
+
             //JLVC 02-01-2020; se obtiene sqlDetalle solo si es distinto a null
             if (sqlDetalle != null) {
                 param.put("sqlDet", sqlDetalle);
                 if ("reciboFacDetPC".equals(nombreReporte) && sqlDetalleRecibo != null) {
                     param.put("sqlDetRec", sqlDetalleRecibo);
-                }else{
+                } else {
                     param.put("sqlDetRec", null);
                 }
-            }else{
+            } else {
                 param.put("sqlDet", null);
             }
 
             //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
             String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
             System.out.println("    subReportDir: " + subReportDir);
-            if ("reciboFac".equals(nombreReporte)){
+            if ("reciboFac".equals(nombreReporte)) {
                 param.put("SUBREPORT_DIR", subReportDir);
             }
-            
-            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte +".jasper");
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 
@@ -2209,7 +2210,7 @@ public class LlamarReportes {
                 if (tipo.equals("VIST")) {
                     disposition = "inline";
 
-                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename="+ filename +".pdf");
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
                     httpServletResponse.addHeader("Content-type", "application/pdf");
 
                     ServletOutputStream servletStream = httpServletResponse.getOutputStream();
@@ -2226,4 +2227,61 @@ public class LlamarReportes {
         }
     }
 
+    public void reporteLiRecibosCom(String sql, Date fechaDesde, Date fechaHasta,
+            Long nroRecDesde, Long nroRecHasta, Proveedores provSeleccionado, String usuImprime, String tipo, 
+            String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("fechaDesde", fechaDesde);
+            param.put("fechaHasta", fechaHasta);
+            param.put("nroReciboDesde", nroRecDesde);
+            param.put("nroReciboHasta", nroRecHasta);
+            param.put("usu_imprime", usuImprime);
+            
+            if (provSeleccionado != null) {
+                param.put("provCod", provSeleccionado.getCodProveed());
+                param.put("provDesc", (provSeleccionado.getXnombre()!= null)?provSeleccionado.getXnombre():"");
+            }else{
+                param.put("provCod", "TODOS");
+                param.put("provDesc", " ");
+            }
+            param.put("sqlDet", sqlDetalle);
+            param.put("sqlDetRec", sqlDetalleRecibo);
+            
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport
+            if ("reciboProvPP".equals(nombreReporte) || "reciboProvDetPP".equals(nombreReporte) || "reciboProvDetND".equals(nombreReporte)) {
+                String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+                param.put("SUBREPORT_DIR", subReportDir);
+            }
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
 }

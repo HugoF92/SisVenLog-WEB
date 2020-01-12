@@ -1,14 +1,8 @@
 package bean.listados;
 
-import dao.EmpleadosFacade;
 import dao.ExcelFacade;
 import dao.ProveedoresFacade;
-import dao.ZonasFacade;
-import entidad.Empleados;
-import entidad.EmpleadosPK;
 import entidad.Proveedores;
-import entidad.Zonas;
-import entidad.ZonasPK;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
