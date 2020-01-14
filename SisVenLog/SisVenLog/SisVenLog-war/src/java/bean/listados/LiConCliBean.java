@@ -68,8 +68,8 @@ public class LiConCliBean {
             extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
         }
         if ( this.nuevo ) {
-            String ldesde = fdesde + "00:00:00";
-            String lhasta = fhasta + "23:59:00";
+            String ldesde = fdesde + " 00:00:00";
+            String lhasta = fhasta + " 23:59:00";
             extras += " AND m.falta between '"+ldesde+"' AND '"+lhasta+"' ";
         }
         List<Object[]> lista = new ArrayList<Object[]>();
@@ -236,11 +236,11 @@ public class LiConCliBean {
                 columnas[3] = "cant_clientes";
                 columnas[4] = "tot_clien";
                 sql = " SELECT v.*, c.tot_clien " +
-                    " from ( select f.cod_zona, m.cod_sublinea, s.xdesc, c.ctipo_cliente as tipo_neg, count(distinctc.cod_cliente) as cant_clientes " +
+                    " from ( select f.cod_zona, m.cod_sublinea, s.xdesc, c.ctipo_cliente as tipo_neg, count(distinct c.cod_cliente) as cant_clientes " +
                     " from facturas f, facturas_det d, sublineas s, mercaderias m,clientes c " +
                     " where f.ffactur between '"+fdesde+"' AND '"+fhasta+
                     "' AND f.cod_cliente = c.cod_cliente and f.mestado ='A' " +
-                    " and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_subline " +
+                    " and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_sublinea " +
                     " AND f.nrofact = d.nrofact and f.ctipo_docum = d.ctipo_docum " +
                     " AND f.ffactur = d.ffactur AND f.cod_empr = d.cod_empr " +
                     " and d.cod_empr = m.cod_empr and d.cod_merca = m.cod_merca " +
