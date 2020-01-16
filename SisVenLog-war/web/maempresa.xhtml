@@ -1,0 +1,327 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnEmpresa" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE EMPRESA</h1>
+
+                            <p:growl id="msgEmpresa" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{empresaBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevEmpresa').show()"
+                                    update=""
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditEmpresa').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{empresaBean.habBtnEdit}"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{empresaBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacEmpresa').show()"
+                                    update="formInacEmpresa"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formEmpresa" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaEmpresa" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{empresaBean.listaEmpresas}" rowKey="#{itemp.codEmpr}"
+                                                     selection="#{empresaBean.empresas}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{empresaBean.onRowSelect(event)}"
+                                                    update="formBtnEmpresa"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.codEmpr}"
+                                                      sortBy="#{itemp.codEmpr}">
+                                                <h:outputText value="#{itemp.codEmpr}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Nombre o Razon Social" filterBy="#{itemp.xrazonSocial}"
+                                                      sortBy="#{itemp.xrazonSocial}">
+                                                <h:outputText value="#{itemp.xrazonSocial}" />
+                                            </p:column>
+
+                                            <p:column headerText="CI o RUC" filterBy="#{itemp.xruc}">
+                                                <h:outputText value="#{itemp.xruc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Direccion" filterBy="#{itemp.xdirec}">
+                                                <h:outputText value="#{itemp.xdirec}" />
+                                            </p:column>
+
+                                            <p:column headerText="Telefono" filterBy="#{itemp.xtelef}">
+                                                <h:outputText value="#{itemp.xtelef}" />
+                                            </p:column>
+
+                                            <p:column headerText="Contacto" filterBy="#{itemp.xcontacto}">
+                                                <h:outputText value="#{itemp.xcontacto}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevEmpresa"  prependId="false">
+                            <p:growl id="msgAgreEmpresa" showDetail="true"/>
+
+                            <p:dialog header="Agregar Empresa"
+                                      widgetVar="dlgNuevEmpresa"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{empresaBean.instanciar()}" />
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Nombre o Razon Social:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descEmpresa" value="#{empresaBean.empresas.xrazonSocial}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="CI o RUC:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="rucEmpresa" value="#{empresaBean.empresas.xruc}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Direccion:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="domiEmpresa" value="#{empresaBean.empresas.xdirec}" 
+                                                 tabindex="3" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Telefono:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="telEmpresa" value="#{empresaBean.empresas.xtelef}" 
+                                                 tabindex="4" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Contacto:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="contEmpresa" value="#{empresaBean.empresas.xcontacto}" 
+                                                 tabindex="5" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{empresaBean.insertar()}"
+                                            update="msgAgreEmpresa formEmpresa"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{empresaBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditEmpresa"  prependId="false">
+                            <p:growl id="msgEditEmpresa" showDetail="true"/>
+
+                            <p:dialog header="Editar Empresa"
+                                      widgetVar="dlgEditEmpresa"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" update="pnlEditEmpresa"/>
+                                <p:ajax event="close" listener="#{empresaBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditEmpresa" columns="2">
+
+                                    <p:outputLabel value="Nombre o Razon Social:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descEditEmpresa" value="#{empresaBean.empresas.xrazonSocial}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="CI o RUC:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="rucEditEmpresa" value="#{empresaBean.empresas.xruc}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Direccion: " style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="domiEditEmpresa" value="#{empresaBean.empresas.xdirec}" 
+                                                 tabindex="3" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Telefono:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="telEditEmpresa" value="#{empresaBean.empresas.xtelef}" 
+                                                 tabindex="4" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Contacto:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="contEditEmpresa" value="#{empresaBean.empresas.xcontacto}" 
+                                                 tabindex="5" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{empresaBean.editar()}"
+                                            update="msgEditEmpresa formEmpresa"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{empresaBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formInacEmpresa" prependId="false">
+
+                            <p:growl id="msgInacEmpresa" showDetail="true"/>
+
+                            <p:dialog header="Borrar Empresa"
+                                      widgetVar="dlgInacEmpresa"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formEmpresa formBtnEmpresa"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{empresaBean.borrar()}"
+                                            update="msgInacEmpresa"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacEmpresa').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formSinGuardarEmpresa" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarEmpresa">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{empresaBean.cerrarDialogosAgregar()}" 
+                                        update="formEmpresa"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarEmpresa').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

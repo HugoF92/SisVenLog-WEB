@@ -1,0 +1,295 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnServicios" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE SERVICIOS</h1>
+
+                            <p:growl id="msgServicios" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{serviciosBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevServicios').show()"
+                                    update="formNuevServicios"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditServicios').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{serviciosBean.habBtnEdit}"
+                                    update="pnlEditServicios"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{serviciosBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacServicios').show()"
+                                    update="formInacServicios"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formServicios" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaServicios" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{serviciosBean.listaServicios}" rowKey="#{itemp.xdesc}"
+                                                     selection="#{serviciosBean.servicios}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{serviciosBean.onRowSelect(event)}"
+                                                    update="formBtnServicios"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.codServicio}"
+                                                      sortBy="#{itemp.codServicio}">
+                                                <h:outputText value="#{itemp.codServicio}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Porcentaje IVA:" filterBy="#{itemp.pimpues}">
+                                                <h:outputText value="#{itemp.pimpues}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevServicios"  prependId="false">
+                            <p:growl id="msgAgreServicios" showDetail="true"/>
+
+                            <p:dialog header="Agregar Servicios"
+                                      widgetVar="dlgNuevServicios"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{serviciosBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descServicios" value="#{serviciosBean.servicios.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Porcentaje IVA:" style="font-weight: bold; float: right;"/>
+
+                                    <p:selectOneMenu value="#{serviciosBean.servicios.pimpues}" 
+                                                     filterMatchMode="contains" filter="true"
+                                                     style=" width: 150px;" >
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                        <f:selectItem itemLabel="EXENTAS" itemValue="0.00"/>
+                                        <f:selectItem itemLabel="5%" itemValue="5.00"/>
+                                        <f:selectItem itemLabel="10%" itemValue="10.00"/>
+
+                                    </p:selectOneMenu>
+
+
+
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{serviciosBean.insertar()}"
+                                            update="msgAgreServicios formServicios"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{serviciosBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacServicios" prependId="false">
+
+                            <p:growl id="msgInacServicios" showDetail="true"/>
+
+                            <p:dialog header="Borrar Servicios"
+                                      widgetVar="dlgInacServicios"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{serviciosBean.borrar()}"
+                                            update="msgInacServicios formBtnServicios formServicios"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacServicios').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarServicios"  prependId="false">
+                            <p:growl id="msgEditServicios" showDetail="true"/>
+
+                            <p:dialog header="Editar Servicios"
+                                      widgetVar="dlgEditServicios"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{serviciosBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditServicios" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codServiciosEdit" value="#{serviciosBean.servicios.codServicio}" 
+                                                 tabindex="1" style="width: 50px;" disabled="true"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descServiciosEdit" value="#{serviciosBean.servicios.xdesc}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Porcentaje IVA:" style="font-weight: bold; float: right;"/>
+
+                                    <p:selectOneMenu value="#{serviciosBean.servicios.pimpues}" 
+                                                     filterMatchMode="contains" filter="true"
+                                                     style=" width: 150px;" >
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                        <f:selectItem itemLabel="EXENTAS" itemValue="0.00"/>
+                                        <f:selectItem itemLabel="5%" itemValue="5.00"/>
+                                        <f:selectItem itemLabel="10%" itemValue="10.00"/>
+
+                                    </p:selectOneMenu>
+
+                                </h:panelGrid>
+
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{serviciosBean.editar()}"
+                                            update="msgEditServicios formBtnServicios formServicios"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditServicios').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarServicios" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarServicios">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{serviciosBean.cerrarDialogosAgregar()}" 
+                                        update="formServicios"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarServicios').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>
