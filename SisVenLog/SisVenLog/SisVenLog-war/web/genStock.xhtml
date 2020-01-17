@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+                funtion start(){
+                    document.getElementById('arch1').click();
+                }
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiApli" header="Generar Rotación de Stock" style="width: 70%;">
+                                    
+                                    <h:panelGrid columns="2" >
+
+                                        <p:outputLabel value="Fecha Inicial:" style="float: right; font-weight: bold;"/>
+
+                                        <p:calendar id="liErroresProcDesde" value="#{genStockBean.desde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                            <p:ajax event="dateSelect" update="liAnuDocHasta" />
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha Final:" style="float: right; font-weight: bold;"/>
+
+                                        <p:calendar id="liAnuDocHasta" value="#{genStockBean.hasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es" mindate="#{genStockBean.desde}"/>
+
+                                        <p:outputLabel value="Zona:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{genStockBean.zonas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;" converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{genStockBean.listZonas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Ruta:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{genStockBean.rutas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;" converter="#{RutasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{genStockBean.listRutas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    
+                                    <p:commandLink title="report" target="_blank" 
+                                                   action="#{genStockBean.ejecutar('1')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" style="visibility: hidden">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn" id="arch1"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                    
+                                    <p:commandButton 
+                                        value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                        style="width: 120px;" onclick="start()"/>
+                                    
+                                    <p:commandLink title="report" target="_blank" 
+                                                   action="#{genStockBean.ejecutar('2')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" style="visibility: hidden">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn" id="arch2"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                                                        
+                                    <p:commandLink title="report" target="_blank" 
+                                                   action="#{genStockBean.ejecutar('3')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" style="visibility: hidden">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn" id="arch3"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                    
+                                </p:panel>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+            <script>
+                function start(){
+                    setTimeout(() => {
+                    document.getElementById('arch1').click()
+                    },1000)
+                    setTimeout(() => {
+                    document.getElementById('arch2').click()
+                    },1000)
+                    setTimeout(() => {
+                    document.getElementById('arch3').click()
+                    },1000)
+                }
+            </script>
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

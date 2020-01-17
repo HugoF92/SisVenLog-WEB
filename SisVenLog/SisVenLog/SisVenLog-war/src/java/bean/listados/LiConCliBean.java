@@ -68,8 +68,8 @@ public class LiConCliBean {
             extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
         }
         if ( this.nuevo ) {
-            String ldesde = fdesde + "00:00:00";
-            String lhasta = fhasta + "23:59:00";
+            String ldesde = fdesde + " 00:00:00";
+            String lhasta = fhasta + " 23:59:00";
             extras += " AND m.falta between '"+ldesde+"' AND '"+lhasta+"' ";
         }
         List<Object[]> lista = new ArrayList<Object[]>();
@@ -84,17 +84,17 @@ public class LiConCliBean {
                 columnas[3] = "xdesc";
                 columnas[4] = "fch_alta";
                 columnas[5] = "cant_clientes";
-                sql = "select f.cod_vendedor, e.xnombre,m.cod_merca, m.xdesc," +
-                        "m.falta as fch_alta, count(distinct cod_cliente) as cant_clientes" +
+                sql = " select f.cod_vendedor, e.xnombre,m.cod_merca, m.xdesc, " +
+                        " m.falta as fch_alta, count(distinct cod_cliente) as cant_clientes " +
                         " from facturas f, facturas_det d, empleados e, mercaderias m " +
-                        "where f.ffactur between '"+fdesde+"' AND '"+fhasta+
+                        " where f.ffactur between '"+fdesde+"' AND '"+fhasta+
                         "' and f.mestado ='A' AND f.ctipo_vta != 'X' " +
-                        "AND f.nrofact = d.nrofact and f.ctipo_docum = d.ctipo_docum " +
-                        "AND f.ffactur = d.ffactur AND f.cod_empr = d.cod_empr " +
-                        "and d.cod_empr = m.cod_empr and f.cod_vendedor = e.cod_empleado " +
-                        "AND f.cod_empr = e.cod_empr and d.cod_merca = m.cod_merca " +
-                        "AND f.cod_empr = 2 AND d.cod_empr = 2 " +
-                        "AND e.cod_empr = 2 AND m.cod_empr = 2 "+ 
+                        " AND f.nrofact = d.nrofact and f.ctipo_docum = d.ctipo_docum " +
+                        " AND f.ffactur = d.ffactur AND f.cod_empr = d.cod_empr " +
+                        " and d.cod_empr = m.cod_empr and f.cod_vendedor = e.cod_empleado " +
+                        " AND f.cod_empr = e.cod_empr and d.cod_merca = m.cod_merca " +
+                        " AND f.cod_empr = 2 AND d.cod_empr = 2 " +
+                        " AND e.cod_empr = 2 AND m.cod_empr = 2 "+ 
                         extras +
                         " group by f.cod_vendedor, e.xnombre, m.cod_merca, m.xdesc, m.falta "; 
                 break;
@@ -107,18 +107,18 @@ public class LiConCliBean {
                 columnas[4] = "ctipo_vta";
                 columnas[5] = "ctipo_cliente";
                 columnas[6] = "cant_clientes";
-                sql = "select f.cod_vendedor, e.xnombre, m.cod_sublinea, s.xdesc," +
-                    "f.ctipo_vta, c.ctipo_cliente, count(distinct c.cod_cliente) as cant_clientes " +
-                    "from facturas f, facturas_det d, empleados e, sublineas s,mercaderias m, clientes c " +
-                    "where f.ffactur between '"+fdesde+"' AND '" +fhasta+
+                sql = " select f.cod_vendedor, e.xnombre, m.cod_sublinea, s.xdesc, " +
+                    " f.ctipo_vta, c.ctipo_cliente, count(distinct c.cod_cliente) as cant_clientes " +
+                    " from facturas f, facturas_det d, empleados e, sublineas s,mercaderias m, clientes c " +
+                    " where f.ffactur between '"+fdesde+"' AND '" +fhasta+
                     "' AND f.cod_cliente = c.cod_cliente  and f.mestado ='A' " +
-                    "and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_sublinea " +
+                    " and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_sublinea " +
                     " AND f.nrofact = d.nrofact and f.ctipo_docum = d.ctipo_docum " +
                     " AND f.ffactur = d.ffactur AND f.cod_empr = d.cod_empr " +
                     " and d.cod_empr = m.cod_empr and f.cod_vendedor = e.cod_empleado " +
                     " AND f.cod_empr = e.cod_empr and d.cod_merca = m.cod_merca " +
                     " AND f.cod_empr = 2 AND d.cod_empr = 2 " +
-                    " AND e.cod_empr = 2 AND m.cod_empr = 2"+ 
+                    " AND e.cod_empr = 2 AND m.cod_empr = 2 "+ 
                     extras +
                     " group by f.cod_vendedor, e.xnombre, m.cod_sublinea, s.xdesc, f.ctipo_vta, c.ctipo_cliente "; 
                 break;
@@ -136,20 +136,20 @@ public class LiConCliBean {
                 columnas[9] = "cant_cajas";
                 columnas[10] = "cant_unid";
                 columnas[11] = "cant_clientes";
-                sql = "SELECT cast('"+fdesde+"' as char) as finicial," +
-                    "cast('"+fhasta+"' as char) as ffinal, f.cod_zona, f.cod_vendedor," +
-                    "v.xnombre,d.cod_merca, m.xdesc as xdesc_merca, m.cod_sublinea," +
-                    "s.xdesc AS xdesc_sublinea, f.ctipo_vta, c.ctipo_cliente," +
-                    "SUM(d.itotal) as itotal, SUM(d.cant_cajas) as cant_cajas ," +
-                    "SUM(d.cant_unid) AS cant_unid, COUNT(DISTINCT f.cod_cliente) AS cant_clientes " +
-                    "FROM facturas f INNER JOIN facturas_det d ON f.nrofact = d.nrofact " +
-                    "AND f.ctipo_docum = d.ctipo_docum and F.FFACTUR = D.FFACTUR " +
-                    "INNER JOIN empleados v ON f.cod_vendedor = v.cod_empleado " +
-                    "INNER JOIN mercaderias m ON d.cod_merca = m.cod_merca" +
-                    "INNER JOIN sublineas s ON m.cod_sublinea = s.cod_sublinea" +
-                    "INNER JOIN clientes c ON f.cod_cliente = c.cod_cliente" +
-                    "WHERE f.ctipo_vta !='X' AND F.MESTADO ='A' AND (f.cod_empr = 2) " +
-                    "and f.cod_empr = d.cod_empr AND (f.ffactur BETWEEN '"+fdesde+"' AND '"+fhasta+"') "+ 
+                sql = " SELECT cast('"+fdesde+"' as char) as finicial, " +
+                    " cast('"+fhasta+"' as char) as ffinal, f.cod_zona, f.cod_vendedor, " +
+                    " v.xnombre,d.cod_merca, m.xdesc as xdesc_merca, m.cod_sublinea, " +
+                    " s.xdesc AS xdesc_sublinea, f.ctipo_vta, c.ctipo_cliente, " +
+                    " SUM(d.itotal) as itotal, SUM(d.cant_cajas) as cant_cajas , " +
+                    " SUM(d.cant_unid) AS cant_unid, COUNT(DISTINCT f.cod_cliente) AS cant_clientes " +
+                    " FROM facturas f INNER JOIN facturas_det d ON f.nrofact = d.nrofact " +
+                    " AND f.ctipo_docum = d.ctipo_docum and F.FFACTUR = D.FFACTUR " +
+                    " INNER JOIN empleados v ON f.cod_vendedor = v.cod_empleado " +
+                    " INNER JOIN mercaderias m ON d.cod_merca = m.cod_merca " +
+                    " INNER JOIN sublineas s ON m.cod_sublinea = s.cod_sublinea " +
+                    " INNER JOIN clientes c ON f.cod_cliente = c.cod_cliente " +
+                    " WHERE f.ctipo_vta !='X' AND F.MESTADO ='A' AND (f.cod_empr = 2) " +
+                    " and f.cod_empr = d.cod_empr AND (f.ffactur BETWEEN '"+fdesde+"' AND '"+fhasta+"') "+ 
                     extras +
                     " GROUP BY f.cod_zona, f.cod_vendedor, v.xnombre, d.cod_merca, m.xdesc, m.cod_sublinea, s.xdesc, f.ctipo_vta, c.ctipo_cliente "; 
                 break;
@@ -161,11 +161,11 @@ public class LiConCliBean {
                 columnas[3] = "xnombre";
                 columnas[4] = "cant_clientes";
                 columnas[5] = "ttotal";
-                sql = "SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal," +
-                    "f.cod_vendedor, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes," +
-                    "SUM(f.ttotal - f.tnotas) AS ttotal " +
-                    "FROM facturas f " +
-                    "INNER JOIN facturas_det d ON f.nrofact = d.nrofact " +
+                sql = " SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal, " +
+                    " f.cod_vendedor, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes, " +
+                    " SUM(f.ttotal - f.tnotas) AS ttotal " +
+                    " FROM facturas f " +
+                    " INNER JOIN facturas_det d ON f.nrofact = d.nrofact " +
                     " AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur " +   
                     " INNER JOIN empleados v ON f.cod_vendedor = v.cod_empleado " +
                     " INNER JOIN mercaderias m ON d.cod_merca = m.cod_merca " +
@@ -186,13 +186,13 @@ public class LiConCliBean {
                 columnas[4] = "ctipo_vta";
                 columnas[5] = "ctipo_cliente";
                 columnas[6] = "cant_clientes";
-                sql = "select f.cod_vendedor, e.xnombre, L.cod_linea, l.xdesc, f.ctipo_vta," +
-                    "c.ctipo_cliente, count(distinct c.cod_cliente) as cant_clientes " +
-                    "from facturas f, facturas_det d, empleados e, sublineas s, mercaderias m, lineas l, clientes c " +
-                    "where f.ffactur between '"+fdesde+"' AND '"+fhasta+
+                sql = " select f.cod_vendedor, e.xnombre, L.cod_linea, l.xdesc, f.ctipo_vta, " +
+                    " c.ctipo_cliente, count(distinct c.cod_cliente) as cant_clientes " +
+                    " from facturas f, facturas_det d, empleados e, sublineas s, mercaderias m, lineas l, clientes c " +
+                    " where f.ffactur between '"+fdesde+"' AND '"+fhasta+
                     "' and f.mestado ='A' and f.ctipo_vta !='X' " +
-                    "AND f.cod_cliente = c.cod_cliente AND s.cod_linea = l.cod_linea " +
-                    "and m.cod_sublinea = s.cod_sublinea AND f.nrofact = d.nrofact " +
+                    " AND f.cod_cliente = c.cod_cliente AND s.cod_linea = l.cod_linea " +
+                    " and m.cod_sublinea = s.cod_sublinea AND f.nrofact = d.nrofact " +
                     " and f.ctipo_docum = d.ctipo_docum  AND f.ffactur = d.ffactur " +
                     " AND f.cod_empr = d.cod_empr and d.cod_empr = m.cod_empr " +
                     " and f.cod_vendedor = e.cod_empleado AND f.cod_empr = e.cod_empr " +
@@ -209,7 +209,7 @@ public class LiConCliBean {
                 columnas[2] = "xdesc";
                 columnas[3] = "cant_clientes";
                 columnas[4] = "tot_clien";
-                sql = "SELECT v.*, c.tot_clien " +
+                sql = " SELECT v.*, c.tot_clien " +
                     " from ( select f.cod_zona, m.cod_sublinea, s.xdesc, count(distinct f.cod_cliente) as cant_clientes " +
                     " from facturas f, facturas_det d, sublineas s, mercaderias m " +
                     " where f.ffactur between '"+fdesde+"' AND '"+fhasta+
@@ -220,8 +220,8 @@ public class LiConCliBean {
                     " and d.cod_merca = m.cod_merca AND f.cod_empr = 2 " +
                     " AND d.cod_empr = 2 AND m.cod_empr = 2 " +
                     extras +
-                    " group by F.COD_ZONA, m.cod_sublinea, s.xdesc ) as v ," +
-                    "( SELECT r.cod_zona,COUNT(*) as tot_clien " +
+                    " group by F.COD_ZONA, m.cod_sublinea, s.xdesc ) as v , " +
+                    " ( SELECT r.cod_zona,COUNT(*) as tot_clien " +
                     " FROM clientes c, rutas r " +
                     " WHERE c.cod_estado = 'A' AND c.cod_ruta = r.cod_ruta " +
                     extras2+
@@ -235,12 +235,12 @@ public class LiConCliBean {
                 columnas[2] = "xdesc";
                 columnas[3] = "cant_clientes";
                 columnas[4] = "tot_clien";
-                sql = "SELECT v.*, c.tot_clien " +
-                    "from ( select f.cod_zona, m.cod_sublinea, s.xdesc, c.ctipo_cliente as tipo_neg, count(distinctc.cod_cliente) as cant_clientes " +
-                    "from facturas f, facturas_det d, sublineas s, mercaderias m,clientes c " +
-                    "where f.ffactur between '"+fdesde+"' AND '"+fhasta+
+                sql = " SELECT v.*, c.tot_clien " +
+                    " from ( select f.cod_zona, m.cod_sublinea, s.xdesc, c.ctipo_cliente as tipo_neg, count(distinct c.cod_cliente) as cant_clientes " +
+                    " from facturas f, facturas_det d, sublineas s, mercaderias m,clientes c " +
+                    " where f.ffactur between '"+fdesde+"' AND '"+fhasta+
                     "' AND f.cod_cliente = c.cod_cliente and f.mestado ='A' " +
-                    " and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_subline " +
+                    " and f.ctipo_vta !='X' and m.cod_sublinea = s.cod_sublinea " +
                     " AND f.nrofact = d.nrofact and f.ctipo_docum = d.ctipo_docum " +
                     " AND f.ffactur = d.ffactur AND f.cod_empr = d.cod_empr " +
                     " and d.cod_empr = m.cod_empr and d.cod_merca = m.cod_merca " +
@@ -265,9 +265,9 @@ public class LiConCliBean {
                 columnas[5] = "xnombre";
                 columnas[6] = "cant_clientes";
                 columnas[7] = "ttotal";
-                sql = "SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal, f.cod_vendedor, s.cod_sublinea," +
-                    "s.xdesc, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes, SUM(f.ttotal - f.tnotas) AS ttotal " +
-                    "FROM facturas f INNER JOIN facturas_det d ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur " +
+                sql = " SELECT cast('"+fdesde+"' as char) as finicial, cast('"+fhasta+"' as char) as ffinal, f.cod_vendedor, s.cod_sublinea, " +
+                    " s.xdesc, v.xnombre, COUNT(DISTINCT f.cod_cliente) AS cant_clientes, SUM(f.ttotal - f.tnotas) AS ttotal " +
+                    " FROM facturas f INNER JOIN facturas_det d ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur " +
                     " INNER JOIN empleados v ON f.cod_vendedor = v.cod_empleado " +
                     " INNER JOIN mercaderias m ON d.cod_merca = m.cod_merca " +
                     " INNER JOIN sublineas s ON m.cod_sublinea = s.cod_sublinea " +
