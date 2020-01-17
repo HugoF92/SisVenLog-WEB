@@ -44,36 +44,40 @@
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
-                        <h1 style="color: brown;">GENERACION DATOS CONTABLES</h1>
 
 
                         <h:form id="form" prependId="false">
 
-                            <p:growl id="messageImpreOrdCarg" showDetail="true"/>
+                            <p:growl showDetail="true"/>
 
                             <center>
 
-                                <p:panel id="pnlParamImpreOrdCarg" header="Parametros para Generacion de datos contables"
-                                         style="width: 40%;">
+                                <p:panel header="Generacion de datos Contables"
+                                          style="width: 70%;">
+
                                     <h:panelGrid columns="2" >
                                         <p:outputLabel value="Fecha Inicial: " style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liAnudocDesde" value="#{genDatosContables.fechaInicial}" 
                                                     showOn="button" style="width: 60px;" locale="es">
                                             <p:ajax event="dateSelect" update="genDatosContablesHasta" />
                                         </p:calendar>
-                                        
+
                                         <p:outputLabel value="Fecha Final: " style="float: right; font-weight: bold;"/>
                                         <p:calendar id="genDatosContablesHasta" value="#{genDatosContables.fechaFinal}" 
                                                     showOn="button" style="width: 60px;" locale="es" mindate="#{genDatosContables.fechaInicial}">
                                         </p:calendar>
                                         
+
+                                        <p:outputLabel for="genDatosContablesDocumentosAnulados" value="" />
+
                                         <p:selectOneRadio id="genDatosContablesDocumentosAnulados" value="#{genDatosContables.documentosAnulados}" 
-                                                          layout="grid" columns="1" >
+                                                          layout="grid" columns="1" style="border: solid;border-width: thin">
                                             <f:selectItem itemLabel="Datos de Ventas" itemValue="DV" />
                                             <f:selectItem itemLabel="Datos de Compras" itemValue="DC" />
                                             <f:selectItem itemLabel="Recibos de Ventas" itemValue="RV" />
-                                            <f:selectItem itemLabel="Recibos de Compras" itemValue="RC" />
+                                            <!-- <f:selectItem itemLabel="Recibos de Compras" itemValue="RC" /> -->
                                         </p:selectOneRadio>
+
                                     </h:panelGrid>
 
                                     <p:commandLink title="report"
@@ -105,5 +109,5 @@
         </h:body>
 
     </ui:define>
-
 </ui:composition>
+

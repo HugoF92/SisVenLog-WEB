@@ -6,12 +6,11 @@
 package bean;
 
 import dao.GenDatosContablesFacade;
-import dto.RecibosVentasDto;
-import entidad.Recibos;
-import java.io.IOException;
+
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -30,24 +29,29 @@ import util.LlamarReportes;
 
 @ManagedBean
 @SessionScoped
-public class GenDatosContables {
+public class GenDatosContables implements Serializable {
 
     @EJB
     private GenDatosContablesFacade genDatosContablesFacade;
-    /***
+    /**
+     * *
      * atributos para manejo del front end
      */
     private Date fechaInicial;
     private Date fechaFinal;
     private String documentosAnulados;
 
+
+    //para manejo de errores
+
     private List<RecibosVentasDto> listaRecibosCompras;
     
+
     private String contenidoError;
     private String tituloError;
 
     public GenDatosContables() {
-        
+
     }
 
     //Operaciones
@@ -58,37 +62,86 @@ public class GenDatosContables {
         this.fechaFinal = new Date();
         setDocumentosAnulados("DV");
     }
-    
-    public void generarDatos(){
-        try{
-            if(documentosAnulados.equals("DV")){
-                listaRecibosCompras = genDatosContablesFacade.busquedaDatosRecibosVentas(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
-                if(listaRecibosCompras.size() == 0){
-                    //RequestContext.getCurrentInstance().update("exceptionDialog");
-                    //contenidoError = "Resultado de la ejecucion del script es vacio. \nPor favor verifique datos de entrada.";//ExceptionHandlerView.getStackTrace(e);
-                    //tituloError = "Datos no encontrados, lista vacia!.";
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));            
-                    //RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+
+
+    public void generarDatos() {
+        List<Object[]> listaRecibosVentas;
+        List<Object[]> listaRecibosCompras;
+        List<Object[]> listaRecibosFacturasVentasIvaInclNoIncl;
+        List<Object[]> listaRecibosFacturasComprasIvaInclNoIncl;
+        try {
+            String path = genDatosContablesFacade.obtenerPath();
+            if (documentosAnulados.equals("RV")) {
+                listaRecibosVentas = genDatosContablesFacade.busquedaDatosRecibosVentas(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
+                if (listaRecibosVentas.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+                } else {
+                    String[] columnas = {"ctipo_docum", "nro_cuota", "frecibo", "nrecibo", "ctipo", "ndocum", "ffactur", "iefectivo", "nro_cheque", "ipagado", "moneda", "cotizacion"};
+
+                    LlamarReportes rep = new LlamarReportes();
+
+                    rep.exportarExcel(columnas, listaRecibosVentas, "revtacont");
+                    //FileWritter.guardarDatosRecibosVentas(path, listaRecibosVentas);
+                }
+            } else if (documentosAnulados.equals("RC")) {
+                listaRecibosCompras = genDatosContablesFacade.busquedaDatosRecibosCompras(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
+                if (listaRecibosCompras.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+                } else {
+
+                    String[] columnas = {"ctipo_docum", "nro_cuota", "frecibo", "nrecibo", "nrofact", "ctipo", "ffactur", "iefectivo", "nro_cheque", "ipagado", "cod_contable", "moneda", "cotizacion", "cod_proveed", "itotal", "ntimbrado", "fact_timbrado", "ntimbrado", "nota_timbrado"};
+
+                    LlamarReportes rep = new LlamarReportes();
+
+                    rep.exportarExcel(columnas, listaRecibosCompras, "recomcont");
+
+                    //FileWritter.guardarDatosRecibosCompras(path, listaRecibosCompras);
+                }
+            } else if (documentosAnulados.equals("DV")) {
+                listaRecibosFacturasVentasIvaInclNoIncl = genDatosContablesFacade.busquedaDatosFacturasVentas(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
+                if (listaRecibosFacturasVentasIvaInclNoIncl.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+                } else {
+                    String[] columnas = {"xrazon_social", "ffactur", "nrofact", "ctipo_docum", "mtipo_papel", "nro_docum_ini", "nro_docum_fin", "ntimbrado", "TTOTAL", "xruc", "xfactura", "texentas", "tgravadas_10", "tgravadas_5", "timpuestos_10", "timpuestos_5"};
+
+                    LlamarReportes rep = new LlamarReportes();
+
+                    rep.exportarExcel(columnas, listaRecibosFacturasVentasIvaInclNoIncl, "vtascont");
+                    //FileWritter.guardarDatosFacturasVentas(path, listaRecibosFacturasVentasIvaInclNoIncl);
+                }
+            } else if (documentosAnulados.equals("DC")) {
+                listaRecibosFacturasComprasIvaInclNoIncl = genDatosContablesFacade.busquedaDatosFacturasCompras(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
+                if (listaRecibosFacturasComprasIvaInclNoIncl.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
+                } else {
+                    String[] columnas = {"xnombre", "ffactur", "nrofact", "ctipo_docum", "TTOTAL", "xruc", "xfactura", "ntimbrado", "texentas", "tgravadas_10", "tgravadas_5", "timpuestos_10", "timpuestos_5"};
+
+                    LlamarReportes rep = new LlamarReportes();
+
+                    rep.exportarExcel(columnas, listaRecibosFacturasComprasIvaInclNoIncl, "compcont");
+
+                    //FileWritter.guardarDatosFacturasCompras(path, listaRecibosFacturasComprasIvaInclNoIncl);
                 }
             }
-            //else if(documentosAnulados.equals("DC"))
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             RequestContext.getCurrentInstance().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos.";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la lectura de datos.", tituloError));            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la lectura de datos.", tituloError));
             RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
         }
     }
-    
+
+
     private String dateToString(Date fecha) {
 
         String resultado = "";
 
         try {
 
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
 
             resultado = dateFormat.format(fecha);
 
@@ -114,6 +167,7 @@ public class GenDatosContables {
     public String getDocumentosAnulados() {
         return documentosAnulados;
     }
+
 
     public List<RecibosVentasDto> getListaRecibosCompras() {
         return listaRecibosCompras;
@@ -147,6 +201,7 @@ public class GenDatosContables {
         this.listaRecibosCompras = listaRecibosCompras;
     }
 
+
     public void setContenidoError(String contenidoError) {
         this.contenidoError = contenidoError;
     }
@@ -155,3 +210,4 @@ public class GenDatosContables {
         this.tituloError = tituloError;
     }
 }
+
