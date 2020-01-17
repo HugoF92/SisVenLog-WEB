@@ -1,0 +1,437 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnTipoDocumento" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE TIPO DE DOCUMENTO</h1>
+
+                            <p:growl id="msgTipoDocumento" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{tipoDocumentoBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevTipoDocumento').show()"
+                                    update="formNuevaTipoDocumento"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditTipoDocumento').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{tipoDocumentoBean.habBtnEdit}"
+                                    update="pnlEditTipoDocumento"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{tipoDocumentoBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacTipoDocumento').show()"
+                                    update="formInacTipoDocumento"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formTipoDocumento" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaTipoDocumento" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{tipoDocumentoBean.listaTipoDocumento}" rowKey="#{itemp.xdesc}"
+                                                     selection="#{tipoDocumentoBean.tipoDocumento}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{tipoDocumentoBean.onRowSelect(event)}"
+                                                    update="formBtnTipoDocumento"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.ctipoDocum}"
+                                                      sortBy="#{itemp.ctipoDocum}">
+                                                <h:outputText value="#{itemp.ctipoDocum}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Indice" filterBy="#{itemp.mindice}">
+                                                <h:outputText value="#{tipoDocumentoBean.tipoDocumentoDC(itemp.mindice)}" />
+                                            </p:column>
+
+                                            <p:column headerText="Max filas" filterBy="#{itemp.nmaxFilas}">
+                                                <h:outputText value="#{itemp.nmaxFilas}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaTipoDocumento"  prependId="false">
+                            <p:growl id="msgAgreTipoDocumento" showDetail="true"/>
+
+                            <p:dialog header="Agregar TipoDocumento"
+                                      widgetVar="dlgNuevTipoDocumento"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{tipoDocumentoBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+                                    <h:panelGrid columns="2">
+
+                                        <p:outputLabel value="Código" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="codTD" value="#{tipoDocumentoBean.tipoDocumento.ctipoDocum}" 
+                                                     tabindex="1" style="width: 200px;" maxlength="3"
+                                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                        <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="descCiud" value="#{tipoDocumentoBean.tipoDocumento.xdesc}" 
+                                                     tabindex="2" style="width: 200px;"
+                                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                        <p:outputLabel value="Tipo:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="docutipo" value="#{tipoDocumentoBean.tipoDocumento.mdebCred}" 
+                                                          layout="grid" columns="1">
+                                            <f:selectItem itemLabel="DEBITO" itemValue="D" />
+                                            <f:selectItem itemLabel="CREDITO" itemValue="C" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Máx. Cant. Lineas:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="maxfilas" value="#{tipoDocumentoBean.tipoDocumento.nmaxFilas}"
+                                                     style="width: 80px;">
+                                            <f:convertNumber pattern="###,###,###.##" type="number" />
+                                        </p:inputText>
+
+                                        <p:outputLabel value="Afecta a:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="docuafecta" value="#{tipoDocumentoBean.tipoDocumento.mafectaStockRes}" 
+                                                          layout="grid" columns="3">
+                                            <f:selectItem itemLabel="Stock" itemValue="S" />
+                                            <f:selectItem itemLabel="Reserva" itemValue="R" />
+                                            <f:selectItem itemLabel="Ninguno" itemValue="N" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Afecta Cta Cte:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="afectacte" value="#{tipoDocumentoBean.tipoDocumento.mafectaCtacte}" 
+                                                          layout="grid" columns="2">
+                                            <f:selectItem itemLabel="Sí" itemValue="S" />
+                                            <f:selectItem itemLabel="No" itemValue="N" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Fijo Sis:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="fijosis" value="#{tipoDocumentoBean.tipoDocumento.mfijoSis}" 
+                                                          layout="grid" columns="2">
+                                            <f:selectItem itemLabel="Sí" itemValue="S" />
+                                            <f:selectItem itemLabel="No" itemValue="N" />
+                                        </p:selectOneRadio>
+
+
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="1">
+                                        <p:panel header="Tipo Documento ContaSys" >
+
+                                            <h:panelGrid columns="2">
+                                                <p:outputLabel value="Fact. Contado:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="factContado" value="#{tipoDocumentoBean.tipoDocumento.codContado}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Fact. Credito:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="factCredito" value="#{tipoDocumentoBean.tipoDocumento.codCredito}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                            </h:panelGrid>
+                                        </p:panel>
+
+                                        <p:panel header="Cuenta Contable ContaSys" >
+
+                                            <h:panelGrid columns="2">
+                                                <p:outputLabel value="Grav 10%:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="grav10" value="#{tipoDocumentoBean.tipoDocumento.codCtacble10}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Grav 5%:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="grav5" value="#{tipoDocumentoBean.tipoDocumento.codCtacble5}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Exenta:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="exenta" value="#{tipoDocumentoBean.tipoDocumento.codCtacblex}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{tipoDocumentoBean.insertar()}"
+                                            update="msgAgreTipoDocumento formTipoDocumento"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{tipoDocumentoBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacTipoDocumento" prependId="false">
+
+                            <p:growl id="msgInacTipoDocumento" showDetail="true"/>
+
+                            <p:dialog header="Borrar TipoDocumento"
+                                      widgetVar="dlgInacTipoDocumento"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formTipoDocumento formBtnTipoDocumento"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{tipoDocumentoBean.borrar()}"
+                                            update="msgInacTipoDocumento formBtnTipoDocumento formTipoDocumento"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacTipoDocumento').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarTipoDocumento"  prependId="false">
+                            <p:growl id="msgEditTipoDocumento" showDetail="true"/>
+
+                            <p:dialog header="Editar TipoDocumento"
+                                      widgetVar="dlgEditTipoDocumento"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{tipoDocumentoBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditTipoDocumento" columns="2">
+
+                                    <h:panelGrid columns="2">
+
+                                        <p:outputLabel value="Código" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="editcodTD" value="#{tipoDocumentoBean.tipoDocumento.ctipoDocum}" 
+                                                     tabindex="1" style="width: 200px;" maxlength="3"
+                                                     onkeyup="this.value = this.value.toUpperCase()"
+                                                     disabled="true"/>
+
+                                        <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="editdescCiud" value="#{tipoDocumentoBean.tipoDocumento.xdesc}" 
+                                                     tabindex="2" style="width: 200px;"
+                                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                        <p:outputLabel value="Tipo:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="editdocutipo" value="#{tipoDocumentoBean.tipoDocumento.mdebCred}" 
+                                                          layout="grid" columns="1">
+                                            <f:selectItem itemLabel="DEBITO" itemValue="D" />
+                                            <f:selectItem itemLabel="CREDITO" itemValue="C" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Máx. Cant. Lineas:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="editmaxfilas" value="#{tipoDocumentoBean.tipoDocumento.nmaxFilas}"
+                                                     style="width: 80px;">
+                                            <f:convertNumber pattern="###,###,###.##" type="number" />
+                                        </p:inputText>
+
+                                        <p:outputLabel value="Afecta a:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="editdocuafecta" value="#{tipoDocumentoBean.tipoDocumento.mafectaStockRes}" 
+                                                          layout="grid" columns="3">
+                                            <f:selectItem itemLabel="Stock" itemValue="S" />
+                                            <f:selectItem itemLabel="Reserva" itemValue="R" />
+                                            <f:selectItem itemLabel="Ninguno" itemValue="N" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Afecta Cta Cte:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="editafectacte" value="#{tipoDocumentoBean.tipoDocumento.mafectaCtacte}" 
+                                                          layout="grid" columns="2">
+                                            <f:selectItem itemLabel="Sí" itemValue="S" />
+                                            <f:selectItem itemLabel="No" itemValue="N" />
+                                        </p:selectOneRadio>
+
+                                        <p:outputLabel value="Fijo Sis:" style="font-weight: bold; float: right;"/>
+
+                                        <p:selectOneRadio id="editfijosis" value="#{tipoDocumentoBean.tipoDocumento.mfijoSis}" 
+                                                          layout="grid" columns="2">
+                                            <f:selectItem itemLabel="Sí" itemValue="S" />
+                                            <f:selectItem itemLabel="No" itemValue="N" />
+                                        </p:selectOneRadio>
+
+
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="1">
+                                        <p:panel header="Tipo Documento ContaSys" >
+
+                                            <h:panelGrid columns="2">
+                                                <p:outputLabel value="Fact. Contado:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="editfactContado" value="#{tipoDocumentoBean.tipoDocumento.codContado}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Fact. Credito:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="editfactCredito" value="#{tipoDocumentoBean.tipoDocumento.codCredito}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                            </h:panelGrid>
+                                        </p:panel>
+
+                                        <p:panel header="Cuenta Contable ContaSys" >
+
+                                            <h:panelGrid columns="2">
+                                                <p:outputLabel value="Grav 10%:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="editgrav10" value="#{tipoDocumentoBean.tipoDocumento.codCtacble10}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Grav 5%:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="editgrav5" value="#{tipoDocumentoBean.tipoDocumento.codCtacble5}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                                <p:outputLabel value="Exenta:" style="font-weight: bold; float: right;"/>
+                                                <p:inputText id="editexenta" value="#{tipoDocumentoBean.tipoDocumento.codCtacblex}"
+                                                             style="width: 80px;">
+                                                </p:inputText>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{tipoDocumentoBean.editar()}"
+                                            update="msgEditTipoDocumento formBtnTipoDocumento formTipoDocumento"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditTipoDocumento').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarTipoDocumento" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarTipoDocumento">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{tipoDocumentoBean.cerrarDialogosAgregar()}" 
+                                        update="formTipoDocumento"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarTipoDocumento').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

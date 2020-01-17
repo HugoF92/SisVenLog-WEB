@@ -38,11 +38,13 @@
                     day: 'Día',
                     allDayText: 'Todo el día'
                 };
+
             </script>
 
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
+
 
                         <h:form id="form" prependId="false">
 
@@ -52,6 +54,7 @@
 
                                 <p:panel header="Generacion de datos Contables"
                                           style="width: 70%;">
+
                                     <h:panelGrid columns="2" >
                                         <p:outputLabel value="Fecha Inicial: " style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liAnudocDesde" value="#{genDatosContables.fechaInicial}" 
@@ -64,6 +67,7 @@
                                                     showOn="button" style="width: 60px;" locale="es" mindate="#{genDatosContables.fechaInicial}">
                                         </p:calendar>
                                         
+
                                         <p:outputLabel for="genDatosContablesDocumentosAnulados" value="" />
 
                                         <p:selectOneRadio id="genDatosContablesDocumentosAnulados" value="#{genDatosContables.documentosAnulados}" 
@@ -105,5 +109,5 @@
         </h:body>
 
     </ui:define>
-
 </ui:composition>
+

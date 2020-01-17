@@ -33,18 +33,20 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
 
     @PersistenceContext(unitName = "SisVenLog-ejbPU")
     private EntityManager em;
-
+  
     @Override
     protected EntityManager getEntityManager() {
         return em;
     }
-    
+
     @EJB
     DatosGeneralesFacade datosGeneralesFacade;
+
 
     public GenDatosContablesFacade() {
         super(Recibos.class);
     }
+
     
     @PreDestroy
     public void destruct() {
@@ -69,11 +71,49 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
 
         System.out.println(q.toString());
 
+
         return q.getResultList();
     }
 
     public List<Object[]> busquedaDatosRecibosCompras(String fechaInicial, String fechaFinal) throws Exception {
         Query q = getEntityManager().createNativeQuery(" SELECT    'REP' as ctipo_docum,  1 as nro_cuota,  CONVERT(char(10),f.frecibo,103) as frecibo, f.nrecibo, d.nrofact , d.ctipo_docum as ctipo,   "
+
+        List<Object[]> resultados = q.getResultList();
+        List<RecibosVentasDto> listadoReciboVentas = new ArrayList<RecibosVentasDto>();
+        for(Object[] resultado: resultados){
+            RecibosVentasDto rvdto = new RecibosVentasDto();
+            rvdto.setCtipoDocum(resultado[0].toString());
+            rvdto.setNcuota(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rvdto.setFrecibo(dateResult_2);
+            }else{              
+                rvdto.setFrecibo(null);
+            }
+            rvdto.setNrecibo(Long.parseLong(resultado[3].toString()));
+            rvdto.setCtipo(resultado[4].toString());
+            rvdto.setNdocum(Long.parseLong(resultado[5].toString()));
+            if(resultado[6] != null){
+                Timestamp timeStamp_6 = (Timestamp) resultado[6];
+                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
+                rvdto.setFfactur(dateResult_6);
+            }else{              
+                rvdto.setFfactur(null);
+            }
+            rvdto.setIefectivo(Long.parseLong(resultado[7].toString()));
+            rvdto.setNroCheque(resultado[8].toString());
+            rvdto.setIpagado(Long.parseLong(resultado[9].toString()));
+            rvdto.setMoneda(Long.parseLong(resultado[10].toString()));
+            rvdto.setCotizacion(Long.parseLong(resultado[11].toString()));
+            listadoReciboVentas.add(rvdto);
+        }        
+        return listadoReciboVentas;
+    }
+    
+    public List<RecibosComprasDto> busquedaDatosRecibosCompras(String fechaInicial, String fechaFinal) throws Exception {
+        Query q = em.createNativeQuery(" SELECT    'REP' as ctipo_docum,  1 as nro_cuota,  CONVERT(char(10),f.frecibo,103) as frecibo, f.nrecibo, d.nrofact , d.ctipo_docum as ctipo,   "
+
                 + " d.ffactur, 0 AS iefectivo, ch.nro_cheque, ch.ipagado, cb.cod_contable, 0 as moneda, 0 as cotizacion, f.cod_proveed, d.itotal, 0 as ntimbrado, 0 as fact_timbrado, 0 as ntimbrado, 0 as nota_timbrado  "
                 + "	FROM         recibos_prov f  INNER JOIN recibos_prov_det d "
                 + " ON f.nrecibo = d.nrecibo AND f.cod_proveed = d.cod_proveed LEFT OUTER JOIN compras c "
@@ -103,6 +143,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
                 + " AND f.iefectivo > 0 ");
 
         System.out.println(q.toString());
+
 
         return q.getResultList();
     }
@@ -729,4 +770,37 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
         return datosGeneralesFacade.findAll().get(0).getTempPath();
     }
     
+}
+
+        List<Object[]> resultados = q.getResultList();
+        List<RecibosComprasDto> listadoReciboCompras = new ArrayList<RecibosComprasDto>();
+        for(Object[] resultado: resultados){
+            RecibosComprasDto rcdto = new RecibosComprasDto();
+            rcdto.setCtipoDocum(resultado[0].toString());
+            rcdto.setNcuota(Long.parseLong(resultado[1].toString()));
+            if(resultado[2] != null){
+                Timestamp timeStamp_2 = (Timestamp) resultado[2];
+                java.util.Date dateResult_2 = new Date(timeStamp_2.getTime());                                
+                rcdto.setFrecibo(dateResult_2);
+            }else{              
+                rcdto.setFrecibo(null);
+            }
+            rcdto.setNrecibo(Long.parseLong(resultado[3].toString()));
+            rcdto.setCtipo(resultado[4].toString());
+            if(resultado[6] != null){
+                Timestamp timeStamp_6 = (Timestamp) resultado[6];
+                java.util.Date dateResult_6 = new Date(timeStamp_6.getTime());                                
+                rcdto.setFfactur(dateResult_6);
+            }else{              
+                rcdto.setFfactur(null);
+            }
+            rcdto.setIefectivo(Long.parseLong(resultado[7].toString()));
+            rcdto.setNroCheque(resultado[8].toString());
+            rcdto.setIpagado(Long.parseLong(resultado[9].toString()));
+            rcdto.setMoneda(Long.parseLong(resultado[10].toString()));
+            rcdto.setCotizacion(Long.parseLong(resultado[11].toString()));
+            listadoReciboCompras.add(rcdto);
+        }        
+        return listadoReciboCompras;
+    }
 }

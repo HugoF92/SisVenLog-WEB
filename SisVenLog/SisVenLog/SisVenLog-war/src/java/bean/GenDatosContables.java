@@ -6,9 +6,11 @@
 package bean;
 
 import dao.GenDatosContablesFacade;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -24,6 +26,7 @@ import util.LlamarReportes;
  *
  * @author Asus
  */
+
 @ManagedBean
 @SessionScoped
 public class GenDatosContables implements Serializable {
@@ -38,7 +41,12 @@ public class GenDatosContables implements Serializable {
     private Date fechaFinal;
     private String documentosAnulados;
 
+
     //para manejo de errores
+
+    private List<RecibosVentasDto> listaRecibosCompras;
+    
+
     private String contenidoError;
     private String tituloError;
 
@@ -54,6 +62,7 @@ public class GenDatosContables implements Serializable {
         this.fechaFinal = new Date();
         setDocumentosAnulados("DV");
     }
+
 
     public void generarDatos() {
         List<Object[]> listaRecibosVentas;
@@ -123,13 +132,16 @@ public class GenDatosContables implements Serializable {
         }
     }
 
+
     private String dateToString(Date fecha) {
 
         String resultado = "";
 
         try {
 
+
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
 
             resultado = dateFormat.format(fecha);
 
@@ -156,6 +168,11 @@ public class GenDatosContables implements Serializable {
         return documentosAnulados;
     }
 
+
+    public List<RecibosVentasDto> getListaRecibosCompras() {
+        return listaRecibosCompras;
+    }
+
     public String getContenidoError() {
         return contenidoError;
     }
@@ -180,6 +197,11 @@ public class GenDatosContables implements Serializable {
         this.documentosAnulados = documentosAnulados;
     }
 
+    public void setListaRecibosCompras(List<RecibosVentasDto> listaRecibosCompras) {
+        this.listaRecibosCompras = listaRecibosCompras;
+    }
+
+
     public void setContenidoError(String contenidoError) {
         this.contenidoError = contenidoError;
     }
@@ -188,3 +210,4 @@ public class GenDatosContables implements Serializable {
         this.tituloError = tituloError;
     }
 }
+

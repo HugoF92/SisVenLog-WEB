@@ -190,4 +190,6 @@ public class RecibosComprasDto implements Serializable {
     public void setNotaTimbrado(String notaTimbrado) {
         this.notaTimbrado = notaTimbrado;
     }
+
 }
+
