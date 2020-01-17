@@ -33,10 +33,10 @@
                                                     showOn="button" style="width: 60px;"/>
                                         
                                         <p:outputLabel value="Número Recibo Desde:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboDesde" value="#{listadoRecibosProveedoresBean.nroReciboDesde}"/>
+                                        <p:inputNumber id="numeroReciboDesde" decimalPlaces="0" value="#{listadoRecibosProveedoresBean.nroReciboDesde}"/>
                                         
                                         <p:outputLabel value="Número Recibo Hasta:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboHasta" value="#{listadoRecibosProveedoresBean.nroReciboHasta}"/>
+                                        <p:inputNumber id="numeroReciboHasta" decimalPlaces="0" value="#{listadoRecibosProveedoresBean.nroReciboHasta}"/>
                                         
                                         <p:outputLabel value="Proveedor:" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu id="seleccionProveedor" value="#{listadoRecibosProveedoresBean.proveedorSeleccionado}" 
@@ -44,8 +44,8 @@
                                                          style="width: 100px;" >
                                             <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
                                                 <f:selectItems id="nombre" value="#{proveedoresBean.listar()}" var="nombreProv" 
-                                                           itemValue="#{nombreProv}" 
-                                                           itemLabel="#{nombreProv.xnombre}"/>
+                                                    itemValue="#{nombreProv}" 
+                                                    itemLabel="#{nombreProv.xnombre}"/>
 
                                         </p:selectOneMenu>
 

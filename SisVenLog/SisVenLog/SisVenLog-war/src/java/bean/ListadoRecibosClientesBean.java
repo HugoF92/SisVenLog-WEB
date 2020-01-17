@@ -45,10 +45,8 @@ public class ListadoRecibosClientesBean implements Serializable{
     private String zonaDes;
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
-    
-    
     private String zonaSeleccionada;
-            
+    
     @EJB
     private ClientesFacade clientesFacade;
     
@@ -493,7 +491,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
                     if (!conDetalle) {
-                        String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFac";
+                        String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFacPC";
                         rep.reporteLiRecibos(
                                 armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
                                 fechaReciboDesde,
@@ -502,7 +500,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                 nroReciboHasta,
                                 clientesRepo,
                                 zonaDes,
-                                "admin",
+                                "jvera",
                                 tipo,
                                 nombreRepo,
                                 "Rrecibos",
@@ -518,7 +516,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                         nroReciboHasta,
                         clientesRepo,
                         zonaDes,
-                        "admin",
+                        "jvera",
                         tipo,
                         nombreRepoDet,
                         "RrecibosDet",

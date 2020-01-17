@@ -9,18 +9,7 @@
 
     <ui:define name="content">
 
-        <h:body>
-            <script type="text/javascript">
-                function mostrarClientes() {
-                    document.getElementById('ocultarBtn').checked = false;                
-                    document.getElementById("clientesId").style.display = "block";
-                };
-                function ocultarClientes() {
-                    document.getElementById('mostrarBtn').checked = false;
-                    document.getElementById("clientesId").style.display = "none";
-                    document.getElementById("selectItemsClientes").value = "";
-                };
-            </script>
+        <h:body style="font-size: medium;">
             <style type="text/css">
                 .ui-datalist .ui-datalist-content {
                         border:0 none
@@ -73,10 +62,10 @@
                                                     showOn="button" style="width: 60px;"/>
                                         
                                         <p:outputLabel value="Número Recibo Desde:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboDesde" value="#{listadoRecibosClientesBean.nroReciboDesde}"/>
+                                        <p:inputNumber id="numeroReciboDesde" decimalPlaces="0" value="#{listadoRecibosClientesBean.nroReciboDesde}"/>
                                         
                                         <p:outputLabel value="Número Recibo Hasta:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboHasta" value="#{listadoRecibosClientesBean.nroReciboHasta}"/>
+                                        <p:inputNumber id="numeroReciboHasta" decimalPlaces="0" value="#{listadoRecibosClientesBean.nroReciboHasta}"/>
                                         
                                         
                                         <p:outputLabel value="Zonas:" style="float: right; font-weight: bold;"/>
@@ -85,21 +74,20 @@
                                                          filterMatchMode="contains" filter="true"
                                                          style="width: 100px;" >
                                         
-                                            <f:selectItem itemValue="#{null}" itemLabel="Todos"/>
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
                                             <f:selectItems value="#{zonasBean.listar()}" var="zonaLista" 
                                                            itemValue="#{zonaLista.zonasPK.codZona}" 
                                                            itemLabel="#{zonaLista.xdesc}"/>
                                         </p:selectOneMenu>
                                         
                                         <p:outputLabel value="Discriminar: " style="float: right; font-weight: bold;"/>
-                                        
-                                        <p:selectOneButton id="discriminarId" value="#{listadoRecibosClientesBean.discriminar}">
-                                            <f:selectItem itemLabel="No Discriminar" itemValue="ND"/>
+                                        <p:selectOneRadio id="discriminarId" value="#{listadoRecibosClientesBean.discriminar}">
+                                            <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
                                             <f:selectItem itemLabel="Por Cliente" itemValue="PC" />
-                                        </p:selectOneButton>
+                                        </p:selectOneRadio>
                                         
-                                        <h:outputText value="Con detalles: " style="float: right; font-weight: bold;"/>
-                                        <p:selectBooleanButton id="detallesId" value="#{listadoRecibosClientesBean.conDetalle}" onLabel="Si" offLabel="No" style="width:60px" />
+                                        <h:outputText value="Con detalles: " style="float: right; font-weight: bold;"/>   
+                                        <p:selectBooleanCheckbox id="detallesId" value="#{listadoRecibosClientesBean.conDetalle}" itemLabel="" style="padding-left: 3px"/>
                                         
                                         <p:outputLabel for="clientesId" value="Clientes:" style="float: right; font-weight: bold;"/>
                                         
@@ -111,11 +99,11 @@
                                         </h:panelGrid>
                                         
                                             
-                                        <div></div>
+                                        <p></p>
                                             
                                         <p:selectManyMenu id="clientesId" value="#{listadoRecibosClientesBean.listadoClientesSeleccionados}" converter="#{ClientesConverter}"
                                                           var="t" filter="true" filterMatchMode="contains" showCheckbox="true" style="display: none">
-                                            <f:selectItems id="selectItemsCodCliente" value="#{listadoRecibosClientesBean.listadoClientes}" var="codigo" itemLabel="#{cliente.codCliente}" itemValue="#{cliente}" />
+                                            <f:selectItems id="selectItemsCodCliente" value="#{listadoRecibosClientesBean.listadoClientes}" var="codigo" itemLabel="#{codigo.codCliente}" itemValue="#{cliente}" />
                                             <f:selectItems id="selectItemsClientes" value="#{listadoRecibosClientesBean.listadoClientes}" var="cliente" itemLabel="#{cliente.xnombre}" itemValue="#{cliente}" />
                                             <p:column>
                                                 <h:outputText value="#{t.codCliente}" />
@@ -164,7 +152,19 @@
                     </div>
                 </div>
             </div>
-
+            <script type="text/javascript">
+                
+                    function mostrarClientes() {
+                        document.getElementById('ocultarBtn').checked = false;                
+                        document.getElementById("clientesId").style.display = "block";
+                    };
+                    function ocultarClientes() {
+                        document.getElementById('mostrarBtn').checked = false;
+                        document.getElementById("clientesId").style.display = "none";
+                        document.getElementById("selectItemsClientes").value = "";
+                    };								 
+                
+            </script>
 
         </h:body>
 

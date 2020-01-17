@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentosReservan" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="0.8467108950806677"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacPC" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+	<property name="ireport.zoom" value="1.6500000000000035"/>
+	<property name="ireport.x" value="537"/>
+	<property name="ireport.y" value="196"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -35,10 +35,10 @@
 		<![CDATA[$P!{sql}]]>
 	</queryString>
 	<field name="cod_cliente" class="java.lang.Integer"/>
-	<variable name="totalEfe" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_recibo" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_cheque" class="java.lang.Integer" incrementType="Column" calculation="Sum"/>
-	<variable name="total_reten" class="java.lang.Integer" incrementType="Column"/>
+	<variable name="totalEfe" class="java.math.BigDecimal" incrementType="Report"/>
+	<variable name="total_recibo" class="java.math.BigDecimal" incrementType="Column"/>
+	<variable name="total_cheque" class="java.math.BigDecimal" incrementType="Column"/>
+	<variable name="total_reten" class="java.math.BigDecimal" incrementType="Report"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -201,11 +201,11 @@
 				<reportElement x="489" y="52" width="100" height="14" uuid="fd43f959-203e-47e2-bb7a-fb0ea6eabc4f"/>
 				<textFieldExpression><![CDATA[$P{fechaHasta}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0">
 				<reportElement x="282" y="69" width="100" height="14" uuid="1fb65bc9-fd29-4af5-9d1c-cdb92cdc195a"/>
 				<textFieldExpression><![CDATA[$P{nroReciboDesde}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0">
 				<reportElement x="489" y="69" width="100" height="14" uuid="5ac69e5f-39ea-465b-8799-2babec7b7536"/>
 				<textFieldExpression><![CDATA[$P{nroReciboHasta}]]></textFieldExpression>
 			</textField>
@@ -249,7 +249,7 @@
 				<returnValue subreportVariable="irecibo_1" toVariable="total_recibo" calculation="Sum"/>
 				<returnValue subreportVariable="iretencion_1" toVariable="total_reten" calculation="Sum"/>
 				<returnValue subreportVariable="icheques_1" toVariable="total_cheque" calculation="Sum"/>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboFacSubReport.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboFacPCSub.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
@@ -287,7 +287,7 @@
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>

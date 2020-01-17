@@ -81,7 +81,6 @@ public class ProveedoresBean implements Serializable {
     //Instanciar objetos
     @PostConstruct
     public void instanciar() {
-        listaProveedores = new ArrayList<Proveedores>();
         this.proveedoress = new Proveedores();
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);

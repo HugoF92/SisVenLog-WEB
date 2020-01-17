@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacSubReport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacPCSub" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
 	<property name="ireport.zoom" value="1.9487171000000054"/>
-	<property name="ireport.x" value="213"/>
+	<property name="ireport.x" value="585"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="fechaRecDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -46,16 +46,16 @@ SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irec
 	<field name="frecibo" class="java.sql.Timestamp"/>
 	<field name="mestado" class="java.lang.String"/>
 	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{iefectivo}]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iefectivo} : 0 )]]></variableExpression>
 	</variable>
 	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{icheques}]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{icheques} : 0 )]]></variableExpression>
 	</variable>
 	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{iretencion}]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iretencion} : 0 )]]></variableExpression>
 	</variable>
 	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{irecibo}]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{irecibo} : 0 )]]></variableExpression>
 	</variable>
 	<variable name="estado" class="java.lang.String">
 		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO" )]]></variableExpression>

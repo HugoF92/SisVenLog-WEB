@@ -59,7 +59,6 @@ public class LlamarReportes {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
-            //conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=venlogDb", "sa", "secreto");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
