@@ -1,0 +1,295 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnConductores" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE CONDUCTORES</h1>
+
+                            <p:growl id="msgConductores" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{conductoresBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevConductores').show()"
+                                    update="formInacConductores"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditConductores').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{conductoresBean.habBtnEdit}"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{conductoresBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacConductores').show()"
+                                    update="formInacConductores"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formConductores" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaConductores" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{conductoresBean.listaConductores}" rowKey="#{itemp.codConductor}"
+                                                     selection="#{conductoresBean.conductores}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{conductoresBean.onRowSelect(event)}"
+                                                    update="formBtnConductores"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.codConductor}"
+                                                      sortBy="#{itemp.codConductor}">
+                                                <h:outputText value="#{itemp.codConductor}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Nombre" filterBy="#{itemp.xconductor}"
+                                                      sortBy="#{itemp.xconductor}">
+                                                <h:outputText value="#{itemp.xconductor}" />
+                                            </p:column>
+
+                                            <p:column headerText="Documento" filterBy="#{itemp.xdocum}">
+                                                <h:outputText value="#{itemp.xdocum}" />
+                                            </p:column>
+
+                                            <p:column headerText="Domicilio" filterBy="#{itemp.xdomicilio}">
+                                                <h:outputText value="#{itemp.xdomicilio}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevConductores"  prependId="false">
+                            <p:growl id="msgAgreConductores" showDetail="true"/>
+
+                            <p:dialog header="Agregar Conductores"
+                                      widgetVar="dlgNuevConductores"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{conductoresBean.instanciar()}" />
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Nombre:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descConductores" value="#{conductoresBean.conductores.xconductor}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Documento:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="docConductores" value="#{conductoresBean.conductores.xdocum}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Domicilio:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="domiConductores" value="#{conductoresBean.conductores.xdomicilio}" 
+                                                 tabindex="3" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{conductoresBean.insertar()}"
+                                            update="msgAgreConductores formConductores"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{conductoresBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditConductores"  prependId="false">
+                            <p:growl id="msgEditConductores" showDetail="true"/>
+
+                            <p:dialog header="Editar Conductores"
+                                      widgetVar="dlgEditConductores"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" update="pnlEditConductores"/>
+                                <p:ajax event="close" listener="#{conductoresBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditConductores" columns="2">
+
+                                    <p:outputLabel value="Nombre:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descEditConductores" value="#{conductoresBean.conductores.xconductor}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Documento:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="rucEditTrans" value="#{conductoresBean.conductores.xdocum}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Domicilio:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="domiEditTrans" value="#{conductoresBean.conductores.xdomicilio}" 
+                                                 tabindex="3" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{conductoresBean.editar()}"
+                                            update="msgEditConductores formConductores"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" onclick="PF('dlgEditConductores').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formInacConductores" prependId="false">
+
+                            <p:growl id="msgInacConductores" showDetail="true"/>
+
+                            <p:dialog header="Borrar Conductores"
+                                      widgetVar="dlgInacConductores"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formConductores formBtnConductores"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{conductoresBean.borrar()}"
+                                            update="msgInacConductores"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacConductores').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formSinGuardarConductores" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarConductores">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{conductoresBean.cerrarDialogosAgregar()}" 
+                                        update="formConductores"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarConductores').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>
