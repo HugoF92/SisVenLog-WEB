@@ -68,7 +68,7 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                                 nroReciboDesde,
                                 nroReciboHasta,
                                 proveedorSeleccionado,
-                                "admin", tipo, nombreRepo, "Rreciboscomdet",
+                                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), tipo, nombreRepo, "Rreciboscomdet",
                                 armarSqlReciboProvDet(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado), 
                                 armarSqlReciboProvDetRec(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado));
                     }else { //sin detalle
@@ -76,7 +76,7 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                         String sqlSinDet = armarSqlSinDetalle(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
                         rep.reporteLiRecibosCom(sqlSinDet, 
                                 fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, proveedorSeleccionado,
-                                "admin", tipo, nombreRepo, "Rreciboscom", null, null);
+                                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), tipo, nombreRepo, "Rreciboscom", null, null);
                     }
 
                 } else { //Excel
