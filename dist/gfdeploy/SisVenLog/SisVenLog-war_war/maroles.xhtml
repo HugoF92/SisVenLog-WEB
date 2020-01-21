@@ -1,0 +1,264 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnRoles" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE ROLES</h1>
+
+                            <p:growl id="msgRoles" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{rolesBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevRoles').show()"
+                                    update="formNuevaRoles"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditRoles').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{rolesBean.habBtnEdit}"
+                                    update="pnlEditRoles"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{rolesBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacRoles').show()"
+                                    update="formInacRoles"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formRoles" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaRoles" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{rolesBean.listaRoles}" rowKey="#{itemp.xdesc}"
+                                                     selection="#{rolesBean.roles}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{rolesBean.onRowSelect(event)}"
+                                                    update="formBtnRoles"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.rolesPK.codRol}"
+                                                      sortBy="#{itemp.rolesPK.codRol}">
+                                                <h:outputText value="#{itemp.rolesPK.codRol}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaRoles"  prependId="false">
+                            <p:growl id="msgAgreRoles" showDetail="true"/>
+
+                            <p:dialog header="Agregar Roles"
+                                      widgetVar="dlgNuevRoles"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{rolesBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descRuta" value="#{rolesBean.roles.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{rolesBean.insertar()}"
+                                            update="msgAgreRoles formRoles"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{rolesBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacRoles" prependId="false">
+
+                            <p:growl id="msgInacRoles" showDetail="true"/>
+
+                            <p:dialog header="Borrar Roles"
+                                      widgetVar="dlgInacRoles"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formRoles formBtnRoles"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{rolesBean.borrar()}"
+                                            update="msgInacRoles"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacRoles').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarRoles"  prependId="false">
+                            <p:growl id="msgEditRoles" showDetail="true"/>
+
+                            <p:dialog header="Editar Roles"
+                                      widgetVar="dlgEditRoles"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{rolesBean.instanciar()}"/>
+                               
+                                <h:panelGrid id="pnlEditRoles" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codRolesEdit" value="#{rolesBean.roles.rolesPK.codEmpr}" 
+                                                 tabindex="1" style="width: 50px;" disabled="true"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="desRolesEdit" value="#{rolesBean.roles.xdesc}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                </h:panelGrid>
+
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{rolesBean.editar()}"
+                                            update="msgEditRoles formBtnRoles formRoles"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditRoles').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarRoles" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarRoles">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{rolesBean.cerrarDialogosAgregar()}" 
+                                        update="formRoles"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarRoles').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

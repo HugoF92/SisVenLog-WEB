@@ -1,0 +1,270 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnZonas" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE ZONAS</h1>
+
+                            <p:growl id="msgZonas" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{zonasBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevZon').show()"
+                                    update="formNuevaZon"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditZon').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{zonasBean.habBtnEdit}"
+                                    update="pnlEditZon"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{zonasBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacZon').show()"
+                                    update="formInacZon"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formZonas" prependId="false">  
+
+                            <p:growl id="msgZon" showDetail="true"/>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaZonas" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{zonasBean.listaZonas}" rowKey="#{itemp.xdesc}"
+                                                     selection="#{zonasBean.zonas}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{zonasBean.onRowSelect(event)}"
+                                                    update="formBtnZonas"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.zonasPK.codZona}"
+                                                      sortBy="#{itemp.zonasPK.codZona}">
+                                                <h:outputText value="#{itemp.zonasPK.codZona}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaZon"  prependId="false">
+                            <p:growl id="msgAgreZon" showDetail="true"/>
+
+                            <p:dialog header="Agregar Zona"
+                                      widgetVar="dlgNuevZon"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{zonasBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codZona" value="#{zonasBean.zonas.zonasPK.codZona}" 
+                                                 tabindex="1" style="width: 50px; text-transform: uppercase;" maxlength="2"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descZon" value="#{zonasBean.zonas.xdesc}" 
+                                                 tabindex="1" style="width: 200px;" 
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{zonasBean.insertar()}"
+                                            update="msgAgreZon formZonas"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{zonasBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacZon" prependId="false">
+
+                            <p:growl id="msgInacZon" showDetail="true"/>
+
+                            <p:dialog header="Borrar Zona"
+                                      widgetVar="dlgInacZon"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formZonas formBtnZonas"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{zonasBean.borrar()}"
+                                            update="msgInacZon"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacZon').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarZon"  prependId="false">
+                            <p:growl id="msgEditZon" showDetail="true"/>
+
+                            <p:dialog header="Editar Zonas"
+                                      widgetVar="dlgEditZon"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{zonasBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditZon" columns="2">
+                                
+                                        <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="codZonaEdit" value="#{zonasBean.zonas.zonasPK.codZona}" 
+                                                     tabindex="1" style="width: 50px;" disabled="true"/>
+
+                                        <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="descZonEdit" value="#{zonasBean.zonas.xdesc}" 
+                                                     tabindex="2" style="width: 200px;"/>
+
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{zonasBean.editar()}"
+                                            update="msgEditZon formBtnZonas formZonas"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditZon').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarZon" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarZon">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{zonasBean.cerrarDialogosAgregar()}" 
+                                        update="formZonas"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarZon').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

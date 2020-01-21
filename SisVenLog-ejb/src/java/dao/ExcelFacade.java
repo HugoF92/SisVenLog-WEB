@@ -75,10 +75,25 @@ public class ExcelFacade {
             respuesta = q.getResultList();
 
         } catch (Exception e) {
+            System.out.println("-ListaExcel: "+e);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al listar secuencias."));
         }
 
         return respuesta;
 
+    }
+    
+    public Boolean ejecutarQuery(String sql){
+        try{
+            System.out.println(sql);
+//            Query q = getEntityManager().createNamedQuery(sql);
+            Query q = getEntityManager().createNativeQuery(sql);
+            q.executeUpdate();
+            return true;
+        }catch(Exception e){
+            System.out.println("-Query: "+e);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error de sql."));
+            return false;
+        }
     }
 }
