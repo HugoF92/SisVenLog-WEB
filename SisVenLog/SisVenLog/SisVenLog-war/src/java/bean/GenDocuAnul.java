@@ -83,18 +83,31 @@ public class GenDocuAnul implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango maximo es solo de 50.", tituloError));
                 return;
             }
+            if(!(controlarDigitos(1, estabInicial) && controlarDigitos(2, expedInicial) && controlarDigitos(7, secueInicial) && controlarDigitos(7, secueFinal))){
+                tituloError = "Error de validación.";
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango de digitos es 1, 2 y 7 digitos respectivamente para los números de documentos.", tituloError));
+                return;
+            }
         } else {
             tituloError = "Error de validación.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ingrese los datos del numero de documento a procesar.", tituloError));
             return;
         }
-        if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("NCV")) {
+        if (tiposDocumentos.getCtipoDocum() == null) {
+            tituloError = "Error de validación.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Seleccione el tipo de documento.", tituloError));
+            return;
+        } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("NCV")) {
             if (fechaFactura == null) {
                 tituloError = "Error de validación.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ingrese la fecha de factura.", tituloError));
                 return;
             } else if ((estabFactInicial == null || expedFactInicial == null || secueFactFinal == null)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ingrese Nro.Factura Contado Relacionada.", tituloError));
+                return;
+            }else if(!(controlarDigitos(1, estabFactInicial) && controlarDigitos(2, expedFactInicial) && controlarDigitos(7, secueFactFinal))){
+                tituloError = "Error de validación.";
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango de digitos es 1, 2 y 7 digitos respectivamente para el número de Factura Relacionada.", tituloError));
                 return;
             }
         }
@@ -175,6 +188,12 @@ public class GenDocuAnul implements Serializable {
         }
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Fin de Grabacion.", "Exito!."));
+    }
+    
+    public static Boolean controlarDigitos(int numeroMaxDigitos, Integer numero){
+        String numeroString = String.valueOf(numero);
+        
+        return (numeroString.length() < numeroMaxDigitos);
     }
 
     public List<TiposDocumentos> listarTipoDocumentoGenDocuAnul() {
