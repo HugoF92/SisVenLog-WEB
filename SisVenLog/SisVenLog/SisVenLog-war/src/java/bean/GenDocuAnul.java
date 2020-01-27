@@ -135,7 +135,7 @@ public class GenDocuAnul implements Serializable {
                 RequestContext.getCurrentInstance().update("exceptionDialog");
 
                 tituloError = "Error de duplicación de datos.";
-                contenidoError = "Documentos existentes para tipo documento " + tiposDocumentos.getXdesc() + ":\n" + errors;
+                contenidoError = "Documentos existentes para tipo documento " + tiposDocumentos.getCtipoDocum().toUpperCase() + ":\n" + errors;
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
 
@@ -169,7 +169,7 @@ public class GenDocuAnul implements Serializable {
                     RequestContext.getCurrentInstance().update("exceptionDialog");
 
                     tituloError = "Error en la insersión de datos.";
-                    contenidoError = "Error en la insersión de datos para el tipo de documento " + tiposDocumentos.getXdesc() + ":\n" + errors;
+                    contenidoError = "Error en la insersión de datos para el tipo de documento " + tiposDocumentos.getCtipoDocum().toUpperCase() + ":\n" + errors;
 
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
 
@@ -193,7 +193,7 @@ public class GenDocuAnul implements Serializable {
     public static Boolean controlarDigitos(int numeroMaxDigitos, Integer numero){
         String numeroString = String.valueOf(numero);
         
-        return (numeroString.length() < numeroMaxDigitos);
+        return (numeroString.length() <= numeroMaxDigitos);
     }
 
     public List<TiposDocumentos> listarTipoDocumentoGenDocuAnul() {
