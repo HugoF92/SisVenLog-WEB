@@ -164,5 +164,15 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
 
         return respuesta;
     }
+    
+    public boolean buscarMercaderiaEnCanalDeVenta(String codMerca, String codCanal){
+        String sql = "select cod_merca, cod_canal "
+                    + "from merca_canales where upper(cod_merca) like upper('"+codMerca+"') "
+                    + "and upper(cod_canal) like upper('"+codCanal+"')";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        return resultados.size() > 0;
+    }
 
 }

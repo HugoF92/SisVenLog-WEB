@@ -132,4 +132,29 @@ public class PedidosFacade extends AbstractFacade<Pedidos> {
         return listadoPedidos;
     }
     
+    public long obtenerTotalPedidosPorClienteFecha(Integer lCodCliente, String lFechaPedido){
+        String sql =    "SELECT ISNULL(SUM(ttotal),0) as tot_ped " +
+                        "FROM pedidos " +
+                        "WHERE cod_cliente = "+lCodCliente+" "+
+                        "AND cod_empr = 2 " +
+                        "AND fpedido >= '"+lFechaPedido+"' "+
+                        "AND mestado IN ('N','E')";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        Long total = Long.parseLong("0");
+        for(Object[] resultado: resultados){
+            total = resultado[0] == null ? Long.parseLong("0") : Long.parseLong(resultado[0].toString());
+        }
+        return total;
+    }
+    
+    public void actualizarPedidosPorNro(long lNroPedido){
+        String sql =    "UPDATE pedidos SET mestado = 'E' "+
+                        "WHERE nro_pedido = "+lNroPedido+" "+
+                        "AND cod_empr = 2";
+        Query q = em.createNativeQuery(sql);
+        q.executeUpdate();
+    }
+    
 }

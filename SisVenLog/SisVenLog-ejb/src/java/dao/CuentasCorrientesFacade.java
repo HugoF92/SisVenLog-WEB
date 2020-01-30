@@ -175,4 +175,22 @@ public class CuentasCorrientesFacade extends AbstractFacade<CuentasCorrientes>{
         return listadoCuentasCorrientes;
     }
     
+    public long obtenerTotalCtaCtePorClienteEnRangoDeFechas(Integer lCodCliente, String lFMovimDesde, String lFMovimHasta) {
+        String sql = "SELECT ISNULL(SUM((texentas+tgravadas+timpuestos)*mindice),0) + ISNULL(SUM(ipagado * MINDICE),0) as tmovim "
+                + "FROM cuentas_corrientes "
+                + "WHERE cod_cliente = "+lCodCliente+" "
+                + "AND cod_empr = 2 "
+                + "AND (fac_ctipo_docum IS NULL OR fac_ctipo_docum != 'FCO') "
+                + "AND fmovim > '" + lFMovimDesde + "' "
+                + "AND fmovim < '" + lFMovimHasta + "' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        long total = 0;
+        for(Object[] resultado: resultados){
+            total = resultado[0] == null ? Long.parseLong("0") : Long.parseLong(resultado[0].toString());
+        }
+        return total;
+    }
+    
 }

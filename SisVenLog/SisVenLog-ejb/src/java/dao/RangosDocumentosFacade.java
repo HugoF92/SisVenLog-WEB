@@ -6,9 +6,12 @@
 package dao;
 
 import entidad.RangosDocumentos;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -29,4 +32,15 @@ public class RangosDocumentosFacade extends AbstractFacade<RangosDocumentos> {
         super(RangosDocumentos.class);
     }
     
+    public List<RangosDocumentos> obtenerRangosDeDocumentos(String lTipoDocum, Long lNroFact){
+        String sql =    "SELECT * FROM rangos_documentos " +
+                        "WHERE cod_empr = 2 and ctipo_docum = '"+lTipoDocum+"' "+
+                        "and mtipo_papel = 'F' " +
+                        "AND "+lNroFact+" BETWEEN nro_docum_ini AND nro_docum_fin";
+        Query q = em.createNativeQuery(sql, RangosDocumentos.class);
+        System.out.println(q.toString());
+        List<RangosDocumentos> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
 }

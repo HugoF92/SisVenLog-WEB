@@ -193,4 +193,29 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
         System.out.println(q.toString());
         return q.getResultList();
     }
+    
+    public List<Existencias> buscarPorCodigoDepositoOrigenYArticulo(short lCodDepo, String lCodMerca) {
+        String sql = "SELECT e.*, m.* "
+                + "FROM existencias e, mercaderias m "
+                + "WHERE e.cod_depo = " + lCodDepo + " "
+                + "AND upper(e.cod_merca) like upper('"+lCodMerca.trim()+"') "
+                + "AND e.cod_empr  = 2 "
+                + "AND e.cod_empr = m.cod_empr "
+                + "AND e.cod_merca = m.cod_merca ";
+        
+        Query q = getEntityManager().createNativeQuery(sql,
+                Existencias.class);
+        System.out.println(q.toString());
+        List<Existencias> respuesta = q.getResultList();
+        return respuesta;
+    }
+    
+    public void actualizarReservaMercaderia(long lCantCajas, long lCantUnid, String lCodMerca, short lCodDepo){
+        String sql =    "UPDATE existencias SET reser_cajas = reser_cajas + "+lCantCajas+", " +
+                        "reser_unid = reser_unid + "+lCantUnid+" " +
+                        "WHERE cod_empr = 2 AND cod_merca = '"+lCodMerca.trim()+"' "+
+                        "AND cod_depo = "+lCodDepo;
+        Query q = em.createNativeQuery(sql);
+        q.executeUpdate();
+    }
 }

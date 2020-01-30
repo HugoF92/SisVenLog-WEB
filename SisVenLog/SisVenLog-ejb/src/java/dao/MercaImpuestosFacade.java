@@ -5,10 +5,15 @@
  */
 package dao;
 
+import entidad.Impuestos;
 import entidad.MercaImpuestos;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +32,27 @@ public class MercaImpuestosFacade extends AbstractFacade<MercaImpuestos> {
 
     public MercaImpuestosFacade() {
         super(MercaImpuestos.class);
+    }
+    
+    public List<Impuestos> obtenerTipoImpuestoPorMercaderia(String lCodMerca){
+        String sql =    "select SUM(i.ifijo) as l_ifijo, SUM(i.pimpues/100) as lpimpues " +
+                        "from merca_impuestos m, impuestos i " +
+                        "where i.cod_impu = m.cod_impu " +
+                        "and m.cod_empr = 2 " +
+                        "and upper(m.cod_merca) like upper('"+lCodMerca+"') ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<Impuestos> listado = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            Impuestos i = new Impuestos();
+            i.setIfijo(resultado[0] == null ? Integer.parseInt("0") : Integer.parseInt(resultado[0].toString()));
+            BigDecimal bd = new BigDecimal(resultado[1].toString());
+            //long l = bd.setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
+            i.setPimpues(resultado[1] == null ? BigDecimal.ZERO : bd);
+            listado.add(i);
+        }
+        return listado;
     }
     
 }

@@ -8,6 +8,7 @@ package dao;
 import dto.FacturaDto;
 import entidad.Facturas;
 import entidad.FacturasPK;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -283,4 +284,158 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
         return resultados;
     }
     
+    public List<Facturas> obtenerFacturasPorNroYFecha(long lNroFactura, String lFechaFactura){
+        String sql =    "SELECT * FROM facturas " +
+                        "WHERE nrofact = "+lNroFactura+" "+
+                        "AND FFACTUR = '"+lFechaFactura+"' "+
+                        "AND cod_empr = 2";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        List<Facturas> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
+    
+    public void insertarFactura(    String lCTipoDoc,
+                                    long lNroFact,
+                                    Integer lCodCliente,
+                                    String lCodCanal,
+                                    short lCodDepo,
+                                    String lCodZona,
+                                    Short lCodRuta,
+                                    String lFFactura,
+                                    Character lCTipoVta,
+                                    String lXObs,
+                                    short lCodVendedor,
+                                    long lTExentas,
+                                    long lTGravadas,
+                                    long lTImpuestos,
+                                    long lTTotal,
+                                    short lCodEntregador,
+                                    long lISaldo,
+                                    long lTDescuentos,
+                                    String lXDirec,
+                                    String lXRazonSocial,
+                                    String lXRuc,
+                                    String lXTelef,
+                                    String lXCiudad,
+                                    String lFVenc,
+                                    String lFvencImpre,
+                                    long lTGravadas10,
+                                    long lTGravadas5,
+                                    BigDecimal lTImpuestos10,
+                                    BigDecimal lTImpuestos5,
+                                    String lXFactura,
+                                    short lNPlazoCheque,
+                                    Long lNroPedido){
+        String sql = "";
+        if(lFVenc.equals("") && lFvencImpre.equals("")){
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                        "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                        "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre, tgravadas_10, tgravadas_5, " +
+                        "timpuestos_10, timpuestos_5, xfactura, nplazo_cheque, nro_pedido ) values ( " +
+                        "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                        "'"+lCodCanal+"', "+lCodDepo+", '"+lCodZona+"', "+lCodRuta+", '"+lFFactura+"', " +
+                        "'"+lCTipoVta+"', '"+lXObs+"', "+lCodVendedor+", 'A', "+lTExentas+", " +
+                        ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", "+lCodEntregador+", "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                        "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', null, null, "+lTGravadas10+", "+lTGravadas5+", " +
+                        ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"', "+lNPlazoCheque+", "+lNroPedido+" )";
+        }else{
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                        "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                        "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre,  tgravadas_10, tgravadas_5, " +
+                        "timpuestos_10, timpuestos_5, xfactura, nplazo_cheque, nro_pedido ) values ( " +
+                        "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                        "'"+lCodCanal+"', "+lCodDepo+", '"+lCodZona+"', "+lCodRuta+", '"+lFFactura+"', " +
+                        "'"+lCTipoVta+"', '"+lXObs+"', "+lCodVendedor+", 'A', "+lTExentas+", " +
+                        ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", "+lCodEntregador+", "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                        "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', '"+lFVenc+"', '"+lFvencImpre+"', "+lTGravadas10+", "+lTGravadas5+", " +
+                        ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"', "+lNPlazoCheque+", "+lNroPedido+" )";
+        }
+                
+        Query q = em.createNativeQuery(sql);
+        q.executeUpdate();
+    }
+    
+    public List<Facturas> obtenerFacturasActivasPorNroPedidoYFactura(long lNroPedido, long lNroFact){
+        String sql =    "SELECT * FROM facturas " + //nrofact
+                        "WHERE nro_pedido = "+lNroPedido+" AND cod_empr = 2 " +
+                        "AND nrofact != "+lNroFact+" AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        List<Facturas> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
+    
+    public void actualizarFacturas( String lFAnulacion, 
+                                    String lUsuario, 
+                                    Short lCMotivo,
+                                    String lFFact,
+                                    long lNroFact,
+                                    String lCTipoDocum){
+        String sql =    "UPDATE facturas SET mestado = 'X', fanul = '"+lFAnulacion+"', cusuario_anul = '"+lUsuario+"', cmotivo = '"+lCMotivo+"' " +
+                        "WHERE  cod_empr = 2 AND ffactur = '"+lFFact+"' AND nrofact = "+lNroFact+" " +
+                        "AND ctipo_docum = '"+lCTipoDocum+"' ";
+        Query q = em.createNativeQuery(sql);
+        q.executeUpdate();
+    }
+    
+    public List<Facturas> listadoDeFacturas(String lCTipoDocum, long lNroFact){
+        String sql =    "SELECT * " +
+                        "FROM facturas f INNER JOIN " +
+                        "depositos d ON f.cod_depo = d.cod_depo INNER JOIN " +
+                        "empleados e ON f.cod_vendedor = e.cod_empleado LEFT OUTER JOIN " +
+                        "empleados e2 ON f.cod_entregador = e2.cod_empleado INNER JOIN clientes c ON f.cod_cliente = c.cod_cliente " +
+                        "WHERE (f.cod_empr = 2) and nrofact = "+lNroFact+" AND ctipo_docum = '"+lCTipoDocum+"' " +
+                        "AND FFACTUR = (SELECT MAX(ffactur) FROM facturas " +
+                        "WHERE cod_empr = 2 AND nrofact = "+lNroFact+" AND ctipo_docum = '"+lCTipoDocum+"' )";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        List<Facturas> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
+    
+    public List<Facturas> listadoDeFacturas(String lCTipoDocum, long lNroFact, String lFFactura){
+        String sql =    "SELECT * " +
+                        "FROM facturas f INNER JOIN " +
+                        "depositos d ON f.cod_depo = d.cod_depo INNER JOIN " +
+                        "empleados e ON f.cod_vendedor = e.cod_empleado LEFT OUTER JOIN " +
+                        "empleados e2 ON f.cod_entregador = e2.cod_empleado INNER JOIN " +
+                        "clientes c ON f.cod_cliente = c.cod_cliente " +
+                        "WHERE (f.cod_empr = 2) and ffactur = '"+lFFactura+"' and nrofact = "+lNroFact+" AND ctipo_docum = '"+lCTipoDocum+"' ";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        List<Facturas> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
+    
+    public List<Facturas> listadoDeFacturas(){
+        String sql = "SELECT nrofact, ffactur, ttotal, mestado, ctipo_docum FROM facturas";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<Facturas> listadoFacturas = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            FacturasPK facPK = new FacturasPK();
+            facPK.setNrofact(Long.parseLong(resultado[0].toString()));
+            if(resultado[1] != null){
+                Timestamp timeStamp_1 = (Timestamp) resultado[1];
+                java.util.Date dateResult_1 = new Date(timeStamp_1.getTime());                
+                facPK.setFfactur(dateResult_1);           
+            }else{
+                facPK.setFfactur(null); 
+            }
+            facPK.setCtipoDocum(resultado[4] == null ? "" : resultado[4].toString());
+            Facturas f = new Facturas();
+            f.setFacturasPK(facPK);
+            f.setTtotal(resultado[2] == null ? 0 : Long.parseLong(resultado[2].toString()));
+            char cEstado = resultado[3] == null ? 0 : resultado[3].toString().charAt(0);
+            f.setMestado(cEstado);
+            listadoFacturas.add(f);
+        }
+        return listadoFacturas;
+    }
 }

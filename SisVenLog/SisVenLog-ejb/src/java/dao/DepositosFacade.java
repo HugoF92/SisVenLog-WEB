@@ -6,7 +6,7 @@
 package dao;
 
 import entidad.Depositos;
-import entidad.Depositos;
+import entidad.DepositosPK;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -145,5 +145,25 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
 
         return respuesta;
     }
-
+    
+    public List<Depositos> obtenerDepositosPorTipoCliente(Character lTipoCliente){
+        String sql =    "SELECT c.cod_depo, d.xdesc FROM tipocli_depositos as c, depositos as d WHERE d.cod_depo = c.cod_depo " +
+                        "AND c.ctipo_cliente = '"+lTipoCliente+"' "+
+                        "AND c.cod_empr = 2";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<Depositos> listado = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            DepositosPK depositoPK = new DepositosPK();
+            depositoPK.setCodEmpr(Short.parseShort("2"));
+            depositoPK.setCodDepo(resultado[0] == null ? 0 : Short.parseShort(resultado[0].toString()));
+            Depositos d = new Depositos();
+            d.setDepositosPK(depositoPK);
+            d.setXdesc(resultado[1] == null ? "" : resultado[1].toString());
+            listado.add(d);
+        }
+        return listado;
+    }
+    
 }
