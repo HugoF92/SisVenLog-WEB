@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboProvDetPP" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.1269722013523689"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="21"/>
+	<property name="ireport.zoom" value="1.024520183047608"/>
+	<property name="ireport.x" value="36"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -30,7 +30,7 @@
 		<![CDATA[$P!{sql}]]>
 	</queryString>
 	<field name="cod_proveed" class="java.lang.Short"/>
-	<variable name="totalEfe" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
+	<variable name="totalEfe" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
 	<variable name="total_recibo" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
@@ -256,6 +256,10 @@
 					<subreportParameterExpression><![CDATA[$P{sqlDetRec}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="iefectivo_1" toVariable="totalEfe" calculation="Sum"/>
+				<returnValue subreportVariable="icheques_1" toVariable="total_cheque" calculation="Sum"/>
+				<returnValue subreportVariable="iretencion_1" toVariable="total_reten" calculation="Sum"/>
+				<returnValue subreportVariable="irecibo_1" toVariable="total_recibo" calculation="Sum"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboProvDetPPSub.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
@@ -294,7 +298,7 @@
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
@@ -306,16 +310,16 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="48" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement x="8" y="28" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<reportElement x="8" y="22" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="159" y="14" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<reportElement x="159" y="9" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -329,28 +333,28 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField pattern="#,##0">
-				<reportElement x="371" y="12" width="68" height="15" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
+				<reportElement x="342" y="7" width="90" height="15" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="696" y="12" width="68" height="15" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
+				<reportElement x="665" y="7" width="90" height="15" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_recibo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="467" y="12" width="68" height="15" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
+				<reportElement x="450" y="7" width="90" height="15" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_cheque}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="568" y="12" width="68" height="15" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
+				<reportElement x="556" y="7" width="90" height="15" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>

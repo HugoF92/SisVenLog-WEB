@@ -6,12 +6,16 @@
 package dao;
 
 import entidad.Depositos;
+import entidad.Lineas;
 import entidad.TiposClientes;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -43,7 +47,17 @@ public class TiposClientesFacade extends AbstractFacade<TiposClientes> {
         q.setParameter("cod_depo", depositos.getDepositosPK().getCodDepo());
         
         q.execute();
-
+    }
     
-}
+    public List<TiposClientes> listarTiposClientes() {
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM tipos_clientes", TiposClientes.class);
+
+        System.out.println(q.toString());
+
+        List<TiposClientes> respuesta = new ArrayList<TiposClientes>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
 }

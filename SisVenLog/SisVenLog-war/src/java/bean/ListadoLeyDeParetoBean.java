@@ -5,20 +5,25 @@
  */
 package bean;
 
-import dao.RecibosProvFacade;
+import dao.LeyParetoFacade;
 import entidad.Proveedores;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import util.DateUtil;
 import util.LlamarReportes;
+
+import entidad.Lineas;
+import entidad.TiposClientes;
+import entidad.Zonas;
+import entidad.CanalesVenta;
+import javax.ejb.EJB;
 
 
 /**
@@ -28,30 +33,29 @@ import util.LlamarReportes;
 
 @ManagedBean
 @SessionScoped
-public class ListadoRecibosProveedoresBean implements Serializable{
-    private Date fechaReciboDesde;
-    private Date fechaReciboHasta;
-    private long nroReciboDesde;
-    private long nroReciboHasta;
+public class ListadoLeyDeParetoBean implements Serializable{
+    private Date fechaFacturacionDesde;
+    private Date fechaFacturacionHasta;
+    private Lineas linea;
+    private TiposClientes tipoCliente;
+    private Zonas zonas;
+    private CanalesVenta canalesVenta;
     private String discriminar;
-    private Boolean conDetalle;
-    private Proveedores proveedorSeleccionado;
-   
+    private String filtar;
+    private String factorSeleccionado;
+    private Integer factor;
     
     @EJB
-    private RecibosProvFacade recibosProvFacade; 
+    private LeyParetoFacade leyParetoFacade;
     
     @PostConstruct
     public void instanciar(){
         limpiarFormulario();
-        proveedorSeleccionado = new Proveedores();
     }
     
     public void limpiarFormulario(){
-        fechaReciboDesde = null;
-        fechaReciboHasta = null;
-        nroReciboDesde = 0;
-        nroReciboHasta = 0;
+        fechaFacturacionDesde = null;
+        fechaFacturacionHasta = null;
     }
     
     public void ejecutar(String tipo) {        
@@ -59,89 +63,54 @@ public class ListadoRecibosProveedoresBean implements Serializable{
             try {
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
-                    if (conDetalle) {
-                        String nombreRepo = "ND".equals(discriminar) ? "reciboProvDetND" : "reciboProvDetPP";
-                        String sqlConDet = armarSqlConDetalle(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
-                        rep.reporteLiRecibosCom(sqlConDet,
-                                fechaReciboDesde,
-                                fechaReciboHasta,
-                                nroReciboDesde,
-                                nroReciboHasta,
-                                proveedorSeleccionado,
-                                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), tipo, nombreRepo, "Rreciboscomdet",
-                                armarSqlReciboProvDet(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado), 
-                                armarSqlReciboProvDetRec(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado));
-                    }else { //sin detalle
-                        String nombreRepo = "ND".equals(discriminar) ? "reciboProvND" : "reciboProvPP";
-                        String sqlSinDet = armarSqlSinDetalle(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
-                        rep.reporteLiRecibosCom(sqlSinDet, 
-                                fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, proveedorSeleccionado,
-                                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), tipo, nombreRepo, "Rreciboscom", null, null);
+                    if ("PC".equals(discriminar)) {
+                        
+                    }else{ //por linea
+                        
                     }
-
+ 
                 } else { //Excel
-                    if (conDetalle) {
+                    if ("PC".equals(discriminar)) {
                         List<Object[]> lista = new ArrayList<>();
-                        String[] columnas = new String[18];
+                        String[] columnas = new String[5];
 
-                        columnas[0] = "nrecibo";
-                        columnas[1] = "cod_proveed";
-                        columnas[2] = "frecibo";
-                        columnas[3] = "irecibo";
-                        columnas[4] = "iefectivo";
-                        columnas[5] = "iretencion";
-                        columnas[6] = "icheques";
-                        columnas[7] = "xobs";
-                        columnas[8] = "mestado";
-                        columnas[9] = "xnombre";
-                        columnas[10] = "ctipo_docum";
-                        columnas[11] = "ndocum";
-                        columnas[12] = "xdesc_banco";
-                        columnas[13] = "fanul";
-                        columnas[14] = "tipodet";
-                        columnas[15] = "cod_proveed2";
-                        columnas[16] = "xnombre2";
-                        columnas[17] = "itotal";
+                        columnas[0] = "cod_cliente";
+                        columnas[1] = "xnombre";
+                        columnas[2] = "cod_zona";
+                        columnas[3] = "xdesc_zona";
+                        columnas[4] = "itotal";
+                       
 
-                        lista = recibosProvFacade.listaProveedores(fechaReciboDesde, 
-                                                                   fechaReciboHasta, 
-                                                                   nroReciboDesde, 
-                                                                   nroReciboHasta, 
-                                                                   discriminar, 
-                                                                   conDetalle, 
-                                                                   proveedorSeleccionado);
-                                
-                        rep.exportarExcel(columnas, lista, "Rreciboscomdet");
+                        lista = leyParetoFacade.generarLeyParetoExcel(fechaFacturacionDesde, 
+                                                                      fechaFacturacionHasta, 
+                                                                      linea, 
+                                                                      tipoCliente, 
+                                                                      zonas, 
+                                                                      canalesVenta, 
+                                                                      discriminar);
+                        rep.exportarExcel(columnas, lista, "RPARETO1");
                         
-                    } else { //sin detalle
+                    } else { //discriminar por linea
                         List<Object[]> lista = new ArrayList<>();
-                        String[] columnas = new String[16];
+                        String[] columnas = new String[8];
 
-                        columnas[0] = "cod_empr";
-                        columnas[1] = "nrecibo";
-                        columnas[2] = "cod_proveed";
-                        columnas[3] = "frecibo";
-                        columnas[4] = "cusuario";
-                        columnas[5] = "falta";
-                        columnas[6] = "fanul";
-                        columnas[7] = "irecibo";
-                        columnas[8] = "iefectivo";
-                        columnas[9] = "iretencion";
-                        columnas[10] = "icheques";
-                        columnas[11] = "xobs";
-                        columnas[12] = "mestado";
-                        columnas[13] = "cod_proveed2";
-                        columnas[14] = "xnombre";
-                        columnas[15] = "xnombre2";
+                        columnas[0] = "cod_cliente";
+                        columnas[1] = "xnombre";
+                        columnas[2] = "cod_zona";
+                        columnas[3] = "xdesc_zona";
+                        columnas[4] = "cod_linea";
+                        columnas[5] = "xdesc_linea";
+                        columnas[6] = "cod_merca";
+                        columnas[7] = "itotal";
                         
-                       lista = recibosProvFacade.listaProveedores(fechaReciboDesde, 
-                                                                   fechaReciboHasta, 
-                                                                   nroReciboDesde, 
-                                                                   nroReciboHasta, 
-                                                                   discriminar, 
-                                                                   conDetalle, 
-                                                                   proveedorSeleccionado);
-                       rep.exportarExcel(columnas, lista, "Rreciboscom");
+                        lista = leyParetoFacade.generarLeyParetoExcel(fechaFacturacionDesde, 
+                                                                     fechaFacturacionHasta, 
+                                                                     linea, 
+                                                                     tipoCliente, 
+                                                                     zonas, 
+                                                                     canalesVenta, 
+                                                                     discriminar);
+                        rep.exportarExcel(columnas, lista, "RPARETO2");
                     }
                 }
             } catch (Exception e) {
@@ -151,23 +120,13 @@ public class ListadoRecibosProveedoresBean implements Serializable{
         
     }
     private Boolean validar(){
-        if (fechaReciboDesde == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha desde.", "Debe ingresar fecha desde."));            
+        if (fechaFacturacionDesde == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha desde.", "Debe ingresar fecha de facturación desde."));            
             return false;
         }else{
-            if (fechaReciboHasta == null){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha hasta."));            
+            if (fechaFacturacionHasta == null){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha de facturación hasta."));            
                 return false;
-            }else{
-                if (nroReciboDesde == 0) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo desde.", "Debe ingresar un número de recibo desde."));            
-                    return false;
-                }else{
-                    if (nroReciboHasta == 0) {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo hasta.", "Debe ingresar un número de recibo hasta."));            
-                        return false;
-                    }
-                }
             }
         }
         return true;
@@ -443,21 +402,53 @@ public class ListadoRecibosProveedoresBean implements Serializable{
         }
         return sql;
     }
-    
-    public Date getFechaReciboDesde() {
-        return fechaReciboDesde;
+
+    public Date getFechaFacturacionDesde() {
+        return fechaFacturacionDesde;
     }
 
-    public void setFechaReciboDesde(Date fechaReciboDesde) {
-        this.fechaReciboDesde = fechaReciboDesde;
+    public void setFechaFacturacionDesde(Date fechaFacturacionDesde) {
+        this.fechaFacturacionDesde = fechaFacturacionDesde;
     }
 
-    public Date getFechaReciboHasta() {
-        return fechaReciboHasta;
+    public Date getFechaFacturacionHasta() {
+        return fechaFacturacionHasta;
     }
 
-    public void setFechaReciboHasta(Date fechaReciboHasta) {
-        this.fechaReciboHasta = fechaReciboHasta;
+    public void setFechaFacturacionHasta(Date fechaFacturacionHasta) {
+        this.fechaFacturacionHasta = fechaFacturacionHasta;
+    }
+
+    public Lineas getLinea() {
+        return linea;
+    }
+
+    public void setLinea(Lineas linea) {
+        this.linea = linea;
+    }
+
+    public TiposClientes getTipoCliente() {
+        return tipoCliente;
+    }
+
+    public void setTipoCliente(TiposClientes tipoCliente) {
+        this.tipoCliente = tipoCliente;
+    }
+
+    public Zonas getZonas() {
+        return zonas;
+    }
+
+    public void setZonas(Zonas zonas) {
+        this.zonas = zonas;
+    }
+
+    public CanalesVenta getCanalesVenta() {
+        return canalesVenta;
+    }
+
+    public void setCanalesVenta(CanalesVenta canalesVenta) {
+        this.canalesVenta = canalesVenta;
     }
 
     public String getDiscriminar() {
@@ -468,35 +459,27 @@ public class ListadoRecibosProveedoresBean implements Serializable{
         this.discriminar = discriminar;
     }
 
-    public Boolean getConDetalle() {
-        return conDetalle;
+    public String getFiltar() {
+        return filtar;
     }
 
-    public void setConDetalle(Boolean conDetalle) {
-        this.conDetalle = conDetalle;
+    public void setFiltar(String filtar) {
+        this.filtar = filtar;
+    }
+    
+    public String getFactorSeleccionado(){
+        return factorSeleccionado;
+    }
+    
+    public void setFactorSeleccionado(String factorSeleccionado){
+        this.factorSeleccionado = factorSeleccionado;
+    }
+    
+    public Integer getFactor() {
+        return factor;
     }
 
-    public long getNroReciboDesde() {
-        return nroReciboDesde;
-    }
-
-    public void setNroReciboDesde(long nroReciboDesde) {
-        this.nroReciboDesde = nroReciboDesde;
-    }
-
-    public long getNroReciboHasta() {
-        return nroReciboHasta;
-    }
-
-    public void setNroReciboHasta(long nroReciboHasta) {
-        this.nroReciboHasta = nroReciboHasta;
-    }
-
-    public Proveedores getProveedorSeleccionado() {
-        return proveedorSeleccionado;
-    }
-
-    public void setProveedorSeleccionado(Proveedores proveedorSeleccionado) {
-        this.proveedorSeleccionado = proveedorSeleccionado;
+    public void setFactor(Integer factor) {
+        this.factor = factor;
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacDetND" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.3636363636363662"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="93"/>
+	<property name="ireport.zoom" value="1.1269722013523686"/>
+	<property name="ireport.x" value="97"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -44,18 +44,6 @@
 	<field name="xnombre2" class="java.lang.String"/>
 	<field name="cod_cliente2" class="java.lang.Integer"/>
 	<field name="xobs" class="java.lang.String"/>
-	<variable name="totalEfe" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{efectivo}]]></variableExpression>
-	</variable>
-	<variable name="total_recibo" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{total}]]></variableExpression>
-	</variable>
-	<variable name="total_cheque" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{cheques}]]></variableExpression>
-	</variable>
-	<variable name="total_reten" class="java.math.BigDecimal" incrementType="Column">
-		<variableExpression><![CDATA[$V{retencion}]]></variableExpression>
-	</variable>
 	<variable name="estado" class="java.lang.String">
 		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO" )]]></variableExpression>
 	</variable>
@@ -70,6 +58,18 @@
 	</variable>
 	<variable name="total" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? null : $F{irecibo} )]]></variableExpression>
+	</variable>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{icheques} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iefectivo} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iretencion} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{irecibo} : 0 )]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -219,7 +219,7 @@
 				<reportElement x="3" y="137" width="799" height="1" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
 			</line>
 			<staticText>
-				<reportElement x="361" y="104" width="79" height="15" uuid="5886303d-6e04-42c3-b415-4882e2f6fbac"/>
+				<reportElement x="336" y="104" width="104" height="15" uuid="5886303d-6e04-42c3-b415-4882e2f6fbac"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -233,11 +233,11 @@
 				<reportElement x="489" y="52" width="100" height="14" uuid="fd43f959-203e-47e2-bb7a-fb0ea6eabc4f"/>
 				<textFieldExpression><![CDATA[$P{fechaHasta}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0">
 				<reportElement x="282" y="69" width="100" height="14" uuid="1fb65bc9-fd29-4af5-9d1c-cdb92cdc195a"/>
 				<textFieldExpression><![CDATA[$P{nroReciboDesde}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0">
 				<reportElement x="489" y="69" width="100" height="14" uuid="5ac69e5f-39ea-465b-8799-2babec7b7536"/>
 				<textFieldExpression><![CDATA[$P{nroReciboHasta}]]></textFieldExpression>
 			</textField>
@@ -299,7 +299,7 @@
 				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="361" y="2" width="78" height="15" uuid="226508bb-746a-47e4-8224-8c3fb044b9f4">
+				<reportElement x="336" y="2" width="103" height="15" uuid="226508bb-746a-47e4-8224-8c3fb044b9f4">
 					<printWhenExpression><![CDATA[$V{efectivo} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -308,7 +308,7 @@
 				<textFieldExpression><![CDATA[$V{efectivo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="467" y="2" width="78" height="15" uuid="65327809-72c3-4404-a7d8-dde31692f7e3">
+				<reportElement x="453" y="2" width="92" height="15" uuid="65327809-72c3-4404-a7d8-dde31692f7e3">
 					<printWhenExpression><![CDATA[$V{cheques} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -317,7 +317,7 @@
 				<textFieldExpression><![CDATA[$V{cheques}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="576" y="2" width="78" height="15" uuid="189970ef-5a3e-4b23-b3ae-5e4c4649c97b">
+				<reportElement x="565" y="2" width="89" height="15" uuid="189970ef-5a3e-4b23-b3ae-5e4c4649c97b">
 					<printWhenExpression><![CDATA[$V{retencion} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -326,7 +326,7 @@
 				<textFieldExpression><![CDATA[$V{retencion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="688" y="2" width="76" height="15" uuid="0a0bdd1b-b9d7-4b3f-a22f-b2feb6c9b94f">
+				<reportElement x="668" y="2" width="96" height="15" uuid="0a0bdd1b-b9d7-4b3f-a22f-b2feb6c9b94f">
 					<printWhenExpression><![CDATA[$V{total} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -407,7 +407,7 @@
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
@@ -419,16 +419,16 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="48" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement x="8" y="28" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<reportElement x="8" y="25" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="159" y="14" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<reportElement x="170" y="8" width="147" height="14" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -441,37 +441,37 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField pattern="#,##0">
-				<reportElement x="371" y="12" width="68" height="15" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="696" y="12" width="68" height="15" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_recibo}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="467" y="12" width="68" height="15" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_cheque}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="568" y="12" width="68" height="15" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_reten}]]></textFieldExpression>
-			</textField>
 			<line>
 				<reportElement x="361" y="2" width="418" height="1" uuid="d41a5751-7490-4012-9469-38d3a533a056"/>
 			</line>
+			<textField pattern="#,##0">
+				<reportElement x="453" y="8" width="92" height="14" uuid="49717da9-9e7e-425e-9d94-8387bc03ad08"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="336" y="8" width="104" height="14" uuid="a7a0edc8-1fa4-4f38-a63d-33538ee4c5a8"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="565" y="8" width="89" height="14" uuid="908426b0-46a4-4a33-bf4e-73eece7967fb"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="668" y="8" width="96" height="14" uuid="c9f01108-8ff9-4a88-b0cf-bd9ac4573bc8"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

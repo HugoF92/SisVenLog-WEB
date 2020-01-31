@@ -119,7 +119,7 @@ public class TipoCliBean implements Serializable {
     }
 
     public List<TiposClientes> listar() {
-        listaTipoCli = tipoCliFacade.findAll();
+        listaTipoCli = tipoCliFacade.listarTiposClientes();
         return listaTipoCli;
     }
 

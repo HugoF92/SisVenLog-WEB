@@ -45,8 +45,10 @@ public class ListadoRecibosClientesBean implements Serializable{
     private String zonaDes;
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
-    private String zonaSeleccionada;
     
+    
+    private String zonaSeleccionada;
+            
     @EJB
     private ClientesFacade clientesFacade;
     
@@ -491,7 +493,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
                     if (!conDetalle) {
-                        String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFacPC";
+                        String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFac";
                         rep.reporteLiRecibos(
                                 armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
                                 fechaReciboDesde,
@@ -500,7 +502,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                 nroReciboHasta,
                                 clientesRepo,
                                 zonaDes,
-                                "jvera",
+                                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(),
                                 tipo,
                                 nombreRepo,
                                 "Rrecibos",
@@ -516,7 +518,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                         nroReciboHasta,
                         clientesRepo,
                         zonaDes,
-                        "jvera",
+                        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(),
                         tipo,
                         nombreRepoDet,
                         "RrecibosDet",

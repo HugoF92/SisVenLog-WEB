@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboProvDetND" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.2396694214876056"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.zoom" value="1.5000000000000042"/>
+	<property name="ireport.x" value="461"/>
+	<property name="ireport.y" value="135"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -38,32 +38,32 @@
 	<field name="xnombre2" class="java.lang.String"/>
 	<field name="cod_proveed2" class="java.lang.Short"/>
 	<field name="xobs" class="java.lang.String"/>
-	<variable name="totalEfe" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{efectivo}]]></variableExpression>
-	</variable>
-	<variable name="total_recibo" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{total}]]></variableExpression>
-	</variable>
-	<variable name="total_cheque" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$V{cheques}]]></variableExpression>
-	</variable>
-	<variable name="total_reten" class="java.math.BigDecimal" incrementType="Column">
-		<variableExpression><![CDATA[$V{retencion}]]></variableExpression>
-	</variable>
 	<variable name="estado" class="java.lang.String">
 		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO" )]]></variableExpression>
 	</variable>
 	<variable name="efectivo" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? null : $F{iefectivo} )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? 0 : $F{iefectivo} )]]></variableExpression>
 	</variable>
 	<variable name="cheques" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? null : $F{icheques} )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? 0 : $F{icheques} )]]></variableExpression>
 	</variable>
 	<variable name="retencion" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? null : $F{iretencion} )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? 0 : $F{iretencion} )]]></variableExpression>
 	</variable>
 	<variable name="total" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? null : $F{irecibo} )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? 0 : $F{irecibo} )]]></variableExpression>
+	</variable>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iefectivo} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{icheques} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iretencion} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{irecibo} : 0 )]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -287,7 +287,7 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="341" y="2" width="91" height="15" uuid="226508bb-746a-47e4-8224-8c3fb044b9f4">
-					<printWhenExpression><![CDATA[$V{efectivo} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
@@ -296,7 +296,7 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="454" y="2" width="91" height="15" uuid="65327809-72c3-4404-a7d8-dde31692f7e3">
-					<printWhenExpression><![CDATA[$V{cheques} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
@@ -305,7 +305,7 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="568" y="2" width="86" height="15" uuid="189970ef-5a3e-4b23-b3ae-5e4c4649c97b">
-					<printWhenExpression><![CDATA[$V{retencion} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
@@ -314,7 +314,7 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="688" y="2" width="76" height="15" uuid="0a0bdd1b-b9d7-4b3f-a22f-b2feb6c9b94f">
-					<printWhenExpression><![CDATA[$V{total} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
@@ -394,7 +394,7 @@
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
 				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
@@ -406,16 +406,16 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="48" splitType="Stretch">
+		<band height="39" splitType="Stretch">
 			<staticText>
-				<reportElement x="8" y="28" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<reportElement x="8" y="21" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="159" y="14" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<reportElement x="159" y="7" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -428,37 +428,37 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField pattern="#,##0">
-				<reportElement x="371" y="12" width="68" height="15" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="696" y="12" width="68" height="15" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_recibo}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="467" y="12" width="68" height="15" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_cheque}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
-				<reportElement x="568" y="12" width="68" height="15" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total_reten}]]></textFieldExpression>
-			</textField>
 			<line>
 				<reportElement x="361" y="2" width="418" height="1" uuid="d41a5751-7490-4012-9469-38d3a533a056"/>
 			</line>
+			<textField pattern="#,##0">
+				<reportElement x="331" y="7" width="100" height="14" uuid="56aaafc6-e154-4117-a38a-7c2d6c2700a2"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="442" y="7" width="103" height="14" uuid="2391c168-debb-491e-b2fe-36d16947a27c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="557" y="7" width="97" height="14" uuid="8248d573-76f9-4410-9a09-8eb1aa87c588"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="664" y="7" width="100" height="14" uuid="3972c77a-b890-432b-b1db-bb8d069001b9"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
