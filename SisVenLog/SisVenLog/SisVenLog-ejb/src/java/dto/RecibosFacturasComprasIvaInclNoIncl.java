@@ -19,18 +19,18 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
     private Date ffactur;
     private Long nrofact;
     private String ctipoDocum;
-    private long ttotal;
+    private Double ttotal;
     private String xruc;
     private String xfactura;
     private BigInteger ntimbrado;
-    private long texentas;
-    private long tgravadas10;
-    private long tgravadas5;
-    private long timpuestos10;
-    private long timpuestos5;
+    private Double texentas;
+    private Double tgravadas10;
+    private Double tgravadas5;
+    private Double timpuestos10;
+    private Double timpuestos5;
     private String cconc;
 
-    public RecibosFacturasComprasIvaInclNoIncl(String xnombre, Date ffactur, Long nrofact, String ctipoDocum, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5, String cconc) {
+    public RecibosFacturasComprasIvaInclNoIncl(String xnombre, Date ffactur, Long nrofact, String ctipoDocum, Double ttotal, String xruc, String xfactura, BigInteger ntimbrado, Double texentas, Double tgravadas10, Double tgravadas5, Double timpuestos10, Double timpuestos5, String cconc) {
         this.xnombre = xnombre;
         this.ffactur = ffactur;
         this.nrofact = nrofact;
@@ -66,7 +66,7 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         return ctipoDocum;
     }
 
-    public long getTtotal() {
+    public Double getTtotal() {
         return ttotal;
     }
 
@@ -82,23 +82,23 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         return ntimbrado;
     }
 
-    public long getTexentas() {
+    public Double getTexentas() {
         return texentas;
     }
 
-    public long getTgravadas10() {
+    public Double getTgravadas10() {
         return tgravadas10;
     }
 
-    public long getTgravadas5() {
+    public Double getTgravadas5() {
         return tgravadas5;
     }
 
-    public long getTimpuestos10() {
+    public Double getTimpuestos10() {
         return timpuestos10;
     }
 
-    public long getTimpuestos5() {
+    public Double getTimpuestos5() {
         return timpuestos5;
     }
 
@@ -122,7 +122,7 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         this.ctipoDocum = ctipoDocum;
     }
 
-    public void setTtotal(long ttotal) {
+    public void setTtotal(Double ttotal) {
         this.ttotal = ttotal;
     }
 
@@ -138,28 +138,27 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         this.ntimbrado = ntimbrado;
     }
 
-    public void setTexentas(long texentas) {
+    public void setTexentas(Double texentas) {
         this.texentas = texentas;
     }
 
-    public void setTgravadas10(long tgravadas10) {
+    public void setTgravadas10(Double tgravadas10) {
         this.tgravadas10 = tgravadas10;
     }
 
-    public void setTgravadas5(long tgravadas5) {
+    public void setTgravadas5(Double tgravadas5) {
         this.tgravadas5 = tgravadas5;
     }
 
-    public void setTimpuestos10(long timpuestos10) {
+    public void setTimpuestos10(Double timpuestos10) {
         this.timpuestos10 = timpuestos10;
     }
 
-    public void setTimpuestos5(long timpuestos5) {
+    public void setTimpuestos5(Double timpuestos5) {
         this.timpuestos5 = timpuestos5;
     }
 
     public void setCconc(String cconc) {
         this.cconc = cconc;
     }
-
 }

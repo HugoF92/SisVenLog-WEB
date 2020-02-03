@@ -20,21 +20,21 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
     private Long nrofact;
     private String ctipoDocum;
     private Character mtipoPapel;
-    private long nroDocumIni;
+    private Long nroDocumIni;
     private Long nroDocumFin;
     private long ttotal;
     private String xruc;
     private String xfactura;
     private BigInteger ntimbrado;
-    private long texentas;
-    private long tgravadas10;
-    private long tgravadas5;
-    private long timpuestos10;
-    private long timpuestos5;
+    private Double texentas;
+    private Double tgravadas10;
+    private Double tgravadas5;
+    private Double timpuestos10;
+    private Double timpuestos5;
     private String facCtipoDocum;
     private String cconc;
 
-    public RecibosFacturasVentasIvaInclNoIncl(String xrazonSocial, Date ffactur, Long nrofact, String ctipoDocum, Character mtipoPapel, long nroDocumIni, Long nroDocumFin, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5, String facCtipoDocum, String cconc) {
+    public RecibosFacturasVentasIvaInclNoIncl(String xrazonSocial, Date ffactur, Long nrofact, String ctipoDocum, Character mtipoPapel, Long nroDocumIni, Long nroDocumFin, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, Double texentas, Double tgravadas10, Double tgravadas5, Double timpuestos10, Double timpuestos5, String facCtipoDocum, String cconc) {
         this.xrazonSocial = xrazonSocial;
         this.ffactur = ffactur;
         this.nrofact = nrofact;
@@ -78,16 +78,12 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         return mtipoPapel;
     }
 
-    public long getNroDocumIni() {
+    public Long getNroDocumIni() {
         return nroDocumIni;
     }
 
     public Long getNroDocumFin() {
         return nroDocumFin;
-    }
-
-    public BigInteger getNtimbrado() {
-        return ntimbrado;
     }
 
     public long getTtotal() {
@@ -102,23 +98,27 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         return xfactura;
     }
 
-    public long getTexentas() {
+    public BigInteger getNtimbrado() {
+        return ntimbrado;
+    }
+
+    public Double getTexentas() {
         return texentas;
     }
 
-    public long getTgravadas10() {
+    public Double getTgravadas10() {
         return tgravadas10;
     }
 
-    public long getTgravadas5() {
+    public Double getTgravadas5() {
         return tgravadas5;
     }
 
-    public long getTimpuestos10() {
+    public Double getTimpuestos10() {
         return timpuestos10;
     }
 
-    public long getTimpuestos5() {
+    public Double getTimpuestos5() {
         return timpuestos5;
     }
 
@@ -150,16 +150,12 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         this.mtipoPapel = mtipoPapel;
     }
 
-    public void setNroDocumIni(long nroDocumIni) {
+    public void setNroDocumIni(Long nroDocumIni) {
         this.nroDocumIni = nroDocumIni;
     }
 
     public void setNroDocumFin(Long nroDocumFin) {
         this.nroDocumFin = nroDocumFin;
-    }
-
-    public void setNtimbrado(BigInteger ntimbrado) {
-        this.ntimbrado = ntimbrado;
     }
 
     public void setTtotal(long ttotal) {
@@ -174,23 +170,27 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         this.xfactura = xfactura;
     }
 
-    public void setTexentas(long texentas) {
+    public void setNtimbrado(BigInteger ntimbrado) {
+        this.ntimbrado = ntimbrado;
+    }
+
+    public void setTexentas(Double texentas) {
         this.texentas = texentas;
     }
 
-    public void setTgravadas10(long tgravadas10) {
+    public void setTgravadas10(Double tgravadas10) {
         this.tgravadas10 = tgravadas10;
     }
 
-    public void setTgravadas5(long tgravadas5) {
+    public void setTgravadas5(Double tgravadas5) {
         this.tgravadas5 = tgravadas5;
     }
 
-    public void setTimpuestos10(long timpuestos10) {
+    public void setTimpuestos10(Double timpuestos10) {
         this.timpuestos10 = timpuestos10;
     }
 
-    public void setTimpuestos5(long timpuestos5) {
+    public void setTimpuestos5(Double timpuestos5) {
         this.timpuestos5 = timpuestos5;
     }
 

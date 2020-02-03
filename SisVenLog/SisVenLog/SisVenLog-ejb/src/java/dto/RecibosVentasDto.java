@@ -20,13 +20,13 @@ public class RecibosVentasDto implements Serializable {
     private String ctipo;
     private long ndocum;
     private Date ffactur;
-    private long iefectivo;
+    private Double iefectivo;
     private String nroCheque;
-    private long ipagado;
-    private long moneda;
-    private long cotizacion;
+    private Double ipagado;
+    private Double moneda;
+    private Double cotizacion;
 
-    public RecibosVentasDto(String ctipoDocum, long ncuota, Date frecibo, long nrecibo, String ctipo, long ndocum, Date ffactur, long iefectivo, String nroCheque, long ipagado, long moneda, long cotizacion) {
+    public RecibosVentasDto(String ctipoDocum, long ncuota, Date frecibo, long nrecibo, String ctipo, long ndocum, Date ffactur, Double iefectivo, String nroCheque, Double ipagado, Double moneda, Double cotizacion) {
         this.ctipoDocum = ctipoDocum;
         this.ncuota = ncuota;
         this.frecibo = frecibo;
@@ -72,7 +72,7 @@ public class RecibosVentasDto implements Serializable {
         return ffactur;
     }
 
-    public long getIefectivo() {
+    public Double getIefectivo() {
         return iefectivo;
     }
 
@@ -80,15 +80,15 @@ public class RecibosVentasDto implements Serializable {
         return nroCheque;
     }
 
-    public long getIpagado() {
+    public Double getIpagado() {
         return ipagado;
     }
 
-    public long getMoneda() {
+    public Double getMoneda() {
         return moneda;
     }
 
-    public long getCotizacion() {
+    public Double getCotizacion() {
         return cotizacion;
     }
 
@@ -120,7 +120,7 @@ public class RecibosVentasDto implements Serializable {
         this.ffactur = ffactur;
     }
 
-    public void setIefectivo(long iefectivo) {
+    public void setIefectivo(Double iefectivo) {
         this.iefectivo = iefectivo;
     }
 
@@ -128,15 +128,15 @@ public class RecibosVentasDto implements Serializable {
         this.nroCheque = nroCheque;
     }
 
-    public void setIpagado(long ipagado) {
+    public void setIpagado(Double ipagado) {
         this.ipagado = ipagado;
     }
 
-    public void setMoneda(long moneda) {
+    public void setMoneda(Double moneda) {
         this.moneda = moneda;
     }
 
-    public void setCotizacion(long cotizacion) {
+    public void setCotizacion(Double cotizacion) {
         this.cotizacion = cotizacion;
     }
 }

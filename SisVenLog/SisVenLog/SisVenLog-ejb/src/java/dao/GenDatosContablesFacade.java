@@ -103,11 +103,11 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             }else{
                 rvdto.setFfactur(null);
             }
-            rvdto.setIefectivo(Long.parseLong(resultado[7].toString()));
+            rvdto.setIefectivo(Double.parseDouble(resultado[7].toString()));
             rvdto.setNroCheque(resultado[8].toString());
-            rvdto.setIpagado(Long.parseLong(resultado[9].toString()));
-            rvdto.setMoneda(Long.parseLong(resultado[10].toString()));
-            rvdto.setCotizacion(Long.parseLong(resultado[11].toString()));
+            rvdto.setIpagado(Double.parseDouble(resultado[9].toString()));
+            rvdto.setMoneda(Double.parseDouble(resultado[10].toString()));
+            rvdto.setCotizacion(Double.parseDouble(resultado[11].toString()));
             
             String xNroFact = String.format("%03d", rvdto.getNdocum()) + "-" + String.format("%03d", rvdto.getNdocum()) + "-" + String.format("%07d", rvdto.getNdocum());
             
@@ -282,11 +282,11 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setXruc(resultado[8].toString());
             rfvdto.setXfactura(resultado[9].toString());
             rfvdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[10].toString())));
-            rfvdto.setTexentas(Long.parseLong(resultado[11].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[15].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[11].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[15].toString()));
 
 //            String tGrabadas5;
             String lCuenta = "";
@@ -447,11 +447,11 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setXruc(resultado[8].toString());
             rfvdto.setXfactura(resultado[9].toString());
             rfvdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[10].toString())));
-            rfvdto.setTexentas(Long.parseLong(resultado[11].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[15].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[11].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[15].toString()));
 
             String lCuenta = "";
             Short lFormap;
@@ -579,11 +579,11 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setXruc(resultado[8].toString());
             rfvdto.setXfactura(resultado[9].toString());
             rfvdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[10].toString())));
-            rfvdto.setTexentas(Long.parseLong(resultado[11].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[15].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[11].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[15].toString()));
 
             String lCuenta = "";
             Short lFormap;
@@ -711,11 +711,11 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setXruc(resultado[8].toString());
             rfvdto.setXfactura(resultado[9].toString());
             rfvdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[10].toString())));
-            rfvdto.setTexentas(Long.parseLong(resultado[11].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[15].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[11].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[15].toString()));
 
             String lCuenta = "";
             Short lFormap;
@@ -826,18 +826,19 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setNroDocumIni(Long.parseLong(resultado[9].toString()));
             rfvdto.setNroDocumFin(Long.parseLong(resultado[10].toString()));
             rfvdto.setXfactura(resultado[11].toString());
-            rfvdto.setTexentas(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[15].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[16].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[15].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[16].toString()));
 
             String lCuenta;
             Short lFormap;
             
-            RangosDocumentos rangosDocumentos = rangosDocumentosFacade.getRangosDocumentosByYearDocument(rfvdto.getNrofact(), String.valueOf(rfvdto.getFfactur().getYear()));
+            RangosDocumentos rangosDocumentos = rangosDocumentosFacade.getRangosDocumentosByYearDocument(rfvdto.getNrofact(), String.valueOf(rfvdto.getFfactur().getYear()+1900));
             
-            rfvdto.setNtimbrado(rangosDocumentos.getNtimbrado());
+            if(rangosDocumentos != null) rfvdto.setNtimbrado(rangosDocumentos.getNtimbrado());
+            else rfvdto.setNtimbrado(BigInteger.ZERO);
 
             TiposDocumentos tipoDocumento = tiposDocumentosFacade.getTipoDocumentoByCTipoDocumento(rfvdto.getCtipoDocum());
 
@@ -894,7 +895,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             listaFinal.add(obj);
         }
         
-        Query qNotasCreditoInactivaIvaIncl = getEntityManager().createNativeQuery(" SELECT    f.xrazon_social, f.xruc, n.fac_ctipo_docum, CONVERT(char(10), n.fdocum,103)  as ffactur, "
+        Query qNotasCreditoInactivaIvaIncl = getEntityManager().createNativeQuery(" SELECT    f.xrazon_social, f.xruc, n.fac_ctipo_docum, n.fdocum as ffactur, "
                 + "  n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, 'F' as mtipo_papel, 0 as nro_docum_ini, 0 as nro_docum_fin, n.xnro_nota, SUM(d.iexentas) AS texentas, "
                 + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
                 + "        AS timpuestos_10, 0 AS timpuestos_5 "
@@ -966,18 +967,19 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rfvdto.setNroDocumIni(Long.parseLong(resultado[9].toString()));
             rfvdto.setNroDocumFin(Long.parseLong(resultado[10].toString()));
             rfvdto.setXfactura(resultado[11].toString());
-            rfvdto.setTexentas(Long.parseLong(resultado[12].toString()));
-            rfvdto.setTgravadas10(Long.parseLong(resultado[13].toString()));
-            rfvdto.setTgravadas5(Long.parseLong(resultado[14].toString()));
-            rfvdto.setTimpuestos10(Long.parseLong(resultado[15].toString()));
-            rfvdto.setTimpuestos5(Long.parseLong(resultado[16].toString()));
+            rfvdto.setTexentas(Double.parseDouble(resultado[12].toString()));
+            rfvdto.setTgravadas10(Double.parseDouble(resultado[13].toString()));
+            rfvdto.setTgravadas5(Double.parseDouble(resultado[14].toString()));
+            rfvdto.setTimpuestos10(Double.parseDouble(resultado[15].toString()));
+            rfvdto.setTimpuestos5(Double.parseDouble(resultado[16].toString()));
 
             String lCuenta;
             Short lFormap;
             
-            RangosDocumentos rangosDocumentos = rangosDocumentosFacade.getRangosDocumentosByYearDocument(rfvdto.getNrofact(), String.valueOf(rfvdto.getFfactur().getYear()));
+            RangosDocumentos rangosDocumentos = rangosDocumentosFacade.getRangosDocumentosByYearDocument(rfvdto.getNrofact(), String.valueOf(rfvdto.getFfactur().getYear()+1900));
             
-            rfvdto.setNtimbrado(rangosDocumentos.getNtimbrado());
+            if(rangosDocumentos != null) rfvdto.setNtimbrado(rangosDocumentos.getNtimbrado());
+            else rfvdto.setNtimbrado(BigInteger.ZERO);
 
             TiposDocumentos tipoDocumento = tiposDocumentosFacade.getTipoDocumentoByCTipoDocumento(rfvdto.getCtipoDocum());
 
@@ -1095,15 +1097,15 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             }
             rfcdto.setNrofact(Long.parseLong(resultado[2].toString()));
             rfcdto.setCtipoDocum(resultado[3].toString());
-            rfcdto.setTtotal(Long.parseLong(resultado[4].toString()));
+            rfcdto.setTtotal(Double.parseDouble(resultado[4].toString()));
             rfcdto.setXruc(resultado[5].toString());
             rfcdto.setXfactura(resultado[6].toString());
             rfcdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[7].toString())));
-            rfcdto.setTexentas(Long.parseLong(resultado[8].toString()));
-            rfcdto.setTgravadas10(Long.parseLong(resultado[9].toString()));
-            rfcdto.setTgravadas5(Long.parseLong(resultado[10].toString()));
-            rfcdto.setTimpuestos10(Long.parseLong(resultado[11].toString()));
-            rfcdto.setTimpuestos5(Long.parseLong(resultado[12].toString()));
+            rfcdto.setTexentas(Double.parseDouble(resultado[8].toString()));
+            rfcdto.setTgravadas10(Double.parseDouble(resultado[9].toString()));
+            rfcdto.setTgravadas5(Double.parseDouble(resultado[10].toString()));
+            rfcdto.setTimpuestos10(Double.parseDouble(resultado[11].toString()));
+            rfcdto.setTimpuestos5(Double.parseDouble(resultado[12].toString()));
 
             String lCuenta;
             Short lFormap;
@@ -1206,15 +1208,15 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             }
             rfcdto.setNrofact(Long.parseLong(resultado[2].toString()));
             rfcdto.setCtipoDocum(resultado[3].toString());
-            rfcdto.setTtotal(Long.parseLong(resultado[4].toString()));
+            rfcdto.setTtotal(Double.parseDouble(resultado[4].toString()));
             rfcdto.setXruc(resultado[5].toString());
             rfcdto.setXfactura(resultado[6].toString());
             rfcdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[7].toString())));
-            rfcdto.setTexentas(Long.parseLong(resultado[8].toString()));
-            rfcdto.setTgravadas10(Long.parseLong(resultado[9].toString()));
-            rfcdto.setTgravadas5(Long.parseLong(resultado[10].toString()));
-            rfcdto.setTimpuestos10(Long.parseLong(resultado[11].toString()));
-            rfcdto.setTimpuestos5(Long.parseLong(resultado[12].toString()));
+            rfcdto.setTexentas(Double.parseDouble(resultado[8].toString()));
+            rfcdto.setTgravadas10(Double.parseDouble(resultado[9].toString()));
+            rfcdto.setTgravadas5(Double.parseDouble(resultado[10].toString()));
+            rfcdto.setTimpuestos10(Double.parseDouble(resultado[11].toString()));
+            rfcdto.setTimpuestos5(Double.parseDouble(resultado[12].toString()));
 
             String lCuenta;
             Short lFormap;
@@ -1274,7 +1276,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             listaFinal.add(obj);
         }
         
-        Query qNotasCreditoIvaNoIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc, n.ctipo_docum,   n.fdocum,  "
+        Query qNotasCreditoIvaNoIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc, n.ctipo_docum, n.fdocum,  "
                 + "  n.nro_nota, n.cconc, n.ttotal,   n.ntimbrado,  "
                 + " SUM(d.iexentas) AS texentas, "
                 + " SUM(d.igravadas) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
@@ -1305,7 +1307,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
 
         System.out.println(qNotasCreditoIvaNoIncl.toString());
         
-        List<Object[]> lista3 = qIvaIncl.getResultList();
+        List<Object[]> lista3 = qNotasCreditoIvaNoIncl.getResultList();
         
         for (Object[] resultado : lista3) {
             RecibosFacturasComprasIvaInclNoIncl rfcdto = new RecibosFacturasComprasIvaInclNoIncl();
@@ -1321,13 +1323,13 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             }
             rfcdto.setNrofact(Long.parseLong(resultado[4].toString()));
             rfcdto.setCconc(resultado[5].toString());
-            rfcdto.setTtotal(Long.parseLong(resultado[6].toString()));
+            rfcdto.setTtotal(Double.parseDouble(resultado[6].toString()));
             rfcdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[6].toString())));            
-            rfcdto.setTexentas(Long.parseLong(resultado[7].toString()));
-            rfcdto.setTgravadas10(Long.parseLong(resultado[8].toString()));
-            rfcdto.setTgravadas5(Long.parseLong(resultado[9].toString()));
-            rfcdto.setTimpuestos10(Long.parseLong(resultado[10].toString()));
-            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            rfcdto.setTexentas(Double.parseDouble(resultado[7].toString()));
+            rfcdto.setTgravadas10(Double.parseDouble(resultado[8].toString()));
+            rfcdto.setTgravadas5(Double.parseDouble(resultado[9].toString()));
+            rfcdto.setTimpuestos10(Double.parseDouble(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Double.parseDouble(resultado[11].toString()));
 
             String lCuenta;
             Short lFormap;
@@ -1385,8 +1387,8 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             listaFinal.add(obj);
         }
 
-        Query qNotasCreditoIvaIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc,   n.fdocum,  "
-                + " n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado,  "
+        Query qNotasCreditoIvaIncl = getEntityManager().createNativeQuery(" SELECT    p.xnombre ,  p.xruc, n.ctipo_docum, n.fdocum,  "
+                + " n.nro_nota, n.cconc, n.ttotal, n.ntimbrado,  "
                 + " SUM(d.iexentas) AS texentas, "
                 + " SUM(d.igravadas + d.impuestos) AS tgravadas_10, 0 AS tgravadas_5, SUM(ABS(d.impuestos)) "
                 + "        AS timpuestos_10, 0 AS timpuestos_5 "
@@ -1400,7 +1402,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
                 + " AND n.cod_empr = 2 and d.cod_empr = 2 "
                 + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal,n.ntimbrado "
                 + " UNION ALL "
-                + " SELECT     p.xnombre, p.xruc,  n.fdocum, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
+                + " SELECT     p.xnombre, p.xruc, n.ctipo_docum, n.fdocum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
                 + " SUM(d.iexentas) AS texentas, "
                 + " 0 AS tgravadas_10, SUM(d.igravadas + d.impuestos) AS tgravadas_5, 0 "
                 + "        AS timpuestos_10, SUM(ABS(d.impuestos)) AS timpuestos_5 "
@@ -1414,7 +1416,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
                 + " AND n.cod_empr = 2 and d.cod_empr = 2 "
                 + " GROUP BY p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, N.CCONC, n.nro_nota, n.ttotal, n.ntimbrado "
                 + " UNION ALL "
-                + " SELECT     p.xnombre, p.xruc, n.fdocum, n.ctipo_docum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
+                + " SELECT     p.xnombre, p.xruc, n.ctipo_docum, n.fdocum, n.nro_nota, n.cconc, n.ttotal, n.ntimbrado, "
                 + " SUM(d.iexentas) AS texentas, "
                 + " 0 AS tgravadas_10, 0 AS tgravadas_5, 0 "
                 + "        AS timpuestos_10, 0 AS timpuestos_5  "
@@ -1445,13 +1447,13 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             }
             rfcdto.setNrofact(Long.parseLong(resultado[4].toString()));
             rfcdto.setCconc(resultado[5].toString());
-            rfcdto.setTtotal(Long.parseLong(resultado[6].toString()));
+            rfcdto.setTtotal(Double.parseDouble(resultado[6].toString()));
             rfcdto.setNtimbrado(BigInteger.valueOf(Long.parseLong(resultado[6].toString())));            
-            rfcdto.setTexentas(Long.parseLong(resultado[7].toString()));
-            rfcdto.setTgravadas10(Long.parseLong(resultado[8].toString()));
-            rfcdto.setTgravadas5(Long.parseLong(resultado[9].toString()));
-            rfcdto.setTimpuestos10(Long.parseLong(resultado[10].toString()));
-            rfcdto.setTimpuestos5(Long.parseLong(resultado[11].toString()));
+            rfcdto.setTexentas(Double.parseDouble(resultado[7].toString()));
+            rfcdto.setTgravadas10(Double.parseDouble(resultado[8].toString()));
+            rfcdto.setTgravadas5(Double.parseDouble(resultado[9].toString()));
+            rfcdto.setTimpuestos10(Double.parseDouble(resultado[10].toString()));
+            rfcdto.setTimpuestos5(Double.parseDouble(resultado[11].toString()));
 
             String lCuenta;
             Short lFormap;

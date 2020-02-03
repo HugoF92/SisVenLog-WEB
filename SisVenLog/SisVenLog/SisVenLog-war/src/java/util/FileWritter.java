@@ -46,11 +46,11 @@ public class FileWritter {
                     + separador + datos.get(i).getCtipo()
                     + separador + Long.toString(datos.get(i).getNdocum())
                     + separador + dateToString(datos.get(i).getFfactur())
-                    + separador + Long.toString(datos.get(i).getIefectivo())
+                    + separador + Double.toString(datos.get(i).getIefectivo())
                     + separador + datos.get(i).getNroCheque()
-                    + separador + Long.toString(datos.get(i).getIpagado())
-                    + separador + Long.toString(datos.get(i).getMoneda())
-                    + separador + Long.toString(datos.get(i).getCotizacion());
+                    + separador + Double.toString(datos.get(i).getIpagado())
+                    + separador + Double.toString(datos.get(i).getMoneda())
+                    + separador + Double.toString(datos.get(i).getCotizacion());
             aGuardarEnArchivo += saltoDeLinea + linea;
             i++;
         }
@@ -111,11 +111,11 @@ public class FileWritter {
                     + separador + Long.toString(datos.get(i).getTtotal())
                     + separador + datos.get(i).getXruc()
                     + separador + datos.get(i).getXfactura()
-                    + separador + Long.toString(datos.get(i).getTexentas())
-                    + separador + Long.toString(datos.get(i).getTgravadas10())
-                    + separador + Long.toString(datos.get(i).getTgravadas5())
-                    + separador + Long.toString(datos.get(i).getTimpuestos10())
-                    + separador + Long.toString(datos.get(i).getTimpuestos5());
+                    + separador + Double.toString(datos.get(i).getTexentas())
+                    + separador + Double.toString(datos.get(i).getTgravadas10())
+                    + separador + Double.toString(datos.get(i).getTgravadas5())
+                    + separador + Double.toString(datos.get(i).getTimpuestos10())
+                    + separador + Double.toString(datos.get(i).getTimpuestos5());
             aGuardarEnArchivo += saltoDeLinea + linea;
             i++;
         }
@@ -136,15 +136,15 @@ public class FileWritter {
                     + separador + dateToString(datos.get(i).getFfactur())
                     + separador + Long.toString(datos.get(i).getNrofact())
                     + separador + datos.get(i).getCtipoDocum()
-                    + separador + Long.toString(datos.get(i).getTtotal())
+                    + separador + Double.toString(datos.get(i).getTtotal())
                     + separador + datos.get(i).getXruc()
                     + separador + datos.get(i).getXfactura()
                     + separador + datos.get(i).getNtimbrado()
-                    + separador + Long.toString(datos.get(i).getTexentas())
-                    + separador + Long.toString(datos.get(i).getTgravadas10())
-                    + separador + Long.toString(datos.get(i).getTgravadas5())
-                    + separador + Long.toString(datos.get(i).getTimpuestos10())
-                    + separador + Long.toString(datos.get(i).getTimpuestos5());
+                    + separador + Double.toString(datos.get(i).getTexentas())
+                    + separador + Double.toString(datos.get(i).getTgravadas10())
+                    + separador + Double.toString(datos.get(i).getTgravadas5())
+                    + separador + Double.toString(datos.get(i).getTimpuestos10())
+                    + separador + Double.toString(datos.get(i).getTimpuestos5());
             aGuardarEnArchivo += saltoDeLinea + linea;
             i++;
         }
