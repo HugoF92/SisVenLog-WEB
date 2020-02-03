@@ -30,7 +30,7 @@ public class RecibosComprasDto implements Serializable {
     private long itotal;
     private BigInteger ntimbrado;
     private BigInteger factTimbrado;
-    private String notaTimbrado; 
+    private String notaTimbrado;
 
     public RecibosComprasDto(String ctipoDocum, long ncuota, Date frecibo, long nrecibo, Long nrofact, String ctipo, Date ffactur, long iefectivo, String nroCheque, long ipagado, long moneda, long cotizacion, short codProveed, long itotal, BigInteger ntimbrado, BigInteger factTimbrado, String notaTimbrado) {
         this.ctipoDocum = ctipoDocum;

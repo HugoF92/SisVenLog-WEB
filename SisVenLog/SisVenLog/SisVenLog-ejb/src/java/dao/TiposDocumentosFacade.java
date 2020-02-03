@@ -74,7 +74,7 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return respuesta;
     }
     
-     public List<TiposDocumentos> listarTipoDocumentoParaConsultaDeVentas() {
+    public List<TiposDocumentos> listarTipoDocumentoParaConsultaDeVentas() {
         Query q = getEntityManager().createNativeQuery("select *\n"
                 + "from tipos_documentos\n"
                 + "where ctipo_docum in ('FCO','CPV','FCR', 'PED', 'NCV', 'NDV')", TiposDocumentos.class);
@@ -88,7 +88,7 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return respuesta;
     }
      
-     public List<TiposDocumentos> listarTipoDocumentoGenDocuAnul() {
+    public List<TiposDocumentos> listarTipoDocumentoGenDocuAnul() {
         Query q = getEntityManager().createNativeQuery("select *\n"
                 + "from tipos_documentos\n"
                 + "where ctipo_docum in ('FCO', 'EN', 'NCV', 'REM')", TiposDocumentos.class);
@@ -98,6 +98,18 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
 
         respuesta = q.getResultList();
+
+        return respuesta;
+    }
+    
+    public TiposDocumentos getTipoDocumentoByCTipoDocumento(String cTipoDocumento) {
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from tipos_documentos\n"
+                + "where ctipo_docum in ('"+ cTipoDocumento +"')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        TiposDocumentos respuesta = (TiposDocumentos) q.getSingleResult();
 
         return respuesta;
     }

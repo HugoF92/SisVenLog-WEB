@@ -28,8 +28,9 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
     private long tgravadas5;
     private long timpuestos10;
     private long timpuestos5;
+    private String cconc;
 
-    public RecibosFacturasComprasIvaInclNoIncl(String xnombre, Date ffactur, Long nrofact, String ctipoDocum, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5) {
+    public RecibosFacturasComprasIvaInclNoIncl(String xnombre, Date ffactur, Long nrofact, String ctipoDocum, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5, String cconc) {
         this.xnombre = xnombre;
         this.ffactur = ffactur;
         this.nrofact = nrofact;
@@ -43,6 +44,7 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         this.tgravadas5 = tgravadas5;
         this.timpuestos10 = timpuestos10;
         this.timpuestos5 = timpuestos5;
+        this.cconc = cconc;
     }
 
     public RecibosFacturasComprasIvaInclNoIncl() {
@@ -100,6 +102,10 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
         return timpuestos5;
     }
 
+    public String getCconc() {
+        return cconc;
+    }
+
     public void setXnombre(String xnombre) {
         this.xnombre = xnombre;
     }
@@ -150,6 +156,10 @@ public class RecibosFacturasComprasIvaInclNoIncl implements Serializable {
 
     public void setTimpuestos5(long timpuestos5) {
         this.timpuestos5 = timpuestos5;
+    }
+
+    public void setCconc(String cconc) {
+        this.cconc = cconc;
     }
 
 }

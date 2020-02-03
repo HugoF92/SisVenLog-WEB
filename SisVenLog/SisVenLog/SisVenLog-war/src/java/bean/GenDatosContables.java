@@ -67,14 +67,15 @@ public class GenDatosContables implements Serializable {
                 if (listaRecibosVentas.isEmpty()) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
                 } else {
-                    String[] columnas = {"ctipo_docum", "nro_cuota", "frecibo", "nrecibo", "ctipo", "ndocum", "ffactur", "iefectivo", "nro_cheque", "ipagado", "moneda", "cotizacion"};
+                    String[] columnas = {"ncuota", "frecibo", "nrofact", "timbrado", "nrecibo ", "iefectivo", "cta_contable", "icheques", "nro_cheque", "cod_cta_cte", "moneda", "cotizacion"};
 
                     LlamarReportes rep = new LlamarReportes();
 
                     rep.exportarExcel(columnas, listaRecibosVentas, "revtacont");
+                    
                     //FileWritter.guardarDatosRecibosVentas(path, listaRecibosVentas);
                 }
-            } else if (documentosAnulados.equals("RC")) {
+            } else if (documentosAnulados.equals("RC")) { // no se hace por el momento
                 listaRecibosCompras = genDatosContablesFacade.busquedaDatosRecibosCompras(dateToString(getFechaInicial()), dateToString(getFechaFinal()));
                 if (listaRecibosCompras.isEmpty()) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
@@ -93,11 +94,12 @@ public class GenDatosContables implements Serializable {
                 if (listaRecibosFacturasVentasIvaInclNoIncl.isEmpty()) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
                 } else {
-                    String[] columnas = {"xrazon_social", "ffactur", "nrofact", "ctipo_docum", "mtipo_papel", "nro_docum_ini", "nro_docum_fin", "ntimbrado", "TTOTAL", "xruc", "xfactura", "texentas", "tgravadas_10", "tgravadas_5", "timpuestos_10", "timpuestos_5"};
+                    String[] columnas = {"codvta", "codempr", "ffactur", "formapago", "xruc", "tipo", "nroboleta", "moneda", "cotizacion", "texentas", "gravadas5", "gravadas10", "ttotal", "cuenta", "detalle", "exentas", "gravadas", "incluido", "nrodetalle", "porciva", "iva5", "iva10", "ivamonto", "nombrecli", "mtipo_papel", "cuota", "timbrado"};
 
                     LlamarReportes rep = new LlamarReportes();
 
                     rep.exportarExcel(columnas, listaRecibosFacturasVentasIvaInclNoIncl, "vtascont");
+                    
                     //FileWritter.guardarDatosFacturasVentas(path, listaRecibosFacturasVentasIvaInclNoIncl);
                 }
             } else if (documentosAnulados.equals("DC")) {
@@ -105,7 +107,7 @@ public class GenDatosContables implements Serializable {
                 if (listaRecibosFacturasComprasIvaInclNoIncl.isEmpty()) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados, lista vacia!.", tituloError));
                 } else {
-                    String[] columnas = {"xnombre", "ffactur", "nrofact", "ctipo_docum", "TTOTAL", "xruc", "xfactura", "ntimbrado", "texentas", "tgravadas_10", "tgravadas_5", "timpuestos_10", "timpuestos_5"};
+                    String[] columnas = {"codcompra", "codempr", "ffactur", "nroboleta", "xruc", "formapago", "moneda", "cotizacion", "tipo", "tipo1", "texentas", "gravadas5", "gravadas10", "ttotal", "cuenta", "detalle", "exentas", "gravadas", "incluido", "nrodetalle", "porciva", "iva5", "iva10", "ivamonto", "nombrepro", "cuota", "timbrado"};
 
                     LlamarReportes rep = new LlamarReportes();
 

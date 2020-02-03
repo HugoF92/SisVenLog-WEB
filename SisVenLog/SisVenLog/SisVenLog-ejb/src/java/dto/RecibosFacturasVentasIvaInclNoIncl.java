@@ -22,17 +22,19 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
     private Character mtipoPapel;
     private long nroDocumIni;
     private Long nroDocumFin;
-    private BigInteger ntimbrado;
     private long ttotal;
     private String xruc;
     private String xfactura;
+    private BigInteger ntimbrado;
     private long texentas;
     private long tgravadas10;
     private long tgravadas5;
     private long timpuestos10;
     private long timpuestos5;
+    private String facCtipoDocum;
+    private String cconc;
 
-    public RecibosFacturasVentasIvaInclNoIncl(String xrazonSocial, Date ffactur, Long nrofact, String ctipoDocum, Character mtipoPapel, long nroDocumIni, Long nroDocumFin, BigInteger ntimbrado, long ttotal, String xruc, String xfactura, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5) {
+    public RecibosFacturasVentasIvaInclNoIncl(String xrazonSocial, Date ffactur, Long nrofact, String ctipoDocum, Character mtipoPapel, long nroDocumIni, Long nroDocumFin, long ttotal, String xruc, String xfactura, BigInteger ntimbrado, long texentas, long tgravadas10, long tgravadas5, long timpuestos10, long timpuestos5, String facCtipoDocum, String cconc) {
         this.xrazonSocial = xrazonSocial;
         this.ffactur = ffactur;
         this.nrofact = nrofact;
@@ -40,15 +42,17 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         this.mtipoPapel = mtipoPapel;
         this.nroDocumIni = nroDocumIni;
         this.nroDocumFin = nroDocumFin;
-        this.ntimbrado = ntimbrado;
         this.ttotal = ttotal;
         this.xruc = xruc;
         this.xfactura = xfactura;
+        this.ntimbrado = ntimbrado;
         this.texentas = texentas;
         this.tgravadas10 = tgravadas10;
         this.tgravadas5 = tgravadas5;
         this.timpuestos10 = timpuestos10;
         this.timpuestos5 = timpuestos5;
+        this.facCtipoDocum = facCtipoDocum;
+        this.cconc = cconc;
     }
 
     public RecibosFacturasVentasIvaInclNoIncl() {
@@ -118,6 +122,14 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
         return timpuestos5;
     }
 
+    public String getFacCtipoDocum() {
+        return facCtipoDocum;
+    }
+
+    public String getCconc() {
+        return cconc;
+    }
+
     public void setXrazonSocial(String xrazonSocial) {
         this.xrazonSocial = xrazonSocial;
     }
@@ -180,6 +192,14 @@ public class RecibosFacturasVentasIvaInclNoIncl implements Serializable {
 
     public void setTimpuestos5(long timpuestos5) {
         this.timpuestos5 = timpuestos5;
+    }
+
+    public void setFacCtipoDocum(String facCtipoDocum) {
+        this.facCtipoDocum = facCtipoDocum;
+    }
+
+    public void setCconc(String cconc) {
+        this.cconc = cconc;
     }
 
 }
