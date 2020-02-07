@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -58,6 +61,40 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
     @PreDestroy
     public void destruct() {
         getEntityManager().close();
+    }
+    
+    private String dateToStringReporte(Date fecha) {
+
+        String resultado = "";
+
+        try {
+
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            resultado = dateFormat.format(fecha);
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al convertir fecha"));
+        }
+
+        return resultado;
+    }
+    /* si es 1, extrae el string de la posicion 0, si es 2, extrae de 1 a 2, si es 3, extrae de 3 a 9 */
+    private String extraerFacturaFormateada(String nroFactura, int tipo){
+        int limiteInf=0;
+        int limiteSup=0;
+        if(tipo == 1){
+            limiteInf=0;
+            limiteSup=0;
+        }else if(tipo == 2){
+            limiteInf=1;
+            limiteSup=2;
+        }else if(tipo == 3){
+            limiteInf=3;
+            limiteSup=nroFactura.length()-1;
+        }
+        
+        return nroFactura.substring(limiteInf, limiteSup+1);
     }
 
     public List<Object[]> busquedaDatosRecibosVentas(String fechaInicial, String fechaFinal) throws Exception { 
@@ -109,7 +146,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             rvdto.setMoneda(Double.parseDouble(resultado[10].toString()));
             rvdto.setCotizacion(Double.parseDouble(resultado[11].toString()));
             
-            String xNroFact = String.format("%03d", rvdto.getNdocum()) + "-" + String.format("%03d", rvdto.getNdocum()) + "-" + String.format("%07d", rvdto.getNdocum());
+            String xNroFact = String.format("%03d", Long.parseLong(extraerFacturaFormateada((new Long(rvdto.getNdocum())).toString(), 1))) + "-" + String.format("%03d", Long.parseLong(extraerFacturaFormateada((new Long(rvdto.getNdocum())).toString(), 2))) + "-" + String.format("%07d", Long.parseLong(extraerFacturaFormateada((new Long(rvdto.getNdocum())).toString(), 3)));
             
             TiposDocumentos tipoDocumento = tiposDocumentosFacade.getTipoDocumentoByCTipoDocumento(rvdto.getCtipoDocum());
             
@@ -121,15 +158,14 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             
             Object[] obj = {
                 (Object)1,
-                (Object)rvdto.getFrecibo(),
+                (Object)dateToStringReporte(rvdto.getFrecibo()),
                 (Object)xNroFact,
                 (Object)0,
-                (Object)rvdto.getFrecibo(),
+                (Object)rvdto.getNrecibo(),
                 (Object)rvdto.getIefectivo(),
                 (Object)lCuenta,
                 (Object)rvdto.getIpagado(),
                 (Object)rvdto.getNroCheque(),
-                (Object)0,
                 (Object)0,
                 (Object)1,
                 (Object)0
@@ -316,7 +352,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)rfvdto.getXruc(),
                 (Object)1,
@@ -474,7 +510,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)"1",
                 (Object)1,
@@ -606,7 +642,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)rfvdto.getXruc(),
                 (Object)1,
@@ -738,7 +774,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)"1",
                 (Object)1,
@@ -866,7 +902,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)rfvdto.getXruc(),
                 (Object)1,
@@ -1007,7 +1043,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfvdto.getNrofact(),
                 (Object)2,
-                (Object)rfvdto.getFfactur(),
+                (Object)dateToStringReporte(rfvdto.getFfactur()),
                 (Object)lFormap,
                 (Object)rfvdto.getXruc(),
                 (Object)1,
@@ -1136,7 +1172,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfcdto.getNrofact(),
                 (Object)2,
-                (Object)rfcdto.getFfactur(),
+                (Object)dateToStringReporte(rfcdto.getFfactur()),
                 (Object)rfcdto.getXfactura(),
                 (Object)rfcdto.getXruc(),
                 (Object)lFormap,
@@ -1247,7 +1283,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfcdto.getNrofact(),
                 (Object)2,
-                (Object)rfcdto.getFfactur(),
+                (Object)dateToStringReporte(rfcdto.getFfactur()),
                 (Object)rfcdto.getXfactura(),
                 (Object)rfcdto.getXruc(),
                 (Object)lFormap,
@@ -1334,7 +1370,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             String lCuenta;
             Short lFormap;
             
-            String xNroFact = String.format("%03d", rfcdto.getNrofact()) + "-" + String.format("%03d", rfcdto.getNrofact()) + "-" + String.format("%07d", rfcdto.getNrofact());
+            String xNroFact = String.format("%03d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 1))) + "-" + String.format("%03d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 2))) + "-" + String.format("%07d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 3)));
             
             TiposDocumentos tipoDocumento = tiposDocumentosFacade.getTipoDocumentoByCTipoDocumento(rfcdto.getCtipoDocum());
 
@@ -1358,7 +1394,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfcdto.getNrofact(),
                 (Object)2,
-                (Object)rfcdto.getFfactur(),
+                (Object)dateToStringReporte(rfcdto.getFfactur()),
                 (Object)xNroFact,
                 (Object)rfcdto.getXruc(),
                 (Object)lFormap,
@@ -1458,7 +1494,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             String lCuenta;
             Short lFormap;
             
-            String xNroFact = String.format("%03d", rfcdto.getNrofact()) + "-" + String.format("%03d", rfcdto.getNrofact()) + "-" + String.format("%07d", rfcdto.getNrofact());
+            String xNroFact = String.format("%03d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 1))) + "-" + String.format("%03d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 2))) + "-" + String.format("%07d", Long.parseLong(extraerFacturaFormateada(rfcdto.getNrofact().toString(), 3)));
             
             TiposDocumentos tipoDocumento = tiposDocumentosFacade.getTipoDocumentoByCTipoDocumento(rfcdto.getCtipoDocum());
 
@@ -1482,7 +1518,7 @@ public class GenDatosContablesFacade extends AbstractFacade<Recibos> {
             Object[] obj = {
                 (Object)rfcdto.getNrofact(),
                 (Object)2,
-                (Object)rfcdto.getFfactur(),
+                (Object)dateToStringReporte(rfcdto.getFfactur()),
                 (Object)xNroFact,
                 (Object)rfcdto.getXruc(),
                 (Object)lFormap,

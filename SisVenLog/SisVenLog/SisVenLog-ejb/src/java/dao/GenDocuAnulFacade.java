@@ -99,13 +99,10 @@ public class GenDocuAnulFacade extends AbstractFacade<Recibos> {
     }
 
     /* Funcion testeada */
-    public List<Integer> getDocAnulEN(Integer estabInicial, Integer expedInicial, Integer secueInicial, Integer secueFinal) throws Exception {
+    public List<Integer> getDocAnulEN(Integer secueInicial, Integer secueFinal) throws Exception {
         List<Integer> result = new ArrayList();
 
         for (int i = secueInicial; i <= secueFinal; i++) {
-            String sNrofactura = Integer.toString(estabInicial) + String.format("%02d", expedInicial) + String.format("%07d", i);
-            Integer nroEnvio = Integer.parseInt(sNrofactura);
-
             Integer nroEnvioActual = i;
             Query q = getEntityManager().createNativeQuery(" SELECT count(*) as kfilas "
                     + " FROM envios "
@@ -117,7 +114,7 @@ public class GenDocuAnulFacade extends AbstractFacade<Recibos> {
             Integer kfilas = (Integer)q.getSingleResult();
 
             if (kfilas > 0) {
-                result.add(nroEnvio);
+                result.add(nroEnvioActual);
             }
         }
 
@@ -302,7 +299,7 @@ public class GenDocuAnulFacade extends AbstractFacade<Recibos> {
         return result;
     }
 
-    public List<Integer> inDocAnulEN(Integer estabInicial, Integer expedInicial, String fechaDoc, Integer secueInicial, Integer secueFinal) throws Exception {
+    public List<Integer> inDocAnulEN(String fechaDoc, Integer secueInicial, Integer secueFinal) throws Exception {
 
         String cod_canal = "'T'";
         Integer depo_origen = 1;
@@ -331,11 +328,10 @@ public class GenDocuAnulFacade extends AbstractFacade<Recibos> {
         List<Integer> result = new ArrayList(); //error
 
         for (int i = secueInicial; i <= secueFinal; i++) {
-            String sNrofactura = Integer.toString(estabInicial) + String.format("%02d", expedInicial) + String.format("%07d", i);
-            Integer new_nroEnvio = Integer.parseInt(sNrofactura);
+            Integer nro_envio = i;
 
             try {
-                Integer nro_envio = i;
+                
                 String q1 = "INSERT INTO envios (cod_empr, nro_envio, "
                         + "cod_entregador, cod_canal, depo_origen, depo_destino, "
                         + "fenvio, xobs, mestado, tot_peso, FANUL) values ("
@@ -352,7 +348,7 @@ public class GenDocuAnulFacade extends AbstractFacade<Recibos> {
                 personalizedFacade.ejecutarSentenciaSQL(q2);
 
             } catch (Exception e) {
-                result.add(new_nroEnvio); //error
+                result.add(nro_envio); //error
             }
         }
 

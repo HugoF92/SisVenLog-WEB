@@ -19,6 +19,7 @@ import javax.ejb.EJB;
 import javax.faces.application.*;
 import javax.faces.bean.*;
 import javax.faces.context.*;
+import javax.faces.event.ValueChangeEvent;
 import org.primefaces.context.RequestContext;
 import util.ExceptionHandlerView;
 
@@ -42,6 +43,10 @@ public class GenDocuAnul implements Serializable {
     /* Fechas del formulario */
     private Date fechaDocumento;
     private Date fechaFactura;
+    
+    /* Booleano para mostrar componentes de tipo documento NVC y EN */
+    private Boolean isNCV;
+    private Boolean isEN;
 
     /* Tipo de documento de la factura */
     private TiposDocumentos tiposDocumentos;
@@ -74,18 +79,16 @@ public class GenDocuAnul implements Serializable {
 
         this.tiposDocumentos = new TiposDocumentos();
         this.listaTiposDocumentos = new ArrayList<TiposDocumentos>();
+        
+        this.isNCV = false;
+        this.isEN = true;
     }
 
     public void ejecutar() {
-        if (!(estabInicial == null || expedInicial == null || secueInicial == null || secueFinal == null)) {
+        if ( ( !(estabInicial == null || expedInicial == null || secueInicial == null || secueFinal == null) && !(tiposDocumentos.getCtipoDocum().toUpperCase().equals("EN")) ) || ( !(secueInicial == null || secueFinal == null) && (tiposDocumentos.getCtipoDocum().toUpperCase().equals("EN")) ) ) {
             if (secueInicial + 50 < secueFinal) {
                 tituloError = "Error de validación.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango maximo es solo de 50.", tituloError));
-                return;
-            }
-            if(!(controlarDigitos(1, estabInicial) && controlarDigitos(2, expedInicial) && controlarDigitos(7, secueInicial) && controlarDigitos(7, secueFinal))){
-                tituloError = "Error de validación.";
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango de digitos es 1, 2 y 7 digitos respectivamente para los números de documentos.", tituloError));
                 return;
             }
         } else {
@@ -105,10 +108,6 @@ public class GenDocuAnul implements Serializable {
             } else if ((estabFactInicial == null || expedFactInicial == null || secueFactFinal == null)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ingrese Nro.Factura Contado Relacionada.", tituloError));
                 return;
-            }else if(!(controlarDigitos(1, estabFactInicial) && controlarDigitos(2, expedFactInicial) && controlarDigitos(7, secueFactFinal))){
-                tituloError = "Error de validación.";
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El rango de digitos es 1, 2 y 7 digitos respectivamente para el número de Factura Relacionada.", tituloError));
-                return;
             }
         }
 
@@ -119,7 +118,7 @@ public class GenDocuAnul implements Serializable {
             } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("FCO")) {
                 kfilas = genDocuAnulFacade.getDocAnulFCO(getEstabInicial(), getExpedInicial(), dateToString(getFechaFactura()), getSecueInicial(), getSecueFinal());
             } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("EN")) {
-                kfilas = genDocuAnulFacade.getDocAnulEN(getEstabInicial(), getExpedInicial(), getSecueInicial(), getSecueFinal());
+                kfilas = genDocuAnulFacade.getDocAnulEN(getSecueInicial(), getSecueFinal());
             } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("NCV")) {
                 kfilas = genDocuAnulFacade.getDocAnulNCV(getEstabInicial(), getExpedInicial(), dateToString(getFechaDocumento()), getSecueInicial(), getSecueFinal());
             }
@@ -152,8 +151,7 @@ public class GenDocuAnul implements Serializable {
                     result = genDocuAnulFacade.inDocAnulFCO(getEstabInicial(), getExpedInicial(), dateToString(getFechaDocumento()),
                             getSecueInicial(), getSecueFinal());
                 } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("EN")) {
-                    result = genDocuAnulFacade.inDocAnulEN(getEstabInicial(), getExpedInicial(), dateToString(getFechaDocumento()),
-                            getSecueInicial(), getSecueFinal());
+                    result = genDocuAnulFacade.inDocAnulEN(dateToString(getFechaDocumento()), getSecueInicial(), getSecueFinal());
                 } else if (tiposDocumentos.getCtipoDocum().toUpperCase().equals("NCV")) {
                     result = genDocuAnulFacade.inDocAnulNCV(getEstabInicial(), getExpedInicial(), getEstabFactInicial(), getExpedFactInicial(),
                             getSecueFactFinal(), dateToString(getFechaDocumento()), dateToString(getFechaFactura()), getSecueInicial(), getSecueFinal());
@@ -190,10 +188,20 @@ public class GenDocuAnul implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Fin de Grabacion.", "Exito!."));
     }
     
-    public static Boolean controlarDigitos(int numeroMaxDigitos, Integer numero){
-        String numeroString = String.valueOf(numero);
-        
-        return (numeroString.length() <= numeroMaxDigitos);
+    public void enableIsNCVorEN(ValueChangeEvent event) {
+        this.setTiposDocumentos((TiposDocumentos) event.getNewValue());
+        if (this.getTiposDocumentos() == null || this.getTiposDocumentos().getCtipoDocum() == null) {
+            this.setIsNCV(false);
+        } else if (this.getTiposDocumentos().getCtipoDocum().toUpperCase().equals("NCV")) {
+            this.setIsNCV(true);
+            this.setIsEN(false);
+        } else if (this.getTiposDocumentos().getCtipoDocum().toUpperCase().equals("EN")) {
+            this.setIsNCV(false);
+            this.setIsEN(true);
+        } else {
+            this.setIsNCV(false);
+            this.setIsEN(false);
+        }
     }
 
     public List<TiposDocumentos> listarTipoDocumentoGenDocuAnul() {
@@ -274,6 +282,14 @@ public class GenDocuAnul implements Serializable {
         return tituloError;
     }
 
+    public Boolean getIsNCV() {
+        return isNCV;
+    }
+
+    public Boolean getIsEN() {
+        return isEN;
+    }
+
     public void setTiposDocumentosFacade(TiposDocumentosFacade tiposDocumentosFacade) {
         this.tiposDocumentosFacade = tiposDocumentosFacade;
     }
@@ -328,5 +344,13 @@ public class GenDocuAnul implements Serializable {
 
     public void setTituloError(String tituloError) {
         this.tituloError = tituloError;
+    }
+
+    public void setIsNCV(Boolean isNCV) {
+        this.isNCV = isNCV;
+    }
+
+    public void setIsEN(Boolean isEN) {
+        this.isEN = isEN;
     }
 }
