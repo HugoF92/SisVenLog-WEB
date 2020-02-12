@@ -81,4 +81,26 @@ public class ExcelFacade {
         return respuesta;
 
     }
+    
+    public Integer executeInsert(String sql){
+        Integer respuesta = null;
+        try {
+            Query q = getEntityManager().createNativeQuery(sql);
+            respuesta = q.executeUpdate();
+        }catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al Ejecutar la consulta."));
+        }
+        return respuesta;
+    }
+    
+    public Object executeSingleSelect(String sql){
+        Object respuesta = null;
+        try {
+            Query q = getEntityManager().createNativeQuery(sql);
+            respuesta = q.getSingleResult();
+        }catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al Ejecutar la consulta."));
+        }
+        return respuesta;
+    }
 }
