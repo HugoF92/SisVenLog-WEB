@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiApli" header="REEMPLAZO DE ENVIOS"
+                                         style="width: 70%;">
+                                    <h:panelGrid id="panelReemplazoOC" columns="2" >
+
+                                        <p:outputLabel value="Nro.OC Inicial:" style="float: right; font-weight: bold;"/>
+                                        <p:inputText id="input1" value="#{reemplazoOC.nroEnvioInicial}" style="width: 100px;">
+                                            <p:ajax event="keyup" update="fechaEnvioOriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                        </p:inputText>
+
+                                        <p:outputLabel value="Nro.OC Final:" style="float: right; font-weight: bold;"/>
+                                        <p:inputText id="input2" value="#{reemplazoOC.nroEnvioFinal}" style="width: 100px;">
+                                            <p:ajax event="keyup" update="fechaEnvioOriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                        </p:inputText>
+
+                                        <p:outputLabel value="Fecha OC Original:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaEnvioOriginal" value="#{reemplazoOC.fechaEnvioOriginal}" 
+                                                    showOn="button" style="width: 60px;" locale="es" disabled="true"/>
+
+                                        <p:outputLabel value="Nuevo Nro.OC:" style="float: right; font-weight: bold;"/>
+                                        <p:inputText id="input3" value="#{reemplazoOC.nroEnvioNuevo}" style="width: 100px;"/>
+
+                                        <p:outputLabel value="Fecha Nueva Orden de Carga:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaEnvioNuevo" value="#{reemplazoOC.fechaEnvioNuevo}" 
+                                                    showOn="button" style="width: 60px;" locale="es"/>
+                                        
+                                    </h:panelGrid>
+
+                                    <br></br>
+
+                                    <p:commandLink title="report"
+                                                   action="#{reemplazoOC.procesarReemplazoOC()}"
+                                                   ajax="false" immediate="false" update="messageImpreOrdCarg">
+
+                                        <p:commandButton 
+                                            value="Iniciar Actualización" icon="fa fa-print" styleClass="green-btn raised-btn"/>
+
+                                    </p:commandLink>
+
+                                </p:panel>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                      height="500px" width="700px">
+                Message: #{genDatosContables.tituloError} <br/>
+                <h:outputText value="#{genDatosContables.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>
