@@ -5,6 +5,7 @@ import dao.ExcelFacade;
 import entidad.Empleados;
 import entidad.EmpleadosPK;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -69,6 +70,7 @@ public class genMasPedidos {
     }
     
     public void ejecutar(String tipo) {
+        System.out.println("HOLAS");
         LlamarReportes rep = new LlamarReportes();
         Short codVendedor = null;
         if(this.vendedor != null){
@@ -289,17 +291,222 @@ public class genMasPedidos {
         this.tmpPedidos = this.datosPendientesPedidos(codVendedor,this.getFecha());
         for(Object[] obj : tmpPedidos){
             Short codVendedorX = (codVendedor==null)?(Short)obj[0]:codVendedor;
+            Short nroPromo = null ;
+            String artcod = null;
             String sql = null;
             this.setPedProcesados(this.getPedProcesados()+1);
             if(obj[35]!=null){
-                sql = " select frige_desde,frige_hasta from promociones where nro_promo = "+obj[35];
+                nroPromo = (Short) obj[35];
+                sql = " select frige_desde,frige_hasta from promociones where nro_promo = "+nroPromo;
                 List<Object[]> promo = excelFacade.listarParaExcel(sql);   
                 Timestamp desde = (Timestamp) promo.get(0)[0];
                 Timestamp hasta = (Timestamp) promo.get(0)[1];
                 if(this.getFecha().getTime() >= desde.getTime() && this.getFecha().getTime() <= hasta.getTime()){
-                    
+                    artcod = (String) obj[7];
+                    sql = "select * from mercaderias where cod_merca = '"+artcod+"'";
+                    List<Object[]> mercaderias = excelFacade.listarParaExcel(sql);
+                    if(mercaderias.isEmpty()){
+                        //No existe la mercaderia en Mercaderias
+                        //Rechazar con estado 'R' en pediidos tmp                                
+                    }
+                    if(obj[34]==null){
+                        //Canal del Pedido no definido
+                        //Rechazar con estado 'R' en pediidos tmp        
+                    }
+                    BigDecimal tmpCodcanal = (BigDecimal) obj[34];
+                    sql = " select cod_canal from merca_canales where cod_merca = "+artcod;
+                    List<Object[]> canales = excelFacade.listarParaExcel(sql);
+                    BigDecimal ArtCodcanal = (BigDecimal) canales.get(0)[0];
+                    if(tmpCodcanal.compareTo(ArtCodcanal)!=0){
+                        //Articulo no pertenece al canal del pedido
+                        //Rechazar con estado 'R' en pediidos tmp        
+                    }
+                    sql = " select * from canales_vendedores where cod_vendedor = "+codVendedorX+" and cod_canal = "+canales.get(0)[0]+" order by cod_canal ";
+                    List<Object[]> canalesVendedores = excelFacade.listarParaExcel(sql);
+                    if(canalesVendedores.isEmpty()){
+                        Short codNuevo = null;
+                        codNuevo = (Short) obj[32];
+                        if(codNuevo==null){
+                            sql = " select codnuevo  from tmp_clientes where clicod = cliCod and cod_vendedor = "+codVendedorX+" ";
+                            List<Object[]> tmpCodNuevo = excelFacade.listarParaExcel(sql);
+                            codNuevo = (Short) tmpCodNuevo.get(0)[0];
+                        }
+                        sql = " select cod_cliente, cod_estado, mforma_pago, nplazo_impresion, nplazo_credito,ctipo_cliente,ilimite_compra,cod_ruta from clientes where cod_cliente = "+codNuevo+" ";
+                        List<Object[]> tmpCodNuevo = excelFacade.listarParaExcel(sql);
+                        if ( tmpCodNuevo.get(0)[1].equals("A") ) {
+                            sql = " select * from ventas_clientes where cod_cliente = "+tmpCodNuevo.get(0)[0]+" and ctipo_vta = '"+obj[5]+"' ";
+                            List<Object[]> ventasCliente = excelFacade.listarParaExcel(sql);
+                            String mFormaPago = (String) tmpCodNuevo.get(0)[2];
+                            BigDecimal nPlazoImpresion = (BigDecimal) tmpCodNuevo.get(0)[3];
+                            BigDecimal nPlazoCheque = (BigDecimal) obj[36];
+                            BigDecimal nplazoCredito = (BigDecimal) tmpCodNuevo.get(0)[4];
+                            BigDecimal ilimiteCompra = (BigDecimal) tmpCodNuevo.get(0)[6];
+                            if (mFormaPago.equals("C") && nPlazoImpresion.compareTo(BigDecimal.ZERO) <=0 && nPlazoCheque==null ){
+                                sql = " update tmp_pedidos set nplazo_cheque = "+nPlazoImpresion+" , codnuevo = "+tmpCodNuevo.get(0)[0]+" where facnro = "+obj[0];
+                                Integer exq = excelFacade.executeInsert(sql);
+                                nPlazoCheque = nPlazoImpresion;
+                            }
+                            Boolean dont = false;
+                            for(String s : "0,5,8,15,18,20,21,25,30,38,45".split(",")){
+                                if(!s.equals(nPlazoCheque.toString())){
+                                    dont = true;
+                                }
+                            }
+                            if(!dont){
+                                String factipfac = (String) obj[27];
+                                String lctipoDocum = factipfac.equals("Contado")?"FCO":((factipfac.equals("Credito")||factipfac.equals("Crédito")))?"FCR":"";
+                                if(mFormaPago.equals("C") && !lctipoDocum.equals("FCO")){
+                                    //Tipo de Factura invalido y/o Plazo del Cheque
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                    
+                                }
+                                if(mFormaPago.equals("F") && !lctipoDocum.equals("FCR")){
+                                    // tipo de factura invalido
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                    
+                                }
+                                if(mFormaPago.equals("T") && (!lctipoDocum.equals("FCO") || nPlazoCheque.compareTo(BigDecimal.ZERO) > 0)){
+                                    //tipo de Factura invalido y / o Plazo del Cheque
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                    
+                                }
+                                if(mFormaPago.equals("") && (!lctipoDocum.equals("FCO") || nPlazoCheque.compareTo(BigDecimal.ZERO) > 0)){
+                                    //tipo de Factura invalido y / o Plazo del Cheque
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                                                        
+                                }
+                                if(nPlazoCheque.compareTo((BigDecimal) tmpCodNuevo.get(0)[3]) >0){
+                                    //Plazo del cheque  superior al plazo credito
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                
+                                }
+                                sql = " select cod_depo from tipocli_depositos where ctipo_cliente = "+tmpCodNuevo.get(0)[5];
+                                List<Object[]> codDepo = excelFacade.listarParaExcel(sql);
+                                String gCodCanal = (String) canales.get(0)[0];
+                                Short mdepo = null;
+                                for(Object[] depo : codDepo){
+                                    mdepo = (Short) depo[0];
+                                    if(gCodCanal.equals("AJ") && mdepo.intValue()==22){
+                                        break;
+                                    }
+                                    if(gCodCanal.equals("T") && mdepo.intValue()==1){
+                                        break;
+                                    }
+                                }
+                                if((gCodCanal.equals("AJ") && mdepo.intValue()!=22) || (gCodCanal.equals("T") && mdepo.intValue()!=1)){
+                                    //" Canal de venta y deposito no corresponden"
+                                    //Rechazar con estado 'R' en pediidos tmp         
+                                }
+                                sql=" select * from depositos where mtipo ='M' and cod_zona =(select cod_zona from rutas where cod_ruta = "+
+                                        tmpCodNuevo.get(0)[7]+")";
+                                List<Object[]> deposito = excelFacade.listarParaExcel(sql);
+                                if(deposito.isEmpty()){
+                                    //No existe camion relacionado a Zona 
+                                    //Rechazar con estado 'R' en pediidos tmp 
+                                    
+                                }
+                                Short camion = (Short) deposito.get(0)[0];
+                                if (!(nplazoCredito.compareTo(BigDecimal.ZERO) <=0 || ilimiteCompra.compareTo(BigDecimal.ZERO) <=0 || 
+                                        !mFormaPago.equals("F")) && (factipfac.equals("Credito") || factipfac.equals("Crédito"))){
+                                    //El tipo de Factura solo puede ser contado
+                                    //Rechazar con estado 'R' en pediidos tmp 
+                                }
+                                if(obj[10]==null && obj[11]==null && obj[12]==null && obj[13]==null){
+                                    //No existen cajas ni unidades pedidas
+                                    //Rechazar con estado 'R' en pediidos tmp        
+                                }
+                                sql="SELECT e.*, m.xdesc FROM existencias e,mercaderias m WHERE e.cod_depo ="+camion+" AND e.cod_merca = '"+artcod+
+                                        "' AND e.cod_empr  = 2  AND e.cod_empr = m.cod_empr AND e.cod_merca = m.cod_merca ";
+                                List<Object[]> existencias = excelFacade.listarParaExcel(sql);                                
+                                if(existencias.isEmpty()){
+                                    //No existe el articulo en el deposito
+                                    //Rechazar con estado 'R' en pediidos tmp                                     
+                                }
+                                BigDecimal deCantidadCajas = (BigDecimal) obj[10];
+                                BigDecimal deCantidadUnidad = (BigDecimal) obj[11];
+                                BigDecimal deCajBonif = (BigDecimal) obj[12];
+                                BigDecimal deUniBonif = (BigDecimal) obj[13];
+                                Short nrelacion = (Short) existencias.get(0)[8];
+                                BigDecimal BigNrelacion = new BigDecimal(nrelacion);
+                                BigDecimal lPedUnid = deCantidadCajas.multiply(BigNrelacion).add(deCantidadUnidad).add(deUniBonif).add(deCajBonif.multiply(BigNrelacion));
+                                sql="select (cant_cajas*nrelacion)+cant_unid as cantTotal from existencias where cod_empr = 2 and cod_merca = '"+artcod+
+                                        "' and cod_depo = "+camion+" and nrelacion = "+nrelacion+" ";
+                                List<Object[]> calReservas = excelFacade.listarParaExcel(sql);                                
+                                BigDecimal lTotUnid = (BigDecimal) calReservas.get(0)[0];
+                                if( lTotUnid.compareTo(deCantidadCajas.multiply(BigNrelacion).add(deCantidadUnidad))> 0){
+                                    BigDecimal lresAnt = lTotUnid.subtract(lPedUnid);
+                                    BigDecimal existenciasCanCajas = (BigDecimal) existencias.get(0)[3];
+                                    BigDecimal existenciasNrelacion = (BigDecimal) existencias.get(0)[8];
+                                    BigDecimal existenciasCanUnid = (BigDecimal) existencias.get(0)[4];
+                                    if(existenciasCanCajas.multiply(existenciasNrelacion).
+                                        add(existenciasCanUnid).subtract(lresAnt).compareTo(BigDecimal.ZERO)>0){
+                                        BigDecimal e1 = existenciasCanCajas.multiply(existenciasNrelacion).add(existenciasCanUnid).subtract(lresAnt);
+                                        BigDecimal e2 = deCantidadCajas.multiply(existenciasNrelacion).add(deCantidadUnidad);
+                                        if(e1.compareTo(e2)>0){
+                                            BigDecimal lDifUnd = existenciasCanCajas.multiply(existenciasNrelacion).add(existenciasCanUnid).subtract(lresAnt).
+                                                    subtract(deCantidadCajas.multiply(existenciasNrelacion)).add(deCantidadUnidad);
+                                            
+                                            if(lDifUnd.compareTo(BigDecimal.ZERO)>0){
+                                                if(deUniBonif.add(deCajBonif.multiply(existenciasNrelacion)).compareTo(BigDecimal.ZERO) > 0){
+                                                    lTotUnid = lTotUnid.subtract(deUniBonif.add(deCajBonif.multiply(existenciasNrelacion)));
+                                                    Integer lNewCajBonifINT = lDifUnd.divide(existenciasNrelacion).intValue();
+                                                    BigDecimal lNewCajBonif = new BigDecimal(lNewCajBonifINT);
+                                                    BigDecimal lNewUnidBonif = lDifUnd.subtract(existenciasNrelacion.multiply(lNewCajBonif));
+                                                    BigDecimal c1 = lNewCajBonif.multiply(existenciasNrelacion).add(lNewUnidBonif);
+                                                    BigDecimal c2 = deUniBonif.add(deCajBonif.multiply(existenciasNrelacion));
+                                                    if(c2.compareTo(BigDecimal.ZERO)>0){
+                                                        if(c1.compareTo(c2)>0){
+                                                            lNewCajBonif = BigDecimal.ZERO;
+                                                            lNewUnidBonif = BigDecimal.ZERO;
+                                                        }
+                                                    }
+                                                    lTotUnid = lTotUnid.add(lNewCajBonif.multiply(existenciasNrelacion)).add(lNewUnidBonif);
+                                                    deCajBonif = lNewCajBonif;
+                                                    deUniBonif = lNewUnidBonif;
+                                                    //Cantidad modificada
+                                                    //Rechazar con estado 'R' en pediidos tmp         
+                                                }
+                                            }
+                                        }else{
+                                            lresAnt = lTotUnid.subtract(lPedUnid);
+                                            BigDecimal lTotDepo = existenciasCanCajas.multiply(existenciasNrelacion).add(existenciasCanUnid).subtract(lresAnt);
+                                            BigDecimal lNewCajas = new BigDecimal(lTotDepo.divide(existenciasNrelacion).intValue());
+                                            BigDecimal lNewUnid = lTotDepo.subtract(lNewCajas.multiply(existenciasNrelacion));
+                                            BigDecimal lNewCajasBonif = BigDecimal.ZERO;
+                                            BigDecimal lNewUnidBonif = BigDecimal.ZERO;
+                                            lTotUnid = lresAnt.add(lNewCajas.multiply(existenciasNrelacion)).add(lNewUnid);
+                                            deCantidadCajas = lNewCajas;
+                                            deCantidadUnidad = lNewUnid;
+                                            deCajBonif = lNewCajasBonif;
+                                            deUniBonif = lNewUnidBonif;
+                                            //Cantidad modificada
+                                            //Rechazar con estado 'R' en pediidos tmp        
+                                        }
+                                    }else{
+                                        //Cant Insuf en el deposito
+                                        //Rechazar con estado 'R' en pediidos tmp        
+                                    }
+                                }
+                                sql = "INSERT INTO pedidos (cod_empr, cod_cliente, ctipo_docum, ctipo_vta, cod_vendedor,cod_canal, cod_ruta, cod_depo,  fpedido,"+
+                                        "npeso_acum, texentas, tgravadas, timpuestos,tdescuentos, ttotal, mestado, morigen, nplazo_cheque)"+
+                                        "VALUES ( 2,"+tmpCodNuevo.get(0)[0]+",'"+lctipoDocum+"','"+obj[5]+"',"+codVendedorX+","+canales.get(0)[0]+","+tmpCodNuevo.get(0)[7]+
+                                        ","+camion+",'"+fecha+"', 0,0, 0, 0, 0, 0, 'N','P',"+obj[36]+")";
+                                excelFacade.executeInsert(sql);
+                            }else{
+                                //Plazo del cheque no se encuentra en el rango
+                                //Rechazar con estado 'R' en pediidos tmp         
+                                
+                            }
+                        } else {
+                            // cliente inactivo
+                            //Rechazar con estado 'R' en pediidos tmp                        
+                        }
+                    }else{
+                        //El canal no corresponde al vendedor
+                        //Rechazar con estado 'R' en pediidos tmp                        
+                    }
                 }else{
-                    
+                    //Rechazar con estado 'R' en pediidos tmp
                 }
             }
         }

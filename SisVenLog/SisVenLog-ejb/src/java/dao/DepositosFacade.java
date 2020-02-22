@@ -93,6 +93,11 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
         
     }
     
+    public List<Depositos> listarDepositosByEmp(Integer emp) {
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM depositos where cod_empr = "+emp, Depositos.class);
+        System.out.println(q.toString());
+        return q.getResultList();
+    }
     
     public List<Depositos> listarDepositosActivos() {
         Query q = getEntityManager().createNativeQuery("SELECT * FROM depositos  ", Depositos.class);

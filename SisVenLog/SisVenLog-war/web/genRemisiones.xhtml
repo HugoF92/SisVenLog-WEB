@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="message" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiApli" header="Generacion de Remisiones" style="width: 70%;">
+                                    <h:panelGrid columns="4" style="border: solid;border-width: thin">
+
+                                        <p:outputLabel value="Fecha de Remision: " style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaRemision" value="#{genRemisiones.fecha}" 
+                                                    showOn="button" style="width: 60px;" locale="es" >
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Nro.Remision inicial: " style="font-weight: bold;"/>
+                                        <h:panelGrid columns="6" >
+                                            <p:inputText id="part1" value="#{genRemisiones.part1}"  style="width: 40px;" />
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText id="part2" value="#{genRemisiones.part2}" style="width: 40px;" />
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText id="part3" value="#{genRemisiones.part3}" style="width: 40px;"/>
+                                            <p:outputLabel value=" " style="font-weight: bold;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Deposito Destino:" style="font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{genRemisiones.deposito}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 200px;" converter="#{depositosConverter}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="#{null}"/>
+                                            <f:selectItems value="#{genRemisiones.listaDepositos}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                            <p:ajax event="change" update="conductor,transportista,entrregador" />
+                                        </p:selectOneMenu>
+                                                                      
+                                        <p:selectOneRadio id="discriminar" layout="grid" columns="1" value="#{genRemisiones.discriminar}" 
+                                                          style="border: solid;border-width: thin;margin-left: 30px">
+                                             <f:selectItem itemLabel="Original" itemValue="1"/>
+                                             <f:selectItem itemLabel="Complementaria" itemValue="2"/>
+                                        </p:selectOneRadio>
+                                        <p:outputLabel for="discriminar" value=" " />
+                                        
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="4" style="border: solid;border-width: thin">
+
+                                        <p:outputLabel value="Conductor: " style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu id="conductor" value="#{genRemisiones.conductor}" 
+                                                         style=" width:180px" converter="#{ConductoresConverter}">
+                                            <f:selectItems value="#{genRemisiones.listaConductores}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xconductor}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Nro.Envio Inicial: " style="float: right;font-weight: bold;"/>
+                                        <p:inputNumber id="envioInicial" value="#{genRemisiones.envioInicial}"
+                                                       required="true" thousandSeparator="." decimalSeparator="," size="7"/>
+
+                                        <p:outputLabel value="Transportista: " style="float: left;font-weight: bold;"/>
+                                        <p:selectOneMenu id="transportista" value="#{genRemisiones.transportista}" 
+                                                         style=" width:180px" converter="#{TransportistasConverter}">
+                                            <f:selectItems value="#{genRemisiones.listaTransportistas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xtransp}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Nro.Envio Final: " style="float: right;font-weight: bold;"/>
+                                        <p:inputNumber id="envioFinal" value="#{genRemisiones.envioFinal}" 
+                                            required="true" thousandSeparator="." padControl="false" decimalSeparator="," size="7"/>
+                                        
+                                        <p:outputLabel value="Entregador:" style="float: left;float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="entrregador" value="#{genRemisiones.empleado}" 
+                                                         style=" width:180px" converter="#{empleadosConverter}">
+                                            <f:selectItems value="#{genRemisiones.listaEntregador}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                    </h:panelGrid>
+
+                                    <br></br>
+
+                                    <p:commandButton 
+                                        value="Generar" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                        style="width: 120px;" actionListener="#{genMasPedidos.ejecutar('VIST')}"/>
+
+                                    <p:commandButton update="message" process="form"
+                                            value="Imprimir" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;" onclick="document.getElementById('impresion').click()"/>
+                                    
+                                    <p:link id="impresion" outcome="/impresionRemision.xhtml" style="visibility: hidden;"></p:link>
+                                    
+                                </p:panel>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>
