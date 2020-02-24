@@ -118,12 +118,38 @@ public class RecibosProvFacade extends AbstractFacade<RecibosProv> {
         q.executeUpdate();
     }
     
-    public List<RecibosProv> listadoRecibosProveedores(){
-        String sql = "SELECT * FROM recibos_prov";
+    public List<RecibosProv> listadoRecibosProveedoresEnUnRango(int[] range){
+        String sql = "SELECT * FROM recibos_prov where mestado = 'A' order by nrecibo desc";
         Query q = em.createNativeQuery(sql, RecibosProv.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
         List<RecibosProv> resultado = new ArrayList<>();
         resultado = q.getResultList();
         return resultado;
+    }
+    
+    public List<RecibosProv> obtenerRecibosProveedoresPorNroEnUnRango(long lNroRecibo, int[] range){
+        String sql =    "SELECT * FROM recibos_prov " +
+                        "WHERE nrecibo = "+lNroRecibo+" "+
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, RecibosProv.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+    }
+    
+     public int obtenerCantidadRecibosDelProveedor(long lNroRecibo){
+        String sql =    "SELECT * FROM recibos_prov " +
+                        "WHERE nrecibo = "+lNroRecibo+" "+
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, RecibosProv.class);
+        System.out.println(q.toString());
+        int cantidadRegistros = q.getResultList().size();
+        return cantidadRegistros;
     }
     
     public List<Object[]> listaProveedores( Date fechaReciboDesde, 
