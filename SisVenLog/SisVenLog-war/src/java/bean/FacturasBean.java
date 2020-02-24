@@ -237,6 +237,7 @@ public class FacturasBean implements Serializable{
     private List<Existencias> listaExistencias;
     private Existencias existencias;
     private LazyDataModel<Existencias> model;
+    private LazyDataModel<Facturas> modelFacturas;
     private boolean habilitaBotonVisualizar;
     HashMap<String, TiposDocumentos> tipoDocumentoEnMemoria;
     HashMap<String, Depositos> depositoEnMemoria;
@@ -497,15 +498,51 @@ public class FacturasBean implements Serializable{
     }
     
     public void listarFacturas(){
-        try{
-            listadoFacturas = facturasFacade.listadoDeFacturas();
-        }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
-            contenidoError = ExceptionHandlerView.getStackTrace(e);
-            tituloError = "Error en la lectura de facturas.";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
-        }
+        
+         modelFacturas = new LazyDataModel<Facturas>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<Facturas> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+                //List<Envios> envioss;
+                int count = 0;
+                if (filters.size() == 0) {
+                    listadoFacturas = facturasFacade.buscarFacturasEnUnRango(new int[]{first, pageSize});
+                    count = facturasFacade.count();
+                }else {
+                    if (filters.size() < 2) {
+                        //dd/MM/yyyy
+                        String filtroNroRecibo = (String) filters.get("facturasPK.nrofact");
+                        listadoFacturas = facturasFacade.obtenerFacturasPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
+                        count = facturasFacade.obtenerCantidadFacturasPorNro(Long.parseLong(filtroNroRecibo));
+                    }
+
+                } 
+                modelFacturas.setRowCount(count);
+                return listadoFacturas;
+            }
+
+            @Override
+            public Facturas getRowData(String rowKey) {
+                String tempIndex = rowKey;
+                System.out.println("1");
+                if (tempIndex != null) {
+                    for (Facturas inc : listadoFacturas) {
+                        if (Long.toString(inc.getFacturasPK().getNrofact()).equals(rowKey)) {
+                            return inc;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            public Object getRowKey(Facturas f) {
+                return f.getFacturasPK().getNrofact();
+            }
+        };
+        
     }
     
     public String comprobarNroPromo(){
@@ -2988,6 +3025,14 @@ public class FacturasBean implements Serializable{
 
     public void setListadoMotivos(List<Motivos> listadoMotivos) {
         this.listadoMotivos = listadoMotivos;
+    }
+
+    public LazyDataModel<Facturas> getModelFacturas() {
+        return modelFacturas;
+    }
+
+    public void setModelFacturas(LazyDataModel<Facturas> modelFacturas) {
+        this.modelFacturas = modelFacturas;
     }
     
 }

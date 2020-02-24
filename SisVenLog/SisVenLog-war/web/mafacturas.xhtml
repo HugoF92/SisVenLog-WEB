@@ -73,8 +73,8 @@
                                         <p:dataTable id="tablaRecibosCompras" var="itemp"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
-                                                     selectionMode="single" reflow="true"
-                                                     value="#{facturasBean.listadoFacturas}" 
+                                                     selectionMode="single" reflow="true" lazy="true"
+                                                     value="#{facturasBean.modelFacturas}" 
                                                      rowKey="#{itemp.facturasPK.nrofact}"
                                                      selection="#{facturasBean.facturaSeleccionada}">
 
@@ -82,33 +82,24 @@
                                                     listener="#{facturasBean.onRowSelect(event)}"
                                                     update="formRecibosCompras"/>
                                             
-                                            <p:column headerText="TipoDoc." filterBy="#{itemp.facturasPK.ctipoDocum}"
-                                                      sortBy="#{itemp.facturasPK.ctipoDocum}">
-                                                <h:outputText value="#{itemp.facturasPK.ctipoDocum}" />
-                                            </p:column>
-                                            
-                                            <p:column headerText="NroFactura" filterBy="#{itemp.facturasPK.nrofact}"
-                                                      sortBy="#{itemp.facturasPK.nrofact}">
+                                            <p:column headerText="NroFactura" filterBy="#{itemp.facturasPK.nrofact}">
                                                 <h:outputText value="#{itemp.facturasPK.nrofact}" />
                                             </p:column>
                                             
-                                            <p:column headerText="FechaFactura" filterBy="#{facturasBean.convertidorFecha(itemp.facturasPK.ffactur)}"
-                                                      sortBy="#{itemp.facturasPK.ffactur}">
+                                            <p:column headerText="TipoDoc.">
+                                                <h:outputText value="#{itemp.facturasPK.ctipoDocum}" />
+                                            </p:column>
+                                                                                        
+                                            <p:column headerText="FechaFactura">
                                                 <h:outputText value="#{itemp.facturasPK.ffactur}">
                                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                                 </h:outputText>
                                             </p:column>
                                             
-                                            <p:column headerText="Total" filterBy="#{itemp.ttotal}"
-                                                      sortBy="#{itemp.ttotal}">
+                                            <p:column headerText="Total">
                                                 <h:outputText value="#{itemp.ttotal}" >
                                                     <f:convertNumber type="number"/>
                                                 </h:outputText>
-                                            </p:column>
-                                            
-                                            <p:column headerText="Estado" filterBy="#{itemp.mestado}"
-                                                      sortBy="#{itemp.mestado}" filterMatchMode="contains">
-                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'ANULADO'}" />
                                             </p:column>
                                             
                                         </p:dataTable>
