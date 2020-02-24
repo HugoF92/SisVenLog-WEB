@@ -438,4 +438,37 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
         }
         return listadoFacturas;
     }
+    
+    public List<Facturas> buscarFacturasEnUnRango(int[] range) {
+        Query q = getEntityManager().createNativeQuery("select * from facturas where mestado = 'A' order by nrofact desc ",
+                Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+    }
+    
+    public List<Facturas> obtenerFacturasPorNroEnUnRango(long lNroFactura, int[] range){
+        String sql =    "SELECT * FROM facturas " +
+                        "WHERE nrofact = "+lNroFactura+" "+
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+    }
+    
+    public int obtenerCantidadFacturasPorNro(long lNroFact){
+        String sql =    "SELECT * FROM facturas " +
+                        "WHERE nrofact = "+lNroFact+" "+
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        int cantidadRegistros = q.getResultList().size();
+        return cantidadRegistros;
+    }
+    
 }
