@@ -60,7 +60,7 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "venlog", "venlog2018CC");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -2326,6 +2326,41 @@ public class LlamarReportes {
             escapedData = "\"" + data + "\"";
         }
         return escapedData;
+    }
+
+    public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
+            String fechaInicialHora, String fechaFinalHora, Integer codVendedor,
+            String codCanal, String estado) {
+        try {
+
+            Map param = new HashMap();
+            param.put("desde", fechaInicial);
+            param.put("hasta", fechaFinal);
+            param.put("desdeHora", fechaInicialHora);
+            param.put("hastaHora", fechaFinalHora);
+            param.put("cod_vendedor", codVendedor);
+            param.put("usuarioImpresion", "admin");
+            param.put("codCanal", codCanal);
+            param.put("estado", Integer.parseInt(estado));
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=limigrapedidos.pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
     
 }
