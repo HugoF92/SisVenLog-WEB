@@ -33,7 +33,7 @@ public class AsociarMercaderiaBean implements Serializable {
     private List<Depositos> listaDepositos;
     private Depositos depositoSeleccionado;
 
-    private DualListModel<Mercaderias> dualMercaderia = new DualListModel<>(new ArrayList<Mercaderias>(), new ArrayList<Mercaderias>());
+    private DualListModel<Mercaderias> dualMercaderia;
 
     private List<Mercaderias> mercaderiaSource;
     private List<Mercaderias> mercaderiaTarget;
@@ -46,6 +46,7 @@ public class AsociarMercaderiaBean implements Serializable {
         mercaderiaTarget = new ArrayList<Mercaderias>();
         listaMercaderiaMovAdd = new ArrayList<Mercaderias>();
         listaMercaderiaMovRemove = new ArrayList<Mercaderias>();
+        dualMercaderia = new DualListModel<>(new ArrayList<Mercaderias>(), new ArrayList<Mercaderias>());
     }
 
     public DualListModel<Mercaderias> getDualMercaderia() {
@@ -90,19 +91,19 @@ public class AsociarMercaderiaBean implements Serializable {
 
     public void onChangeDepositoSelected() {
         if (depositoSeleccionado != null) {
-            mercaderiaSource = mercadoFacade.listarMercaderiasActivas();
-            List<Existencias> exiTarget = existenciaFacade.listarExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
-            for (int i = 0; i < exiTarget.size(); i++) {
-                for (int j = 0; j < mercaderiaSource.size(); j++) {
-                    if (Objects.equals(exiTarget.get(i).getExistenciasPK().getCodMerca(), mercaderiaSource.get(j).getMercaderiasPK().getCodMerca())) {
-                        mercaderiaSource.remove(mercaderiaSource.get(j));
-                    }
-                }
-            }
+            System.out.println("ACA");
+            this.mercaderiaSource = this.mercadoFacade.listarMercaderiasActivasNoEnDeposito(this.depositoSeleccionado.getDepositosPK().getCodDepo());
+//            mercaderiaSource = mercadoFacade.listarMercaderiasActivas();
+//            List<Existencias> exiTarget = existenciaFacade.listarExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
+//            for (int i = 0; i < exiTarget.size(); i++) {
+//                for (int j = 0; j < mercaderiaSource.size(); j++) {
+//                    if (Objects.equals(exiTarget.get(i).getExistenciasPK().getCodMerca(), mercaderiaSource.get(j).getMercaderiasPK().getCodMerca())) {
+//                        mercaderiaSource.remove(mercaderiaSource.get(j));
+//                    }
+//                }
+//            }
             mercaderiaTarget = existenciaFacade.listarMercaderiasByExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
             dualMercaderia = new DualListModel<>(mercaderiaSource, mercaderiaTarget);
-        } else {
-
         }
     }
 

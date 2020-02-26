@@ -24,22 +24,25 @@
                                     return false;
                                 }">
                             <center>
-                                <p:panel id="pnlActualizarPromocion" header="ASOCIACIÓN DE MERCADERÍAS"
-                                         style="width: 70%;">
+                                <p:panel id="pnlActualizarPromocion" header="ASOCIACIÓN DE MERCADERÍAS" style="width: 70%;">
+                                    
                                     <p:growl id="idGrowl" showDetail="true"/>
-                                    <h:panelGrid columns="2" columnClasses="c1" style="width: 70%">
+                                    
+                                    <h:panelGrid columns="2" columnClasses="c1" style="width: 70%;text-align: center">
+                                    
                                         <p:outputLabel value="Depósito:" style="float: right; font-weight: bold;" />
+                                        
                                         <p:selectOneMenu value="#{asociarMercaderiaBean.depositoSeleccionado}" 
                                                          filterMatchMode="contains" filter="true"
-                                                         style=" width: 60%;" converter="#{depositosConverter}">
-                                            <p:ajax event="itemSelect"  process="@this" update="pickListC"
-                                                    listener="#{asociarMercaderiaBean.onChangeDepositoSelected}"
-                                                    />
+                                                         style="width: 60%;" converter="#{depositosConverter}" id="selDepositos">
+                                            <p:ajax event="itemSelect"  process="@this" update="pickListC" 
+                                                    listener="#{asociarMercaderiaBean.onChangeDepositoSelected}" />
                                             <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
                                             <f:selectItems value="#{asociarMercaderiaBean.listaDepositos}" var="item"
                                                            itemValue="#{item}"
                                                            itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
+                                        
                                     </h:panelGrid>
 
                                     <br/>
@@ -67,7 +70,8 @@
                                                      style="width: 120px;"
                                                      id="idBotonAsociar"/>
                                     
-                                    <p:blockUI block="idBotonAsociar" trigger="idBotonAsociar" />
+                                    <p:blockUI block="pnlActualizarPromocion" trigger="idBotonAsociar" />
+                                    <p:blockUI block="pnlActualizarPromocion" trigger="selDepositos" />
                                 </p:panel>
                             </center>
                         </h:form>
