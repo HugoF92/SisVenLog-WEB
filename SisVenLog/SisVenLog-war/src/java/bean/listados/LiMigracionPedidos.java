@@ -149,7 +149,7 @@ public class LiMigracionPedidos implements Serializable {
             }
             
             if(Objects.nonNull(this.canalVenta)){
-                sql += " AND tp.cod_canal =" + this.canalVenta.getCodCanal() + " ";
+                sql += " AND tp.cod_canal = '" + this.canalVenta.getCodCanal() + "' ";
             }
             
 //            sql += "ORDER BY cod_vendedor, nroped ";
@@ -189,7 +189,7 @@ public class LiMigracionPedidos implements Serializable {
                     }
 
                     if(Objects.nonNull(this.canalVenta)){
-                        sql += " AND p.cod_canal = " + this.canalVenta.getCodCanal() + " ";
+                        sql += " AND p.cod_canal = '" + this.canalVenta.getCodCanal() + "' ";
                     }
             }
             

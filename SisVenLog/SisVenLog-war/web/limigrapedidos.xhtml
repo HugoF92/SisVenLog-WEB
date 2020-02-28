@@ -66,7 +66,8 @@
                                         </p:calendar>
                                         
                                         <p:outputLabel value="Vendedor:" style="float: right; font-weight: bold;"/>
-                                        <p:selectOneMenu value="#{liMigracionPedidos.vendedor}" style="width: 300px;" >
+                                        <p:selectOneMenu value="#{liMigracionPedidos.vendedor}" style="width: 300px;" 
+                                                         converter="#{empleadosConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
                                             <f:selectItems value="#{liMigracionPedidos.listaVendedores}"
                                                            var="vendedor"
@@ -74,7 +75,8 @@
                                                            itemLabel="#{vendedor.xnombre}"/>
                                         </p:selectOneMenu>
                                         <p:outputLabel value="Canal de Venta:" style="float: right; font-weight: bold;"/>
-                                        <p:selectOneMenu value="#{liMigracionPedidos.canalVenta}" dynamic="true" style="width: 300px;" >
+                                        <p:selectOneMenu value="#{liMigracionPedidos.canalVenta}" dynamic="true"
+                                                         style="width: 300px;" converter="#{CanalesVentaConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
                                             <f:selectItems value="#{liMigracionPedidos.listaCanalesVentas}"
                                                            var="canalVenta"

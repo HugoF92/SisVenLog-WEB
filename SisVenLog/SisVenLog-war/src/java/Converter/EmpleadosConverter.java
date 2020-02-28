@@ -32,7 +32,7 @@ public class EmpleadosConverter  implements Converter, Serializable{
         }
         else
         {
-            return new Empleados(new EmpleadosPK(new Short("2"), new Short(value)));
+            return new Empleados(new EmpleadosPK(new Short("2"), new Short(value.trim())));
             //return new Empleados(new EmpleadosPK(Integer.parseInt(value), 0));
         }
     }
