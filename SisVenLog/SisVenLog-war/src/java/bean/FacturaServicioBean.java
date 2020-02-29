@@ -38,6 +38,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
@@ -79,6 +80,10 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
     
     @EJB
     private MotivosFacade motivosFacade;
+    
+    @ManagedProperty("#{impresionFacturasServiciosBean}")
+    private ImpresionFacturasServiciosBean impresionDacturasServiciosBean;
+    
     
     //variables de clase
     private List<TiposDocumentos> listadoTiposDocumentos;
@@ -803,6 +808,12 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
             //actualizar las existencias por las reglas en los respectivos depositos 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Datos grabados con éxito."));
             RequestContext.getCurrentInstance().execute("PF('dlgNuevFactura').hide();");
+            //imprimir la factura de servicio
+            impresionDacturasServiciosBean.setEstabInicial(Integer.parseInt(String.valueOf(nPuntoEstabLbl)));
+            impresionDacturasServiciosBean.setExpedInicial(Integer.parseInt(String.valueOf(nPuntoExpedLbl)));
+            impresionDacturasServiciosBean.setSecueInicial(Integer.parseInt(String.valueOf(nroFactLbl)));
+            impresionDacturasServiciosBean.setSecueFinal(Integer.parseInt(String.valueOf(nroFactLbl)));
+            impresionDacturasServiciosBean.impresion();
             inicializar();
             return null;
         }catch(Exception e){
@@ -1183,6 +1194,14 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
 
     public void setFacturasFacade(FacturasFacade facturasFacade) {
         this.facturasFacade = facturasFacade;
+    }
+
+    public ImpresionFacturasServiciosBean getImpresionDacturasServiciosBean() {
+        return impresionDacturasServiciosBean;
+    }
+
+    public void setImpresionDacturasServiciosBean(ImpresionFacturasServiciosBean impresionDacturasServiciosBean) {
+        this.impresionDacturasServiciosBean = impresionDacturasServiciosBean;
     }
     
 }
