@@ -5,6 +5,7 @@
  */
 package dao;
 
+import dto.ListaStringDto;
 import entidad.Clientes;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -12,14 +13,18 @@ import entidad.Mercaderias;
 import entidad.Promociones;
 import entidad.Sublineas;
 import entidad.TiposDocumentos;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.DateUtil;
 
 /**
  *
@@ -43,8 +48,8 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         super(Mercaderias.class);
     }
     
-    public List<Object[]> ejecutar(Lineas lineas, Sublineas sublineas, Promociones promocion, TiposDocumentos tipoDocumento,
-            Empleados vendedor, Clientes cliente, Date fechaDesde, Date fechaHasta, Boolean todosCliente, Integer codCliente, String nombreCliente, List<Mercaderias> mercaderias) {
+    public ListaStringDto ejecutar(Lineas lineas, Sublineas sublineas, Promociones promocion, TiposDocumentos tipoDocumento,
+            Empleados vendedor, Clientes cliente, Date fechaDesde, Date fechaHasta, Boolean todosCliente, List<Mercaderias> mercaderias) {
 
         String sql = " SELECT f.ctipo_docum, f.nrofact , f.ffactur, "
                 + " f.cod_cliente,f.xrazon_social as xnombre, "
@@ -59,43 +64,43 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
                 + " AND (f.mestado = 'A') "
                 + " AND f.cod_empr = 2 "
                 + " AND d.cod_empr = 2 "
-                + " AND (f.ffactur BETWEEN '" + DateUtil.dateToString(fechaDesde) + "' AND '" + DateUtil.dateToString(fechaHasta) + "') "
+                + " AND (f.ffactur BETWEEN '" + dateToString(fechaDesde) + "' AND '" + dateToString(fechaHasta) + "') "
                 + " AND f.nrofact = d.nrofact "
-                + " AND AND d.cod_merca IN ( " + convertirCodigosMercaderiasString(mercaderias) + " ) "
+                + " AND d.cod_merca IN ( " + convertirCodigosMercaderiasString(mercaderias) + " ) "
                 + " AND f.ctipo_docum = d.ctipo_docum "
                 + " AND f.cod_empr = d.cod_empr "
                 + " AND d.cod_merca = m.cod_merca "
                 + " AND m.cod_sublinea = s.cod_sublinea ";
         
-        if(promocion.getNroPromoGral() != null){
+        if(promocion != null && promocion.getNroPromoGral() != null){
             Long nro_promo = promocion.getNroPromoGral();
             sql += " AND d.cod_merca in (SELECT cod_merca "
                 + " FROM promociones_det "
                 + " WHERE nro_promo = " + nro_promo + ") ";
         }
-        if(!tipoDocumento.getCtipoDocum().isEmpty()){
+        if(tipoDocumento != null && !tipoDocumento.getCtipoDocum().isEmpty()){
             String ctipo_docum = tipoDocumento.getCtipoDocum();
             sql += " AND f.ctipo_docum = " + ctipo_docum + " ";
         }
-        if(vendedor.getEmpleadosPK() != null){
+        if(vendedor != null && vendedor.getEmpleadosPK() != null){
             Short cod_empleado = vendedor.getEmpleadosPK().getCodEmpleado();
             sql += " AND f.cod_vendedor = " + cod_empleado + " ";
         }
-        if(sublineas.getCodSublinea() != null){
+        if(sublineas != null && sublineas.getCodSublinea() != null){
             Short cod_sublinea = sublineas.getCodSublinea();
             sql += " AND m.cod_sublinea = " + cod_sublinea + " ";
         }
-        if(lineas.getCodLinea() != null){
+        if(lineas != null && lineas.getCodLinea() != null){
             Short cod_linea = lineas.getCodLinea();
             sql += " AND s.cod_linea = " + cod_linea + " ";
         }
         
         //Control de cliente
-        List<Clientes> clientesVar;
+        List<Clientes> clientesVar = new ArrayList<Clientes>();
         if(todosCliente == true){
             clientesVar = clientesFacade.findAll();
-        }else{
-            clientesVar = clientesFacade.buscarPorCodigoNombre(codCliente, nombreCliente);
+        }else if(cliente.getCodCliente() != null){
+            clientesVar = clientesFacade.buscarPorCodigoNombre(cliente.getCodCliente(), cliente.getXnombre());
         }
         
         String codigosClientes = convertirCodigosClientesString(clientesVar);
@@ -112,7 +117,7 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
             + " AND (f.mestado = 'A') "
             + " AND f.cod_empr = 2 "
             + " AND d.cod_empr  = 2 "
-            + " AND (n.fdocum BETWEEN '" + DateUtil.dateToString(fechaDesde) + "' AND '" + DateUtil.dateToString(fechaHasta) + "') "
+            + " AND (n.fdocum BETWEEN '" + dateToString(fechaDesde) + "' AND '" + dateToString(fechaHasta) + "') "
             + " AND n.cconc = 'DPR' "
             + " AND n.fac_ctipo_docum = f.ctipo_docum "
             + " AND n.nrofact = f.nrofact "
@@ -123,26 +128,26 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
             + " AND d.cod_merca = m.cod_merca "
             + " AND m.cod_sublinea = s.cod_sublinea ";
         
-        if(!tipoDocumento.getCtipoDocum().isEmpty()){
+        if(tipoDocumento != null && !tipoDocumento.getCtipoDocum().isEmpty()){
             String ctipo_docum = tipoDocumento.getCtipoDocum();
             sql += " AND n.ctipo_docum  = " + ctipo_docum + " ";
         }
 
-        if (vendedor.getEmpleadosPK() != null) {
+        if (vendedor != null && vendedor.getEmpleadosPK() != null) {
             Short cod_empleado = vendedor.getEmpleadosPK().getCodEmpleado();
             sql += " AND f.cod_vendedor  = " + cod_empleado + " ";
         }
-        if (sublineas.getCodSublinea() != null) {
+        if (sublineas != null && sublineas.getCodSublinea() != null) {
             Short cod_sublinea = sublineas.getCodSublinea();
             sql += " AND m.cod_sublinea  = " + cod_sublinea + " ";
 
         }
-        if (promocion.getNroPromoGral() != null) {
+        if (promocion != null && promocion.getNroPromoGral() != null) {
             Long nro_promo = promocion.getNroPromoGral();
             sql += " AND n.nro_promo  = " + nro_promo + " ";
         }
 
-        if (lineas.getCodLinea() != null) {
+        if (lineas != null && lineas.getCodLinea() != null) {
             Short  cod_linea = lineas.getCodLinea();
             sql += " AND s.cod_linea  = " + cod_linea + " ";
         }
@@ -156,10 +161,30 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         Query q = getEntityManager().createNativeQuery(sql);
         
         System.out.println(q.toString());
-
-        List<Object[]> respuesta = q.getResultList();
+        
+        ListaStringDto respuesta = new ListaStringDto();
+        
+        respuesta.setLista(q.getResultList());
+        respuesta.setSql(sql);
 
         return respuesta;
+    }
+    
+    private String dateToString(Date fecha) {
+
+        String resultado = "";
+
+        try {
+
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            resultado = dateFormat.format(fecha);
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al convertir fecha"));
+        }
+
+        return resultado;
     }
     
     private String convertirCodigosClientesString(List<Clientes> clientes) {
@@ -178,9 +203,9 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         String listaCodigos = "";
         for (int i = 0; i < mercaderias.size(); i++) {
             if (i == 0) {
-                listaCodigos += mercaderias.get(i).toString();
+                listaCodigos += "'" + mercaderias.get(i).toString() + "'";
             } else {
-                listaCodigos += "," + mercaderias.get(i).toString();
+                listaCodigos += "," + "'" + mercaderias.get(i).toString() + "'";
             }
         }
         return listaCodigos;

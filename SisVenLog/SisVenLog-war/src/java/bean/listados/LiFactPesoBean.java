@@ -12,6 +12,7 @@ import dao.LineasFacade;
 import dao.MercaderiasFacade;
 import dao.PromocionesFacade;
 import dao.TiposDocumentosFacade;
+import dto.ListaStringDto;
 import entidad.Clientes;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -19,13 +20,17 @@ import entidad.Mercaderias;
 import entidad.Promociones;
 import entidad.Sublineas;
 import entidad.TiposDocumentos;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.model.DualListModel;
 import util.LlamarReportes;
 
@@ -54,9 +59,6 @@ public class LiFactPesoBean {
     @EJB
     private MercaderiasFacade mercaderiasFacade;
     
-    @EJB
-    private ExcelFacade excelFacade;
-    
     private Lineas lineas;
     private List<Lineas> listaLineas;
     
@@ -74,8 +76,6 @@ public class LiFactPesoBean {
     
     private Clientes clientes;
     private List<Clientes> listaClientes;
-    private String nombreCliente;
-    private Integer codCliente;
     private Boolean todosCliente;
     
     private Date fechaDesde;
@@ -107,8 +107,6 @@ public class LiFactPesoBean {
         
         this.clientes = new Clientes();
         this.listaClientes = new ArrayList<>();
-        this.codCliente = null;
-        this.nombreCliente = "";
         this.todosCliente = true;
         
         this.fechaDesde = new Date();
@@ -148,19 +146,36 @@ public class LiFactPesoBean {
     }
     
     public void ejecutar(String operacion){
+        
+        String usuario = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+        
+        ListaStringDto resultado = liFactPesoFacade.ejecutar(getLineas(), getSublineas(), getPromocion(), getTiposDocumentos(),
+                getVendedor(), getClientes(), getFechaDesde(), getFechaHasta(), getTodosCliente(), getMercaderias().getTarget());
+        
+        LlamarReportes rep = new LlamarReportes();
 
-        if (operacion.equals("VIST")) {
-            
-        }else if (operacion.equals("ARCH")){            
+        if (operacion.equals("ARCH")){            
             String[] columnas = {"ctipo_docum","nrofact","ffactur","cod_cliente","x_nombre","cod_merca","xdesc","cant_cajas","cant_unid","tpeso_cajas","tpeso_unid","itotal","cod_vendedor","xvendedor","nro_promo","nfactura","pdesc"};
-            
-            LlamarReportes rep = new LlamarReportes();
-            
-            List<Object[]> resultado = liFactPesoFacade.ejecutar(getLineas(), getSublineas(), getPromocion(), getTiposDocumentos(),
-                getVendedor(), getClientes(), getFechaDesde(), getFechaHasta(), getTodosCliente(), getCodCliente(), getNombreCliente(), getMercaderias().getTarget());
-            
-            rep.exportarExcel(columnas, resultado, "lifactpeso");
+
+            rep.exportarExcel(columnas, resultado.getLista(), "lifactpeso");
+        }else rep.reporteLiFactPeso(resultado.getSql(),  dateToString(getFechaDesde()), dateToString(getFechaHasta()), usuario, getVendedor().getXnombre(), getLineas().getXdesc(), getSublineas().getXdesc(), operacion);
+    }
+    
+    private String dateToString(Date fecha) {
+
+        String resultado = "";
+
+        try {
+
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            resultado = dateFormat.format(fecha);
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al convertir fecha"));
         }
+
+        return resultado;
     }
             
     public Lineas getLineas() {
@@ -217,14 +232,6 @@ public class LiFactPesoBean {
 
     public Date getFechaHasta() {
         return fechaHasta;
-    }
-
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
-
-    public Integer getCodCliente() {
-        return codCliente;
     }
 
     public Boolean getTodosCliente() {
@@ -289,14 +296,6 @@ public class LiFactPesoBean {
 
     public void setFechaHasta(Date fechaHasta) {
         this.fechaHasta = fechaHasta;
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-
-    public void setCodCliente(Integer codCliente) {
-        this.codCliente = codCliente;
     }
 
     public void setTodosCliente(Boolean todosCliente) {

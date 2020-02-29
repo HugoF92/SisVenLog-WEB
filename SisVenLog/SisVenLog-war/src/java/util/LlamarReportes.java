@@ -1411,18 +1411,19 @@ public class LlamarReportes {
         }
     }
     
-    public void reporteLiFactPeso(String sql, String desde, String hasta, String tipoDoc, String usuImprime, String zona, String tipo) {
+    public void reporteLiFactPeso(String sql, String desde, String hasta, String usuImprime, String nombre_vendedor, String nombre_linea, String nombre_sublinea, String tipo) {
         try {
 
             Map param = new HashMap();
             param.put("sql", sql);
             param.put("desde", desde);
             param.put("hasta", hasta);
-            param.put("tipoDoc", tipoDoc);
-            param.put("zona", zona);
             param.put("usuImprime", usuImprime);
+            param.put("nombre_vendedor", nombre_vendedor);
+            param.put("nombre_linea", nombre_linea);
+            param.put("nombre_sublinea", nombre_sublinea);
 
-            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/mercaderiasSinMovimientos.jasper");
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liFactPeso.jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 
@@ -1435,7 +1436,7 @@ public class LlamarReportes {
                 if (tipo.equals("VIST")) {
                     disposition = "inline";
 
-                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=limercasin.pdf");
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=lifactpeso.pdf");
                     httpServletResponse.addHeader("Content-type", "application/pdf");
 
                     ServletOutputStream servletStream = httpServletResponse.getOutputStream();

@@ -109,9 +109,9 @@
                                         <p:selectBooleanCheckbox id="checkbox" itemLabel="" value="#{liFactPesoBean.todosCliente}">
                                             <p:ajax update="codCliente nombreCliente" />
                                         </p:selectBooleanCheckbox>
-                                        <p:inputText id="codCliente" value="#{liFactPesoBean.codCliente}" disabled="#{liFactPesoBean.todosCliente}"
+                                        <p:inputText id="codCliente" value="#{liFactPesoBean.clientes.codCliente}" disabled="#{liFactPesoBean.todosCliente}"
                                                      placeholder="código cliente" style="width: 100px;"/>
-                                        <p:inputText id="nombreCliente" value="#{liFactPesoBean.nombreCliente}" disabled="#{liFactPesoBean.todosCliente}"
+                                        <p:inputText id="nombreCliente" value="#{liFactPesoBean.clientes.xnombre}" disabled="#{liFactPesoBean.todosCliente}"
                                                      placeholder="nombre cliente" style="width: 100px;"/>
 
                                         <p:outputLabel value="Tipo Documento:"/>
