@@ -25,7 +25,7 @@
 
                         <h:form id="formRecibosCompras" prependId="false">  
 
-                            <h1 align="center">MANTENIMIENTO DE FACTURAS</h1>
+                            <h1 align="center">MANTENIMIENTO DE FACTURAS DE VENTAS</h1>
 
                             <p:growl id="msgRecibosCom" showDetail="true"/>
 
@@ -75,7 +75,6 @@
                                                      emptyMessage="Sin datos para mostrar."
                                                      selectionMode="single" reflow="true" lazy="true"
                                                      value="#{facturasBean.modelFacturas}" 
-                                                     rowKey="#{itemp.facturasPK.nrofact}"
                                                      selection="#{facturasBean.facturaSeleccionada}">
 
                                             <p:ajax event="rowSelect"
@@ -100,6 +99,10 @@
                                                 <h:outputText value="#{itemp.ttotal}" >
                                                     <f:convertNumber type="number"/>
                                                 </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Estado">
+                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'INACTIVO'}"></h:outputText>
                                             </p:column>
                                             
                                         </p:dataTable>
