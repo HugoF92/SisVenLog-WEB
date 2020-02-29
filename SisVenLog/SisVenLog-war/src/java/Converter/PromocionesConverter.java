@@ -46,8 +46,10 @@ public class PromocionesConverter  implements Converter, Serializable{
         }
         else
         {
+            
+            PromocionesPK promocionesPK = ((Promociones) value).getPromocionesPK();
             //return String.valueOf(((Integer) value));
-            return String.valueOf(((Promociones) value).getPromocionesPK().getNroPromo());
+            return (promocionesPK == null) ? "" : String.valueOf(promocionesPK.getNroPromo());
         }
     }
 

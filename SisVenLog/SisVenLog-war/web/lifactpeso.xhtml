@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiFactPeso" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiApli" header="KILAJE EN FACTURAS"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="4">
+                                        
+                                        <p:outputLabel value="Fecha de Facturacion Inicial:" />
+                                        <p:calendar id="fechaDesde" value="#{liFactPesoBean.fechaDesde}" 
+                                                    showOn="button" locale="es"/>
+                                        
+                                        <p:outputLabel value="Fecha de Facturacion Final:"/>
+                                        <p:calendar id="fechaHasta" value="#{liFactPesoBean.fechaHasta}" 
+                                                    showOn="button" locale="es"/>
+
+                                        <p:outputLabel value="Línea:"/>
+                                        <p:selectOneMenu value="#{liFactPesoBean.lineas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{LineasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liFactPesoBean.listarLineas()}" var="linea"
+                                                           itemValue="#{linea}"
+                                                           itemLabel="#{linea.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Sublínea:"/>
+
+                                        <p:selectOneMenu value="#{liFactPesoBean.sublineas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{SublineasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{sublineasBean.listar()}" var="sublinea"
+                                                           itemValue="#{sublinea}"
+                                                           itemLabel="#{sublinea.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Vendedor:"/>
+                                        <p:selectOneMenu value="#{liFactPesoBean.vendedor}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{EmpleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liFactPesoBean.listarEmpleadosActivos()}" var="vendedor"
+                                                           itemValue="#{vendedor}"
+                                                           itemLabel="#{vendedor.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Promoción:"/>
+
+                                        <p:selectOneMenu value="#{liFactPesoBean.promocion}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{promocionesConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liFactPesoBean.listarPromociones()}" var="promocion"
+                                                           itemValue="#{promocion}"
+                                                           itemLabel="#{promocion.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Cliente:" />
+                                        <p:selectBooleanCheckbox id="checkbox" itemLabel="" value="#{liFactPesoBean.todosCliente}">
+                                            <p:ajax update="codCliente nombreCliente" />
+                                        </p:selectBooleanCheckbox>
+                                        <p:inputText id="codCliente" value="#{liFactPesoBean.codCliente}" disabled="#{liFactPesoBean.todosCliente}"
+                                                     placeholder="código cliente" style="width: 100px;"/>
+                                        <p:inputText id="nombreCliente" value="#{liFactPesoBean.nombreCliente}" disabled="#{liFactPesoBean.todosCliente}"
+                                                     placeholder="nombre cliente" style="width: 100px;"/>
+
+                                        <p:outputLabel value="Tipo Documento:"/>
+
+                                        <p:selectOneMenu value="#{liFactPesoBean.tiposDocumentos}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{TiposDocumentosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liFactPesoBean.listarTipoDocumento()}" var="tipoDocumento"
+                                                           itemValue="#{tipoDocumento}"
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandButton icon="fa fa-filter"
+                                                     oncomplete="PF('dlgSelectMerca').show()"
+                                                     style="margin-top:10px" />
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liFactPesoBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                    
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liFactPesoBean.ejecutar('IMPR')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            id="VPbtn" value="Imprimir" icon="fa fa-file-pdf-o" styleClass="blue-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liFactPesoBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-print" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                </p:panel>
+                                
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+
+                                    <p:pickList id="pickListMerca" value="#{liFactPesoBean.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                    
+
+                                </p:dialog>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

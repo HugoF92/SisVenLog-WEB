@@ -1410,6 +1410,47 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    
+    public void reporteLiFactPeso(String sql, String desde, String hasta, String tipoDoc, String usuImprime, String zona, String tipo) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("tipoDoc", tipoDoc);
+            param.put("zona", zona);
+            param.put("usuImprime", usuImprime);
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/mercaderiasSinMovimientos.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=limercasin.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     public void reporteLiMercaSin2(String sql, String desde, String hasta,
             String usuImprime, String tipo) {

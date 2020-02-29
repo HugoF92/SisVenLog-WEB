@@ -199,4 +199,18 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
 
         return respuesta;
     }
+     
+     public List<TiposDocumentos> listarTipoDocumentoKilajeEnFactura() {
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from tipos_documentos\n"
+                + "where ctipo_docum in ('FCO','FCR','CPV','NCV')", TiposDocumentos.class);
+        
+        System.out.println(q.toString());
+
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
 }

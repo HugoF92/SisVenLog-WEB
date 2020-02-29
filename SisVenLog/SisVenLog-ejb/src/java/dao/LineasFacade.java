@@ -50,6 +50,18 @@ public class LineasFacade extends AbstractFacade<Lineas> {
 
         return respuesta;
     }
+    
+     public List<Lineas> listarLineas() {
+        Query q = getEntityManager().createNativeQuery("select * from lineas", Lineas.class);
+
+        System.out.println(q.toString());
+
+        List<Lineas> respuesta = new ArrayList<Lineas>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
 
     public void insertarLineas(Lineas lineas) {
 
