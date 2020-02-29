@@ -42,17 +42,19 @@
                                 
                                 <p:commandButton 
                                     value="Anular"
-                                    oncomplete="PF('dlgAnularFactura').show()"
-                                    update="formInacReciboCompra"
+                                    actionListener="#{facturaServicioBean.visualizarFacturaServicio}"
+                                    oncomplete="PF('dlgVisualizarFacturaSer').show()"
+                                    update="formVisuaFacturaSer"
                                     icon="fa fa-search"
                                     styleClass="yelow-btn raised-btn" 
                                     disabled="#{facturaServicioBean.habilitaBotonAnular}"
                                     style="margin-bottom:10px; width: 100px;"/>
-
+                                
                                 <p:commandButton 
                                     value="Eliminar"  
-                                    update="formBorrarFactura"
-                                    oncomplete="PF('dlgBorrarFactura').show()"
+                                    actionListener="#{facturaServicioBean.visualizarFacturaServicio}"
+                                    update="formEliminaFacturaSer"
+                                    oncomplete="PF('dlgEliminarFacturaSer').show()"
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
@@ -372,62 +374,180 @@
 
                         </h:form>
                         
-                        <h:form id="formBorrarFactura" prependId="false">
+                        <h:form id="formVisuaFacturaSer"  prependId="false">
+                            <p:growl id="msgVisuaFacturaSer" showDetail="true"/>
 
-                            <p:growl id="msgBorrarFactura" showDetail="true"/>
-
-                            <p:dialog header="Eliminar Factura"
-                                      widgetVar="dlgBorrarFactura"
+                            <p:dialog header="Anular Factura Servicio"
+                                      widgetVar="dlgVisualizarFacturaSer"
                                       modal="true"
                                       responsive="true"
-                                      width="400">
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
                                 
-                                <p:outputLabel value="Desea eliminar el registro seleccionado?" style="font-weight: bold;"/>
-                                <br></br>
-                                <br></br>
+                                <p:ajax event="open" listener="#{facturaServicioBean.inicializarDatosAnulacion}" update="panel_grid_anular_factura"/> 
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_agregar_datos_visualizar" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Tipo de Documento: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="tipo_documento_id_a" value="#{facturaServicioBean.tipoDocumentoSeleccionadoLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" converter="#{TiposDocumentosConverter}" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{facturaServicioBean.listarTiposDocumentos()}" 
+                                                           var="tipoDocumento"
+                                                           itemValue="#{tipoDocumento}"
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_visua_ser" columns="3">
+                                            <p:inputText id="codigo_cliente_id_a" value="#{facturaServicioBean.codClienteLbl}" style="width: 60px;" disabled="true">
+                                                <p:ajax event="blur" update="cliente_descripcion_visua" listener="#{facturaServicioBean.verificarCliente}"/>
+                                            </p:inputText>
+                                            <p:commandButton 
+                                                oncomplete="PF('dlgBusClieConsultaFactura').show()"
+                                                update="panel_grid_agregar_datos_visualizar"
+                                                icon="fa fa-search"
+                                                styleClass="blue-btn raised-btn" 
+                                                style="width: 30px;"
+                                                ajax="true"/>
+                                            <p:outputLabel id="cliente_descripcion_visua" value="#{facturaServicioBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Factura: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_factura_id_a" size="8" value="#{facturaServicioBean.fechaFactLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                                                                    
+                                        <p:outputLabel value="Nro. Factura:  " style="font-weight: bold; text-align: left;"/>    
+                                        <h:panelGrid id="panel_nro_factura_a" columns="3">
+                                            <p:inputText id="nro_establec_id_a" value="#{facturaServicioBean.puntoEstabLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_expedic_id_a" value="#{facturaServicioBean.puntoExpedLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_factura_id_a" value="#{facturaServicioBean.nroFactLbl}" style="width: 100px;" disabled="true"/>
+                                        </h:panelGrid>
+                                                                                
+                                        <p:outputLabel value="Fecha Venc.: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_id_a" size="8" value="#{facturaServicioBean.fechaVencLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Observaciones: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id_a" value="#{facturaServicioBean.observacionLbl}" cols="4" rows="3" disabled="true"></p:inputTextarea>
+                                        
+                                    </p:panelGrid>
+                                </div>
+                                
+                                <p:panel header="Detalle">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Servicios</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
 
+                                                            <!-- LISTADO DE SERVICIOS   -->
+                                                            <p:dataTable id="tablaFacturasSerDetVisua" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{facturaServicioBean.facturas.facturasSerCollection}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         editable="true" editMode="cell"
+                                                                         reflow="true" selectionMode="single"
+                                                                         rowKey="#{itemd.facturasSerPK.codServicio}"
+                                                                         selection="#{facturaServicioBean.facturasSerSeleccionado}"
+                                                                         style="width: 800px;">
+
+                                                                <p:column headerText="Cod. Servicio" width="80">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.codServicio}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Tipo Doc." width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.ctipoDocum}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Factura" width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.ffactur}" >
+                                                                         <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Nro. Factura" width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.nrofact}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Exentas" width="100">
+                                                                    <h:outputText value="#{itemd.iexentas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Gravadas" width="100">
+                                                                    <h:outputText value="#{itemd.igravadas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Tipo Impuesto" width="80">
+                                                                    <h:outputText value="#{itemd.pimpues}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Impuesto" width="100">
+                                                                    <h:outputText value="#{itemd.impuestos}" >
+                                                                         <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                   
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
                                 <center>
-                                    
-                                    <br></br>
-                                    <br></br>
-                                    
-                                    <h:panelGrid columns="2">
-
-                                        <p:commandButton
-                                            value="Eliminar"
-                                            actionListener="#{facturaServicioBean.eliminarFacturaServicio}"
-                                            update="msgBorrarFactura formListadoRecibosCompras tablaRecibosCompras"
-                                            icon="fa fa-check"
-                                            styleClass="green-btn raised-btn" 
-                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
-
-
-                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgBorrarFactura').hide();" 
-                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                         icon="fa fa-times"/>
+                                    <h:panelGrid columns="3">
+                                        
+                                        <p:outputLabel value="PARCIALES:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_gravadas_id_a" value="#{facturaServicioBean.totalGravadas}" style="width: 100px;" disabled="true"/>
+                                        <p:inputNumber id="total_exentas_id_a" value="#{facturaServicioBean.totalExentas}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="I.V.A:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_iva_id_a" value="#{facturaServicioBean.totalIva}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="DESCUENTOS:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_descuento_id_a" value="#{facturaServicioBean.totalDescuentos}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="TOTAL:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_id_a" value="#{facturaServicioBean.totalFinal}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                                                                
                                     </h:panelGrid>
                                 </center>
-                            </p:dialog>
-
-                        </h:form>
-                        
-                        
-                        <h:form id="formInacReciboCompra" prependId="false">
-
-                            <p:growl id="msgInacFactura" showDetail="true"/>
-
-                            <p:dialog header="Anular Factura"
-                                      widgetVar="dlgAnularFactura"
-                                      modal="true"
-                                      responsive="true"
-                                      width="400">
-
-                                <p:ajax event="open" listener="#{facturaServicioBean.inicializarDatosAnulacion}" update="fecha_anulacion_id motivo_anulacion_id"/>      
-                                <p:outputLabel value="Desea anular el registro seleccionado?" style="font-weight: bold;"/>
-
-                                <br></br>
-                                <br></br>
-
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
                                 <center>
                                     
                                     <div class="ui-fluid">
@@ -457,23 +577,224 @@
                                     <br></br>
                                     <br></br>
                                     
+                                    
+                                </center>
+
+                                <center>
                                     <h:panelGrid columns="2">
 
                                         <p:commandButton
                                             value="Anular"
-                                            process="formInacReciboCompra"
+                                            process="formVisuaFacturaSer"
                                             actionListener="#{facturaServicioBean.anularFacturaServicio}"
-                                            update="msgInacFactura formListadoRecibosCompras tablaRecibosCompras"
+                                            update="msgVisuaFacturaSer formListadoRecibosCompras tablaRecibosCompras"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
-
-
-                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgAnularFactura').hide();" 
+                                        
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgVisualizarFacturaSer').hide()"
+                                                         update="formListadoRecibosCompras formVisuaFacturaSer"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>
+                                        
                                     </h:panelGrid>
                                 </center>
+                                
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        <h:form id="formEliminaFacturaSer"  prependId="false">
+                            <p:growl id="msgEliminaFacturaSer" showDetail="true"/>
+
+                            <p:dialog header="Eliminar Factura Servicio"
+                                      widgetVar="dlgEliminarFacturaSer"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_agregar_datos_eliminar" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Tipo de Documento: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="tipo_documento_id_e" value="#{facturaServicioBean.tipoDocumentoSeleccionadoLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" converter="#{TiposDocumentosConverter}" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{facturaServicioBean.listarTiposDocumentos()}" 
+                                                           var="tipoDocumento"
+                                                           itemValue="#{tipoDocumento}"
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_elimi_ser" columns="3">
+                                            <p:inputText id="codigo_cliente_id_e" value="#{facturaServicioBean.codClienteLbl}" style="width: 60px;" disabled="true">
+                                                <p:ajax event="blur" update="cliente_descripcion_eli" listener="#{facturaServicioBean.verificarCliente}"/>
+                                            </p:inputText>
+                                            <p:commandButton 
+                                                oncomplete="PF('dlgBusClieConsultaFactura').show()"
+                                                update="panel_grid_agregar_datos_eliminar"
+                                                icon="fa fa-search"
+                                                styleClass="blue-btn raised-btn" 
+                                                style="width: 30px;"
+                                                ajax="true"/>
+                                            <p:outputLabel id="cliente_descripcion_eli" value="#{facturaServicioBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Factura: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_factura_id_e" size="8" value="#{facturaServicioBean.fechaFactLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                                                                    
+                                        <p:outputLabel value="Nro. Factura:  " style="font-weight: bold; text-align: left;"/>    
+                                        <h:panelGrid id="panel_nro_factura_e" columns="3">
+                                            <p:inputText id="nro_establec_id_e" value="#{facturaServicioBean.puntoEstabLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_expedic_id_e" value="#{facturaServicioBean.puntoExpedLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_factura_id_e" value="#{facturaServicioBean.nroFactLbl}" style="width: 100px;" disabled="true"/>
+                                        </h:panelGrid>
+                                                                                
+                                        <p:outputLabel value="Fecha Venc.: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_id_e" size="8" value="#{facturaServicioBean.fechaVencLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Observaciones: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id_e" value="#{facturaServicioBean.observacionLbl}" cols="4" rows="3" disabled="true"></p:inputTextarea>
+                                        
+                                    </p:panelGrid>
+                                </div>
+                                
+                                <p:panel header="Detalle">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Servicios</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE SERVICIOS   -->
+                                                            <p:dataTable id="tablaFacturasSerDetEli" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{facturaServicioBean.facturas.facturasSerCollection}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         editable="true" editMode="cell"
+                                                                         reflow="true" selectionMode="single"
+                                                                         rowKey="#{itemd.facturasSerPK.codServicio}"
+                                                                         selection="#{facturaServicioBean.facturasSerSeleccionado}"
+                                                                         style="width: 800px;">
+
+                                                                <p:column headerText="Cod. Servicio" width="80">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.codServicio}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Tipo Doc." width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.ctipoDocum}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Factura" width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.ffactur}" >
+                                                                         <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Nro. Factura" width="100">
+                                                                    <h:outputText value="#{itemd.facturasSerPK.nrofact}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Exentas" width="100">
+                                                                    <h:outputText value="#{itemd.iexentas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Gravadas" width="100">
+                                                                    <h:outputText value="#{itemd.igravadas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Tipo Impuesto" width="80">
+                                                                    <h:outputText value="#{itemd.pimpues}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Impuesto" width="100">
+                                                                    <h:outputText value="#{itemd.impuestos}" >
+                                                                         <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                   
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="3">
+                                        
+                                        <p:outputLabel value="PARCIALES:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_gravadas_id_e" value="#{facturaServicioBean.totalGravadas}" style="width: 100px;" disabled="true"/>
+                                        <p:inputNumber id="total_exentas_id_e" value="#{facturaServicioBean.totalExentas}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="I.V.A:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_iva_id_e" value="#{facturaServicioBean.totalIva}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="DESCUENTOS:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_descuento_id_e" value="#{facturaServicioBean.totalDescuentos}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="TOTAL:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_id_e" value="#{facturaServicioBean.totalFinal}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Eliminar"
+                                            actionListener="#{facturaServicioBean.eliminarFacturaServicio}"
+                                            update="msgEliminaFacturaSer formListadoRecibosCompras tablaRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+                                        
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgEliminarFacturaSer').hide()"
+                                                         update="formListadoRecibosCompras formEliminaFacturaSer"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                        
+                                    </h:panelGrid>
+                                </center>
+                                
                             </p:dialog>
 
                         </h:form>

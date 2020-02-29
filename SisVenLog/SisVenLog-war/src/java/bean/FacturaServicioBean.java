@@ -40,7 +40,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -247,7 +246,8 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                 return false;
             }else{
                 if(fechaAnulacionLbl.compareTo(DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)) == 1){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atención", "Fecha máxima de anulación: "+DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)));
+                    Date fechaMaxima = DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2);
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atención", "Fecha máxima de anulación: "+DateUtil.formaterDateToString(fechaMaxima)));
                     return false;
                 }
             }
@@ -430,6 +430,33 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
         totalFinal = totalExentas + totalGravadas + totalIva;
     }
     
+    public String visualizarFacturaServicio(){
+        try{
+            tipoDocumentoSeleccionadoLbl = tiposDocumentosFacade.find(facturas.getFacturasPK().getCtipoDocum());
+            clienteBuscado = facturas.getCodCliente();
+            codClienteLbl = clienteBuscado.getCodCliente();
+            nombreClienteLbl = clienteBuscado.getXnombre();
+            fechaFactLbl = facturas.getFacturasPK().getFfactur();
+            nPuntoEstabLbl = Short.parseShort(String.valueOf(facturas.getFacturasPK().getNrofact()).substring(0, 1));
+            nPuntoExpedLbl = Short.parseShort(String.valueOf(facturas.getFacturasPK().getNrofact()).substring(1, 3));
+            nroFactLbl = Long.parseLong(String.valueOf(facturas.getFacturasPK().getNrofact()).substring(3));
+            fechaVencLbl = facturas.getFvenc();
+            observacionLbl = facturas.getXobs();
+            totalDescuentos = facturas.getTdescuentos();
+            totalExentas = facturas.getTexentas();
+            totalGravadas = facturas.getTgravadas();
+            totalIva = facturas.getTimpuestos();
+            totalFinal = facturas.getTtotal();
+        }catch(Exception e){
+            RequestContext.getCurrentInstance().update("exceptionDialog");
+            contenidoError = ExceptionHandlerView.getStackTrace(e);
+            tituloError = "Error al visualizar una factura de servicio.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
+            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+        }
+        return null;
+    }
+    
     public String eliminarFacturaServicio(){
         try{
             if(facturas.getMestado() == 'X'){
@@ -456,7 +483,7 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                     return null;
                 }
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Datos eliminados.", ""));
-                RequestContext.getCurrentInstance().execute("PF('dlgBorrarFactura').hide();");
+                RequestContext.getCurrentInstance().execute("PF('dlgEliminarFacturaSer').hide();");
                 inicializar();
                 return null;
             }else{
@@ -541,7 +568,7 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                         return null;
                     }
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Factura anulada.", ""));
-                    RequestContext.getCurrentInstance().execute("PF('dlgAnularFactura').hide();");
+                    RequestContext.getCurrentInstance().execute("PF('dlgVisualizarFacturaSer').hide();");
                     inicializar();
                     return null;
                 }
