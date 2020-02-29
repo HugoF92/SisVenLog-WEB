@@ -500,24 +500,21 @@ public class FacturasBean implements Serializable{
     public void listarFacturas(){
         
          modelFacturas = new LazyDataModel<Facturas>() {
-            private static final long serialVersionUID = 1L;
+             private static final long serialVersionUID = 1L;
 
             @Override
             public List<Facturas> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-                //List<Envios> envioss;
                 int count = 0;
                 if (filters.size() == 0) {
-                    listadoFacturas = facturasFacade.buscarFacturasEnUnRango(new int[]{first, pageSize});
-                    count = facturasFacade.count();
-                }else {
+                    listadoFacturas = facturasFacade.buscarFacturasClientesEnUnRango(new int[]{first, pageSize});
+                    count = facturasFacade.obtenerCantidadFacturasClientes();
+                } else {
                     if (filters.size() < 2) {
-                        //dd/MM/yyyy
                         String filtroNroRecibo = (String) filters.get("facturasPK.nrofact");
-                        listadoFacturas = facturasFacade.obtenerFacturasPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
-                        count = facturasFacade.obtenerCantidadFacturasPorNro(Long.parseLong(filtroNroRecibo));
+                        listadoFacturas = facturasFacade.obtenerFacturasClientesPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
+                        count = facturasFacade.obtenerCantidadFacturasClientesPorNro(Long.parseLong(filtroNroRecibo));
                     }
-
-                } 
+                }
                 modelFacturas.setRowCount(count);
                 return listadoFacturas;
             }
@@ -525,11 +522,12 @@ public class FacturasBean implements Serializable{
             @Override
             public Facturas getRowData(String rowKey) {
                 String tempIndex = rowKey;
-                System.out.println("1");
+                System.out.println("row key: "+tempIndex);
                 if (tempIndex != null) {
-                    for (Facturas inc : listadoFacturas) {
-                        if (Long.toString(inc.getFacturasPK().getNrofact()).equals(rowKey)) {
-                            return inc;
+                    for (Facturas fac : listadoFacturas) {
+                        String fechaFac = dateToString(fac.getFacturasPK().getFfactur());
+                        if (String.valueOf(fac.getFacturasPK().getNrofact()).concat(" ").concat(fac.getFacturasPK().getCtipoDocum()).concat(" ").concat(fechaFac).equals(rowKey)) {
+                            return fac;
                         }
                     }
                 }
@@ -539,9 +537,11 @@ public class FacturasBean implements Serializable{
 
             @Override
             public Object getRowKey(Facturas f) {
-                return f.getFacturasPK().getNrofact();
+                FacturasPK pk = f != null ? f.getFacturasPK() : null;
+                return pk != null ? pk.getNrofact() + " " + pk.getCtipoDocum() + " " + dateToString(pk.getFfactur()) : null;
             }
-        };
+            
+         };
         
     }
     
@@ -883,14 +883,7 @@ public class FacturasBean implements Serializable{
     }
     
     public String visualizarFactura(){
-        //limpiarFormulario();    //inicialmente.
         try{
-            FacturasPK facturaPK = new FacturasPK();
-            facturaPK.setCodEmpr(Short.parseShort("2"));
-            facturaPK.setCtipoDocum(facturaSeleccionada.getFacturasPK().getCtipoDocum());
-            facturaPK.setFfactur(facturaSeleccionada.getFacturasPK().getFfactur());
-            facturaPK.setNrofact(facturaSeleccionada.getFacturasPK().getNrofact());
-            facturaSeleccionada = facturasFacade.find(facturaPK);
             if (facturaSeleccionada.getFacturasPK().getFfactur() == null) {
                 //cabecera de la factura
                 try {
@@ -1029,12 +1022,6 @@ public class FacturasBean implements Serializable{
     
     public String anularFactura(){
         try{
-            FacturasPK facturaPK = new FacturasPK();
-            facturaPK.setCodEmpr(Short.parseShort("2"));
-            facturaPK.setCtipoDocum(facturaSeleccionada.getFacturasPK().getCtipoDocum());
-            facturaPK.setFfactur(facturaSeleccionada.getFacturasPK().getFfactur());
-            facturaPK.setNrofact(facturaSeleccionada.getFacturasPK().getNrofact());
-            facturaSeleccionada = facturasFacade.find(facturaPK);
             long lNroFactura = facturaSeleccionada.getFacturasPK().getNrofact();
             Date lFFactura = facturaSeleccionada.getFacturasPK().getFfactur();
             String lFFacturaStr = dateToString(lFFactura);
@@ -1238,15 +1225,16 @@ public class FacturasBean implements Serializable{
     
     private boolean validarDatosAnulacion(){
         if(fechaAnulacionLbl == null){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención", "Debe ingresar fecha de anulación."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe ingresar fecha de anulación."));
             return false;
         }else{
             if(cMotivoLbl == 0){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención", "Debe seleccionar un motivo de anulación."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar un motivo de anulación."));
                 return false;
             }else{
                 if(fechaAnulacionLbl.compareTo(DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)) == 1){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atención", "Fecha máxima de anulación: "+DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)));
+                    Date fechaMaxima = DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2);
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Fecha máxima de anulación es: "+DateUtil.formaterDateToString(fechaMaxima)));
                     return false;
                 }
             }
@@ -2328,12 +2316,15 @@ public class FacturasBean implements Serializable{
     
     public void onRowSelect(SelectEvent event) {
         if(facturaSeleccionada != null){
-            if(facturaSeleccionada.getFacturasPK().getNrofact() != 0){
-                setHabilitaBotonEliminar(false);
-                setHabilitaBotonVisualizar(false);
-            }else{
-                setHabilitaBotonEliminar(true);
-                setHabilitaBotonVisualizar(true);
+            FacturasPK pk = facturaSeleccionada.getFacturasPK();
+            if(pk != null){
+                if(pk.getNrofact() != 0 && !pk.getCtipoDocum().equals("")){
+                    setHabilitaBotonEliminar(false);
+                    setHabilitaBotonVisualizar(false);
+                }else{
+                    setHabilitaBotonEliminar(true);
+                    setHabilitaBotonVisualizar(true);
+                }
             }
         }
     }
@@ -3030,9 +3021,5 @@ public class FacturasBean implements Serializable{
     public LazyDataModel<Facturas> getModelFacturas() {
         return modelFacturas;
     }
-
-    public void setModelFacturas(LazyDataModel<Facturas> modelFacturas) {
-        this.modelFacturas = modelFacturas;
-    }
-    
+ 
 }
