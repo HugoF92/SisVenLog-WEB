@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liClientesConRuteo" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="da15e1b6-bdf8-4b65-bda1-060a297efc59">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="286"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="707"/>
+	<parameter name="codTipoCliente" class="java.lang.String"/>
+	<parameter name="tipoCliente" class="java.lang.String"/>
+	<parameter name="codZona" class="java.lang.String"/>
+	<parameter name="zona" class="java.lang.String"/>
+	<parameter name="codRuta" class="java.lang.Short"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<parameter name="estado" class="java.lang.Integer"/>
+	<parameter name="fechaAltaDesde" class="java.lang.String"/>
+	<parameter name="fechaAltaHasta" class="java.lang.String"/>
+	<parameter name="todosClientes" class="java.lang.Boolean"/>
+	<parameter name="listaCodClientes" class="java.lang.String"/>
+	<parameter name="usuarioImpresion" class="java.lang.String"/>
+	<parameter name="camposCondicionales" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[(($P{codTipoCliente} != null) ? (" AND c.ctipo_cliente = '" + $P{codTipoCliente} + "' "): "")
+	+ (($P{codZona} != null )? (" AND r.cod_zona = '" + $P{codZona} + "' "): "")
+	+ (($P{codRuta} != null) ? (" AND c.cod_ruta = " + $P{codRuta} + " "): "")
+	+ (($P{estado} != null && $P{estado} == 1) ? (" AND cod_estado = 'A' ") :  "")
+	+ (($P{estado} != null && $P{estado} == 2) ? (" AND CONVERT(char(10), c.falta, 103) BETWEEN '" + $P{fechaAltaDesde} + "' AND '" + $P{fechaAltaHasta} + "' "): "")
+	+ (($P{estado} != null && $P{estado} == 3) ? (" AND cod_estado = 'I' "): "")
+	+ (($P{listaCodClientes} != null && $P{listaCodClientes}.length() > 0)? (" AND c.cod_cliente IN (" + $P{listaCodClientes} + ") " ) : "")
+	+ " ORDER BY c.xnombre"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  c.cod_cliente, 
+        r.cod_zona, 
+        c.cod_ruta, 
+        c.xnombre, 
+        c.xpropietario, 
+        c.xruc, 
+        c.xdirec, 
+        c.xtelef, 
+        z.xdesc as xdesc_zona, 
+        r.xdesc as xdesc_ruta,
+        c.ctipo_cliente, 
+        t.xdesc as xdesc_tipo, 
+        cod_estado
+FROM clientes c, tipos_clientes t, zonas z, rutas r
+WHERE
+    c.ctipo_cliente = t.ctipo_cliente
+    AND c.cod_empr = r.cod_empr
+    AND z.cod_empr = 2
+    AND r.cod_zona = z.cod_zona
+    AND r.cod_empr = z.cod_empr
+    AND c.cod_ruta = r.cod_ruta
+    $P!{camposCondicionales}]]>
+	</queryString>
+	<field name="cod_cliente" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="cod_cliente"/>
+	</field>
+	<field name="cod_zona" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cod_zona"/>
+	</field>
+	<field name="cod_ruta" class="java.lang.Short">
+		<property name="com.jaspersoft.studio.field.label" value="cod_ruta"/>
+	</field>
+	<field name="xnombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xnombre"/>
+	</field>
+	<field name="xpropietario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xpropietario"/>
+	</field>
+	<field name="xruc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xruc"/>
+	</field>
+	<field name="xdirec" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdirec"/>
+	</field>
+	<field name="xtelef" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xtelef"/>
+	</field>
+	<field name="xdesc_zona" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_zona"/>
+	</field>
+	<field name="xdesc_ruta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_ruta"/>
+	</field>
+	<field name="ctipo_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ctipo_cliente"/>
+	</field>
+	<field name="xdesc_tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_tipo"/>
+	</field>
+	<field name="cod_estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cod_estado"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="122" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="6" y="5" width="101" height="16" uuid="260a627f-9f36-4afc-99ae-4bb5e9ebe0bb"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENLOG S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="21" width="101" height="14" uuid="2cb3a92f-afb1-430d-86b0-ec9071be4cd5"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stock y Cta. Cte.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="15" width="263" height="20" uuid="5dfb34e5-5fc5-4e6d-9c49-a9839b52adf4"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE CLIENTES POR ZONAS/RUTAS]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="480" y="7" width="79" height="14" uuid="a57265f7-b537-43c2-aba5-98891e389039"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="434" y="7" width="44" height="14" uuid="aac94e64-ae1f-4e0b-8310-241653791b68"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="80" width="556" height="1" uuid="6459331f-367d-42d5-a0ae-ecddeeafe22a">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="66" y="36" width="80" height="20" uuid="c1ea4f65-2e15-4601-b76d-8bb4a162a868"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Cliente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="146" y="36" width="97" height="20" uuid="ba7711a7-28cb-4072-8050-d0ef9b5aef24"/>
+				<textFieldExpression><![CDATA[$P{tipoCliente} == null? "":$P{tipoCliente} ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="245" y="36" width="39" height="20" uuid="7d82f76b-6b2d-4048-b83a-f59f702a6220"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zona:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="286" y="36" width="80" height="20" uuid="b7819c80-713d-415f-8de7-21ad9ef158cd"/>
+				<textFieldExpression><![CDATA[$P{zona} == null?"":$P{zona} ]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="366" y="36" width="39" height="20" uuid="801e236b-5977-4415-a02a-27e0d74b05a0"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="406" y="36" width="80" height="20" uuid="5cc909a3-052a-4e6b-ab78-65e077ac9d0d"/>
+				<textFieldExpression><![CDATA[$P{ruta}==null? "": $P{ruta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="60" width="201" height="21" uuid="c5e9d547-6e6c-4dec-a90c-a5f197556634"/>
+				<textFieldExpression><![CDATA[$P{estado} == 1 ? "Clientes Activos":
+								$P{estado} == 2 ? "Desde " + $P{fechaAltaDesde} + " Hasta " + $P{fechaAltaHasta}:
+															$P{estado} == 3 ? "Clientes Inactivos": ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="432" y="80" width="31" height="21" uuid="598fd44c-d7b0-4216-bcdb-182d7151ebaf"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="80" width="31" height="21" uuid="b8265306-772e-46ff-85c2-1de50c941e66"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="80" width="31" height="21" uuid="51a8e028-970b-47de-97e3-28b8aaaf3bdc"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="80" width="31" height="21" uuid="6116424a-51b4-47b0-a32e-cb25f3e528db"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="101" width="31" height="21" uuid="4bb33fde-599d-455b-ac3a-3522a5c5169c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="101" width="31" height="21" uuid="73a3ea4b-7d26-4453-986f-11637ca4d96b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="101" width="31" height="21" uuid="2cf36952-ded9-4956-bf32-bef05294973b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="101" width="31" height="21" uuid="6db8ff4c-0e30-46b5-a859-f59088bd66ae"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="80" width="62" height="20" uuid="fce32166-40f3-4721-9bc6-84da21aa7432"/>
+				<text><![CDATA[Fecha Visita:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="101" width="62" height="20" uuid="90b4ecd2-3b15-4b08-a715-36d552f56570"/>
+				<text><![CDATA[Cant. Visitas:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="84" width="62" height="21" uuid="7b13535e-1057-42f8-98bc-a8c5fd0c6b79"/>
+				<text><![CDATA[Monto Diario:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="179" y="84" width="41" height="21" uuid="ed026ff4-75e4-4f28-88cf-11941b9f37fd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="84" width="40" height="21" uuid="4e03dc23-2398-452e-8748-6893e05899a4"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="84" width="40" height="21" uuid="a3eb6c2f-3d9a-43f2-a540-6def32874cf2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="84" width="40" height="21" uuid="f522a356-102d-4112-a761-c433405d7cdb"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="53" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="0" y="26" width="50" height="24" uuid="dd028ceb-495c-45f1-bfc1-661635bd3b07"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="27" width="60" height="23" uuid="ad60b68a-4865-4579-a67b-abe6af82ebd6"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="27" width="60" height="23" uuid="a52b2bb8-156c-4e40-b91a-a69c0c022fe0"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="1" width="31" height="21" uuid="03239816-88ca-40f7-b66e-32b596a09194"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="1" width="31" height="21" uuid="53432984-6efd-4d29-9295-7b1ae4f103ab"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="1" width="31" height="21" uuid="9889dc0f-e175-4a95-8f30-afbdd5998115"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="1" width="31" height="21" uuid="01d02661-393e-467e-b0f4-a4e50131be5a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="1" width="62" height="20" uuid="af0a71c2-38f3-498c-b8df-b7dbf528ed3a"/>
+				<text><![CDATA[Cant. Ventas:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement x="0" y="-1" width="556" height="1" uuid="694211e5-0e8a-4a46-9fb6-02458aa31f1b">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="20" width="130" height="30" uuid="1045a905-6ac7-4084-89a4-2b8309a41394"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{cod_cliente} + " " + $F{xnombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="18" width="58" height="32" uuid="6a17eb43-98d1-44c2-935e-c368720d94e5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{xdirec}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="278" y="19" width="62" height="22" uuid="9219a748-e6fc-4ebe-963f-bd52ead14420"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{cod_ruta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="431" y="20" width="31" height="21" uuid="2c558248-830d-41c9-a26c-02a994ee738e"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="20" width="31" height="21" uuid="731d5fb1-dc2a-435f-b3bc-00b646d6aa5f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="20" width="31" height="21" uuid="322553d9-f722-424f-bd70-e9981415f6f4"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="524" y="20" width="31" height="21" uuid="68e89569-96d6-42e0-ae1a-64b0a1f1207c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="21" width="63" height="14" uuid="3b134e45-9742-4847-9808-5c12620050c8"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Impreso el:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="433" y="21" width="80" height="14" uuid="dd01c674-032e-40a3-94b6-4f56c04762b1"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="21" width="40" height="14" uuid="0e2de13c-9549-4a3f-8146-1a0c2de98639"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="66" y="21" width="111" height="14" uuid="30e10d79-61c5-49f4-bc34-574d71d2eae1"/>
+				<textElement>
+					<font size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="82f27711-d467-4832-bed0-4d386b0fdea1"/>
+			</line>
+			<textField>
+				<reportElement x="179" y="20" width="100" height="16" uuid="035ec299-ba39-4afb-ac0b-4794eb86e0b7"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuarioImpresion}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="19" width="555" height="1" uuid="48484ba3-4f18-4cdb-9d05-865e7c15bd05"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="4" width="553" height="14" uuid="057e36e1-ff3e-4636-8f45-3d6e48b442cc"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[***FIN DEL INFORME***]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>
