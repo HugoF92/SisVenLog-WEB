@@ -203,9 +203,9 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         String listaCodigos = "";
         for (int i = 0; i < mercaderias.size(); i++) {
             if (i == 0) {
-                listaCodigos += "'" + mercaderias.get(i).toString() + "'";
+                listaCodigos += "'" + mercaderias.get(i).getMercaderiasPK().getCodMerca().toString() + "'";
             } else {
-                listaCodigos += "," + "'" + mercaderias.get(i).toString() + "'";
+                listaCodigos += "," + "'" + mercaderias.get(i).getMercaderiasPK().getCodMerca().toString() + "'";
             }
         }
         return listaCodigos;
