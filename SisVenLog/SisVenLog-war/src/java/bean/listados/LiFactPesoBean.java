@@ -276,10 +276,14 @@ public class LiFactPesoBean {
     }
 
     public void setLineas(Lineas lineas) {
-        for(int i=0; i < getListaLineas().size(); i++){
-            if(getListaLineas().get(i).getCodLinea() == lineas.getCodLinea()){
-                this.lineas = getListaLineas().get(i);
-                break;
+        if (lineas == null) {
+            this.lineas = null;
+        } else {
+            for (int i = 0; i < getListaLineas().size(); i++) {
+                if (getListaLineas().get(i).getCodLinea() == lineas.getCodLinea()) {
+                    this.lineas = getListaLineas().get(i);
+                    break;
+                }
             }
         }
     }
@@ -289,10 +293,14 @@ public class LiFactPesoBean {
     }
 
     public void setSublineas(Sublineas sublineas) {
-        for(int i=0; i < getListaSublineas().size(); i++){
-            if(getListaSublineas().get(i).getCodSublinea() == sublineas.getCodSublinea()){
-                this.sublineas = getListaSublineas().get(i);
-                break;
+        if (sublineas == null) {
+            this.sublineas = null;
+        } else {
+            for (int i = 0; i < getListaSublineas().size(); i++) {
+                if (getListaSublineas().get(i).getCodSublinea() == sublineas.getCodSublinea()) {
+                    this.sublineas = getListaSublineas().get(i);
+                    break;
+                }
             }
         }
     }
@@ -330,10 +338,14 @@ public class LiFactPesoBean {
     }
     
     public void setVendedor(Empleados vendedor) {
-         for(int i=0; i < getListaVendedores().size(); i++){
-            if(getListaVendedores().get(i).getEmpleadosPK().getCodEmpleado() == vendedor.getEmpleadosPK().getCodEmpleado()){
-                this.vendedor = getListaVendedores().get(i);
-                break;
+        if (vendedor == null) {
+            this.vendedor = null;
+        } else {
+            for (int i = 0; i < getListaVendedores().size(); i++) {
+                if (getListaVendedores().get(i).getEmpleadosPK().getCodEmpleado() == vendedor.getEmpleadosPK().getCodEmpleado()) {
+                    this.vendedor = getListaVendedores().get(i);
+                    break;
+                }
             }
         }
     }
