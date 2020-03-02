@@ -11,8 +11,8 @@ import dao.LiFactPesoFacade;
 import dao.LineasFacade;
 import dao.MercaderiasFacade;
 import dao.PromocionesFacade;
+import dao.SublineasFacade;
 import dao.TiposDocumentosFacade;
-import dto.ListaStringDto;
 import entidad.Clientes;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -31,7 +31,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
+import util.ExceptionHandlerView;
 import util.LlamarReportes;
 
 /**
@@ -46,6 +48,9 @@ public class LiFactPesoBean {
     
     @EJB
     private LineasFacade lineasFacade;
+    
+    @EJB
+    private SublineasFacade sublineasFacade;
     
     @EJB
     private EmpleadosFacade empleadosFacade;
@@ -85,6 +90,10 @@ public class LiFactPesoBean {
     private List<Mercaderias> mercaTarget;
     private DualListModel<Mercaderias> mercaderias;
     
+    //para manejo de errores
+    private String contenidoError;
+    private String tituloError;
+    
     //Operaciones
     //Instanciar objetos
     @PostConstruct
@@ -112,8 +121,8 @@ public class LiFactPesoBean {
         this.fechaDesde = new Date();
         this.fechaHasta = new Date();
         
-        this.mercaSource = new ArrayList<>();
-        this.mercaTarget = new ArrayList<>();
+        this.mercaSource = new ArrayList<Mercaderias>();
+        this.mercaTarget = new ArrayList<Mercaderias>();
         
         mercaSource = mercaderiasFacade.listarMercaderiasActivasDepo1();
 
@@ -145,20 +154,36 @@ public class LiFactPesoBean {
         return getListaLineas();
     }
     
-    public void ejecutar(String operacion){
-        
-        String usuario = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
-        
-        ListaStringDto resultado = liFactPesoFacade.ejecutar(getLineas(), getSublineas(), getPromocion(), getTiposDocumentos(),
-                getVendedor(), getClientes(), getFechaDesde(), getFechaHasta(), getTodosCliente(), getMercaderias().getTarget());
-        
-        LlamarReportes rep = new LlamarReportes();
+    public List<Sublineas> listarSublineas() {
+        listaSublineas = sublineasFacade.findAll();
+        return listaSublineas;
+    }
+    
+    public void ejecutar(String operacion){//agregar controles de si algun litado no se selecciona o linea, sublinea, vendedor, promocion, tipo de documento o la mercaderia target
+        try {
+            String usuario = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
 
-        if (operacion.equals("ARCH")){            
-            String[] columnas = {"ctipo_docum","nrofact","ffactur","cod_cliente","x_nombre","cod_merca","xdesc","cant_cajas","cant_unid","tpeso_cajas","tpeso_unid","itotal","cod_vendedor","xvendedor","nro_promo","nfactura","pdesc"};
+            String sql = liFactPesoFacade.crearSql(getLineas(), getSublineas(), getPromocion(), getTiposDocumentos(),
+                    getVendedor(), getClientes(), getFechaDesde(), getFechaHasta(), getTodosCliente(), getMercaderias().getTarget());
 
-            rep.exportarExcel(columnas, resultado.getLista(), "lifactpeso");
-        }else rep.reporteLiFactPeso(resultado.getSql(),  dateToString(getFechaDesde()), dateToString(getFechaHasta()), usuario, getVendedor().getXnombre(), getLineas().getXdesc(), getSublineas().getXdesc(), operacion);
+            LlamarReportes rep = new LlamarReportes();
+
+            if (operacion.equals("ARCH")) {
+                List<Object[]> resultado = liFactPesoFacade.ejecutarSql(sql);
+                
+                String[] columnas = {"ctipo_docum", "nrofact", "ffactur", "cod_cliente", "x_nombre", "cod_merca", "xdesc", "cant_cajas", "cant_unid", "tpeso_cajas", "tpeso_unid", "itotal", "cod_vendedor", "xvendedor", "nro_promo", "nfactura", "pdesc"};
+
+                rep.exportarExcel(columnas, resultado, "lifactpeso");
+            } else {
+                rep.reporteLiFactPeso(sql, dateToString(getFechaDesde()), dateToString(getFechaHasta()), usuario, getVendedor().getXnombre(), getLineas().getXdesc(), getSublineas().getXdesc(), operacion);
+            }
+        } catch (Exception e) {
+            RequestContext.getCurrentInstance().update("exceptionDialog");
+            contenidoError = ExceptionHandlerView.getStackTrace(e);
+            tituloError = "Error al procesar datos.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
+            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+        }
     }
     
     private String dateToString(Date fecha) {
@@ -242,8 +267,21 @@ public class LiFactPesoBean {
         return mercaderias;
     }
 
+    public String getContenidoError() {
+        return contenidoError;
+    }
+
+    public String getTituloError() {
+        return tituloError;
+    }
+
     public void setLineas(Lineas lineas) {
-        this.lineas = lineas;
+        for(int i=0; i < getListaLineas().size(); i++){
+            if(getListaLineas().get(i).getCodLinea() == lineas.getCodLinea()){
+                this.lineas = getListaLineas().get(i);
+                break;
+            }
+        }
     }
 
     public void setListaLineas(List<Lineas> listaLineas) {
@@ -251,7 +289,12 @@ public class LiFactPesoBean {
     }
 
     public void setSublineas(Sublineas sublineas) {
-        this.sublineas = sublineas;
+        for(int i=0; i < getListaSublineas().size(); i++){
+            if(getListaSublineas().get(i).getCodSublinea() == sublineas.getCodSublinea()){
+                this.sublineas = getListaSublineas().get(i);
+                break;
+            }
+        }
     }
 
     public void setListaSublineas(List<Sublineas> listaSublineas) {
@@ -287,7 +330,12 @@ public class LiFactPesoBean {
     }
     
     public void setVendedor(Empleados vendedor) {
-        this.vendedor = vendedor;
+         for(int i=0; i < getListaVendedores().size(); i++){
+            if(getListaVendedores().get(i).getEmpleadosPK().getCodEmpleado() == vendedor.getEmpleadosPK().getCodEmpleado()){
+                this.vendedor = getListaVendedores().get(i);
+                break;
+            }
+        }
     }
 
     public void setFechaDesde(Date fechaDesde) {
@@ -304,6 +352,14 @@ public class LiFactPesoBean {
 
     public void setMercaderias(DualListModel<Mercaderias> mercaderias) {
         this.mercaderias = mercaderias;
+    }
+
+    public void setContenidoError(String contenidoError) {
+        this.contenidoError = contenidoError;
+    }
+
+    public void setTituloError(String tituloError) {
+        this.tituloError = tituloError;
     }
     
 }

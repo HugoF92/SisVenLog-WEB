@@ -5,7 +5,6 @@
  */
 package dao;
 
-import dto.ListaStringDto;
 import entidad.Clientes;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -48,7 +47,7 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         super(Mercaderias.class);
     }
     
-    public ListaStringDto ejecutar(Lineas lineas, Sublineas sublineas, Promociones promocion, TiposDocumentos tipoDocumento,
+    public String crearSql(Lineas lineas, Sublineas sublineas, Promociones promocion, TiposDocumentos tipoDocumento,
             Empleados vendedor, Clientes cliente, Date fechaDesde, Date fechaHasta, Boolean todosCliente, List<Mercaderias> mercaderias) {
 
         String sql = " SELECT f.ctipo_docum, f.nrofact , f.ffactur, "
@@ -80,7 +79,7 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         }
         if(tipoDocumento != null && !tipoDocumento.getCtipoDocum().isEmpty()){
             String ctipo_docum = tipoDocumento.getCtipoDocum();
-            sql += " AND f.ctipo_docum = " + ctipo_docum + " ";
+            sql += " AND f.ctipo_docum = '" + ctipo_docum + "' ";
         }
         if(vendedor != null && vendedor.getEmpleadosPK() != null){
             Short cod_empleado = vendedor.getEmpleadosPK().getCodEmpleado();
@@ -98,9 +97,9 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         //Control de cliente
         List<Clientes> clientesVar = new ArrayList<Clientes>();
         if(todosCliente == true){
-            clientesVar = clientesFacade.findAll();
+            clientesVar.addAll(clientesFacade.findAll());
         }else if(cliente.getCodCliente() != null){
-            clientesVar = clientesFacade.buscarPorCodigoNombre(cliente.getCodCliente(), cliente.getXnombre());
+            clientesVar.addAll(clientesFacade.buscarPorCodigoNombre(cliente.getCodCliente(), cliente.getXnombre()));
         }
         
         String codigosClientes = convertirCodigosClientesString(clientesVar);
@@ -130,7 +129,7 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         
         if(tipoDocumento != null && !tipoDocumento.getCtipoDocum().isEmpty()){
             String ctipo_docum = tipoDocumento.getCtipoDocum();
-            sql += " AND n.ctipo_docum  = " + ctipo_docum + " ";
+            sql += " AND n.ctipo_docum  = '" + ctipo_docum + "' ";
         }
 
         if (vendedor != null && vendedor.getEmpleadosPK() != null) {
@@ -158,15 +157,16 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
 
         sql += " ORDER BY 4, 3, 1 ";
         
+        return sql;
+    }
+    
+    public List<Object[]> ejecutarSql(String sql){
         Query q = getEntityManager().createNativeQuery(sql);
         
         System.out.println(q.toString());
         
-        ListaStringDto respuesta = new ListaStringDto();
+        List<Object[]> respuesta = q.getResultList();
         
-        respuesta.setLista(q.getResultList());
-        respuesta.setSql(sql);
-
         return respuesta;
     }
     
@@ -191,9 +191,9 @@ public class LiFactPesoFacade extends AbstractFacade<Mercaderias> {
         String listaCodigos = "";
         for (int i = 0; i < clientes.size(); i++) {
             if (i == 0) {
-                listaCodigos += clientes.get(i).toString();
+                listaCodigos += clientes.get(i).getCodCliente().toString();
             } else {
-                listaCodigos += "," + clientes.get(i).toString();
+                listaCodigos += "," + clientes.get(i).getCodCliente().toString();
             }
         }
         return listaCodigos;

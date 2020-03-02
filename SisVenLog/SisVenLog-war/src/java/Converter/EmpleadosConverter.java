@@ -46,10 +46,9 @@ public class EmpleadosConverter  implements Converter, Serializable{
         }
         else
         {
-            //return String.valueOf(((Integer) value));
-            return String.valueOf(((Empleados) value).getEmpleadosPK().getCodEmpleado());
+            if(((Empleados) value).getEmpleadosPK() == null)
+                return "";
+            else return String.valueOf(((Empleados) value).getEmpleadosPK().getCodEmpleado());
         }
     }
-
-    
 }
