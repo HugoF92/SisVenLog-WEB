@@ -1,0 +1,182 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pv="http://primefaces.org/paradise">
+
+    <div class="layout-menu-wrapper #{guestPreferences.darkMenu ? 'layout-menu-dark' : null}">
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form>
+
+                        <p:growl id="msgMenu" showDetail="true"/>
+
+                        <pv:menu>
+
+                            <p:submenu label="MANTENIMIENTOS" 
+                                       icon="angle-double-right">
+                                <p:menuitem value="Depositos" outcome="/madepositos" />
+                                <p:menuitem value="Ciudades" outcome="/maciudades" />
+                                <p:menuitem value="Bancos" outcome="/mabancos" />
+                                <p:menuitem value="Zonas" outcome="/mazonas" />
+                                <p:menuitem value="Tipo de Venta" outcome="/matipovta" />
+                                <p:menuitem value="Transportista" outcome="/matransportistas" />
+                                <p:menuitem value="Conductores" outcome="/maconductores" />
+                                <p:menuitem value="Motivo" outcome="/mamotivos" />
+                                <p:menuitem value="Divisiones" outcome="/madivisiones" />
+                                <p:menuitem value="Rutas" outcome="/marutas" />
+                                <p:menuitem value="Usuarios" outcome="/mausuarios" />
+
+                                <p:menuitem value="Lineas" outcome="/malineas" />
+                                <p:menuitem value="SubLineas" outcome="/masublineas" />
+                                <p:menuitem value="Parametros" outcome="/maparametros" />
+                                <p:menuitem value="Tipo de Cliente" outcome="/matipocli" />
+                                <p:menuitem value="Categorias" outcome="/macategorias" />
+                                <p:menuitem value="Servicios" outcome="/maservicios" />
+                                <p:menuitem value="Tipo Empleado" outcome="/matipoempleado" />
+                                <p:menuitem value="Marca" outcome="/mamarca" />
+
+                                <p:menuitem value="Canales de compra" outcome="/macanales" />
+                                <p:menuitem value="Proveedores" outcome="/maproveedores" />
+                                <p:menuitem value="Canales de venta" outcome="/macanalesven" />
+                                <p:menuitem value="Tipo de Documento" outcome="/matipodocumento" />
+                                <p:menuitem value="Aplicaciones" outcome="/maaplicaciones" />
+                                <p:menuitem value="Roles" outcome="/maroles" />
+
+                                <p:menuitem value="Empleados" outcome="/maempleados" />
+
+                                <p:menuitem value="Concepto de Documentos" outcome="/maconceptodoc" />
+                                <p:menuitem value="Rango de Documento" outcome="/marangodoc" />
+                                <p:menuitem value="Envios" outcome="/maenvios" />
+                                <p:menuitem value="Actualizar Vigencia de Promoción" outcome="/actualizarvigenciapromociones" />
+                                <p:menuitem value="Recibos de Proveedores" outcome="/mareciboscom" />
+                                <p:menuitem value="Recibos de Clientes" outcome="/marecibos" />
+                                <p:menuitem value="Mercaderías" outcome="/mamercaderias" />
+                                <p:menuitem value="Facturas" outcome="/mafacturas" />
+
+                            </p:submenu>
+
+                            <p:submenu label="CONSULTAS" icon="angle-double-right">
+                                <p:menuitem value="Consulta de Cheques" outcome="/consultacheques"/>
+                                <p:menuitem value="Cobro de Pagarés" outcome="/cobropagares"/>
+                                <p:menuitem value="Documentos de Ventas" outcome="/consultaDocumentoVentas"/>
+                                <p:menuitem value="Documentos de Compras" outcome="/consultaDocumentoCompras"/>
+
+                            </p:submenu>
+
+                            <p:submenu label="CUENTA CORRIENTE" icon="angle-double-right">
+                                <p:menuitem value="Pago Cheques Proveedores" outcome="/pagochequesproveedores"/>
+                                <p:menuitem value="Cobro/Rechazo de Cheques" outcome="/cobrorechazocheques"/>
+                            </p:submenu>
+
+                            <p:submenu label="PROCESOS" icon="angle-double-right">
+                                <p:menuitem value="Actualizar fecha de pedidos" outcome="/actupedidos"/>
+                                <p:menuitem value="Cambio de Precios" outcome="/cambioprecios"/>
+                                <p:menuitem value="Cambio de Entregador de Documentos" outcome="/cambiarEntregador" />
+                                <p:menuitem value="Asociar Mercadería" outcome="/asociarmercaderia" />
+                                <p:menuitem value="Conteo De Clientes" outcome="/conClientes" />
+                                <p:menuitem value="Generacion de archivo budget" outcome="/genBudget" />
+                                <p:menuitem value="Autorización Salida Gratuita Mercadería" outcome="/autorizacionSalidaGratuitaMercaderia" />
+                                <p:menuitem value="Generacion Datos Contables" outcome="/genDatosCont" />
+                                <p:menuitem value="Generar Remision" outcome="/generarRemision" />
+                                <p:menuitem value="Generacion Documentos Anulados" outcome="/genDocuAnul" />
+                                <p:menuitem value="Generacion Libro de Ventas" outcome="/genLibroVentas" />
+                            </p:submenu>
+
+                            <p:submenu label="LISTADOS" 
+                                       icon="angle-double-right">
+                                <p:menuitem value="Aplicaciones" outcome="/liaplica" />
+                                <p:menuitem value="Documentos Anulados" outcome="/lianudoc" />
+                                <p:menuitem value="Diferencias en Facturacion" outcome="/lierroresproc" />
+                                <p:menuitem value="Procesamientos" outcome="/liprocesamientos" />
+                                <p:menuitem value="Control pedidos facturados" outcome="/licontrolped" />
+                                <p:menuitem value="Retenciones" outcome="/litotreten" />
+                                <p:menuitem value="Facturas Con Bonificaciones" outcome="/lifacbonif" />
+                                <p:menuitem value="Datos de Mercaderias" outcome="/lidatosmerc" />
+                                <p:menuitem value="Documentos que Reservan" outcome="/lidocures" />
+                                <p:menuitem value="Notas de Remisiones" outcome="/linotasremi" />
+                                <p:menuitem value="Mercaderias sin movimientos" outcome="/limercasin" />
+                                <p:menuitem value="Notas de envio" outcome="/lienvios" />
+                                <p:menuitem value="Mercaderias en camiones sin movimientos(ventas)" outcome="/limercasincamiones" />
+                                <p:menuitem value="Mercaderias (en camiones) sin ordenes de carga " outcome="/limercasincamiones2" />
+                                <p:menuitem value="Extracto de proveedor" outcome="/liextractoprov" />
+                                <p:menuitem value="Extracto de clientes" outcome="/liextractocliente" />
+                                <p:menuitem value="Facturas por Servicios" outcome="/lifactserv" />
+                                <p:menuitem value="Existencia en Camiones" outcome="/licamiones" />
+                                <p:menuitem value="Retorno de mercaderias" outcome="/liretornomerca" />
+                                <p:menuitem value="Histórico de precios" outcome="/lihistoricoprecios" />
+                                <p:menuitem value="Salidas de mercaderias" outcome="/lisalidas" />
+                                <p:menuitem value="Detalle de Ventas por retorno" outcome="/livtaretorno" />
+                                <p:menuitem value="Facturas Anuladas" outcome="/lifactanul" />
+                                <p:menuitem value="Cheques Emitidos" outcome="/lichequesemis" />
+                                <p:menuitem value= "Recibos a Clientes" outcome ="/lirecibos" />
+                                <p:menuitem value="Recibos de Proveedores" outcome="/lireciboscom" />
+                                <p:menuitem value="Ley de Pareto" outcome="/lipareto" />
+                                <p:menuitem value="Listado de Pedidos" outcome="/lidatosped" />
+
+                            </p:submenu>
+
+                            <p:submenu label="IMPRESIONES" 
+                                       icon="angle-double-right">
+
+                                <p:menuitem value="Impresion masiva de facturas" outcome="/impresionMasivaFacturas" />
+
+                                <p:menuitem value="Impresion de ordenes de carga" outcome="/impresionOrdenCarga" />
+
+                                <p:menuitem value="Impresion de ordenes de pago" outcome="/impresionOrdenPago"/>
+
+                                <p:menuitem value="Impresion de notas de credito" outcome="/impresionNotasCredito"/>
+
+                                <p:menuitem value="Impresion de Salidas" outcome="/impresionSalidas" />    
+
+                                <p:menuitem value="Impresion de notas de Remision" outcome="/impresionRemision" />
+
+                                <p:menuitem value="Impresion Facturas por Servicios" outcome="/impresionFacturasServicios" />
+
+                                <p:menuitem value="Impresion de Cheques" outcome="/impresionCheques" />
+
+                            </p:submenu>
+
+                            <p:submenu id="pm_theme_colors" label="CAMBIAR APARIENCIA" 
+                                       icon="fa fa-paint-brush">
+                                <p:submenu id="pm_layout_colors_flat" label="Basicos" icon="fa fa-circle">
+                                    <p:menuitem id="pm_layout_default" value="Defecto" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('default')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_blue" value="Azul" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('blue')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_green" value="Verde" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('green')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_turquoise" value="Turquesa" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('turquoise')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_purple" value="Morado" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('purple')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_orange" value="Naranja" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('orange')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_deeppurple" value="Morado oscuro" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('deeppurple')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_lime" value="Lima" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('lime')}" ajax="false"/>
+                                </p:submenu>
+                                <p:submenu id="pm_layout_colors_special" label="Especiales" icon="fa fa-fire">
+                                    <p:menuitem id="pm_layout_horizon" value="Horizonte" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('horizon')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_bliss" value="Felicidad" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('bliss')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_crimson" value="Carmesí" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('crimson')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_disco" value="Disco" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('disco')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_sunset" value="Puesta de Sol" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('sunset')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_deepsea" value="Mar Profundo" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('deepsea')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_opa" value="Opa" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('opa')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_cheer" value="Animar" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('cheer')}" ajax="false"/>
+                                    <p:menuitem id="pm_layout_smoke" value="Humo" icon="fa fa-paint-brush" actionListener="#{guestPreferences.setLayout('smoke')}" ajax="false"/>
+                                </p:submenu>
+                            </p:submenu>
+
+                        </pv:menu>
+
+
+
+                    </h:form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</ui:composition>
