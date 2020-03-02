@@ -56,26 +56,61 @@
                                     <h:panelGrid id="panelReemplazoNC" columns="2" >
 
                                         <p:outputLabel value="Nro. NCR Inicial:" style="float: right; font-weight: bold;"/>
-                                        <p:inputText id="input1" value="#{reemplazoNC.nroNCRInicial}" style="width: 100px;">
-                                            <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoNC.validarDatosNCR}"/>
-                                        </p:inputText>
+                                        <h:panelGrid columns="5" >
+                                            <p:inputText value="#{reemplazoNC.estabInicial}"
+                                                         style="width: 40px;" maxlength="2">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.expInicial}" 
+                                                         style="width: 40px;" maxlength="2">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.nroNotaInicial}" 
+                                                         style="width: 90px;" maxlength="7">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                        </h:panelGrid>
 
                                         <p:outputLabel value="Nro. NCR Final:" style="float: right; font-weight: bold;"/>
-                                        <p:inputText id="input2" value="#{reemplazoNC.nroNCRFinal}" style="width: 100px;">
-                                            <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoNC.validarDatosNCR}"/>
-                                        </p:inputText>
+                                        <h:panelGrid columns="5" >
+                                            <p:inputText value="#{reemplazoNC.estabFinal}"
+                                                         style="width: 40px;" maxlength="2">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.estabFinal}" 
+                                                         style="width: 40px;" maxlength="2">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.nroNotaFinal}" 
+                                                         style="width: 90px;" maxlength="7">
+                                                <p:ajax event="keyup" update="fechaNCROriginal" listener="#{reemplazoOC.validarDatosOC}"/>
+                                            </p:inputText>
+                                        </h:panelGrid>
+
+                                        <p:outputLabel value="Nro. NCR Nuevo:" style="float: right; font-weight: bold;"/>
+                                        <h:panelGrid columns="5" >
+                                            <p:inputText value="#{reemplazoNC.estabNuevo}"
+                                                         style="width: 40px;" maxlength="2"/>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.expNuevo}" 
+                                                         style="width: 40px;" maxlength="2"/>
+                                            <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                            <p:inputText value="#{reemplazoNC.nroNotaNuevo}" 
+                                                         style="width: 90px;" maxlength="7"/>
+                                        </h:panelGrid>
 
                                         <p:outputLabel value="Fecha Nota Original:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="fechaNCROriginal" value="#{reemplazoNC.fechaNCROriginal}" 
                                                     showOn="button" style="width: 60px;" locale="es" disabled="true"/>
 
-                                        <p:outputLabel value="Nueva NCR Inicial:" style="float: right; font-weight: bold;"/>
-                                        <p:inputText id="input3" value="#{reemplazoNC.nroNCRNuevo}" style="width: 100px;"/>
-
                                         <p:outputLabel value="Fecha Nueva Nota:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="fechaEnvioNuevo" value="#{reemplazoNC.fechaNCRNuevo}" 
                                                     showOn="button" style="width: 60px;" locale="es"/>
-                                        
+
                                     </h:panelGrid>
 
                                     <br></br>

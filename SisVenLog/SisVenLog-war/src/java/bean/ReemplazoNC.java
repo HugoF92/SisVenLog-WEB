@@ -34,12 +34,23 @@ public class ReemplazoNC implements Serializable {
      * atributos para manejo del front end
      */
     /* Datos originales */
+    private Integer estabInicial;
+    private Integer expInicial;
+    private Integer nroNotaInicial;
+    private Integer estabFinal;
+    private Integer expFinal;
+    private Integer nroNotaFinal;
+    
     private Long nroNCRInicial;
     private Long nroNCRFinal;
+    private Long nroNCRNuevo;
+    
     private Date fechaNCROriginal;
 
     /* Datos nuevos */
-    private Long nroNCRNuevo;
+    private Long estabNuevo;
+    private Long expNuevo;
+    private Long nroNotaNuevo;
     private Date fechaNCRNuevo;
 
     private String contenidoError;
@@ -54,9 +65,20 @@ public class ReemplazoNC implements Serializable {
         this.fechaNCROriginal = null;
         this.fechaNCRNuevo = new Date();
 
+        this.estabInicial = null;
+        this.expInicial = null;
+        this.nroNotaInicial = null;
+        this.estabFinal = null;
+        this.expFinal = null;
+        this.nroNotaFinal = null;
+        
         this.nroNCRInicial = null;
         this.nroNCRFinal = null;
         this.nroNCRNuevo = null;
+        
+        this.estabNuevo = null;
+        this.expNuevo = null;
+        this.nroNotaNuevo = null;
 
         this.cantidadesOrdenCargaDto = null;
     }
@@ -65,19 +87,26 @@ public class ReemplazoNC implements Serializable {
 
         try {
 
-            if (this.nroNCRInicial == null || this.nroNCRFinal == null) {
+            if (this.estabInicial == null || this.expInicial == null || this.nroNotaInicial == null || this.estabFinal == null 
+                    || this.expFinal == null || this.nroNotaFinal == null) {
                 return;
             }
+            String NCRInicial =  (this.estabInicial).toString() + (this.expInicial).toString() + (this.nroNotaInicial).toString();
+            String NCRFinal = (this.estabFinal).toString() + (this.expFinal).toString() + (this.nroNotaFinal).toString();
+            String NCRNuevo = (this.estabNuevo).toString() + (this.expNuevo).toString() + (this.nroNotaNuevo).toString();
+            nroNCRInicial = Long.valueOf(NCRInicial);
+            nroNCRFinal = Long.valueOf(NCRFinal);
+            nroNCRNuevo = Long.valueOf(NCRNuevo);
+            
+            this.cantidadesOrdenCargaDto = reemplazoNCFacade.buscarCantidadesNC(nroNCRInicial, nroNCRFinal);
 
-            this.cantidadesOrdenCargaDto = reemplazoNCFacade.buscarCantidadesNC(this.nroNCRInicial, this.nroNCRFinal);
-
-            if (this.cantidadesOrdenCargaDto.getCantExistenteOC() != (this.nroNCRFinal - this.nroNCRInicial + 1)) {
+            if (this.cantidadesOrdenCargaDto.getCantExistenteOC() != (nroNCRFinal - nroNCRInicial + 1)) {
                 return;
             } else if (this.cantidadesOrdenCargaDto.getCantFechasDistintasOC() > 1) {
                 return;
             }
 
-            this.fechaNCROriginal = reemplazoNCFacade.buscarFechaNC(this.nroNCRInicial, this.nroNCRFinal);
+            this.fechaNCROriginal = reemplazoNCFacade.buscarFechaNC(nroNCRInicial, nroNCRFinal);
 
             if (this.fechaNCROriginal == null) {
                 return;
@@ -87,14 +116,14 @@ public class ReemplazoNC implements Serializable {
             RequestContext.getCurrentInstance().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos.";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
+            //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
             RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
         }
 
     }
 
     public void procesarReemplazoNC() throws Exception {
-
+        
         try {
 
             Boolean error = false;
@@ -166,10 +195,34 @@ public class ReemplazoNC implements Serializable {
         } catch (Exception e) {
             RequestContext.getCurrentInstance().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
-            tituloError = "Error en la lectura de datos.";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
+            tituloError = "Error al procesarlos datos.";
+            //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, contenidoError, tituloError));
             RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
         }
+    }
+
+    public Integer getEstabInicial() {
+        return estabInicial;
+    }
+
+    public Integer getExpInicial() {
+        return expInicial;
+    }
+
+    public Integer getNroNotaInicial() {
+        return nroNotaInicial;
+    }
+
+    public Integer getEstabFinal() {
+        return estabFinal;
+    }
+
+    public Integer getExpFinal() {
+        return expFinal;
+    }
+
+    public Integer getNroNotaFinal() {
+        return nroNotaFinal;
     }
 
     public Long getNroNCRInicial() {
@@ -180,12 +233,24 @@ public class ReemplazoNC implements Serializable {
         return nroNCRFinal;
     }
 
+    public Long getNroNCRNuevo() {
+        return nroNCRNuevo;
+    }
+
     public Date getFechaNCROriginal() {
         return fechaNCROriginal;
     }
 
-    public Long getNroNCRNuevo() {
-        return nroNCRNuevo;
+    public Long getEstabNuevo() {
+        return estabNuevo;
+    }
+
+    public Long getExpNuevo() {
+        return expNuevo;
+    }
+
+    public Long getNroNotaNuevo() {
+        return nroNotaNuevo;
     }
 
     public Date getFechaNCRNuevo() {
@@ -204,6 +269,30 @@ public class ReemplazoNC implements Serializable {
         return cantidadesOrdenCargaDto;
     }
 
+    public void setEstabInicial(Integer estabInicial) {
+        this.estabInicial = estabInicial;
+    }
+
+    public void setExpInicial(Integer expInicial) {
+        this.expInicial = expInicial;
+    }
+
+    public void setNroNotaInicial(Integer nroNotaInicial) {
+        this.nroNotaInicial = nroNotaInicial;
+    }
+
+    public void setEstabFinal(Integer estabFinal) {
+        this.estabFinal = estabFinal;
+    }
+
+    public void setExpFinal(Integer expFinal) {
+        this.expFinal = expFinal;
+    }
+
+    public void setNroNotaFinal(Integer nroNotaFinal) {
+        this.nroNotaFinal = nroNotaFinal;
+    }
+
     public void setNroNCRInicial(Long nroNCRInicial) {
         this.nroNCRInicial = nroNCRInicial;
     }
@@ -212,12 +301,24 @@ public class ReemplazoNC implements Serializable {
         this.nroNCRFinal = nroNCRFinal;
     }
 
+    public void setNroNCRNuevo(Long nroNCRNuevo) {
+        this.nroNCRNuevo = nroNCRNuevo;
+    }
+
     public void setFechaNCROriginal(Date fechaNCROriginal) {
         this.fechaNCROriginal = fechaNCROriginal;
     }
 
-    public void setNroNCRNuevo(Long nroNCRNuevo) {
-        this.nroNCRNuevo = nroNCRNuevo;
+    public void setEstabNuevo(Long estabNuevo) {
+        this.estabNuevo = estabNuevo;
+    }
+
+    public void setExpNuevo(Long expNuevo) {
+        this.expNuevo = expNuevo;
+    }
+
+    public void setNroNotaNuevo(Long nroNotaNuevo) {
+        this.nroNotaNuevo = nroNotaNuevo;
     }
 
     public void setFechaNCRNuevo(Date fechaNCRNuevo) {
@@ -235,6 +336,7 @@ public class ReemplazoNC implements Serializable {
     public void setCantidadesOrdenCargaDto(CantidadesOrdenCargaDto cantidadesOrdenCargaDto) {
         this.cantidadesOrdenCargaDto = cantidadesOrdenCargaDto;
     }
+
     
     
 }
