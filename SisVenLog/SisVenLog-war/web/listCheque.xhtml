@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Listado de Cheques</title>
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <!--
+               <p:layoutUnit position="north" size="100" resizable="true" closable="true" collapsible="true">
+                   Header
+               < / p:layoutUnit>
+   
+               <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                   Footer
+               < / p:layoutUnit>
+           !-->
+
+        <p:panelGrid>
+
+            <p:row>
+                <p:column colspan="6" style="font-weight:bold">Fecha de Cheque</p:column> 
+            </p:row>
+
+            <p:row>
+                <p:column>
+                    <p:outputLabel for="uiFechaChequeDesde" value="Fecha Desde" style="font-weight:bold"/>
+                </p:column>
+
+                <p:column>
+                    <p:calendar id="uiFechaChequeDesde"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel for="uiFechaChequeHasta" value="Fecha Hasta" style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <p:calendar id="uiFechaChequeHasta"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel for="dis1" value="Discriminar" style="font-weight:bold"/>
+                    <p:selectOneRadio id="dis1"  layout="grid" columns="1">
+                        <f:selectItem itemLabel="No Discriminar" itemValue="*" />
+                        <f:selectItem itemLabel="Por Banco" itemValue="banco" />
+                        <f:selectItem itemLabel="Con Recibos" itemValue="con-recibo" />
+                    </p:selectOneRadio>
+                </p:column>
+
+
+                <p:column>
+                    <p:outputLabel for="dis2" value="" />
+                    <p:selectOneRadio id="dis2"  layout="grid" columns="1">
+                        <f:selectItem itemLabel="Todos" itemValue="*" />
+                        <f:selectItem itemLabel="Diferidos" itemValue="banco" />
+                        <f:selectItem itemLabel="Con Cobros Credito" itemValue="con-recibo" />
+                        <f:selectItem itemLabel="A dia" itemValue="con-recibo" />
+                    </p:selectOneRadio>
+                </p:column>
+
+            </p:row>
+
+            <p:row>
+                <p:column colspan="4" style="font-weight:bold" >Fecha Emision</p:column> 
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel for="uiFechaEmisionDesde" value="Fecha Desde" style="font-weight:bold"/>
+                </p:column>
+
+                <p:column>
+                    <p:calendar id="uiFechaEmisionDesde"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel for="uiFechaEmisionHasta" value="Fecha Hasta" style="font-weight:bold"/>
+                </p:column>
+                <p:column>
+                    <p:calendar id="uiFechaEmisionHasta"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+                <p:column colspan="2">
+                    <p:outputLabel for="dis3" value="" />
+                    <p:selectOneRadio id="dis3" value="" >
+                        <f:selectItem itemLabel="Todos" itemValue="*" />
+                        <f:selectItem itemLabel="Cobrados" itemValue="PS4" />
+                        <f:selectItem itemLabel="No Cobrados" itemValue="Wii" />
+                    </p:selectOneRadio>
+                </p:column>
+
+
+            </p:row>
+            <p:row>
+                <p:column colspan="6" style="font-weight:bold">Fecha Cobro</p:column> 
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:outputLabel for="uiFechaCobroDesde" value="Fecha Desde" style="font-weight:bold" />
+                </p:column>
+
+                <p:column>
+                    <p:calendar id="uiFechaCobroDesde"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+
+                <p:column>
+                    <p:outputLabel for="uiFechaCobroHasta" value="Fecha Hasta" style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <p:calendar id="uiFechaCobroHasta"  showOn="button" pattern="dd/MM/yyyy" />
+                </p:column>
+            </p:row>
+
+            <p:row>
+                <p:column>
+                    <p:outputLabel for="uiBanco" value="Banco" style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu id="uiBanco" value="" style="width:125px">
+                        <f:selectItem itemLabel="Select One" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                        <f:facet name="footer">
+                            <p:separator />
+                            <h:outputText value="3 consoles" style="font-weight:bold;"/>
+                        </f:facet>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column>
+                    <p:outputLabel for="uiZonaCliente" value="Zona Cliente" style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu id="uiZonaCliente" value="" style="width:125px">
+                        <f:selectItem itemLabel="Select One" itemValue="" />
+                        <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="PS4" itemValue="PS4" />
+                        <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+
+
+            <p:row>
+
+                <p:column colspan="6">
+                    <p:outputLabel for="uiCliente" value="Cliente" style="font-weight:bold" />
+                    <p:inputText id='uiCliente' size="15" />
+                    <p:inputText id='uiClienteNombre' size="70"/>
+                </p:column>
+            </p:row>
+            <p:row>
+
+                <p:column colspan="6">
+                    <p:outputLabel for="uiSalida" value="Salida" style="font-weight:bold" />
+                    <p:selectOneMenu id="uiSalida" value="">
+                        <f:selectItem itemLabel="Vista Previa" itemValue="" />
+                        <f:selectItem itemLabel="Archivo" itemValue="Xbox One" />
+                        <f:selectItem itemLabel="Impresora" itemValue="PS4" />
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            
+            <p:row >
+
+                <p:column style="text-align: center;" colspan="6">
+                    <h:form>
+                    <p:commandButton value="Ejecutar" id="nonAjax" ajax="false" />
+                    </h:form>
+                </p:column>
+            </p:row>
+            
+        </p:panelGrid>
+    </h:body>
+</html>
+
