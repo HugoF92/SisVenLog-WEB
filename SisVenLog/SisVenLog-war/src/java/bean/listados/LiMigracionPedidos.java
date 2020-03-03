@@ -8,10 +8,10 @@ package bean.listados;
 import dao.CanalesVentaFacade;
 import dao.EmpleadosFacade;
 import dao.ExcelFacade;
+import dao.MigracionPedidosFacade;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +39,9 @@ public class LiMigracionPedidos implements Serializable {
     
     @EJB
     private ExcelFacade excelFacade;
+
+    @EJB
+    private MigracionPedidosFacade migracionPedidosFacade;
 
     private Date fechaInicial;
     private Date fechaFinal;
@@ -81,8 +84,7 @@ public class LiMigracionPedidos implements Serializable {
             rep.reporteLiMigraPedidos(fecInicial, fecFinal, fechaInicialHora, fechaFinalHora, codVendedor, codCanal, this.estado);
             
         } else if (tipoArchivo.equals("XLS")){
-            List<Object[]> lista = new ArrayList<>();
-
+            List<Object[]> lista;
             String[] columnas = new String[] {
                 "vencod", 
                 "facnro", 
@@ -103,98 +105,8 @@ public class LiMigracionPedidos implements Serializable {
                 "cod_vendedor"
             };
             
-            
-            String sql = ""
-                    + "SELECT    tp.vencod, "
-                    + "		 tp.facnro, "
-                    + "		 tp.codnuevo, "
-                    + "		 tp.facfecha, "
-                    + "		 tp.factipovta, "
-                    + "		 tp.forpago, "
-                    + "		 tp.nplazo_cheque, "
-                    + "		 tp.artcod, "
-                    + "		 tp.detcancajas, "
-                    + "		 tp.detcanunid, "
-                    + "		 tp.detprecio, "
-                    + "		 tp.estado, "
-                    + "		 tp.nroped, "
-                    + "		 c.xnombre, "
-                    + "		 tp.clicod, "
-                    + "		 tp.msg_error, "
-                    + "		 tp.cod_vendedor    as cod_vendedor "
-                    + "FROM tmp_pedidos tp LEFT JOIN clientes c "
-                    + "ON tp.codnuevo = c.cod_cliente "
-                    + "WHERE tp.facfecha BETWEEN '" + DateUtil.dateToString(this.fechaInicial, "yyyy/MM/dd") + "' "
-                    + "AND '" + DateUtil.dateToString(this.fechaFinal, "yyyy/MM/dd") + "' ";
-            
-            String lEstado = "";
-            if(this.estado.equals("2")){
-                lEstado = " ";
-            } else if(this.estado.equals("3")) {
-                lEstado = "R";
-            } else if(this.estado.equals("4")) {
-                lEstado = "M";
-            }
-            
-            if(this.estado.equals("2") || this.estado.equals("4")) {
-                sql += " AND estado = '" + lEstado + "' ";
-            }
-            
-            if(this.estado.equals("3")) {
-                sql += " AND ( estado = '" + lEstado + "' OR (estado = 'M' AND msg_error != '')) ";
-            }
-            
-            if(Objects.nonNull(this.vendedor)){
-                sql += " AND tp.cod_vendedor = " + this.vendedor.getEmpleadosPK().getCodEmpleado()  + " ";
-            }
-            
-            if(Objects.nonNull(this.canalVenta)){
-                sql += " AND tp.cod_canal = '" + this.canalVenta.getCodCanal() + "' ";
-            }
-            
-//            sql += "ORDER BY cod_vendedor, nroped ";
-            
-            // Si selecciono los estados de (Todos, Rechazados)
-            if(this.estado.equals("1") || this.estado.equals("3")) {
-                sql += " UNION "
-                    + " "
-                    + "SELECT   e.xnombre       as vencod, "
-                    + "		 p.nro_pedido    as facnro, "
-                    + "		 p.cod_cliente   as codnuevo, "
-                    + "		 p.fpedido       as facfecha, "
-                    + "		 p.ctipo_vta     as factipovta, "
-                    + "		 p.ctipo_docum   as forpago, "
-                    + "		 p.nplazo_cheque as nplazo_cheque, "
-                    + "		 ''              as artcod, "
-                    + "		 0               as detcancajas, "
-                    + "		 0               as detcanunid, "
-                    + "		 0               as detprecio, "
-                    + "		 p.mestado       as estado, "
-                    + "		 p.nro_pedido    as nroped, "
-                    + "		 c.xnombre, "
-                    + "		 p.cod_cliente   as clicod, "
-                    + "		 'Nro.Promocion Invalido' as msg_error, "
-                    + "		 p.cod_vendedor as cod_vendedor "
-                    + "FROM pedidos p, clientes c, empleados e "
-                    + "WHERE "
-                    + "p.cod_empr= 2 "
-                    + "AND p.cod_vendedor = e.cod_empleado "
-                    + "AND p.cod_cliente = c.cod_cliente "
-                    + "AND p.fpedido BETWEEN '" + DateUtil.dateToString(this.fechaInicial, "yyyy/dd/MM HH:mm:ss") + "' "
-                    + "AND '" + DateUtil.dateToString(this.fechaFinal, "yyyy/dd/MM HH:mm:ss") + "' "
-                    + "AND p.mestado = 'R' ";
-                
-                    if(Objects.nonNull(this.vendedor)){
-                        sql += " AND p.cod_vendedor = " + this.vendedor.getEmpleadosPK().getCodEmpleado()  + " ";
-                    }
-
-                    if(Objects.nonNull(this.canalVenta)){
-                        sql += " AND p.cod_canal = '" + this.canalVenta.getCodCanal() + "' ";
-                    }
-            }
-            
-            sql += " ORDER BY cod_vendedor, nroped";
-
+            String sql = this.migracionPedidosFacade.generateSql(fechaInicial,
+                    fechaFinal, estado, vendedor, canalVenta);
             lista = excelFacade.listarParaExcel(sql);
 
             rep.exportarExcel(columnas, lista, "limigrapedidos");
