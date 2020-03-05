@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -141,8 +142,8 @@ public class CanalesVenBean implements Serializable {
                 canalesVenFacade.create(canalesVen);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevCanalesVen').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevCanalesVen').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevCanalesVen').hide();");
                 instanciar();
 
             
@@ -170,8 +171,8 @@ public class CanalesVenBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditCanalesVen').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditCanalesVen').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditCanalesVen').hide();");
             }
 
         } catch (Exception e) {
@@ -186,7 +187,8 @@ public class CanalesVenBean implements Serializable {
             this.canalesVen = new CanalesVenta();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacCanalesVen').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacCanalesVen').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacCanalesVen').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -214,17 +216,20 @@ public class CanalesVenBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanalesVen').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanalesVen').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCanalesVen').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanalesVen').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanalesVen').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCanalesVen').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCanales').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCanales').hide();");
     }
 
 }

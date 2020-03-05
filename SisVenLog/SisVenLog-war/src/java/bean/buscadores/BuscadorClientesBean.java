@@ -10,7 +10,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -106,7 +107,7 @@ public class BuscadorClientesBean {
                 //RequestContext.getCurrentInstance().update("liExtractoCliPnlClie");
                 //RequestContext.getCurrentInstance().update("lifactPnlClie");
                 //RequestContext.getCurrentInstance().update("lifactClientesSel");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClie').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusClie').hide();");
             }
 
         }

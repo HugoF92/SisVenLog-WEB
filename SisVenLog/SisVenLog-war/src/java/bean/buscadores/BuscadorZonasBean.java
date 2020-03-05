@@ -10,8 +10,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -103,11 +103,11 @@ public class BuscadorZonasBean {
             if (this.zonas.getXdesc() != null) {
                 depositosBean.setZonas(this.zonas);
                 rutasBean.setZonas(this.zonas);
-                RequestContext.getCurrentInstance().update("agreDepoPnlZona");
-                RequestContext.getCurrentInstance().update("editDepoPnlZona");
-                RequestContext.getCurrentInstance().update("agreRutaPnlZona");
-                RequestContext.getCurrentInstance().update("editRutaPnlZona");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusZona').hide();");
+                PrimeFaces.current().ajax().update("agreDepoPnlZona");
+                PrimeFaces.current().ajax().update("editDepoPnlZona");
+                PrimeFaces.current().ajax().update("agreRutaPnlZona");
+                PrimeFaces.current().ajax().update("editRutaPnlZona");
+                PrimeFaces.current().executeScript("PF('dlgBusZona').hide();");
             }
 
         }

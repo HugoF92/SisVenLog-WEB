@@ -16,7 +16,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -108,7 +109,8 @@ public class RutasBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formRutas");
+//    RequestContext.getCurrentInstance().update("formRutas");
+        PrimeFaces.current().ajax().update("formRutas");
     }
 
     public String getFiltro() {
@@ -144,7 +146,7 @@ public class RutasBean implements Serializable {
             rutasFacade.insertarRutas(rutas);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevRutas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevRutas').hide();");
 
             instanciar();
 
@@ -172,7 +174,7 @@ public class RutasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditRutas').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditRutas').hide();");
 
             }
 
@@ -187,7 +189,7 @@ public class RutasBean implements Serializable {
             rutasFacade.remove(rutas);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacRutas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacRutas').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -215,16 +217,16 @@ public class RutasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRutas').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarRutas').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevRutas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevRutas').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRutas').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevRutas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarRutas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevRutas').hide();");
 
     }
     

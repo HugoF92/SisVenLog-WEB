@@ -24,8 +24,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.primefaces.context.RequestContext;
+//import org.primefaces.context.RequestContext;
 import org.apache.commons.codec.binary.Base64;
+import org.primefaces.PrimeFaces;
 
 @Named(value = "mercaderiasBean")
 @ViewScoped
@@ -133,13 +134,13 @@ public class MercaderiasBean implements Serializable {
     public void preparedEdit() {
         editar = true;
         if (selected.getXfoto() == null || selected.getXfoto() == "") {
-            RequestContext.getCurrentInstance().execute("$('#blah').attr('src', 'http://placehold.it/180')");
-            RequestContext.getCurrentInstance().execute("document.getElementById('idFoto').value = ''");
+            PrimeFaces.current().executeScript("$('#blah').attr('src', 'http://placehold.it/180')");
+            PrimeFaces.current().executeScript("document.getElementById('idFoto').value = ''");
             imgBase64 = "";
         } else {
             String foto = "data:image/png;base64," + encodeFileToBase64Binary(selected.getXfoto());
-            RequestContext.getCurrentInstance().execute("$('#blah').attr('src', '" + foto + "')");
-            RequestContext.getCurrentInstance().execute("document.getElementById('idFoto').value = '" + foto + "'");
+            PrimeFaces.current().executeScript("$('#blah').attr('src', '" + foto + "')");
+            PrimeFaces.current().executeScript("document.getElementById('idFoto').value = '" + foto + "'");
             imgBase64 = foto;
         }
     }
@@ -176,7 +177,7 @@ public class MercaderiasBean implements Serializable {
                 convertirImagen(dir);
             }
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEditMercaderia').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEditMercaderia').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Creado con éxito."));
         } else {
             System.out.println("Creado con error");
@@ -205,7 +206,7 @@ public class MercaderiasBean implements Serializable {
                 convertirImagen(dir);
             }
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEditMercaderia').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEditMercaderia').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Editado con éxito."));
         } else {
             System.out.println("Edutadi con error");
@@ -221,7 +222,7 @@ public class MercaderiasBean implements Serializable {
             selected = null;
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             listar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacMercaderias').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacMercaderias').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Ocurrió un error."));
         } finally {

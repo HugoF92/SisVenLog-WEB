@@ -119,7 +119,7 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
         Query q = getEntityManager().createNativeQuery("select * from mercaderias m where m.mestado = 'A' and "+
             " m.cod_merca not in (select m.cod_merca from existencias e join mercaderias m on e.cod_empr = m.cod_empr and e.cod_merca = m.cod_merca "+
             " where cod_depo= "+deposito+") ", Mercaderias.class);
-        System.out.println("SQL: "+q.toString());
+//        System.out.println("SQL: "+q.toString());
         return q.getResultList();
     }
     

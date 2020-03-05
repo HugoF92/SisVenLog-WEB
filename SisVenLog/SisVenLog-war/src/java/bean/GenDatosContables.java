@@ -16,7 +16,8 @@ import javax.ejb.EJB;
 import javax.faces.application.*;
 import javax.faces.bean.*;
 import javax.faces.context.*;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import util.ExceptionHandlerView;
 import util.LlamarReportes;
 
@@ -115,11 +116,12 @@ public class GenDatosContables implements Serializable {
                 }
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la lectura de datos.", tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
 

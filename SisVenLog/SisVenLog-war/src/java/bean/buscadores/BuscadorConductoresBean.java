@@ -3,15 +3,14 @@ package bean.buscadores;
 import bean.DepositosBean;
 import dao.ConductoresFacade;
 import entidad.Conductores;
-import entidad.Conductores;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,9 +89,11 @@ public class BuscadorConductoresBean {
 
             if (this.conductores.getXconductor() != null) {
                 depositosBean.setConductores(this.conductores);
-                RequestContext.getCurrentInstance().update("agreDepoPnlCond");
-                RequestContext.getCurrentInstance().update("editDepoPnlCond");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusCond').hide();");
+//                RequestContext.getCurrentInstance().update("agreDepoPnlCond");
+                PrimeFaces.current().ajax().update("agreDepoPnlCond");
+//                RequestContext.getCurrentInstance().update("editDepoPnlCond");
+                PrimeFaces.current().ajax().update("editDepoPnlCond");
+                PrimeFaces.current().executeScript("PF('dlgBusCond').hide();");
             }
 
         }

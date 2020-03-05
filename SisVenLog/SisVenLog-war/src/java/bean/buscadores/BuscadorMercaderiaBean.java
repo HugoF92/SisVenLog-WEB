@@ -1,9 +1,7 @@
 package bean.buscadores;
 
-import bean.DepositosBean;
 import bean.listados.LiMovMercaBean;
 import dao.MercaderiasFacade;
-import entidad.Mercaderias;
 import entidad.Mercaderias;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,8 +9,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -91,8 +89,9 @@ public class BuscadorMercaderiaBean {
 
             if (this.mercaderias.getXdesc() != null) {
                 liMovMercaBean.setMercaderias(mercaderias);
-                RequestContext.getCurrentInstance().update("agreDepoPnlCond");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusMerca').hide();");
+//                RequestContext.getCurrentInstance().update("agreDepoPnlCond");
+                PrimeFaces.current().ajax().update("agreDepoPnlCond");
+                PrimeFaces.current().executeScript("PF('dlgBusMerca').hide();");
             }
 
         }

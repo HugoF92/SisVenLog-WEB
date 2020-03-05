@@ -15,7 +15,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -108,7 +109,8 @@ public class ConceptoDocumentoBean implements Serializable {
                
         listar();
 
-    RequestContext.getCurrentInstance().update("formConceptoDocumento");
+//    RequestContext.getCurrentInstance().update("formConceptoDocumento");
+        PrimeFaces.current().ajax().update("formConceptoDocumento");
     }
 
     public String getFiltro() {
@@ -140,8 +142,8 @@ public class ConceptoDocumentoBean implements Serializable {
             conceptoDocumentoFacade.create(conceptoDocumento);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevConceptoDocumento').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -167,8 +169,8 @@ public class ConceptoDocumentoBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditConceptoDocumento').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditConceptoDocumento').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditConceptoDocumento').hide();");
             }
 
         } catch (Exception e) {
@@ -182,7 +184,8 @@ public class ConceptoDocumentoBean implements Serializable {
             conceptoDocumentoFacade.remove(conceptoDocumento);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacConceptoDocumento').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacConceptoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacConceptoDocumento').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -228,17 +231,20 @@ public class ConceptoDocumentoBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConceptoDocumento').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConceptoDocumento').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarConceptoDocumento').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevConceptoDocumento').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConceptoDocumento').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConceptoDocumento').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarConceptoDocumento').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevConceptoDocumento').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevConceptoDocumento').hide();");
     }
 
 }

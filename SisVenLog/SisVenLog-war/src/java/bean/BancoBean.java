@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -141,8 +142,8 @@ public class BancoBean implements Serializable {
                 bancosFacade.insertarBancos(bancos);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevBanc').hide();");
                 instanciar();
 
             
@@ -170,8 +171,8 @@ public class BancoBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditBanc').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditBanc').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditBanc').hide();");
             }
 
         } catch (Exception e) {
@@ -186,7 +187,8 @@ public class BancoBean implements Serializable {
             this.bancos = new Bancos();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacBanc').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacBanc').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -214,17 +216,20 @@ public class BancoBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarBanc').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarBanc').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarBanc').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevBanc').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarBanc').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarBanc').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevBanc').hide();");
     }
 
 }

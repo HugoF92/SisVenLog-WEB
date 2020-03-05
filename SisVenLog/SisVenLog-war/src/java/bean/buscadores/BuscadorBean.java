@@ -10,7 +10,8 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context?.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -101,9 +102,11 @@ public class BuscadorBean {
                 
                 if (this.ventana.equals("maCanales")) {
                     canalesBean.setResultadoProveedor(Resultado);
-                    RequestContext.getCurrentInstance().update("agreCanalPnlProv");
+//                    RequestContext.getCurrentInstance().update("agreCanalPnlProv");
+                    PrimeFaces.current().ajax().update("agreCanalPnlProv");
                 }
-                RequestContext.getCurrentInstance().execute("PF('dlgBuscador').hide();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBuscador').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBuscador').hide();");
             }
 
         }

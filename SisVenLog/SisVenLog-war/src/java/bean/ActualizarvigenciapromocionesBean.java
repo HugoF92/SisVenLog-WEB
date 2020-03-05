@@ -12,8 +12,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
-import org.primefaces.context.RequestContext;
-import util.ExceptionHandlerView;
 
 @Named(value = "actualizarvigenciapromocionesBean")
 @ViewScoped

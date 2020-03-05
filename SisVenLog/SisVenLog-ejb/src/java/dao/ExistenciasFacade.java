@@ -190,7 +190,7 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
         Query q = getEntityManager().createNativeQuery("select  m.* from  existencias e, mercaderias m "
                 + "  where m.cod_merca = e.cod_merca and e.cod_empr=" + cod_emp
                 + " and e.cod_depo=" + cod_depo, Mercaderias.class);
-        System.out.println(q.toString());
+//        System.out.println(q.toString());
         return q.getResultList();
     }
     
@@ -217,5 +217,12 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
                         "AND cod_depo = "+lCodDepo;
         Query q = em.createNativeQuery(sql);
         q.executeUpdate();
+    }
+    
+    public List<Existencias> findExistenciasByMerc(short lCodDepo,String lCodMerca){
+        String sql = "select * from existencias where  cod_merca ='"+lCodMerca+"' and cod_depo = "+lCodDepo;
+        System.out.println("SQL: "+sql);
+        Query q = em.createNativeQuery(sql,Existencias.class);
+        return q.getResultList();
     }
 }
