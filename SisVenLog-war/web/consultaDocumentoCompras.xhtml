@@ -1,0 +1,383 @@
+     <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+            
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+                body .ui-dialog .ui-resizable-handle {
+                    display: block !important;
+                }
+            </style>
+            
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        
+                        <h1 style="color: brown;">CONSULTA DE DOCUMENTOS DE COMPRAS</h1>
+                        
+                        <h:form id="form_consulta_documentos_compras" prependId="false">
+
+                            <p:growl id="messageImpreOrdCarg" showDetail="true"/>
+                                                           
+                            <h:form id="form_buscador" prependId="false">
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid id="panel_buscador_documentos" 
+                                                 columns="4" 
+                                                 layout="grid"
+                                                 columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                 styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Fecha Emisión Inicial: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_emision_inicial_id" size="8" value="#{consultaDocumentoComprasBean.fechaInicialLab}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel value="Fecha Emisión Final: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_emision_final_id" size="8" value="#{consultaDocumentoComprasBean.fechaFinalLab}" showOn="button" style="width: 100px;"  />
+                                        
+                                        <p:outputLabel value="Tipo Documento: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="tipo_documento_id" value="#{consultaDocumentoComprasBean.tipoDocumentoSeleccionado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{TiposDocumentosConverter}">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{consultaDocumentoComprasBean.listarTiposDocumentos()}" 
+                                                           var="tipoDocumento"
+                                                           itemValue="#{tipoDocumento}"
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Nº Documento: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nro_documento_id" value="#{consultaDocumentoComprasBean.nroDocumentoLab}" style="width: 100px;"/>
+
+                                        <p:outputLabel value="Proveedor: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="proveedor_id" value="#{consultaDocumentoComprasBean.proveedorSeleccionado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{proveedoresBean.listar()}" 
+                                                           var="proveedor"
+                                                           itemValue="#{proveedor}"
+                                                           itemLabel="#{proveedor.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Estado: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneRadio id="estado_id" value="#{consultaDocumentoComprasBean.estadoSeleccionado}">
+                                            <f:selectItem itemLabel="Activo" itemValue="#{1}"/>
+                                            <f:selectItem itemLabel="Inactivo" itemValue="#{2}" />
+                                            <f:selectItem itemLabel="Todos" itemValue="#{3}" />
+                                        </p:selectOneRadio>
+
+                                        <h:panelGrid id="grid_botones" columns="2">
+                                            <p:commandButton value="Buscar" ajax="true" actionListener="#{consultaDocumentoComprasBean.listarMovimientos}" update="form_documentos messageImpreOrdCarg">
+                                                <f:ajax event="click" execute="@this" render="form_documentos" />
+                                            </p:commandButton>
+                                            <p:commandButton value="Limpiar" ajax="true" actionListener="#{consultaDocumentoComprasBean.limpiarFormulario}" update="panel_buscador_documentos form_documentos"/>
+                                        </h:panelGrid>
+                                       
+                                    </p:panelGrid>
+                                </div>
+                                
+                            </h:form>
+                            
+                            <h:form id="form_documentos" prependId="false">
+
+                                <div id="compras" class="ui-fluid">
+                                    <p:dataTable    paginatorPosition="bottom" 
+                                                    resizableColumns="true"  
+                                                    tableStyle="width:auto"
+                                                    id="compras_id" 
+                                                    var="itemp" 
+                                                    selectionMode="single"
+                                                    rendered="#{consultaDocumentoComprasBean.mostrarGrillaNotasCompras == true}"
+                                                    paginator="true" 
+                                                    rows="20" 
+                                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                                    reflow="true" style="margin-top:20px"    
+                                                    emptyMessage="Sin datos para mostrar."
+                                                    value="#{consultaDocumentoComprasBean.listadoComprasDto}"
+                                                    rowKey="#{itemp.compra.comprasPK.nrofact}"
+                                                    selection="#{consultaDocumentoComprasBean.compraDto}">
+
+                                        <p:column headerText="Nro Factura"
+                                                  sortBy="#{itemp.compra.comprasPK.nrofact}">
+                                            <h:outputText value="#{itemp.compra.comprasPK.nrofact}" />
+                                        </p:column>
+
+                                        <p:column headerText="Tipo Factura" 
+                                                  sortBy="#{itemp.compra.comprasPK.ctipoDocum}">
+                                            <h:outputText value="#{itemp.compra.comprasPK.ctipoDocum}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cod.Depósito" 
+                                                  sortBy="#{itemp.compra.depositos.depositosPK.codDepo}">
+                                            <h:outputText value="#{itemp.compra.depositos.depositosPK.codDepo}" />
+                                        </p:column>
+
+                                        <p:column headerText="Descrip. Depósito" 
+                                                  sortBy="#{itemp.descripcionDeposito}">
+                                            <h:outputText value="#{itemp.descripcionDeposito}" />
+                                        </p:column>
+
+                                        <p:column headerText="Canal Compra" 
+                                                  sortBy="#{itemp.compra.ccanalCompra}">
+                                            <h:outputText value="#{itemp.compra.ccanalCompra}" />
+                                        </p:column>
+
+                                        <p:column headerText="Nombre Proveedor" 
+                                                  sortBy="#{itemp.nombreProveedor}">
+                                            <h:outputText value="#{itemp.nombreProveedor}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Fecha Vto." 
+                                                  sortBy="#{itemp.compra.fvenc}">
+                                            <h:outputText value="#{itemp.compra.fvenc}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        
+                                        <p:column headerText="Código Proveedor" 
+                                                  sortBy="#{itemp.compra.proveedores.codProveed}">
+                                            <h:outputText value="#{itemp.compra.proveedores.codProveed}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Estado" 
+                                                  sortBy="#{itemp.compra.mestado}">
+                                            <h:outputText value="#{itemp.compra.mestado == 'A' ? 'Activo' : 'Anulado'}" />
+                                        </p:column>
+                                        
+                                        <f:facet name="footer">
+                                            <p:commandButton process="compras_id" style="width: 100px;" update="ctaCteDetalle" value="Cuenta Cte." oncomplete="PF('ctaCteDialog').show()" />
+                                        </f:facet>
+                                        
+                                    </p:dataTable>
+                                </div>
+                                
+                                <div id="notas_compras" class="ui-fluid">
+                                    <p:dataTable    paginatorPosition="bottom" 
+                                                    resizableColumns="true"  
+                                                    tableStyle="width:auto"
+                                                    id="notas_compras_id"
+                                                    rendered="#{consultaDocumentoComprasBean.mostrarGrillaCuentasProveedores == true}"
+                                                    var="itemf" 
+                                                    selectionMode="single"
+                                                    paginator="true" 
+                                                    rows="20" 
+                                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                                    reflow="true" style="margin-top:20px"    
+                                                    emptyMessage="Sin datos para mostrar."
+                                                    value="#{consultaDocumentoComprasBean.listadoNotasComprasDto}"
+                                                    rowKey="#{itemf.notaCompra.notasComprasPK.nroNota}"
+                                                    selection="#{consultaDocumentoComprasBean.notaCompraDto}">
+                                        
+                                        <p:column headerText="Nro Factura"
+                                                  sortBy="#{itemf.notaCompra.notasComprasPK.nroNota}">
+                                            <h:outputText value="#{itemf.notaCompra.notasComprasPK.nroNota}" />
+                                        </p:column>
+
+                                        <p:column headerText="Tipo Factura" 
+                                                  sortBy="#{itemf.notaCompra.notasComprasPK.ctipoDocum}">
+                                            <h:outputText value="#{itemf.notaCompra.notasComprasPK.ctipoDocum}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cod.Depósito" 
+                                                  sortBy="#{itemf.notaCompra.depositos.depositosPK.codDepo}">
+                                            <h:outputText value="#{itemf.notaCompra.depositos.depositosPK.codDepo}" />
+                                        </p:column>
+
+                                        <p:column headerText="Descrip. Depósito" 
+                                                  sortBy="#{itemf.notaCompra.depositos.xdesc}">
+                                            <h:outputText value="#{itemf.notaCompra.depositos.xdesc}" />
+                                        </p:column>
+
+                                        <p:column headerText="Nombre Proveedor" 
+                                                  sortBy="#{itemf.nombreProveedor}">
+                                            <h:outputText value="#{itemf.nombreProveedor}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Código Proveedor" 
+                                                  sortBy="#{itemf.notaCompra.notasComprasPK.codProveed}">
+                                            <h:outputText value="#{itemf.notaCompra.notasComprasPK.codProveed}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Estado" 
+                                                  sortBy="#{itemf.notaCompra.mestado}">
+                                            <h:outputText value="#{itemf.notaCompra.mestado == 'A' ? 'Activo' : 'Anulado'}" />
+                                        </p:column>
+                                                                               
+                                        <f:facet name="footer">
+                                            <p:commandButton process="notas_compras_id" style="width: 100px;" update="ctaCteNotasDetalle" value="Cuenta Cte." oncomplete="PF('ctaCteNotasDialog').show()" />
+                                        </f:facet>
+                                                                                                                       
+                                    </p:dataTable>
+                                </div>
+                                
+                            </h:form>
+                           
+                        </h:form>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                      height="500px" width="700px">
+                Message: #{consultaDocumentoComprasBean.tituloError} <br/>
+                StackTrace: <h:outputText value="#{consultaDocumentoComprasBean.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+            
+            <p:dialog header="Cuenta Corriente" 
+                      widgetVar="ctaCteDialog" 
+                      modal="true" 
+                      resizable="true"
+                      height="250" 
+                      width="700">
+                
+                <p:ajax event="open"
+                        listener="#{consultaDocumentoComprasBean.inicializarListadoDeCuentasCorrientesNotasCompras}"
+                        update="ctaCteDetalle tabla_ctacte"/>
+                
+                <p:outputPanel id="ctaCteDetalle" style="text-align:center;">
+                    <p:dataTable id="tabla_ctacte"
+                                 var="ctactedetalle"
+                                 value="#{consultaDocumentoComprasBean.listadoCuentasProveedoresDto}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10"
+                                 emptyMessage="No existen datos de cuenta corriente."
+                                 style="width: 98%;"
+                                 paginatorPosition="bottom">
+
+                        <p:column headerText="Tipo" width="100">
+                            <h:outputText value="#{ctactedetalle.tipoDocumento}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Descripción" width="100">
+                            <h:outputText value="#{ctactedetalle.tipoDocumentoDescripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Nro. Documento" width="100">
+                            <h:outputText value="#{ctactedetalle.numeroDocumentoCheque}"/>
+                        </p:column>
+
+                        <p:column headerText="Fecha" width="100">
+                            <h:outputText value="#{ctactedetalle.fechaMovimiento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Gravadas" width="200">
+                            <h:outputText value="#{ctactedetalle.gravadas}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Impuestos" width="200">
+                            <h:outputText value="#{ctactedetalle.impuestos}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Exentas" width="200">
+                            <h:outputText value="#{ctactedetalle.exentas}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Importe Pagado" width="200">
+                            <h:outputText value="#{ctactedetalle.importePagado}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                                              
+                    </p:dataTable>
+                </p:outputPanel>
+                
+            </p:dialog>
+            
+             <p:dialog header="Cuenta Corriente" 
+                      widgetVar="ctaCteNotasDialog" 
+                      modal="true" 
+                      resizable="true"
+                      height="250" 
+                      width="700">
+                
+                <p:ajax event="open"
+                        listener="#{consultaDocumentoComprasBean.inicializarListadoDeCuentasCorrientesCuentasProveedores}"
+                        update="ctaCteNotasDetalle tabla_ctacte_notas"/>
+                
+                <p:outputPanel id="ctaCteNotasDetalle" style="text-align:center;">
+                    <p:dataTable id="tabla_ctacte_notas"
+                                 var="ctactedetallenotas"
+                                 value="#{consultaDocumentoComprasBean.listadoCuentasProveedoresDto}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10"
+                                 emptyMessage="No existen datos de cuenta corriente."
+                                 style="width: 98%;"
+                                 paginatorPosition="bottom">
+
+                        <p:column headerText="Tipo" width="100">
+                            <h:outputText value="#{ctactedetallenotas.tipoDocumento}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Desripción" width="100">
+                            <h:outputText value="#{ctactedetallenotas.tipoDocumentoDescripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Nro. Documento" width="100">
+                            <h:outputText value="#{ctactedetallenotas.numeroDocumentoCheque}"/>
+                        </p:column>
+
+                        <p:column headerText="Fecha" width="100">
+                            <h:outputText value="#{ctactedetallenotas.fechaMovimiento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Gravadas" width="200">
+                            <h:outputText value="#{ctactedetallenotas.gravadas}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Impuestos" width="200">
+                            <h:outputText value="#{ctactedetallenotas.impuestos}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Exentas" width="200">
+                            <h:outputText value="#{ctactedetallenotas.exentas}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Importe Pagado" width="200">
+                            <h:outputText value="#{ctactedetallenotas.importePagado}">
+                                <f:convertNumber pattern="###,###.##" />
+                            </h:outputText>
+                        </p:column>
+                                               
+
+                    </p:dataTable>
+                    
+                </p:outputPanel>
+                
+            </p:dialog>
+            
+                        
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

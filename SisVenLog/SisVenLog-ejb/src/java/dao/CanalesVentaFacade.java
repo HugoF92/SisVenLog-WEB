@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
+import javax.persistence.Query;
 
 /**
  *
@@ -32,6 +33,15 @@ public class CanalesVentaFacade extends AbstractFacade<CanalesVenta> {
         super(CanalesVenta.class);
     }
     
-   
+    public CanalesVenta getCanalVentaPorCodigo(String codigo) {
+        Query q = getEntityManager().createNativeQuery("select * from canales_venta where cod_canal = " + codigo , CanalesVenta.class);
 
+        System.out.println(q.toString());
+
+        CanalesVenta canalVenta = new CanalesVenta();
+
+        canalVenta = (CanalesVenta)q.getSingleResult();
+
+        return canalVenta;
+    }
 }

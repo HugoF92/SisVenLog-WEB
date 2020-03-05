@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.CacheStoreMode;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -439,36 +440,173 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
         return listadoFacturas;
     }
     
-    public List<Facturas> buscarFacturasEnUnRango(int[] range) {
-        Query q = getEntityManager().createNativeQuery("select * from facturas where mestado = 'A' order by nrofact desc ",
-                Facturas.class);
+    public List<Facturas> buscarFacturasServiciosEnUnRango(int[] range) {
+        List<Facturas> resultado = new ArrayList<>();
+        Query q = em.createNativeQuery("select * from facturas where ctipo_docum in ('FCS', 'FCP') and cod_empr = 2 order by nrofact desc",Facturas.class);
         System.out.println(q.toString());
         q.setMaxResults(range[1]);
         q.setFirstResult(range[0]);
-        return q.getResultList();
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        resultado = q.getResultList();
+        return resultado;
     }
     
-    public List<Facturas> obtenerFacturasPorNroEnUnRango(long lNroFactura, int[] range){
-        String sql =    "SELECT * FROM facturas " +
-                        "WHERE nrofact = "+lNroFactura+" "+
-                        "AND cod_empr = 2 "+
-                        "AND mestado = 'A'";
+    public int obtenerCantidadFacturasServicios(){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+        
+    public List<Facturas> obtenerFacturasServiciosPorNroEnUnRango(long lNroFactura, int[] range){
+        String sql =    "select * from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and nrofact = "+lNroFactura+" "+
+                        "and cod_empr = 2 ";
         Query q = em.createNativeQuery(sql, Facturas.class);
         System.out.println(q.toString());
         q.setMaxResults(range[1]);
         q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
         return q.getResultList();
     }
     
-    public int obtenerCantidadFacturasPorNro(long lNroFact){
-        String sql =    "SELECT * FROM facturas " +
-                        "WHERE nrofact = "+lNroFact+" "+
-                        "AND cod_empr = 2 "+
-                        "AND mestado = 'A'";
+    public int obtenerCantidadFacturasServiciosPorNro(long lNroFact){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and nrofact = "+lNroFact+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+    
+    public List<Facturas> buscarFacturasClientesEnUnRango(int[] range) {
+        List<Facturas> resultado = new ArrayList<>();
+        Query q = em.createNativeQuery("select * from facturas where ctipo_docum in ('FCO', 'FCR') and cod_empr = 2 order by nrofact desc",Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        resultado = q.getResultList();
+        return resultado;
+    }
+    
+    public int obtenerCantidadFacturasClientes(){
+        String sql = "select count(*) from facturas where ctipo_docum in ('FCO', 'FCR') and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+        
+    public List<Facturas> obtenerFacturasClientesPorNroEnUnRango(long lNroFactura, int[] range){
+        String sql =    "select * from facturas where ctipo_docum in ('FCO', 'FCR') " +
+                        "and nrofact = "+lNroFactura+" "+
+                        "and cod_empr = 2 ";
         Query q = em.createNativeQuery(sql, Facturas.class);
         System.out.println(q.toString());
-        int cantidadRegistros = q.getResultList().size();
-        return cantidadRegistros;
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        return q.getResultList();
+    }
+    
+    public int obtenerCantidadFacturasClientesPorNro(long lNroFact){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCO', 'FCR') " +
+                        "and nrofact = "+lNroFact+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+    
+    public void borrarFactura(long lNroFact, String lFFactura, String lCTipoDoc){
+        String sql =    "DELETE FROM facturas " +
+                        "WHERE cod_empr = 2 AND nrofact = "+lNroFact+" "+
+                        "AND ffactur = '"+lFFactura+"' AND ctipo_docum = '"+lCTipoDoc+"' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
+    
+    public void insertarFactura(    String lCTipoDoc,
+                                    long lNroFact,
+                                    Integer lCodCliente,
+                                    String lFFactura,
+                                    Character lCTipoVta,
+                                    String lXObs,
+                                    long lTExentas,
+                                    long lTGravadas,
+                                    long lTImpuestos,
+                                    long lTTotal,
+                                    long lISaldo,
+                                    long lTDescuentos,
+                                    String lXDirec,
+                                    String lXRazonSocial,
+                                    String lXRuc,
+                                    String lXTelef,
+                                    String lXCiudad,
+                                    String lFVenc,
+                                    long lTGravadas10,
+                                    long lTGravadas5,
+                                    BigDecimal lTImpuestos10,
+                                    BigDecimal lTImpuestos5,
+                                    String lXFactura){
+        String sql = "";
+        if(!lFVenc.equals("")){
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre,  tgravadas_10, tgravadas_5, " +
+                "timpuestos_10, timpuestos_5, xfactura) values ( " +
+                "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                "null, null, null, null, '"+lFFactura+"', " +
+                "'"+lCTipoVta+"', '"+lXObs+"', null, 'A', "+lTExentas+", " +
+                ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", null, "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', '"+lFVenc+"', null, "+lTGravadas10+", "+lTGravadas5+", " +
+                ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"')";
+        }else{
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre,  tgravadas_10, tgravadas_5, " +
+                "timpuestos_10, timpuestos_5, xfactura) values ( " +
+                "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                "null, null, null, null, '"+lFFactura+"', " +
+                "'"+lCTipoVta+"', '"+lXObs+"', null, 'A', "+lTExentas+", " +
+                ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", null, "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', null, null, "+lTGravadas10+", "+lTGravadas5+", " +
+                ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"')";
+        }
+        
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
     }
     
 }

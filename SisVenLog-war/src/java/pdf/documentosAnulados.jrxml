@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="documentosAnulados" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sql" class="java.lang.String"/>
+	<parameter name="desde" class="java.lang.String"/>
+	<parameter name="hasta" class="java.lang.String"/>
+	<parameter name="tipoDoc" class="java.lang.String"/>
+	<parameter name="usuImprime" class="java.lang.String"/>
+	<parameter name="operacion" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sql}]]>
+	</queryString>
+	<field name="ndocum" class="java.lang.Integer"/>
+	<field name="ctipo_docum" class="java.lang.String"/>
+	<field name="fdocum" class="java.util.Date"/>
+	<field name="cod_persona" class="java.lang.String"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="ttotal" class="java.lang.Double"/>
+	<field name="fanul" class="java.util.Date"/>
+	<field name="cusuario_anul" class="java.lang.String"/>
+	<field name="origen" class="java.lang.String"/>
+	<field name="destino" class="java.lang.String"/>
+	<field name="cconc" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="130" splitType="Stretch">
+			<staticText>
+				<reportElement x="61" y="51" width="101" height="14" uuid="eb89e586-b220-4b75-ba58-bd9a26824a61"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="51" width="50" height="14" uuid="d77884d0-4946-41d2-8c59-e5cb61e33303"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="114" width="70" height="13" uuid="bac79874-c9db-47d6-851f-fba98f676f17"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="87" width="552" height="1" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="16" width="101" height="14" uuid="c7ba82dc-a8a4-468e-8b54-0c24059c853a"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stock y Cta. Cte.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="0" width="101" height="16" uuid="986423d4-af2a-47f2-951b-c94962ecd4ec"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENLOG S.A.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="475" y="2" width="79" height="14" uuid="6891f4ce-0949-43c7-a921-454b468a2bb8"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="432" y="16" width="121" height="14" uuid="5c8a919a-2a9e-4bf3-88f9-aedcff776451"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ranudoc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="429" y="2" width="44" height="14" uuid="8f32f822-47d9-4e50-b62f-6adc192d9bbe"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="161" y="68" width="101" height="14" uuid="3b56724d-8380-4eb1-b817-a0f0f86c3e23"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Documento:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="162" y="51" width="100" height="14" uuid="90ada09f-535a-472e-919a-8a11c3059933"/>
+				<textFieldExpression><![CDATA[$P{desde}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="51" width="100" height="14" uuid="765b0152-eca8-431e-bd29-1360e2484aa2"/>
+				<textFieldExpression><![CDATA[$P{hasta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="68" width="100" height="14" uuid="316331ef-7df6-47d7-b60f-d28b4ada8945"/>
+				<textFieldExpression><![CDATA[$P{tipoDoc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="172" y="102" width="96" height="13" uuid="778236ff-7c8d-44e0-bd64-6f6356aa1eac"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="172" y="115" width="96" height="13" uuid="9d4fad52-cfe3-4676-acd3-e8c8b32ff5ec"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVEEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="115" width="69" height="13" uuid="880aff12-d9e7-4162-aed1-f773a08d39e4"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="30" width="551" height="14" uuid="303e9be7-6b50-4b4d-ba23-b0b1b2cf5341"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{operacion}.equals("A")?"DOCUMENTOS ANULADOS" : "DOCUMENTOS ELIMINADOS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="89" width="67" height="39" uuid="4b35f57d-8c2b-41be-9f38-6c4cfabc8965"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{operacion}.equals("A")?"FECHA ANULACION" : "FECHA ELIMINACION"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="477" y="90" width="75" height="38" uuid="e62e351a-dbc1-4b9f-9754-ae879910442b"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{operacion}.equals("A")?"USUARIO ANULACION" : "USUARIO ELIMINACION"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="111" y="114" width="61" height="13" uuid="1e49df23-7a76-44f6-89e5-a8eeb2200d1e"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="172" y="90" width="96" height="13" uuid="4b34b1ed-c94d-4c92-9f26-0e15b8c7cadb"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORIGEN / DESTINO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="129" width="552" height="1" uuid="caf6f88c-2649-40e6-a12e-7e180a65f0e7"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement x="31" y="0" width="71" height="14" uuid="404fc689-8f80-4d4d-bc77-195d2f346247"/>
+				<textFieldExpression><![CDATA[$F{ndocum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="111" y="0" width="61" height="14" uuid="32acb500-0649-45d6-9c56-dec6bbaf4dda"/>
+				<textFieldExpression><![CDATA[$F{fdocum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="418" y="0" width="59" height="14" uuid="60fbd4f1-c77e-498d-a1f8-7a9f07b57aba"/>
+				<textFieldExpression><![CDATA[$F{fanul}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="0" width="27" height="14" uuid="f2e5ab5d-0be8-41bc-93d8-065f825bdcd8"/>
+				<textFieldExpression><![CDATA[$F{ctipo_docum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="475" y="0" width="75" height="15" uuid="0da7879b-9706-4e3c-b2cc-9a0e0da91e64"/>
+				<textFieldExpression><![CDATA[$F{cusuario_anul}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="172" y="0" width="157" height="14" uuid="2a9a5424-4ab5-4538-96bc-a886acf6a87c"/>
+				<textFieldExpression><![CDATA[$F{ctipo_docum}.equals("EN")?"DE "+$F{origen}.trim()+" A "+$F{destino}.trim():$F{xnombre}.trim()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="335" y="2" width="75" height="14" uuid="76d15a28-095d-4280-bd7d-afa3f173cbce"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="2" width="63" height="14" uuid="2f32d0d9-5835-43b0-999d-23a930fcf144"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Impreso el:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="433" y="2" width="80" height="14" uuid="92456382-90d7-4600-9e51-ef0518ffbd3f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="2" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="67" y="2" width="111" height="14" uuid="dd04c650-f64e-419a-8c74-c32a8acabd43"/>
+				<textElement>
+					<font size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="642b4c76-c2d8-4f5b-ab24-f0b7fa7db180"/>
+			</line>
+			<textField>
+				<reportElement x="180" y="1" width="100" height="16" uuid="babb5227-57a5-4b63-ae1d-6d0151a40736"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuImprime}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="553" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[***FIN DEL INFORME***]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

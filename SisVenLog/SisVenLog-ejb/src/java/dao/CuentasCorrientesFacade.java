@@ -192,5 +192,16 @@ public class CuentasCorrientesFacade extends AbstractFacade<CuentasCorrientes>{
         }
         return total;
     }
+	
+	 public void borrarCuentaCorriente(String lCTipoDocum, long lNroFact){
+        String sql =    "DELETE FROM " +
+                        "cuentas_corrientes " +
+                        "WHERE cod_empr = 2 " +
+                        "AND ctipo_docum = '"+lCTipoDocum+"' "+
+                        "AND ndocum_cheq = "+lNroFact;
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
     
 }
