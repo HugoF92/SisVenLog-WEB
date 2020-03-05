@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="limigrapedidos" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="limigrapedidos" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.5000000000000002"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
-	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[dG1wX3BlZGlkb3MgLDE1LDE1LDUzNzFmZTMxLThiYTEtNDBiNy1iNTNjLTk0YzQ3MGE1YTdjMjtj
+bGllbnRlcyAsMTgxLDMxLDNlNDY5YjJmLWI5ZDMtNDgyMC05M2E4LTc0ZmY2NTI5YTQ3Mzs=]]>
+	</property>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="261"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="731"/>
 	<parameter name="desde" class="java.lang.String">
@@ -21,88 +24,43 @@
 	</parameter>
 	<parameter name="usuarioImpresion" class="java.lang.String"/>
 	<parameter name="codCanal" class="java.lang.String"/>
+	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="estado" class="java.lang.Integer"/>
 	<parameter name="l_estado" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{estado} == 2 ? "" : ($P{estado} == 3? "R" : ($P{estado} == 4 ? "M":""))]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{estado} == 2) ? "" : (($P{estado} == 3)? "R" : (($P{estado} == 4) ? "M":""))]]></defaultValueExpression>
 	</parameter>
 	<parameter name="cond_l_estado" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[($P{estado} == 2 || $P{estado} == 4) ? (" AND estado = " + $P{l_estado} + " ") : ($P{estado} == 3? " AND ( estado = " + $P{l_estado} + " OR (estado = 'M' AND msg_error != '')) ": "")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[($P{estado} == 2 || $P{estado} == 4) ? (" AND estado = " + $P{l_estado} + " ") : (($P{estado} == 3)? (" AND ( estado = " + $P{l_estado} + " OR (estado = 'M' AND msg_error != '')) "): "")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="whereTempPedidos" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["WHERE CONVERT(date, tp.facfecha, 103) BETWEEN '" + $P{desde} + "' " + "AND '" + $P{hasta}+ "' "
-                    + $P{cond_l_estado}
-                    + $P{cod_vendedor} == null ? "" : (" AND tp.cod_vendedor = " + $P{cod_vendedor}  + " ")
-                    + $P{codCanal} == null? "" : (" AND tp.cod_canal = '" + $P{codCanal} + "' ")
-                    + " ORDER BY cod_vendedor, facnro "
-                    + ($P{estado} == 1 || $P{estado} == 3) ?
-                    " UNION " 
-                    	+ (($P{cod_vendedor} !=null && $P{codCanal} !=null)?
-                    		(" SELECT e.xnombre as vencod, pe.nro_pedido as facnro, pe.cod_cliente as codnuevo, pe.fpedido as facfecha, "
-                    	+ "		 pe.ctipo_vta as factipovta, pe.ctipo_docum as forpago, pe.nplazo_cheque as nplazo_cheque,  '' as artcod, "
-                    	+ "		 0 as detcancajas,  0 as detcanunid,  0 as detprecio, pe.mestado as estado,  pe.nro_pedido as nroped, "
-                    	+ "		 c.xnombre, pe.cod_cliente as clicod, 'Nro.Promocion Invalido' as msg_error, pe.cod_vendedor as cod_vendedor,"
-                    	+ "		 pe.cod_canal as cod_canal "
-                    	+ "FROM pedidos pe, clientes c, empleados e "
-                    	+ "WHERE "
-                    	+ "pe.cod_empr= 2 "
-                    	+ "AND pe.cod_vendedor = e.cod_empleado "
-                    	+ "AND pe.cod_cliente = c.cod_cliente "
-                    	+ "AND pe.fpedido BETWEEN '" + $P{desdeHora} + "' AND '" + $P{hastaHora}+ "' "
-                    	+ "AND pe.mestado = 'R' "
-                    	+ "AND pe.cod_vendedor = " + $P{cod_vendedor}  + " "
-                    	+ "AND pe.cod_canal = '" + $P{codCanal} + "' "
-                    	+ " ORDER BY cod_vendedor, nroped") : "")
-                    	+ (($P{cod_vendedor} ==null && $P{codCanal} !=null)?
-                    		(" SELECT e.xnombre as vencod, pe.nro_pedido as facnro, pe.cod_cliente as codnuevo, pe.fpedido as facfecha, "
-                    	+ "		 pe.ctipo_vta as factipovta, pe.ctipo_docum as forpago, pe.nplazo_cheque as nplazo_cheque,  '' as artcod, "
-                    	+ "		 0 as detcancajas,  0 as detcanunid,  0 as detprecio, pe.mestado as estado,  pe.nro_pedido as nroped, "
-                    	+ "		 c.xnombre, pe.cod_cliente as clicod, 'Nro.Promocion Invalido' as msg_error, pe.cod_vendedor as cod_vendedor,"
-                    	+ "		 pe.cod_canal as cod_canal "
-                    	+ "FROM pedidos pe, clientes c, empleados e "
-                    	+ "WHERE "
-                    	+ "pe.cod_empr= 2 "
-                    	+ "AND pe.cod_vendedor = e.cod_empleado "
-                    	+ "AND pe.cod_cliente = c.cod_cliente "
-                    	+ "AND pe.fpedido BETWEEN '" + $P{desdeHora} + "' AND '" + $P{hastaHora}+ "' "
-                    	+ "AND pe.mestado = 'R' "
-                    	+ "AND pe.cod_canal = '" + $P{codCanal} + "' "
-                    	+ " ORDER BY cod_vendedor, nroped") : "")
-                    	+ (($P{cod_vendedor} ==null && $P{codCanal} ==null)?
-                    		(" SELECT e.xnombre as vencod, pe.nro_pedido as facnro, pe.cod_cliente as codnuevo, pe.fpedido as facfecha, "
-                    	+ "		 pe.ctipo_vta as factipovta, pe.ctipo_docum as forpago, pe.nplazo_cheque as nplazo_cheque,  '' as artcod, "
-                    	+ "		 0 as detcancajas,  0 as detcanunid,  0 as detprecio, pe.mestado as estado,  pe.nro_pedido as nroped, "
-                    	+ "		 c.xnombre, pe.cod_cliente as clicod, 'Nro.Promocion Invalido' as msg_error, pe.cod_vendedor as cod_vendedor,"
-                    	+ "		 pe.cod_canal as cod_canal "
-                    	+ "FROM pedidos pe, clientes c, empleados e "
-                    	+ "WHERE "
-                    	+ "pe.cod_empr= 2 "
-                    	+ "AND pe.cod_vendedor = e.cod_empleado "
-                    	+ "AND pe.cod_cliente = c.cod_cliente "
-                    	+ "AND pe.fpedido BETWEEN '" + $P{desdeHora} + "' AND '" + $P{hastaHora}+ "' "
-                    	+ "AND pe.mestado = 'R' "
-                    	+ " ORDER BY cod_vendedor, nroped") : "")
-                    	+ (($P{cod_vendedor} !=null && $P{codCanal} ==null)?
-                    		(" SELECT e.xnombre as vencod, pe.nro_pedido as facnro, pe.cod_cliente as codnuevo, pe.fpedido as facfecha, "
-                    	+ "		 pe.ctipo_vta as factipovta, pe.ctipo_docum as forpago, pe.nplazo_cheque as nplazo_cheque,  '' as artcod, "
-                    	+ "		 0 as detcancajas,  0 as detcanunid,  0 as detprecio, pe.mestado as estado,  pe.nro_pedido as nroped, "
-                    	+ "		 c.xnombre, pe.cod_cliente as clicod, 'Nro.Promocion Invalido' as msg_error, pe.cod_vendedor as cod_vendedor,"
-                    	+ "		 pe.cod_canal as cod_canal "
-                    	+ "FROM pedidos pe, clientes c, empleados e "
-                    	+ "WHERE "
-                    	+ "pe.cod_empr= 2 "
-                    	+ "AND pe.cod_vendedor = e.cod_empleado "
-                    	+ "AND pe.cod_cliente = c.cod_cliente "
-                    	+ "AND pe.fpedido BETWEEN '" + $P{desdeHora} + "' AND '" + $P{hastaHora}+ "' "
-                    	+ "AND pe.mestado = 'R' "
-                    	+ "AND pe.cod_vendedor = " + $P{cod_vendedor}  + " "
-                    	+ " ORDER BY cod_vendedor, nroped") : "")
-                    :""]]></defaultValueExpression>
++ $P{cond_l_estado}
++ (($P{cod_vendedor} != null) ? (" AND tp.cod_vendedor = " + $P{cod_vendedor}  + " ") :  "")
++ (($P{codCanal} != null)? (" AND tp.cod_canal = '" + $P{codCanal} + "' ") : "")
++ (($P{estado} == 2 || $P{estado} == 4)  ? "ORDER BY cod_vendedor, facnro ":"")
++ (($P{estado} == 1 || $P{estado} == 3) ? (" UNION " 
++ "SELECT e.xnombre as vencod, pe.nro_pedido as facnro, pe.cod_cliente as codnuevo, convert(varchar, pe.fpedido, 103) as facfecha, "
++ "		 pe.ctipo_vta as factipovta, pe.ctipo_docum as forpago, pe.nplazo_cheque as nplazo_cheque,  '' as artcod, "
++ "		 0 as detcancajas,  0 as detcanunid,  0 as detprecio, pe.mestado as estado,  pe.nro_pedido as nroped, "
++ "		 c.xnombre, pe.cod_cliente as clicod, 'Nro.Promocion Invalido' as msg_error, pe.cod_vendedor as cod_vendedor,"
++ "		 pe.cod_canal as cod_canal "
++ "FROM pedidos pe, clientes c, empleados e "
++ "WHERE "
++ "pe.cod_empr= 2 "
++ "AND pe.cod_vendedor = e.cod_empleado "
++ "AND pe.cod_cliente = c.cod_cliente "
++ "AND pe.fpedido BETWEEN '" + $P{desdeHora} + "' AND '" + $P{hastaHora}+ "' "
++ "AND pe.mestado = 'R' "
++ (($P{cod_vendedor} != null) ? (" AND pe.cod_vendedor = " + $P{cod_vendedor}  + " ") :  "")
++ (($P{codCanal} != null)? (" AND pe.cod_canal = '" + $P{codCanal} + "' ") : "")
++ " ORDER BY cod_vendedor, nroped")
+: "")]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT tp.vencod,
 	tp.facnro,
 	tp.codnuevo,
-	tp.facfecha,
+	CONVERT( date,tp.facfecha,103) AS facfecha,
 	tp.factipovta,
 	tp.forpago,
 	tp.nplazo_cheque,
@@ -116,7 +74,7 @@
 	tp.clicod,
 	tp.msg_error,
 	tp.cod_vendedor AS cod_vendedor,
-	tp.cod_canal as cod_canal
+	tp.cod_canal AS cod_canal
 FROM tmp_pedidos tp
 	LEFT JOIN clientes c ON 
 	 tp.codnuevo = c.cod_cliente 
@@ -131,7 +89,7 @@ FROM tmp_pedidos tp
 	<field name="codnuevo" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codnuevo"/>
 	</field>
-	<field name="facfecha" class="java.sql.Timestamp">
+	<field name="facfecha" class="java.sql.Date">
 		<property name="com.jaspersoft.studio.field.label" value="facfecha"/>
 	</field>
 	<field name="factipovta" class="java.lang.String">
@@ -179,62 +137,50 @@ FROM tmp_pedidos tp
 	<variable name="condi_l_estado" class="java.lang.String">
 		<variableExpression><![CDATA[($P{estado} == 2 || $P{estado} == 4) ? (" AND estado = " + $P{l_estado} + " ") : ($P{estado} == 3? " AND ( estado = " + $P{l_estado} + " OR (estado = 'M' AND msg_error != '')) ": "")]]></variableExpression>
 	</variable>
-	<group name="pedidos" minHeightToStartNewPage="10" keepTogether="true">
+	<group name="pedidos" minHeightToStartNewPage="20" keepTogether="true">
 		<groupExpression><![CDATA[$F{cod_vendedor}]]></groupExpression>
 		<groupHeader>
 			<band>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<textField>
-					<reportElement x="5" y="-25" width="180" height="16" uuid="cd01144a-f7ee-43e1-90e9-ba294a3fcf62"/>
-					<textFieldExpression><![CDATA[$F{cod_vendedor} == null ? "": ("Vendedor " + $F{cod_vendedor})]]></textFieldExpression>
+					<reportElement x="5" y="-17" width="180" height="16" uuid="cd01144a-f7ee-43e1-90e9-ba294a3fcf62"/>
+					<textFieldExpression><![CDATA[$F{cod_vendedor} == null ? "": ("Vendedor: " + $F{cod_vendedor} + " - " + $F{vencod})]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="1" y="-9" width="555" height="1" uuid="ba0cc65b-521c-4c14-94ce-7a9c104c5aac"/>
-				</line>
-				<line>
-					<reportElement x="2" y="-28" width="557" height="1" uuid="bf4fe9e8-dbc0-4b1a-8319-5d4e4771a858"/>
+					<reportElement x="2" y="-20" width="557" height="1" uuid="bf4fe9e8-dbc0-4b1a-8319-5d4e4771a858"/>
 				</line>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="41">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<line>
-					<reportElement x="1" y="1" width="555" height="1" uuid="8d2f9a7a-7cb7-4314-b11d-53e2470ee0e5"/>
-				</line>
 				<textField>
 					<reportElement x="0" y="1" width="330" height="20" uuid="2230f180-9731-4e53-a09d-521027de9dfe"/>
-					<textFieldExpression><![CDATA[$F{vencod} == null ? "": ("Total pedidos del Vendedor: " + $F{vencod} + " " + $V{pedidos_COUNT})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{vencod} == null ? "": ("Total pedidos del Vendedor: " + $V{pedidos_COUNT})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<title>
-		<band height="143" splitType="Stretch">
+		<band height="135" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="58" y="57" width="101" height="14" uuid="483d2cb5-78fe-40e0-adc9-1ab8a1a1c633"/>
+				<reportElement x="58" y="41" width="101" height="14" uuid="483d2cb5-78fe-40e0-adc9-1ab8a1a1c633"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Desde:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="311" y="57" width="50" height="14" uuid="e0561030-2cdd-46ba-840c-506765d41616"/>
+				<reportElement x="311" y="41" width="50" height="14" uuid="e0561030-2cdd-46ba-840c-506765d41616"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Hasta:]]></text>
 			</staticText>
 			<line>
-				<reportElement x="3" y="112" width="556" height="1" uuid="1e9780f4-6379-4d3e-a96b-b363061fe7fa"/>
+				<reportElement x="3" y="111" width="556" height="1" uuid="1e9780f4-6379-4d3e-a96b-b363061fe7fa"/>
 			</line>
-			<staticText>
-				<reportElement x="8" y="37" width="550" height="20" uuid="fa0d0067-f09d-4843-ab94-1a63c53b2fdc"/>
-				<textElement textAlignment="Center">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[INFORME DE MIGRACION DE PEDIDOS]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="6" y="21" width="101" height="14" uuid="6a37a68c-dddb-4676-a3e2-07a365738f2f"/>
 				<textElement textAlignment="Center">
@@ -264,158 +210,136 @@ FROM tmp_pedidos tp
 				<text><![CDATA[Fecha:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="94" width="101" height="14" uuid="100fa224-fcb8-4b49-8e81-53df2515914a"/>
+				<reportElement x="10" y="78" width="101" height="14" uuid="100fa224-fcb8-4b49-8e81-53df2515914a"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Canal Venta:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="159" y="57" width="100" height="14" uuid="8236a994-6a86-4020-9ed1-63edd3f25a4f"/>
-				<textFieldExpression><![CDATA[$P{desde}]]></textFieldExpression>
+				<reportElement x="159" y="41" width="100" height="14" uuid="8236a994-6a86-4020-9ed1-63edd3f25a4f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{desde} != null ? $P{desde} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="361" y="57" width="100" height="14" uuid="1b86179b-d78c-479d-a930-3d4c05c31d2f"/>
-				<textFieldExpression><![CDATA[$P{hasta}]]></textFieldExpression>
+				<reportElement x="361" y="41" width="100" height="14" uuid="1b86179b-d78c-479d-a930-3d4c05c31d2f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{hasta} != null? $P{hasta}: ""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="111" y="94" width="185" height="14" uuid="4d2d8f57-4ab3-40f4-981a-30f9820fb621"/>
-				<textFieldExpression><![CDATA[$P{codCanal} == null? "": $P{codCanal}]]></textFieldExpression>
+				<reportElement x="111" y="78" width="185" height="14" uuid="4d2d8f57-4ab3-40f4-981a-30f9820fb621"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{canal} == null? "": $P{canal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="25" y="75" width="134" height="14" uuid="8a916964-c7de-4fd2-a5a1-a0cfdf041dba"/>
+				<reportElement x="25" y="59" width="134" height="14" uuid="8a916964-c7de-4fd2-a5a1-a0cfdf041dba"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Estado de los pedidos:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="162" y="75" width="398" height="14" uuid="8822cd9c-9d54-44d4-8ffc-49eb8b3f5eed"/>
+				<reportElement x="162" y="59" width="398" height="14" uuid="8822cd9c-9d54-44d4-8ffc-49eb8b3f5eed"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{estado} ==1? "TODOS" : ($P{estado} ==2? "PENDIENTES" : ($P{estado} ==3? "RECHAZADOS" : ($P{estado} ==4? "MIGRADOS" : "")))]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="39" y="113" width="1" height="22" uuid="d600679f-455b-4a9d-900d-e45cb642a4b3">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="98" y="113" width="1" height="22" uuid="5538649a-0ec6-4c37-b112-f2998c0e7e9c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="162" y="113" width="1" height="22" uuid="a73848f2-18d1-43be-953e-e69ec6701f61">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="213" y="113" width="1" height="22" uuid="97542d4c-872b-46be-b1d1-d2eeb7d43fce">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="252" y="113" width="1" height="23" uuid="91ffb674-d542-4859-b305-612095dbf1a6">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="340" y="113" width="1" height="22" uuid="9fa11ed1-7020-40a5-996b-11e68728550c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="396" y="113" width="1" height="22" uuid="c4c13e8e-50a8-458e-bef5-a7cc3915ec96">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="431" y="113" width="1" height="22" uuid="1478afe4-265f-4c0e-9635-3f16430bafe7">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="483" y="112" width="1" height="23" uuid="4f5b2854-04a8-4768-b1b7-df7f74147af5">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
+			<staticText>
+				<reportElement x="192" y="7" width="230" height="30" uuid="c3bc979f-e05b-4509-80b3-de997c85d713"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORME DE MIGRACION DE PEDIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="434" y="21" width="125" height="16" uuid="8ccdc169-7ed3-4234-b1b5-42c0c0a6264e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[limigrapedidos]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="20" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="3" y="-26" width="36" height="16" uuid="3de0bec4-3e1d-4c58-ab14-6d0ad6addc9f"/>
-				<textElement textAlignment="Center">
+				<reportElement x="3" y="-17" width="36" height="16" uuid="3de0bec4-3e1d-4c58-ab14-6d0ad6addc9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FACNRO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="39" y="-26" width="60" height="16" uuid="1bd8aa83-0621-4588-ac9b-6f62dc3cff5d"/>
-				<textElement textAlignment="Center">
+				<reportElement x="131" y="-17" width="39" height="16" uuid="4b118f9c-f3ad-413d-aeae-a4e96991e68f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[COD.CLIENTE]]></text>
+				<text><![CDATA[FECHA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="99" y="-26" width="63" height="16" uuid="11b275a9-9f6e-4e72-90f2-acfdd4f0e588"/>
-				<textElement textAlignment="Center">
+				<reportElement x="39" y="-17" width="60" height="16" uuid="1bd8aa83-0621-4588-ac9b-6f62dc3cff5d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PL.CHQ.FECHA]]></text>
+				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="162" y="-26" width="51" height="16" uuid="c3c1b941-e62f-48a3-a136-f834e02ac2fd"/>
-				<textElement textAlignment="Center">
+				<reportElement x="99" y="-17" width="31" height="16" uuid="11b275a9-9f6e-4e72-90f2-acfdd4f0e588"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TIPO VENTA]]></text>
+				<text><![CDATA[PL.CHQ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="215" y="-26" width="40" height="15" uuid="291c90d4-0b38-4bb9-9eea-5023d1417434"/>
-				<textElement textAlignment="Center">
+				<reportElement x="170" y="-17" width="43" height="16" uuid="c3c1b941-e62f-48a3-a136-f834e02ac2fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO VTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="215" y="-17" width="44" height="15" uuid="291c90d4-0b38-4bb9-9eea-5023d1417434"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.PAGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="341" y="-26" width="56" height="16" uuid="be15ce76-2cb9-4b1c-a0d5-7b73c3e21032"/>
-				<textElement textAlignment="Center">
-					<font size="8" isBold="true"/>
+				<reportElement x="332" y="-17" width="48" height="16" uuid="be15ce76-2cb9-4b1c-a0d5-7b73c3e21032"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[UNID.PRECIO]]></text>
+				<text><![CDATA[UNID PRECIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="253" y="-26" width="88" height="16" uuid="b02b329d-df28-438b-83d1-807383a3319c"/>
-				<textElement textAlignment="Center">
-					<font size="8" isBold="true"/>
+				<reportElement x="259" y="-17" width="71" height="16" uuid="b02b329d-df28-438b-83d1-807383a3319c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[MERCADERIACAJAS]]></text>
+				<text><![CDATA[MERCADERIA CAJAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="397" y="-26" width="35" height="16" uuid="a1cad5ef-6131-4646-899c-5aa7428f573e"/>
-				<textElement textAlignment="Center">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ESTADO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="432" y="-26" width="51" height="16" uuid="34a4a1be-740e-497d-9173-72e082fdebf5">
+				<reportElement x="432" y="-17" width="51" height="16" uuid="34a4a1be-740e-497d-9173-72e082fdebf5">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NRO.PEDIDO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="483" y="-26" width="77" height="16" uuid="403c157f-aa5b-4c3c-8f75-e496768b1e2a">
+				<reportElement x="483" y="-17" width="77" height="16" uuid="403c157f-aa5b-4c3c-8f75-e496768b1e2a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ MOTIVO RECHAZO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="-17" width="51" height="16" uuid="a1cad5ef-6131-4646-899c-5aa7428f573e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -423,51 +347,80 @@ FROM tmp_pedidos tp
 		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="2" y="0" width="38" height="14" uuid="ee5318de-218c-41ba-aa09-b33387d172a6"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{facnro}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="40" y="0" width="59" height="14" uuid="23c08da9-03fc-49fd-854e-0763faa87af1"/>
-				<textFieldExpression><![CDATA[$F{clicod}]]></textFieldExpression>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clicod} + " " + (($F{xnombre} ==null || $F{xnombre} == "")? "": $F{xnombre})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="99" y="0" width="63" height="14" uuid="7a1c892e-b928-438a-b75b-5ccef7a646c1"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{facfecha}]]></textFieldExpression>
+				<reportElement x="130" y="0" width="55" height="14" uuid="7a1c892e-b928-438a-b75b-5ccef7a646c1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{facfecha} != null? new SimpleDateFormat("dd/MM/yyyy").format($F{facfecha}):""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="162" y="0" width="51" height="14" uuid="9da6500a-ade3-4398-95e1-1138ba337f4c"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="185" y="0" width="28" height="14" uuid="9da6500a-ade3-4398-95e1-1138ba337f4c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{factipovta}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="213" y="0" width="40" height="14" uuid="358672d2-cf9e-4f71-9fb3-5fe6521a660d"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{forpago}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="254" y="0" width="88" height="14" uuid="f8bec2da-4372-42f9-b743-c6f8f130ad05"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="259" y="0" width="71" height="14" uuid="f8bec2da-4372-42f9-b743-c6f8f130ad05"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{artcod} + " " +$F{detcancajas}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="342" y="0" width="56" height="14" uuid="28e58288-cd9f-478c-8be7-e008c4d734fb"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="332" y="0" width="48" height="14" uuid="28e58288-cd9f-478c-8be7-e008c4d734fb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{detcanunid} + " " +$F{detprecio}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="398" y="0" width="34" height="14" uuid="040d2176-3352-46a9-a71f-535cde68eaee"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="380" y="0" width="60" height="14" uuid="040d2176-3352-46a9-a71f-535cde68eaee"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{estado}.equals("M")?"MIGRADO" : ($F{estado}.equals("R")?"RECHAZADO" : "PENDIENTE")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="432" y="0" width="52" height="14" uuid="f4fc3df7-8ca1-4623-8d81-1dff756324c7"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="440" y="0" width="44" height="14" uuid="f4fc3df7-8ca1-4623-8d81-1dff756324c7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{nroped}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="484" y="0" width="77" height="14" uuid="bb432ce8-5ad3-443a-8125-2e732484812b"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{estado}.equals("M")? "" : $F{msg_error}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="0" width="32" height="14" uuid="1581baef-35a5-46bd-9ac7-3ba866e92c91"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nplazo_cheque}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -2330,7 +2330,7 @@ public class LlamarReportes {
 
     public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
             String fechaInicialHora, String fechaFinalHora, Integer codVendedor,
-            String codCanal, String estado) {
+            String codCanal, String canalDescripcion, String estado) {
         try {
 
             Map param = new HashMap();
@@ -2341,6 +2341,7 @@ public class LlamarReportes {
             param.put("cod_vendedor", codVendedor);
             param.put("usuarioImpresion", "admin");
             param.put("codCanal", codCanal);
+            param.put("codCanal", canalDescripcion);
             param.put("estado", Integer.parseInt(estado));
 
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");

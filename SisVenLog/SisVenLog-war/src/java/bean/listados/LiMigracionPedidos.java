@@ -74,14 +74,15 @@ public class LiMigracionPedidos implements Serializable {
         LlamarReportes rep = new LlamarReportes();
         if(tipoArchivo.equals("PDF")){
             
-            String fecInicial = DateUtil.dateToString(this.fechaInicial, "yyyy/MM/dd");
-            String fecFinal = DateUtil.dateToString(this.fechaFinal, "yyyy/MM/dd");
-            String fechaInicialHora = DateUtil.dateToString(this.fechaInicial, "yyyy/dd/MM HH:mm:ss");
-            String fechaFinalHora = DateUtil.dateToString(this.fechaFinal, "yyyy/dd/MM HH:mm:ss");
+            String fecInicial = DateUtil.dateToString(this.fechaInicial, "yyyy-MM-dd");
+            String fecFinal = DateUtil.dateToString(this.fechaFinal, "yyyy-MM-dd");
+            String fechaInicialHora = DateUtil.dateToString(this.fechaInicial, "yyyy-dd-MM");
+            String fechaFinalHora = DateUtil.dateToString(this.fechaFinal, "yyyy-dd-MM");
             Integer codVendedor = Objects.nonNull(this.vendedor) ? new Integer(this.vendedor.getEmpleadosPK().getCodEmpleado()) : null;
             String codCanal = Objects.nonNull(this.canalVenta) ? this.canalVenta.getCodCanal() : null;
+            String canal = Objects.nonNull(this.canalVenta) ? this.canalVenta.getXdesc() : null;
 
-            rep.reporteLiMigraPedidos(fecInicial, fecFinal, fechaInicialHora, fechaFinalHora, codVendedor, codCanal, this.estado);
+            rep.reporteLiMigraPedidos(fecInicial, fecFinal, fechaInicialHora, fechaFinalHora, codVendedor, codCanal, canal, this.estado);
             
         } else if (tipoArchivo.equals("XLS")){
             List<Object[]> lista;
