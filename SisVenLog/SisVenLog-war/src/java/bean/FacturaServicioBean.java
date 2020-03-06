@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bean;
 
 import dao.ClientesFacade;
@@ -41,7 +36,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -227,11 +223,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
         try{
             listadoMotivos = motivosFacade.findAll();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de motivos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoMotivos;
     }
@@ -261,30 +257,30 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
     }
     
     public void cerrarDialogoSinGuardar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRecibos').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevReciboCompra').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarRecibos').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevReciboCompra').hide();");
     }
     
     public String verificarCliente(){
         if(codClienteLbl != null){
             if(codClienteLbl == 0){
                 //mostrar busqueda de clientes
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').show();");
             }else{
                 try{
                     clienteBuscado = clientesFacade.find(codClienteLbl);
                     if(clienteBuscado == null){
                         //mostrar busqueda de clientes
-                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+                        PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').show();");
                     }else{
                         this.nombreClienteLbl = clienteBuscado.getXnombre();
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de clientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return null;
                 }
             }
@@ -318,11 +314,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
         try{
             listaClientes = clientesFacade.buscarPorFiltro(filtro);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de clientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }   
     }
     
@@ -331,34 +327,34 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
             if (getClientes().getXnombre() != null) {
                 codClienteLbl = getClientes().getCodCliente();
                 nombreClienteLbl = getClientes().getXnombre();
-                RequestContext.getCurrentInstance().update("panel_grid_nueva_factura");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').hide();");
+                PrimeFaces.current().ajax().update("panel_grid_nueva_factura");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').hide();");
             }
         }
     }
     
     public List<Servicios> listarServicios(){
         try{
-            listadoServicios = serviciosFacade.listarServiciosOrdenadosPorDescripcion();
+//            listadoServicios = serviciosFacade.listarServiciosOrdenadosPorDescripcion();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al obtener datos de servicios.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoServicios;
     }
     
     public List<TiposDocumentos> listarTiposDocumentos(){
         try{
-            listadoTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentoFacturaServicio();
+//            listadoTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentoFacturaServicio();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al obtener datos de tipos de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoTiposDocumentos;
     }
@@ -415,11 +411,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
             exentasDet = 0;
             gravadasDet = 0;
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al agregar servicio en el detalle.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -453,11 +449,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
             totalIva = facturas.getTimpuestos();
             totalFinal = facturas.getTtotal();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al visualizar una factura de servicio.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -469,26 +465,26 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                 try{
                     facturasFacade.borrarFactura(facturas.getFacturasPK().getNrofact(), dateToString(facturas.getFacturasPK().getFfactur()), facturas.getFacturasPK().getCtipoDocum());
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la eliminación de facturas.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                     return null;
                 }
                 //eliminar de cuenta corriente si corresponde
                 try{
                     cuentasCorrientesFacade.borrarCuentaCorriente(facturas.getFacturasPK().getCtipoDocum(), facturas.getFacturasPK().getNrofact());
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la eliminación de cuentas corrientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                     return null;
                 }
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Datos eliminados.", ""));
-                RequestContext.getCurrentInstance().execute("PF('dlgEliminarFacturaSer').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEliminarFacturaSer').hide();");
                 inicializar();
                 return null;
             }else{
@@ -496,11 +492,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                 return null;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al eliminar una factura de servicio.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -551,11 +547,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                             c.setFfactur(facturas.getFacturasPK().getFfactur());
                             cuentasCorrientesFacade.insertarCuentas(c);
                         }catch(Exception e){
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en inserción de movimientos en cuenta corriente.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                             return null;
                         }
                     }
@@ -569,11 +565,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al actualizar facturas.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                     }
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Factura anulada.", ""));
-                    RequestContext.getCurrentInstance().execute("PF('dlgVisualizarFacturaSer').hide();");
+                    PrimeFaces.current().executeScript("PF('dlgVisualizarFacturaSer').hide();");
                     inicializar();
                     return null;
                 }
@@ -582,11 +578,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                 return null;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al anular una factura de servicio.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -606,11 +602,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al borrar un detalle de la grilla de facturas.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
     }
     
@@ -653,11 +649,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                     }
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la búsqueda de factura de venta.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return null;
             }
             //validar ingreso de detalles  
@@ -726,11 +722,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                                                 BigDecimal.valueOf(lTIva5), 
                                                 obtenerNroFacturaCompletoConFormato());
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en inserción de facturas.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return null;
             }
             //insertar en cuenta corriente
@@ -765,11 +761,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                     c.setFfactur(fechaFactLbl);
                     cuentasCorrientesFacade.insertarCuentas(c);
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en inserción de movimientos en cuenta corriente.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                     return null;
                 }
             }
@@ -798,16 +794,16 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                     }
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en inserción de facturas servicios detalles.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return null;
             }
             //actualizar las existencias por las reglas en los respectivos depositos 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Datos grabados con éxito."));
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevFactura').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevFactura').hide();");
             //imprimir la factura de servicio
             impresionDacturasServiciosBean.setEstabInicial(Integer.parseInt(String.valueOf(nPuntoEstabLbl)));
             impresionDacturasServiciosBean.setExpedInicial(Integer.parseInt(String.valueOf(nPuntoExpedLbl)));
@@ -817,11 +813,11 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
             inicializar();
             return null;
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al agregar nueva factura de servicio.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -845,19 +841,19 @@ public class FacturaServicioBean extends LazyDataModel<Facturas> implements Seri
                     }
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la generación de cursor de impuestos.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return false;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en función timbrado vencido.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             return false;
         }
         return true;
