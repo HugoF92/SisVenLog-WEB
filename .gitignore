@@ -7,14 +7,3 @@
 /build/
 /SisVenLog-war/dist/
 /dist/
-SisVenLog/SisVenLog-war/nbproject/
-
-build.xml
-
-SisVenLog-war/nbproject/
-
-nbproject/
-
-src/conf/MANIFEST.MF
-
-src/conf/jboss-app.xml
