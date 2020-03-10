@@ -1,0 +1,405 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <!--Botones Superiores-->
+                        <h:form id="formBtnClientes" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE CLIENTES</h1>
+
+                            <p:growl id="msgFormBtnClientes" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{clientesBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevoCliente').show()"
+                                    update="formNuevoCliente"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+                                
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditarCliente').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{clientesBean.habBtnEdit}"
+                                    update="pnlEditarCliente"/>
+                                
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{clientesBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacCliente').show()"
+                                    update="formInacCliente"/>
+                                
+                            </center>
+
+                        </h:form>
+                        
+                        <!--Nuevo Cliente-->
+                        
+                        <h:form id="formNuevoCliente"  prependId="false">
+                            <p:growl id="msgAgregarCliente" showDetail="true"/>
+
+                            <p:dialog header="Agregar Cliente"
+                                      widgetVar="dlgNuevoCliente"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+                            
+                                <p:ajax event="open" listener="#{clientesBean.instanciar()}"/>
+                                
+                                <h:panelGrid columns="2">
+                                    
+
+                                    <p:outputLabel value="Nombre/Razon Social" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="nombreCliente" value="#{clientesBean.clientes.xnombre}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Cedula de Identidad" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="cedulaCliente" value="#{clientesBean.clientes.xcedula}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    
+                                    <p:outputLabel value="RUC" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="rucCliente" value="#{clientesBean.clientes.xruc}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Tipo de Cliente " style="font-weight: bold; text-align: left;"/>
+                                    <p:selectOneMenu id="tipoClienteDropDown" value="#{clientesBean.clientes.ctipoCliente}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;">
+                                            <f:selectItems value="#{clientesBean.listaDeTipoCliente}" 
+                                                           var="tipoDeCliente"
+                                                           itemValue="#{tipoDeCliente.ctipoCliente}"
+                                                           itemLabel="#{tipoDeCliente.xdesc}"/>
+                                    </p:selectOneMenu>
+                                    
+                                    <p:outputLabel value="Dirección" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="direccionCliente" value="#{clientesBean.clientes.xdirec}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Contacto" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="contactoCliente" value="#{clientesBean.clientes.xcontacto}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Ciudad" style="font-weight: bold; float: right;"/>
+                                    <p:selectOneMenu id="listaDeCiudadDropDown" value="#{clientesBean.clientes.codCiudad}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;">
+                                        <f:selectItems value="#{clientesBean.listaCiudades}" 
+                                                           var="ciudad"
+                                                           itemValue="#{ciudad.codCiudad}"
+                                                           itemLabel="#{ciudad.xdesc}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Telefono" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="telefonoCliente" value="#{clientesBean.clientes.xtelef}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Fax" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="faxCliente" value="#{clientesBean.clientes.xfax}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Correo electronico" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="emailCliente" value="#{clientesBean.clientes.xemail}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Estado" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="estadoCliente" value="#{clientesBean.clientes.codEstado}" 
+                                                 tabindex="1" style="width: 350px;"
+                                                 label="ACTIVO" disabled="true"/>
+                                    
+                                    
+                                    <p:outputLabel value="Ruta" style="font-weight: bold; float: right;"/>
+
+                                    <p:selectOneMenu id="listaDeRutaDropDown" value="#{clientesBean.clientes.codRuta}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;">
+                                        <f:selectItems value="#{clientesBean.listaRutas}" 
+                                                           var="ruta"
+                                                           itemValue="#{ruta.rutasPK.codRuta}"
+                                                           itemLabel="#{ruta.rutasPK.codRuta} - #{ruta.xdesc} - #{ruta.zonas.xdesc}"/>
+                                    </p:selectOneMenu>
+                                    
+                                    </h:panelGrid>
+                                     <br></br>
+                                    <h:panelGrid>
+                                        <p:outputLabel value="Dias de Visita" style="font-weight: bold; float: left;"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="3">
+
+                                    <p:selectBooleanCheckbox id="lunes" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Lunes" style="width: 300px; float: right;"/>
+                                    
+                                    <p:selectBooleanCheckbox id="martes" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Martes" style="width: 300px;"/>
+                                    
+                                    <p:selectBooleanCheckbox id="miercoles" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Miercoles" style="width: 300px;"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="3">
+                                    <p:selectBooleanCheckbox id="jueves" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Jueves" style="width: 300px;"/>
+                                    
+                                    <p:selectBooleanCheckbox id="viernes" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Viernes" style="width: 300px;"/>
+                                    
+                                    <p:selectBooleanCheckbox id="sabado" value="#{clientesBean.clientes.xdiasVisita}" 
+                                                itemLabel="Sabado" style="width: 300px;"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                     <p:outputLabel value="Observacion" style="font-weight: bold; float: right;"/>
+
+                                     <p:inputTextarea id="observaionCliente" value="#{clientesBean.clientes.xobs}" 
+                                                 tabindex="1" style="width: 650px; height: 300px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>    
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                       <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{clientesBean.insertar()}"
+                                            update="msgAgregarCliente formClientes"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+                                       
+                                       <p:commandButton value="Cancelar" actionListener="#{clientesBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" 
+                                                         style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                        
+                                </h:panelGrid>
+                                  
+                            </p:dialog>
+                        </h:form>
+                        
+                        <!--Actuaizar Cliente-->
+                        
+                        <h:form id="formEditarCliente"  prependId="false">
+                            <p:growl id="msgEditarCliente" showDetail="true"/>
+
+                            <p:dialog header="Editar Cliente"
+                                      widgetVar="dlgEditarCliente"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{clientesBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditarCliente" columns="2">
+                                
+                                        <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="codClienteEditar" value="#{clientesBean.clientes.codCliente}" 
+                                                     tabindex="1" style="width: 50px;" disabled="true"/>
+
+                                        <p:outputLabel value="Nombre" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="nombreClienteEditar" value="#{clientesBean.clientes.xnombre}" 
+                                                     tabindex="2" style="width: 350px;"
+                                                     onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{clientesBean.editar()}"
+                                            update="msgEditarCliente formBtnClientes formClientes"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditarCliente').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        
+                        <!--Desactivar o borrar Cliente-->
+                        
+                        <h:form id="formInacCliente" prependId="false">
+
+                            <p:growl id="msgFormInacCliente" showDetail="true"/>
+
+                            <p:dialog header="Borrar Cliente"
+                                      widgetVar="dlgInacCliente"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formClientes formBtnClientes"/>
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{clientesBean.borrar()}"
+                                            update="msgFormInacCliente"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacCliente').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        
+                        <!--Form para volver a la lista de clientes-->
+                        
+                        <h:form id="formSinGuardarCliente" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardadCliente">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>
+                                <br></br>
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{clientesBean.cerrarDialogosAgregar()}" 
+                                        update="formClientes"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardadCliente').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        
+                        <!--Lista de Clientes-->
+                        
+                        <h:form id="formClientes" prependId="false">  
+                            <p:growl id="msgFormClientes" showDetail="true"/>
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaClientes" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{clientesBean.listaClientes}" rowKey="#{itemp.xnombre}"
+                                                     selection="#{clientesBean.clientes}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{clientesBean.onRowSelect(event)}"
+                                                    update="formBtnClientes"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.codCliente}"
+                                                      sortBy="#{itemp.codCliente}">
+                                                <h:outputText value="#{itemp.codCliente}" />
+                                            </p:column>
+
+                                            <p:column headerText="Nombre/Razon Social" filterBy="#{itemp.xnombre}"
+                                                      sortBy="#{itemp.xnombre}">
+                                                <h:outputText value="#{itemp.xnombre}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Cedula" filterBy="#{itemp.xcedula}"
+                                                      sortBy="#{itemp.xcedula}">
+                                                <h:outputText value="#{itemp.xcedula}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Ruc" filterBy="#{itemp.xruc}"
+                                                      sortBy="#{itemp.xruc}">
+                                                <h:outputText value="#{itemp.xruc}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Estado" filterBy="#{itemp.codEstado}"
+                                                      sortBy="#{itemp.codEstado}">
+                                                <h:outputText value="#{itemp.codEstado}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Direccion">
+                                                <h:outputText value="#{itemp.xdirec}" />
+                                            </p:column>
+                                            
+<!--                                            <p:column headerText="Tipo de Persona" filterBy="#{itemp.ctipoCliente}">
+                                                <h:outputText value="#{itemp.ctipoCliente}" />
+                                            </p:column>-->
+                                            
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>  
+                        </h:form>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

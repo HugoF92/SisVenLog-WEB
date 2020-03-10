@@ -92,4 +92,16 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         return respuesta;
     }
     
+    
+    public Integer getMaxId() {
+
+        Query q = getEntityManager().createNativeQuery("select max(cod_cliente) as codCliente "
+                + "from clientes ", Clientes.class);
+
+
+        Integer respuesta = (Integer) q.getSingleResult();
+
+        return respuesta;
+    }
+    
 }

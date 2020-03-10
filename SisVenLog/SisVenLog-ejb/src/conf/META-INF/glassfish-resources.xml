@@ -5,11 +5,10 @@
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="1433"/>
         <property name="databaseName" value="VenlogDB"/>
-        <property name="User" value="sa"/>
-        <property name="Password" value="venlog2018CC"/>
+        <property name="User" value="venlogdb"/>
+        <property name="Password" value="venlogdb"/>
         <property name="URL" value="jdbc:sqlserver://localhost:1433;databaseName=VenlogDB"/>
         <property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="venlogDb" object-type="user" pool-name="microsoft_sql_VenlogDB_saPool"/>
-</resources>
-        
+    <jdbc-resource enabled="true" jndi-name="venlogdb" object-type="user" pool-name="microsoft_sql_VenlogDB_saPool"/>
+    </resources>
