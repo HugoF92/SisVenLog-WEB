@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -515,10 +516,16 @@ public class Clientes implements Serializable {
         return true;
     }
 
+//    @Override
+//    public String toString() {
+//        return "entidad.Clientes[ codCliente=" + codCliente + " ]";
+//    }
+
     @Override
     public String toString() {
-        return "entidad.Clientes[ codCliente=" + codCliente + " ]";
+        return "Clientes{" + "codCliente=" + codCliente + ", xnombre=" + xnombre + ", codEmpr=" + codEmpr + ", codRuta=" + codRuta + ", codCiudad=" + codCiudad + ", ctipoCliente=" + ctipoCliente + ", xcedula=" + xcedula + ", xruc=" + xruc + ", xtelef=" + xtelef + ", xfax=" + xfax + ", xdirec=" + xdirec + ", nordenRuta=" + nordenRuta + ", xpropietario=" + xpropietario + ", nplazoCredito=" + nplazoCredito + ", ilimiteCompra=" + ilimiteCompra + ", mformaPago=" + mformaPago + ", nriesgo=" + nriesgo + ", codGrupo=" + codGrupo + ", codEstado=" + codEstado + ", xrazonEstado=" + xrazonEstado + ", fprimFact=" + fprimFact + ", xcontacto=" + xcontacto + ", isaldo=" + isaldo + ", falta=" + falta + ", cusuario=" + cusuario + ", fultimModif=" + fultimModif + ", cusuarioModif=" + cusuarioModif + ", codAnterior=" + codAnterior + ", xobs=" + xobs + ", xemail=" + xemail + ", xctacte=" + xctacte + ", codBanco=" + codBanco + ", nfrec=" + nfrec + ", xdiasVisita=" + xdiasVisita + ", ccategCliente=" + ccategCliente + ", codCanal=" + codCanal + ", nplazoImpresion=" + nplazoImpresion + '}';
     }
+    
 
     @XmlTransient
     public Collection<CuentasCorrientes> getCuentasCorrientesCollection() {

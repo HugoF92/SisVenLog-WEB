@@ -12,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  *
@@ -93,15 +95,30 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
     }
     
     
+    
     public Integer getMaxId() {
-
-        Query q = getEntityManager().createNativeQuery("select max(cod_cliente) as codCliente "
-                + "from clientes ", Clientes.class);
-
-
-        Integer respuesta = (Integer) q.getSingleResult();
-
-        return respuesta;
+       try{
+           Query q = getEntityManager().createQuery("SELECT MAX(c.codCliente) from Clientes c");
+           Integer respuesta = (Integer) q.getSingleResult();
+           return respuesta;
+       }catch(Exception e){
+           e.printStackTrace();
+           return null;
+       }
     }
     
+    @Override
+    public void create(Clientes entity) {
+        try {
+              System.out.println(entity.toString());
+              getEntityManager().persist(entity);
+        } catch (ConstraintViolationException e) {
+            // Aqui tira los errores de constraint
+            for (ConstraintViolation actual : e.getConstraintViolations()) {
+                System.out.println(actual.toString());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }

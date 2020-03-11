@@ -17,7 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -265,20 +265,14 @@ public class ClientesBean implements Serializable {
                 clientes.setXtelef(clientes.getXtelef());
                 clientes.setXfax(clientes.getXfax());
                 clientes.setXemail(clientes.getXemail());
-                clientes.setXfax(clientes.getXfax());
-                clientes.setCodRuta(clientes.getCodRuta());
-                
-                
                 clientes.setCodEstado("A");
+                clientes.setCodRuta(clientes.getCodRuta());
+                clientes.setXdiasVisita(concatenarDias());
+                clientes.setXobs(clientes.getXobs());
                 clientesFacade.create(clientes);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
-
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevoCliente').hide();");
-
+                PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
                 instanciar();
-
-            
-
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -301,7 +295,7 @@ public class ClientesBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditarCliente').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditarCliente').hide();");
 
             }
 
@@ -311,10 +305,49 @@ public class ClientesBean implements Serializable {
     }
 
     public void borrar() {
-       
+       try {
+
+            clientesFacade.remove(clientes);
+            this.clientes = new Clientes();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
+            instanciar();
+            PrimeFaces.current().executeScript("PF('dlgInacCliente').hide();");
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
+        }
     }
 
     public void onRowSelect(SelectEvent event) {
+        
+        String diasSeleccionads  = this.clientes.getXdiasVisita();
+        char l = 'L';
+        char t = 'T';
+        char m = 'M';
+        char j = 'J';
+        char v = 'V';
+        char s = 'S';
+        
+        for (char c : diasSeleccionads.toCharArray()) {
+            if(c==l){
+                lunes = true;
+            }
+            if(c==t){
+                martes = true;
+            }
+            if(c==m){
+                miercoles = true;
+            }
+            if(c==j){
+                jueves = true;
+            }
+            if(c==v){
+                viernes = true;
+            }
+            if(c==s){
+                sabado = true;
+            }
+        }
+
         if (!"".equals(this.clientes.getXnombre())) {
             this.setHabBtnEdit(false);
         } else {
@@ -335,17 +368,17 @@ public class ClientesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardadCliente').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardadCliente').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevoCliente').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
         
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardadCliente').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevoCliente').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardadCliente').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
     }
     
     public List<TiposClientes> listarTipoCliente() {
@@ -361,6 +394,30 @@ public class ClientesBean implements Serializable {
     public List<Rutas> listarRutas(){
         listaRutas = rutasFacade.findAll();
         return listaRutas;
+    }
+    
+    public String concatenarDias(){
+        String dias = "";
+        if(lunes){
+            dias=dias+"L";
+        }
+        if(martes){
+            dias=dias+"T";
+        }
+        if(miercoles){
+            dias=dias+"M";
+        }
+        if(jueves){
+            dias=dias+"J";
+        }
+        if(viernes){
+            dias=dias+"V";
+        }
+        if(sabado){
+            dias=dias+"S";
+        }
+        
+        return dias.trim();
     }
 
 }
