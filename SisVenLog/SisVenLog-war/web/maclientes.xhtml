@@ -29,14 +29,14 @@
                                     update="formNuevoCliente"
                                     icon="fa fa-plus"
                                     styleClass="green-btn raised-btn" 
-                                    style="margin-bottom:10px; width: 300px;"
+                                    style="margin-bottom:10px; width: 100px;"
                                     ajax="true"/>
 
                                 <p:commandButton 
                                     value="Editar"   
                                     styleClass="orange-btn raised-btn" 
                                     oncomplete="PF('dlgEditarCliente').show()"
-                                    style="margin-bottom:10px; width: 300px;"
+                                    style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-pencil"
                                     disabled="#{clientesBean.habBtnEdit}"
                                     update="pnlEditarCliente"/>
@@ -44,7 +44,7 @@
                                 <p:commandButton 
                                     value="Borrar" 
                                     styleClass="red-btn raised-btn" 
-                                    style="margin-bottom:10px; width: 300px;"
+                                    style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
                                     disabled="#{clientesBean.habBtnEdit}"
                                     oncomplete="PF('dlgInacCliente').show()"
@@ -64,11 +64,19 @@
                                       modal="true"
                                       responsive="true"
                                       closeOnEscape="false"
-                                      closable="false" resizable="true">
+                                      closable="false" resizable="true"
+                                      style="position: absolute;
+                                      overflow: scroll;">
 
                                 <p:ajax event="open" listener="#{clientesBean.instanciar()}"/>
 
                                 <h:panelGrid columns="2">
+                                    
+                                    <p:outputLabel value="Tipo Persona" style="font-weight: bold; float: right;"/>
+                                    <p:selectOneRadio id="tipoPersonaCliente" value="#{clientesBean.clientes.codTipoPersona}">
+                                            <f:selectItem itemLabel="Fisica" itemValue="F" />
+                                            <f:selectItem itemLabel="Juridica" itemValue="J" />
+                                    </p:selectOneRadio>
 
 
                                     <p:outputLabel value="Nombre/Razon Social" style="font-weight: bold; float: right;"/>
@@ -212,15 +220,17 @@
 
                         <!--Actuaizar Cliente-->
 
-                        <h:form id="formEditarCliente"  prependId="false">
+                        <h:form id="formEditarCliente"  prependId="false" >
                             <p:growl id="msgEditarCliente" showDetail="true"/>
-
                             <p:dialog header="Editar Cliente"
                                       widgetVar="dlgEditarCliente"
                                       modal="true"
                                       responsive="true"
                                       closable="false"
-                                      closeOnEscape="false">
+                                      closeOnEscape="false"
+                                      style="position: absolute;
+                                      overflow: scroll;
+                                      ">
 
                                 <p:ajax event="close" listener="#{clientesBean.instanciar()}"/>
 
@@ -230,6 +240,13 @@
 
                                     <p:inputText id="codClienteEditar" value="#{clientesBean.clientes.codCliente}" 
                                                  tabindex="1" style="width: 50px;" disabled="true"/>
+                                    
+                                    <p:outputLabel value="Tipo Persona" style="font-weight: bold; float: right;"/>
+                                    
+                                    <p:selectOneRadio id="tipoPersonaClienteEditar" value="#{clientesBean.clientes.codTipoPersona}" disabled="true">
+                                            <f:selectItem itemLabel="Fisica" itemValue="F" />
+                                            <f:selectItem itemLabel="Juridica" itemValue="J" />
+                                    </p:selectOneRadio>
 
                                     <p:outputLabel value="Nombre" style="font-weight: bold; float: right;"/>
 
@@ -316,7 +333,6 @@
                                                            itemLabel="#{ruta.rutasPK.codRuta} - #{ruta.xdesc} - #{ruta.zonas.xdesc}"/>
                                     </p:selectOneMenu>
                                 </h:panelGrid>
-                                <br></br>
                                 <h:panelGrid>
                                     <p:outputLabel value="Dias de Visita" style="font-weight: bold; float: left;"/>
                                 </h:panelGrid>

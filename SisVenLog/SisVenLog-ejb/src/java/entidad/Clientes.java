@@ -69,6 +69,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Clientes.findByXdiasVisita", query = "SELECT c FROM Clientes c WHERE c.xdiasVisita = :xdiasVisita")
     , @NamedQuery(name = "Clientes.findByCcategCliente", query = "SELECT c FROM Clientes c WHERE c.ccategCliente = :ccategCliente")
     , @NamedQuery(name = "Clientes.findByCodCanal", query = "SELECT c FROM Clientes c WHERE c.codCanal = :codCanal")
+    , @NamedQuery(name = "Clientes.findByCodTipoPersona", query = "SELECT c FROM Clientes c WHERE c.codTipoPersona = :codTipoPersona")
     , @NamedQuery(name = "Clientes.findByNplazoImpresion", query = "SELECT c FROM Clientes c WHERE c.nplazoImpresion = :nplazoImpresion")})
 public class Clientes implements Serializable {
 
@@ -180,10 +181,16 @@ public class Clientes implements Serializable {
     private String codCanal;
     @Column(name = "nplazo_impresion")
     private Short nplazoImpresion;
+    
+    @Column(name = "cod_tipo_persona")
+    private String codTipoPersona;
+    
+    
     @OneToMany(mappedBy = "codCliente")
     private Collection<CuentasCorrientes> cuentasCorrientesCollection;
     @OneToMany(mappedBy = "codCliente")
     private Collection<Cheques> chequesCollection;
+    
     
     public Clientes() {
     }
@@ -544,5 +551,15 @@ public class Clientes implements Serializable {
     public void setChequesCollection(Collection<Cheques> chequesCollection) {
         this.chequesCollection = chequesCollection;
     }
+
+    public String getCodTipoPersona() {
+        return codTipoPersona;
+    }
+
+    public void setCodTipoPersona(String codTipoPersona) {
+        this.codTipoPersona = codTipoPersona;
+    }
+    
+    
     
 }

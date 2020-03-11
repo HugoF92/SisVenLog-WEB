@@ -254,6 +254,7 @@ public class ClientesBean implements Serializable {
         
         try {
                 Integer maxCod = this.clientesFacade.getMaxId();
+                clientes.setCodTipoPersona(clientes.getCodTipoPersona());
                 clientes.setCodCliente(maxCod+1);
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
                 clientes.setXcedula(clientes.getXcedula());
