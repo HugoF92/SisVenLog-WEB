@@ -9,6 +9,7 @@ import entidad.RecaudacionDet;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -29,4 +30,9 @@ public class RecaudacionDetFacade extends AbstractFacade<RecaudacionDet> {
         super(RecaudacionDet.class);
     }
     
+    public void deleteRecaudacionDet(long nroPlanilla){
+        Query q = this.em.createNativeQuery("delete from recaudacion_det where nro_planilla = "+nroPlanilla);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
 }

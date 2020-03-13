@@ -227,9 +227,9 @@ public class BancoBean implements Serializable {
     
     public void cerrarDialogosAgregar() {
 //            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarBanc').hide();");
-            PrimeFaces.current().executeScript("PF('dlgSinGuardarBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarRecaudacion').hide();");
 //            RequestContext.getCurrentInstance().execute("PF('dlgNuevBanc').hide();");
-            PrimeFaces.current().executeScript("PF('dlgNuevBanc').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevRecaudacion').hide();");
     }
 
 }

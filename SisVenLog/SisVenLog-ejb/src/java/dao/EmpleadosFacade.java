@@ -166,5 +166,17 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         return respuesta;
     }
     
+    public Empleados getEntregadorByCod(Short codEntrgador){
+        Query q = getEntityManager().createNativeQuery("select * from empleados where cod_empleado = "+codEntrgador,Empleados.class);
+        System.out.println(q.toString());
+        return (Empleados) q.getSingleResult();
+    }
+    
+    public List<Empleados> findEntregadorByZona(String codZona){
+        Query q = getEntityManager().createNativeQuery("select e.* from  empleados e , depositos d "+
+            "where ctipo_emp like 'E%' and e.cod_depo = d.cod_depo and e.mestado = 'A' and d.cod_zona = '"+codZona+"' order by e.xnombre ",Empleados.class);
+        System.out.println(q.toString());
+        return q.getResultList();
+    }
     
 }
