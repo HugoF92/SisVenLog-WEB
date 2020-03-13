@@ -2395,6 +2395,46 @@ public class LlamarReportes {
         }
     }
     
+     public void reporteLiVtaGrav(String sql, String desde, String hasta, String nombre_zona, String tipo_venta, String tipo) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("nombre_zona", nombre_zona);
+            param.put("tipo_venta", tipo_venta);
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liVtaGrav.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=livtagrav.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
     public void exportarCSV(List<Object[]> lista, String nombre) {
         List<String> ListStrin = new ArrayList<>();
         for ( Object[] i : lista){

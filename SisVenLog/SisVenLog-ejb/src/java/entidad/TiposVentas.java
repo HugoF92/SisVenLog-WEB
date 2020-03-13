@@ -129,5 +129,5 @@ public class TiposVentas implements Serializable {
     public String toString() {
         return "entidad.TiposVentas[ tiposVentasPK=" + tiposVentasPK + " ]";
     }
-    
+
 }

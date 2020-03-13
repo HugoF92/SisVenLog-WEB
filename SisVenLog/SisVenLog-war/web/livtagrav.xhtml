@@ -1,0 +1,174 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiApli" header="VENTAS DE MERCADERÍAS"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="4" >
+
+                                        <p:outputLabel value="Fecha de Facturacion Inicial:" />
+                                        <p:calendar id="fechaDesde" value="#{liVtaGravBean.fechaDesde}" 
+                                                    showOn="button" locale="es"/>
+
+                                        <p:outputLabel value="Fecha de Facturacion Final:"/>
+                                        <p:calendar id="fechaHasta" value="#{liVtaGravBean.fechaHasta}" 
+                                                    showOn="button" locale="es"/>
+
+                                        <p:outputLabel value="Sublínea:"/>
+
+                                        <p:selectOneMenu value="#{liVtaGravBean.sublineas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{SublineasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liVtaGravBean.listarSubLineas()}" var="sublinea"
+                                                           itemValue="#{sublinea}"
+                                                           itemLabel="#{sublinea.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Zona:"/>
+
+                                        <p:selectOneMenu value="#{liVtaGravBean.zonas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{zonasBean.listar()}" var="zona"
+                                                           itemValue="#{zona}"
+                                                           itemLabel="#{zona.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Tipo Venta:"/>
+
+                                        <p:selectOneMenu value="#{liVtaGravBean.tiposVentas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{TiposVentasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{tipoVtaBean.listar()}" var="tipoVenta"
+                                                           itemValue="#{tipoVenta}"
+                                                           itemLabel="#{tipoVenta.xdesc}"/>
+                                        </p:selectOneMenu> 
+
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    
+                                    <p:commandButton title="Valores de Mercaderias"
+                                                     icon="fa fa-filter"
+                                                     oncomplete="PF('dlgSelectMerca').show()"
+                                                     style="margin-top:10px" />
+
+                                    <p:commandLink title="Reporte" target="_blank"
+                                                   action="#{liVtaGravBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="Reporte" target="_blank"
+                                                   action="#{liVtaGravBean.ejecutar('IMPR')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            id="VPbtn" value="Imprimir" icon="fa fa-file-pdf-o" styleClass="blue-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="Reporte" target="_blank"
+                                                   action="#{liVtaGravBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-print" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+
+
+                                </p:panel>
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+
+                                    <p:pickList id="pickListMerca" value="#{liVtaGravBean.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+
+
+                                </p:dialog>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

@@ -53,4 +53,24 @@ public class TiposVentasFacade extends AbstractFacade<TiposVentas> {
         return listado;
     }
     
+     public List<TiposVentas> obtenerTiposVentasPorTipo(String tipo){
+        String sql =    "SELECT * FROM tipos_ventas WHERE " +
+                        "ctipo_vta = '" + tipo + "' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<TiposVentas> listado = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            char cEstado = resultado[0] == null ? 0 : resultado[0].toString().charAt(0);
+            TiposVentas tv = new TiposVentas();
+            TiposVentasPK tvPK = new TiposVentasPK();
+            tvPK.setCtipoVta(cEstado);
+            tvPK.setCodEmpr(Short.parseShort("2"));
+            tv.setTiposVentasPK(tvPK);
+            tv.setXdesc(resultado[1] == null ? "" : resultado[1].toString());
+            listado.add(tv);
+        }
+        return listado;
+    }
+    
 }
