@@ -230,6 +230,13 @@ public class ClientesBean implements Serializable {
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);
         this.setHabBtnInac(true);
+        
+//        this.setLunes(true);
+//        this.setMartes(true);
+//        this.setMiercoles(true);
+//        this.setJueves(true);
+//        this.setViernes(true);
+//        this.setSabado(true);
 
         listar();
         listarTipoCliente();
@@ -253,6 +260,7 @@ public class ClientesBean implements Serializable {
     public void insertar() {
         
         try {
+            if(this.verificarDatos()){
                 Integer maxCod = this.clientesFacade.getMaxId();
                 clientes.setCodTipoPersona(clientes.getCodTipoPersona());
                 clientes.setCodCliente(maxCod+1);
@@ -274,6 +282,10 @@ public class ClientesBean implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
                 PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
                 instanciar();
+            }else{
+                throw new Exception("Verifique los datos a ingresar.");
+            }
+                
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -282,12 +294,25 @@ public class ClientesBean implements Serializable {
     public void editar() {
         try {
 
-            if ("".equals(this.clientes.getXnombre())) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar un Nombre."));
+            if (!this.verificarDatos()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Veifique los campos"));
 
             } else {
-
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
+                clientes.setXcedula(clientes.getXcedula());
+                clientes.setXruc(clientes.getXruc().toUpperCase());
+                clientes.setCtipoCliente(clientes.getCtipoCliente());
+                clientes.setXdirec(clientes.getXdirec());
+                clientes.setXcontacto(clientes.getXcontacto());
+                clientes.setCodCiudad(clientes.getCodCiudad());
+                clientes.setXtelef(clientes.getXtelef());
+                clientes.setXfax(clientes.getXfax());
+                clientes.setXemail(clientes.getXemail());
+                clientes.setCodEstado(clientes.getCodEstado());
+                clientes.setCodRuta(clientes.getCodRuta());
+                clientes.setXdiasVisita(concatenarDias());
+                clientes.setXobs(clientes.getXobs());
+                
                 clientesFacade.edit(clientes);
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Guardado con exito."));
@@ -330,22 +355,22 @@ public class ClientesBean implements Serializable {
         
         for (char c : diasSeleccionads.toCharArray()) {
             if(c==l){
-                lunes = true;
+                this.setLunes(true);
             }
             if(c==t){
-                martes = true;
+                this.setMartes(true);
             }
             if(c==m){
-                miercoles = true;
+                this.setMiercoles(true);
             }
             if(c==j){
-                jueves = true;
+                this.setJueves(true) ;
             }
             if(c==v){
-                viernes = true;
+                this.setViernes(true);
             }
             if(c==s){
-                sabado = true;
+                this.setSabado(true) ;
             }
         }
 
@@ -419,6 +444,45 @@ public class ClientesBean implements Serializable {
         }
         
         return dias.trim();
+        
+    }
+    
+    public boolean verificarDatos(){
+
+        if( this.clientes.getXnombre()!= null 
+                && !this.clientes.getXnombre().isEmpty()
+                && this.clientes.getXcedula()!= null
+                && this.clientes.getXcedula().intValue()>0
+                && this.clientes.getXruc() != null 
+                && !this.clientes.getXruc().isEmpty()
+                && this.clientes.getCtipoCliente()!= null 
+                
+                && this.clientes.getXdirec()!= null 
+                && !this.clientes.getXdirec().isEmpty()
+                && this.clientes.getXcontacto()!= null
+                && !this.clientes.getXcontacto().isEmpty()
+                
+                && this.clientes.getCodCiudad() != null
+
+                && this.clientes.getXtelef() != null 
+                && !this.clientes.getXtelef().isEmpty()
+                && this.clientes.getXfax() != null
+                && !this.clientes.getXfax().isEmpty()
+                && this.clientes.getXemail()!=null
+                && !this.clientes.getXemail().isEmpty()
+                && !this.clientes.getXemail().contentEquals("@")
+                && this.clientes.getCodEstado() != null 
+                && !this.clientes.getCodEstado().isEmpty()
+                && this.clientes.getCodRuta() != null
+                
+                && this.clientes.getXdiasVisita()!= null
+                && !this.clientes.getXdiasVisita().isEmpty()
+                && this.clientes.getXobs() != null
+                && !this.clientes.getXobs().isEmpty()
+                ){
+            return true;
+        }
+        return false;
     }
 
 }
