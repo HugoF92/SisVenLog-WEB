@@ -73,7 +73,7 @@
                                 <h:panelGrid columns="2">
                                     
                                     <p:outputLabel value="Tipo Persona" style="font-weight: bold; float: right;"/>
-                                    <p:selectOneRadio id="tipoPersonaCliente" value="#{clientesBean.clientes.codTipoPersona}">
+                                    <p:selectOneRadio id="tipoPersonaCliente" value="#{clientesBean.clientes.mtipoPersona}">
                                             <f:selectItem itemLabel="Fisica" itemValue="F" />
                                             <f:selectItem itemLabel="Juridica" itemValue="J" />
                                     </p:selectOneRadio>
@@ -243,7 +243,7 @@
                                     
                                     <p:outputLabel value="Tipo Persona" style="font-weight: bold; float: right;"/>
                                     
-                                    <p:selectOneRadio id="tipoPersonaClienteEditar" value="#{clientesBean.clientes.codTipoPersona}" disabled="true">
+                                    <p:selectOneRadio id="tipoPersonaClienteEditar" value="#{clientesBean.clientes.mtipoPersona}" disabled="true">
                                             <f:selectItem itemLabel="Fisica" itemValue="F" />
                                             <f:selectItem itemLabel="Juridica" itemValue="J" />
                                     </p:selectOneRadio>
@@ -507,8 +507,8 @@
                                                 <h:outputText value="#{itemp.xdirec}" />
                                             </p:column>
 
-                                            <p:column headerText="Tipo de Persona" filterBy="#{itemp.codTipoPersona}">
-                                                <h:outputText value="#{itemp.codTipoPersona}" />
+                                            <p:column headerText="Tipo de Persona" filterBy="#{itemp.mtipoPersona}">
+                                                <h:outputText value="#{itemp.mtipoPersona}" />
                                             </p:column>
 
                                         </p:dataTable>

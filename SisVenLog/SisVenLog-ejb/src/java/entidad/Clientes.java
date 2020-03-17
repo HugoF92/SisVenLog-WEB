@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Clientes.findByXdiasVisita", query = "SELECT c FROM Clientes c WHERE c.xdiasVisita = :xdiasVisita")
     , @NamedQuery(name = "Clientes.findByCcategCliente", query = "SELECT c FROM Clientes c WHERE c.ccategCliente = :ccategCliente")
     , @NamedQuery(name = "Clientes.findByCodCanal", query = "SELECT c FROM Clientes c WHERE c.codCanal = :codCanal")
-    , @NamedQuery(name = "Clientes.findByCodTipoPersona", query = "SELECT c FROM Clientes c WHERE c.codTipoPersona = :codTipoPersona")
+    , @NamedQuery(name = "Clientes.findByMtipoPersona", query = "SELECT c FROM Clientes c WHERE c.mTipoPersona = :mTipoPersona")
     , @NamedQuery(name = "Clientes.findByNplazoImpresion", query = "SELECT c FROM Clientes c WHERE c.nplazoImpresion = :nplazoImpresion")})
 public class Clientes implements Serializable {
 
@@ -182,8 +182,8 @@ public class Clientes implements Serializable {
     @Column(name = "nplazo_impresion")
     private Short nplazoImpresion;
     
-    @Column(name = "cod_tipo_persona")
-    private String codTipoPersona;
+    @Column(name = "mtipo_persona")
+    private String mTipoPersona ;
     
     
     @OneToMany(mappedBy = "codCliente")
@@ -552,12 +552,12 @@ public class Clientes implements Serializable {
         this.chequesCollection = chequesCollection;
     }
 
-    public String getCodTipoPersona() {
-        return codTipoPersona;
+    public String getMtipoPersona() {
+        return mTipoPersona;
     }
 
-    public void setCodTipoPersona(String codTipoPersona) {
-        this.codTipoPersona = codTipoPersona;
+    public void setMtipoPersona(String mTipoPersona) {
+        this.mTipoPersona = mTipoPersona;
     }
     
     

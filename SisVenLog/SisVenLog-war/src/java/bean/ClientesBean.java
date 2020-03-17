@@ -262,7 +262,7 @@ public class ClientesBean implements Serializable {
         try {
             if(this.verificarDatos()){
                 Integer maxCod = this.clientesFacade.getMaxId();
-                clientes.setCodTipoPersona(clientes.getCodTipoPersona());
+                clientes.setMtipoPersona(clientes.getMtipoPersona());
                 clientes.setCodCliente(maxCod+1);
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
                 clientes.setXcedula(clientes.getXcedula());
