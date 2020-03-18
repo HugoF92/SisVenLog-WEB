@@ -6,6 +6,7 @@
 package util;
 
 import dto.LiMercaSinDto;
+import entidad.Bancos;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import entidad.Proveedores;
@@ -1494,6 +1495,91 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    
+    public void reporteLiCheques(String sql, String desde, String hasta, Bancos banco, String nombre_cliente, String tipo) {
+        try {
+
+            String nombre_banco = banco != null ? banco.getXdesc() : "Sin Banco";
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("nombre_banco", nombre_banco);
+            param.put("nombre_cliente", nombre_cliente);
+            
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=licheques.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    /*
+    public void reporteLiCheques2(String sql, String desde, String hasta, String nombre_banco, String nombre_cliente, String tipo) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("nombre_banco", nombre_banco);
+            param.put("nombre_cliente", nombre_cliente);
+            
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques2.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=licheques2.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    */
 
     public void reporteLiExtractoCliente(String sql, String desde, String hasta,
             String usuImprime, String tipo) {

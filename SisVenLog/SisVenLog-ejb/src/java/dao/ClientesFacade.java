@@ -48,7 +48,7 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         return respuesta;
     }
     
-     public Clientes buscarPorCodigo(String filtro) {
+    public Clientes buscarPorCodigo(String filtro) {
 
         Query q = getEntityManager().createNativeQuery("select *\n"
                 + "from clientes\n"
@@ -66,12 +66,28 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         return respuesta;
     }
      
+    public List<Clientes> buscarPorNombre(String nombreCliente){
+        List<Clientes> respuesta = null;
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from clientes\n"
+                + "where upper(xnombre) like '%"+nombreCliente.toUpperCase()+"%'", Clientes.class);
+        
+        respuesta = q.getResultList();
+        if(respuesta.size() <= 0){
+            return null;
+        }else{
+            return respuesta;
+        }
+   
+    }
+    
     public List<Clientes> buscarPorCodigoNombre(Integer codigoCliente, String nombreCliente){
         List<Clientes> respuesta = null;
         Query q = getEntityManager().createNativeQuery("select *\n"
                 + "from clientes\n"
-                + "where cod_cliente = " + codigoCliente + "\n"
+                + "where CAST(cod_cliente as CHAR) LIKE '%" + codigoCliente + "%'\n"
                 + "and upper(xnombre) like '%"+nombreCliente.toUpperCase()+"%'", Clientes.class);
+        
         respuesta = q.getResultList();
         if(respuesta.size() <= 0){
             return null;
