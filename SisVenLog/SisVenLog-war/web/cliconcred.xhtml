@@ -48,21 +48,21 @@
                                          style="width: 50%;">
                                     <h:panelGrid columns="2" >
 
-                                        <p:outputLabel value="Fecha Facturación Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Facturación Desde:" style="float: left; font-weight: bold;"/>
                                         <p:calendar id="fechaAltaDesde" value="#{clientesCreditosBean.fechaFacDesde}" 
                                                     showOn="button" style="width: 60px;">
                                             <p:ajax event="dateSelect" listener="#{clientesCreditosBean.onDateSelect}" />
                                             <p:ajax event="blur" listener="#{clientesCreditosBean.onDateSelect}" />
                                         </p:calendar>
 
-                                        <p:outputLabel value="Fecha Facturación Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Facturación Hasta:" style="float: left; font-weight: bold;"/>
                                         <p:calendar id="fechaAltaHasta" value="#{clientesCreditosBean.fechaFacHasta}" 
                                                     showOn="button" style="width: 60px;">
                                             <p:ajax event="dateSelect" listener="#{clientesCreditosBean.onDateSelect}" />
                                             <p:ajax event="blur" listener="#{clientesCreditosBean.onDateSelect}" />
                                         </p:calendar>
 
-                                        <p:outputLabel value="Zona:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Zona:" style="float: left; font-weight: bold;"/>
                                         <p:selectOneMenu id="zonas" value="#{clientesCreditosBean.zona}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style="width: 100px;" converter="#{ZonasConverter}">
@@ -74,7 +74,7 @@
                                                            itemLabel="#{zona.xdesc}"/>
                                         </p:selectOneMenu>
                                                                                 
-                                        <p:outputLabel value="Vendedor:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Vendedor:" style="float: left; font-weight: bold;"/>
                                         <p:selectOneMenu value="#{clientesCreditosBean.vendedor}" style="width: 300px;"
                                                          converter="#{empleadosConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
@@ -84,40 +84,36 @@
                                                            itemLabel="#{vendedor.xnombre}"/>
                                         </p:selectOneMenu>
                                         
-                                        <p:outputLabel value="Dividir Ventas en:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Dividir Ventas en:" style="float: left; font-weight: bold;"/>
                                         <p:inputNumber id="numeroPromedio" decimalPlaces="0" value="#{clientesCreditosBean.nroPromedio}"/>
                                         
-                                        <p:outputLabel for="modalidadPago" value="Modalidad de Pago: " style="float: right; font-weight: bold;"/>
-                                        <p:fieldset  style="margin-bottom:20px">
-                                            <p:selectOneRadio id="modalidadPago" layout="grid" columns="1" value="#{clientesCreditosBean.modalidadPago}">
-                                                <f:selectItem itemLabel="TODOS" itemValue="-1"/>
-                                                <f:selectItem itemLabel="Factura" itemValue="F"/>
-                                                <f:selectItem itemLabel="Cheque" itemValue="C"/>
-                                                <f:selectItem itemLabel="Contado" itemValue=" "/>
-                                            </p:selectOneRadio>
-                                        </p:fieldset>
+                                        <p:outputLabel for="modalidadPago" value="Modalidad de Pago: " style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu id="modalidadPago" value="#{clientesCreditosBean.modalidadPago}" style="width: 150px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="-1"/>
+                                            <f:selectItem itemLabel="Factura" itemValue="F"/>
+                                            <f:selectItem itemLabel="Cheque" itemValue="C"/>
+                                            <f:selectItem itemLabel="Contado" itemValue=" "/>
+                                        </p:selectOneMenu>
 
-                                        <p:outputLabel for="estado" value="Estado del Cliente: " style="float: right; font-weight: bold;"/>
-                                        <p:fieldset  style="margin-bottom:20px">
-                                            <p:selectOneRadio id="estado" layout="grid" columns="1" value="#{clientesCreditosBean.estado}">
-                                                <f:selectItem itemLabel="TODOS" itemValue=""/>
-                                                <f:selectItem itemLabel="Activos" itemValue="A"/>
-                                                <f:selectItem itemLabel="Inactivos" itemValue="I"/>
-                                                <f:selectItem itemLabel="Suspendidos" itemValue="S"/>
-                                            </p:selectOneRadio>
-                                        </p:fieldset>
+                                        <p:outputLabel for="estado" value="Estado del Cliente: " style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu id="estado" value="#{clientesCreditosBean.estado}" style="width: 150px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue=""/>
+                                            <f:selectItem itemLabel="Activos" itemValue="A"/>
+                                            <f:selectItem itemLabel="Inactivos" itemValue="I"/>
+                                            <f:selectItem itemLabel="Suspendidos" itemValue="S"/>
+                                        </p:selectOneMenu>
 
-                                        <p:outputLabel value="Discriminar: " style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Discriminar: " style="float: left; font-weight: bold;"/>
                                         <p:selectOneRadio id="discriminarId" value="#{clientesCreditosBean.discriminar}">
                                             <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
                                             <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
                                         </p:selectOneRadio>
 
-                                        <p:outputLabel for="clientesId" value="Clientes:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel for="clientesId" value="Clientes:" style="float: left; font-weight: bold;"/>
                                         <h:panelGrid columns="4" >
-                                            <p:outputLabel for="ocultarBtn" value="Todos " style="float: right; font-weight: bold;"/>
+                                            <p:outputLabel for="ocultarBtn" value="Todos " style="float: left; font-weight: bold;"/>
                                             <h:selectBooleanCheckbox id="ocultarBtn" onclick="ocultarClientes()" value="#{clientesCreditosBean.todosClientes}"/>    
-                                            <p:outputLabel for="mostrarBtn" value="Seleccionar Clientes " style="float: right; font-weight: bold;"/>
+                                            <p:outputLabel for="mostrarBtn" value="Seleccionar Clientes " style="float: left; font-weight: bold;"/>
                                             <h:selectBooleanCheckbox id="mostrarBtn" onclick="mostrarClientes()" value="#{clientesCreditosBean.seleccionarClientes}"/>
                                         </h:panelGrid>
                                         <p></p>

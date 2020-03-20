@@ -79,6 +79,7 @@ public class ClientesCreditosBean implements Serializable {
     @PostConstruct
     public void instanciar(){
         this.listadoClientes = new ArrayList<>();
+        this.listadoClientesSeleccionados = new ArrayList<>();
         this.fechaFacDesde = null;
         this.fechaFacHasta = null;
         this.zona = null;
@@ -109,9 +110,9 @@ public class ClientesCreditosBean implements Serializable {
             stmt.execute(clientesCreditosFacade.generateTmpVentas());
             stmt.execute(clientesCreditosFacade.generateTmpTableCurfac(fechaFacDesde, fechaFacHasta, vendedor));
             if (discriminar.equals("ND")) {
-                stmt.execute(clientesCreditosFacade.generateTmpTableCurDatosND(vendedor));
+                stmt.execute(clientesCreditosFacade.generateTmpTableCurDatosND(vendedor, nroPromedio));
             } else {
-                stmt.execute(clientesCreditosFacade.generateTmpTableCurDatosPZ(vendedor));
+                stmt.execute(clientesCreditosFacade.generateTmpTableCurDatosPZ(vendedor, nroPromedio));
             }
             if (tipo.equals("VIST")) {
                 Zonas z = null;
@@ -159,9 +160,12 @@ public class ClientesCreditosBean implements Serializable {
         if (fechaFacDesde != null && fechaFacHasta != null) {
             long noOfDaysBetween = DAYS.between(fechaFacDesde.toInstant(),fechaFacHasta.toInstant());
             if (noOfDaysBetween < 0) {
-                this.nroPromedio = 0;
+                this.nroPromedio = 1;
             } else {
                 this.nroPromedio = Math.toIntExact(noOfDaysBetween / 30L);
+                if(this.nroPromedio <= 0){
+                    this.nroPromedio = 1;
+                }
             }
             //update input
             PrimeFaces.current().ajax().update("numeroPromedio");
@@ -270,6 +274,8 @@ public class ClientesCreditosBean implements Serializable {
 
     public void setTodosClientes(Boolean todosClientes) {
         this.todosClientes = todosClientes;
+        if(todosClientes)
+            this.listadoClientesSeleccionados.clear();
     }
 
     public Boolean getSeleccionarClientes() {
@@ -279,8 +285,4 @@ public class ClientesCreditosBean implements Serializable {
     public void setSeleccionarClientes(Boolean seleccionarClientes) {
         this.seleccionarClientes = seleccionarClientes;
     }
-
-    
-    
-
 }

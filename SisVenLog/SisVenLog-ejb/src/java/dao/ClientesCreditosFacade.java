@@ -108,12 +108,12 @@ public class ClientesCreditosFacade extends AbstractFacade<Clientes> {
         return sql;
     }
 
-    public String generateTmpTableCurDatosND(Empleados vendedor) {
+    public String generateTmpTableCurDatosND(Empleados vendedor, Integer nroPromedio) {
         String sql = ""
                 + "SELECT '' AS cod_zona, '' AS xdesc_zona, m.cod_cliente , "
                 + "       m.xnombre, m.nriesgo, m.mforma_pago, "
                 + "       m.nplazo_credito, m.ilimite_compra, m.cod_estado, "
-                + "       m.xdesc_estado, f.ttotal "
+                + "       m.xdesc_estado, round(isnull(f.ttotal,0)/" + nroPromedio + ",0) as ttotal "
                 + "INTO #CURDATOS ";
         if (Objects.isNull(vendedor)) {
             sql += "FROM #MOSTRAR m LEFT JOIN #CURFAC f ";
@@ -126,12 +126,12 @@ public class ClientesCreditosFacade extends AbstractFacade<Clientes> {
         return sql;
     }
 
-    public String generateTmpTableCurDatosPZ(Empleados vendedor) {
+    public String generateTmpTableCurDatosPZ(Empleados vendedor, Integer nroPromedio) {
         String sql = ""
                 + "SELECT m.cod_zona, m.xdesc_zona, m.cod_cliente , "
                 + "       m.xnombre, m.nriesgo, m.mforma_pago, "
                 + "       m.nplazo_credito, m.ilimite_compra, m.cod_estado, "
-                + "       m.xdesc_estado, f.ttotal "
+                + "       m.xdesc_estado, round(isnull(f.ttotal,0)/" + nroPromedio + ",0) as ttotal "
                 + "INTO #CURDATOS "
                 + "FROM      #MOSTRAR m ";
         if (Objects.isNull(vendedor)) {
@@ -149,7 +149,7 @@ public class ClientesCreditosFacade extends AbstractFacade<Clientes> {
                 + "SELECT cod_zona, xdesc_zona, cod_cliente , "
                 + "       xnombre, nriesgo, mforma_pago, "
                 + "       nplazo_credito, ilimite_compra, cod_estado, "
-                + "       xdesc_estado, ttotal "
+                + "       xdesc_estado, ceiling(isnull(ttotal, 0)) as ttotal "
                 + "FROM #CURDATOS ";
         return sql;
     }
