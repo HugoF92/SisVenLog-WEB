@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoVentasCredito2_subRep" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d7b283dc-1012-4399-8463-8701d44c9aca">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="codigoZona" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM curfin WHERE cod_zona = $P{codigoZona}]]>
+	</queryString>
+	<field name="cod_zona" class="java.lang.String"/>
+	<field name="desc_zona" class="java.lang.String"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="ftotal" class="java.math.BigDecimal"/>
+	<field name="tcheques" class="java.math.BigDecimal"/>
+	<field name="tpagares" class="java.math.BigDecimal"/>
+	<variable name="totalFac" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ftotal}+$F{tcheques}+$F{tpagares}]]></variableExpression>
+	</variable>
+	<variable name="totalFactura" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ftotal}]]></variableExpression>
+	</variable>
+	<variable name="totalCheques" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{tcheques}]]></variableExpression>
+	</variable>
+	<variable name="totalPagares" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{tpagares}]]></variableExpression>
+	</variable>
+	<variable name="totalTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{totalFac}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField>
+				<reportElement x="116" y="3" width="88" height="14" uuid="cd9d41c8-26c0-41e7-83c2-45529e861526"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ffactur}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="231" y="3" width="100" height="14" uuid="0adbcb84-9d81-4850-be6c-ec36b6ba128e"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ftotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="391" y="3" width="100" height="14" uuid="f688d99b-3a51-4dc2-8264-4c74c46a8385"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{tcheques}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="550" y="3" width="100" height="14" uuid="f0637cbb-c81d-4ea9-bc6a-bb05961ce9a1"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{tpagares}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="678" y="3" width="100" height="14" uuid="73cc5456-955e-4af7-8eff-1edcf3a54fec"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{totalFac}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

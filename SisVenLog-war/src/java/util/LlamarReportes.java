@@ -2287,6 +2287,7 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    
     public void reporteLiPedidos(String sql, 
                                  String sqlDetalle,
                                  String sqlDetalleDet,
@@ -2368,6 +2369,78 @@ public class LlamarReportes {
             //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
             String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
             param.put("SUBREPORT_DIR", subReportDir);
+
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    public void listadoVentasCredito(String sql,
+                                 Date fechaDocumentoDesde,
+                                 Date fechaDocumentoHasta,
+                                 Zonas zona,
+                                 String discriminado,
+                                 String usuImprime, 
+                                 String tipo,
+                                 String nombreReporte, 
+                                 String filename) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("fechaDesde", fechaDocumentoDesde);
+            param.put("fechaHasta", fechaDocumentoHasta);
+            param.put("titulo", "VENTAS A CREDITO");
+            
+            if ("rvtascred2".equals(filename)){
+                param.put("discriminado", discriminado);
+                
+                //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+                String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+                param.put("SUBREPORT_DIR", subReportDir);
+            }
+            
+            //zona
+            if (zona != null) {
+                param.put("txtZona", zona.getXdesc());
+            } else {
+                param.put("txtZona", "Todas");
+            }
+            
+            param.put("nombreRepo", filename);
+            param.put("usu_imprime", usuImprime);
+            
+            //if ("rdetpedidos".equals(filename)) {
+            //    param.put("sqlDetalleDetSub", sqlDetalleDet);
+            //}
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+            //String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+            //param.put("SUBREPORT_DIR", subReportDir);
 
 
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
