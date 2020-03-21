@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -93,6 +92,7 @@ public class LiClientesRutasZonasBean implements Serializable{
         this.zona = null;
         this.ruta = null;
         this.estado = "4";
+        this.todosClientes = true;
         this.listaTiposClientes = this.tiposClientesFacade.findAll();
         this.listaZonas = this.zonasFacade.findAll();
         this.listaRutas = this.rutasFacade.findAll();
@@ -104,7 +104,8 @@ public class LiClientesRutasZonasBean implements Serializable{
             LlamarReportes rep = new LlamarReportes();
             // validamos las fechas en caso que el estado sea 2
             if(estado.equals("2")){
-                validarFechas();
+                if(!validarFechas())
+                    return;
             }
             if (tipo.equals("VIST")) {
                 String usuarioImpresion = "admin";

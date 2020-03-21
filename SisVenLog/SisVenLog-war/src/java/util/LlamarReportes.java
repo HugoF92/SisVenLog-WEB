@@ -2239,12 +2239,12 @@ public class LlamarReportes {
             String usuarioImpresion) {
         try {
             Map param = new HashMap();
-            param.put("codTipoCliente", tipoCliente.getCtipoCliente());
-            param.put("tipoCliente", tipoCliente.getXdesc());
-            param.put("codZona", zona.getZonasPK().getCodZona());
-            param.put("zona", zona.getXdesc());
-            param.put("codRuta", ruta.getRutasPK().getCodRuta());
-            param.put("ruta", ruta.getXdesc());
+            param.put("codTipoCliente", tipoCliente == null ? null: tipoCliente.getCtipoCliente());
+            param.put("tipoCliente", tipoCliente == null ? null: tipoCliente.getXdesc());
+            param.put("codZona", zona == null? null:zona.getZonasPK().getCodZona());
+            param.put("zona", zona == null? null: zona.getXdesc());
+            param.put("codRuta", ruta ==null? null : ruta.getRutasPK().getCodRuta());
+            param.put("ruta", ruta ==null? null : ruta.getXdesc());
             param.put("estado", Integer.parseInt(estado));
             param.put("fechaAltaDesde", fechaAltaDesde);
             param.put("fechaAltaHasta", fechaAltaHasta);
