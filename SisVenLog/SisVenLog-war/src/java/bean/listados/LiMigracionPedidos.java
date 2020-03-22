@@ -7,11 +7,13 @@ package bean.listados;
 
 import dao.CanalesVentaFacade;
 import dao.EmpleadosFacade;
-import dao.ExcelFacade;
 import dao.MigracionPedidosFacade;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +22,8 @@ import javax.ejb.EJB;
 import javax.faces.bean.*;
 import util.DateUtil;
 import util.LlamarReportes;
+import javax.faces.context.FacesContext;
+import javax.faces.application.FacesMessage;
 
 /**
  *
@@ -36,9 +40,6 @@ public class LiMigracionPedidos implements Serializable {
 
     @EJB
     private CanalesVentaFacade canalesVenFacade;
-    
-    @EJB
-    private ExcelFacade excelFacade;
 
     @EJB
     private MigracionPedidosFacade migracionPedidosFacade;
@@ -71,47 +72,79 @@ public class LiMigracionPedidos implements Serializable {
     }
     
     public void generarArchivo(String tipoArchivo) {
-        LlamarReportes rep = new LlamarReportes();
-        if(tipoArchivo.equals("PDF")){
-            
-            String fecInicial = DateUtil.dateToString(this.fechaInicial, "yyyy-MM-dd");
-            String fecFinal = DateUtil.dateToString(this.fechaFinal, "yyyy-MM-dd");
-            String fechaInicialHora = DateUtil.dateToString(this.fechaInicial, "yyyy-dd-MM");
-            String fechaFinalHora = DateUtil.dateToString(this.fechaFinal, "yyyy-dd-MM");
-            Integer codVendedor = Objects.nonNull(this.vendedor) ? new Integer(this.vendedor.getEmpleadosPK().getCodEmpleado()) : null;
-            String codCanal = Objects.nonNull(this.canalVenta) ? this.canalVenta.getCodCanal() : null;
-            String canal = Objects.nonNull(this.canalVenta) ? this.canalVenta.getXdesc() : null;
-
-            rep.reporteLiMigraPedidos(fecInicial, fecFinal, fechaInicialHora, fechaFinalHora, codVendedor, codCanal, canal, this.estado);
-            
-        } else if (tipoArchivo.equals("XLS")){
-            List<Object[]> lista;
-            String[] columnas = new String[] {
-                "vencod", 
-                "facnro", 
-                "codnuevo", 
-                "facfecha", 
-                "factipovta", 
-                "forpago", 
-                "nplazo_cheque", 
-                "artcod", 
-                "detcancajas", 
-                "detcanunid", 
-                "detprecio", 
-                "estado", 
-                "nroped", 
-                "xnombre",
-                "clicod",
-                "msg_error",
-                "cod_vendedor"
-            };
-            
-            String sql = this.migracionPedidosFacade.generateSql(fechaInicial,
-                    fechaFinal, estado, vendedor, canalVenta);
-            lista = excelFacade.listarParaExcel(sql);
-
-            rep.exportarExcel(columnas, lista, "limigrapedidos");
+        try {
+            if(!validarFechas())
+                return;
+            LlamarReportes rep = new LlamarReportes();
+            Connection conexion = rep.conexion;
+            Statement stmt = conexion.createStatement();
+            stmt.execute(this.migracionPedidosFacade.generateSQLPedCur(fechaInicial,
+                    fechaFinal, estado, vendedor, canalVenta));
+            // Si selecciono los estados de (Todos, Rechazados)
+            if(estado.equals("1") || estado.equals("3")) {
+                stmt.execute(this.migracionPedidosFacade.generateSQLCurRec(fechaInicial,
+                    fechaFinal, vendedor, canalVenta));
+            }
+            if(tipoArchivo.equals("PDF")){
+                String fecInicial = DateUtil.dateToString(this.fechaInicial, "dd/MM/yyyy");
+                String fecFinal = DateUtil.dateToString(this.fechaFinal, "dd/MM/yyyy");
+                String vend = Objects.nonNull(this.vendedor) ? empleadosFacade.find(this.vendedor.getEmpleadosPK()).getXnombre() : null;
+                String canal = Objects.nonNull(this.canalVenta) ? canalesVenFacade.find(this.canalVenta.getCodCanal()).getXdesc() : null;
+                Object usuarioImpresion = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+                rep.reporteLiMigraPedidos(fecInicial, fecFinal, vend, canal,
+                        this.estado, (usuarioImpresion == null)? "":usuarioImpresion.toString());
+            } else if (tipoArchivo.equals("XLS")){
+                String[] columnas = new String[] {
+                    "vencod", 
+                    "facnro", 
+                    "codnuevo", 
+                    "facfecha", 
+                    "factipovta", 
+                    "forpago", 
+                    "nplazo_cheque", 
+                    "artcod", 
+                    "detcancajas", 
+                    "detcanunid", 
+                    "detprecio", 
+                    "estado", 
+                    "nroped", 
+                    "xnombre",
+                    "clicod",
+                    "msg_error",
+                    "cod_vendedor"
+                };
+                List<Object[]> lista;
+                lista = migracionPedidosFacade.listarParaExcel(stmt, columnas,
+                        migracionPedidosFacade.generateSelectMigradat());
+                conexion.close();
+                rep.exportarExcel(columnas, lista, "limigrapedidos");
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al generar archivo.",
+                            "Error al generar archivo."));
         }
+    }
+
+    private Boolean validarFechas() {
+        if (fechaInicial == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Debe ingresar fecha desde.",
+                            "Debe ingresar fecha desde."));
+            return false;
+        } else {
+            if (fechaFinal == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "Debe ingresar fecha hasta.",
+                                "Debe ingresar fecha hasta."));
+                return false;
+            }
+        }
+        return true;
     }
 
     public Date getFechaInicial() {
@@ -151,8 +184,6 @@ public class LiMigracionPedidos implements Serializable {
     }
 
     public void setCanalVenta(CanalesVenta canalVenta) {
-        if(canalVenta != null)
-            System.out.println("Canal de venta seleccionado " + canalVenta.getCodCanal());
         this.canalVenta = canalVenta;
     }
 

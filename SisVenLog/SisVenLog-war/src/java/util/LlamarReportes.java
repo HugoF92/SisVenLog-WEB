@@ -2329,19 +2329,15 @@ public class LlamarReportes {
     }
 
     public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
-            String fechaInicialHora, String fechaFinalHora, Integer codVendedor,
-            String codCanal, String canalDescripcion, String estado) {
+            String vendedor, String canalDescripcion,
+            String estado, String usuarioImpresion) {
         try {
-
             Map param = new HashMap();
             param.put("desde", fechaInicial);
             param.put("hasta", fechaFinal);
-            param.put("desdeHora", fechaInicialHora);
-            param.put("hastaHora", fechaFinalHora);
-            param.put("cod_vendedor", codVendedor);
-            param.put("usuarioImpresion", "admin");
-            param.put("codCanal", codCanal);
-            param.put("codCanal", canalDescripcion);
+            param.put("vendedor", vendedor);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("canal", canalDescripcion);
             param.put("estado", Integer.parseInt(estado));
 
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");
