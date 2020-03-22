@@ -10,6 +10,7 @@ import dao.ClientesFacade;
 import dao.RecibosFacade;
 import dao.ZonasFacade;
 import entidad.Clientes;
+import entidad.Zonas;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,12 +43,11 @@ public class ListadoRecibosClientesBean implements Serializable{
     private long nroReciboDesde;
     private long nroReciboHasta;
     private String clientesRepo;
+    private Zonas zona;
     private String zonaDes;
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
     
-    
-    private String zonaSeleccionada;
             
     @EJB
     private ClientesFacade clientesFacade;
@@ -71,7 +71,7 @@ public class ListadoRecibosClientesBean implements Serializable{
         fechaReciboHasta = null;
         nroReciboDesde = 0;
         nroReciboHasta = 0;
-        zonaSeleccionada = null;
+        zona = null;
     }
     
     private List<Clientes> listarClientes(){
@@ -89,7 +89,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sql = "";
         if ("PC".equals(discriminar)) {
            sql = ";WITH principalCTE " +
@@ -112,9 +112,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sql += " AND a.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -136,9 +136,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND a.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -152,7 +152,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sql = "";
         if ("ND".equals(discriminar)) {
             sql += ";WITH principalCTE" +
@@ -177,9 +177,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -207,9 +207,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -238,9 +238,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -268,9 +268,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -285,7 +285,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sqlDetalle = "";    
         if ("ND".equals(discriminar)) {
             sqlDetalle += ";WITH principalCTE" +
@@ -310,9 +310,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -340,9 +340,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -371,9 +371,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -401,9 +401,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -418,7 +418,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sqlDetalleRec = "";    
         if ("ND".equals(discriminar)) {  //no existe corte de control por cliente
             sqlDetalleRec = null;
@@ -445,9 +445,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalleRec += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalleRec += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -475,9 +475,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalleRec += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalleRec += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -495,7 +495,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                     if (!conDetalle) {
                         String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFac";
                         rep.reporteLiRecibos(
-                                armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
+                                armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
                                 fechaReciboDesde,
                                 fechaReciboHasta,
                                 nroReciboDesde,
@@ -511,7 +511,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                     } else {
                         String nombreRepoDet = "ND".equals(discriminar) ? "reciboFacDetND" : "reciboFacDetPC";
                         rep.reporteLiRecibos(
-                        armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
+                        armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
                         fechaReciboDesde,
                         fechaReciboHasta,
                         nroReciboDesde,
@@ -522,8 +522,8 @@ public class ListadoRecibosClientesBean implements Serializable{
                         tipo,
                         nombreRepoDet,
                         "RrecibosDet",
-                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
-                        armarSqlDetalleRecibos(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada));
+                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
+                        armarSqlDetalleRecibos(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona));
                     }
 
                 } else {
@@ -551,7 +551,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                         columnas[16] = "xnombre2";
                         columnas[17] = "d.itotal";
 
-                        lista = recibosFacade.listaRecibosConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada, discriminar, todosClientes);
+                        lista = recibosFacade.listaRecibosConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona, discriminar, todosClientes);
                         rep.exportarExcel(columnas, lista, "lirecibosDet");
 
                     } else {
@@ -570,7 +570,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                         columnas[9] = "cod_cliente2";
                         columnas[10] = "xnombre";
 
-                        lista = recibosFacade.listaRecibosSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada, discriminar, todosClientes);
+                        lista = recibosFacade.listaRecibosSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona, discriminar, todosClientes);
                         rep.exportarExcel(columnas, lista, "lirecibos");
                     }
                 }
@@ -674,14 +674,6 @@ public class ListadoRecibosClientesBean implements Serializable{
         this.nroReciboHasta = nroReciboHasta;
     }
 
-    public String getZonaSeleccionada() {
-        return zonaSeleccionada;
-    }
-
-    public void setZonaSeleccionada(String zonaSeleccionada) {
-        this.zonaSeleccionada = zonaSeleccionada;
-    }
-
     public String getClientesRepo() {
         return clientesRepo;
     }
@@ -690,6 +682,18 @@ public class ListadoRecibosClientesBean implements Serializable{
         this.clientesRepo = clientesRepo;
     }
 
+    public Zonas getZona() {
+        return zona;
+    }
+
+    public void setZona(Zonas zona) {
+        if (zona != null) {
+            this.zona = zonasFacade.buscarPorCodigo(zona.getZonasPK().getCodZona());
+        } else {
+            this.zona = zona;
+        }
+    }
+    
     public String getZonaDes() {
         return zonaDes;
     }
@@ -720,5 +724,5 @@ public class ListadoRecibosClientesBean implements Serializable{
             System.out.println("seleccionarClientes: " + this.seleccionarClientes);
             System.out.println("todosClientes: " + this.todosClientes);
         }*/
-    }    
+    }
 }
