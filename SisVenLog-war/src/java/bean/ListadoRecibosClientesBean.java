@@ -62,6 +62,8 @@ public class ListadoRecibosClientesBean implements Serializable{
     public void instanciar(){
         limpiarFormulario();
         listadoClientes = listarClientes();
+        setDiscriminar("ND");
+        setTodosClientes(true);
     }
     
     public void limpiarFormulario(){
