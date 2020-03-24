@@ -46,6 +46,7 @@
 
                                 <p:panel id="pnlParamLiRetornoRecibo" header="VENTAS A CREDITO"
                                          style="width: 70%;">
+                                
                                     <h:panelGrid columns="2" >
 
                                         <p:outputLabel value="Fecha de Documento Desde:" style="float: right; font-weight: bold;"/>
@@ -61,7 +62,7 @@
                                         
                                         <p:selectOneMenu id="seleccionZonas" value="#{listadoVentasCreditoBean.zona}" 
                                                          filterMatchMode="contains" filter="true"
-                                                         style="width: 100px;" converter="#{ZonasConverter}" >
+                                                         style="width: 160px;" converter="#{ZonasConverter}" >
                                         
                                             <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
                                             <f:selectItems value="#{zonasBean.listar()}" var="zona" 
@@ -69,15 +70,19 @@
                                                            itemLabel="#{zona.xdesc}"/>
                                         </p:selectOneMenu>
                                         
-                                        <p:outputLabel value="Discriminado: " style="float: right; font-weight: bold;"/>
-                                        <p:selectOneRadio id="seleccionTipo" value="#{listadoVentasCreditoBean.discriminado}">
-                                            <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
-                                            <f:selectItem itemLabel="Por Fecha" itemValue="PF" />
-                                            <f:selectItem itemLabel="Por Zona y Fecha" itemValue="ZF" />
-                                        </p:selectOneRadio>
-                                         
+                                        <p:outputLabel value="Discriminado:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <h:panelGrid columns="1" style="margin: 0px" cellpadding="5">
+                                            <p:selectOneRadio id="seleccionTipo" value="#{listadoVentasCreditoBean.discriminado}"  
+                                                              layout="grid" columns="1" 
+                                                              style="border: #cccccc 1px solid; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; margin: 0px;">
+                                                <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
+                                                <f:selectItem itemLabel="Por Fecha" itemValue="PF" />
+                                                <f:selectItem itemLabel="Por Zona y Fecha" itemValue="ZF" />
+                                            </p:selectOneRadio>
+                                        </h:panelGrid>
+                                        
                                     </h:panelGrid>
-
                                     <br></br>
 
                                     <p:commandLink title="report" target="_blank"

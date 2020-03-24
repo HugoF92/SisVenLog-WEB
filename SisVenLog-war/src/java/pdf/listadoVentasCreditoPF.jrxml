@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoVentasCredito2" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoVentasCreditoPF" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.3636363636363675"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="26"/>
+	<property name="ireport.y" value="9"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -23,18 +23,11 @@
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
-	<field name="cod_zona" class="java.lang.String"/>
-	<field name="desc_zona" class="java.lang.String"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
 	<variable name="totalFactura" class="java.math.BigDecimal" calculation="Sum"/>
 	<variable name="totalCheques" class="java.math.BigDecimal" calculation="Sum"/>
 	<variable name="totalPagares" class="java.math.BigDecimal" calculation="Sum"/>
 	<variable name="totalTotal" class="java.math.BigDecimal" calculation="Sum"/>
-	<variable name="codZona" class="java.lang.String">
-		<variableExpression><![CDATA[$P{discriminado}.toString().equals("ZF") ? $F{cod_zona} : " "]]></variableExpression>
-	</variable>
-	<variable name="descZona" class="java.lang.String">
-		<variableExpression><![CDATA[$P{discriminado}.toString().equals("ZF") ? $F{desc_zona} : " "]]></variableExpression>
-	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -170,33 +163,19 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="30" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<subreport>
-				<reportElement x="-19" y="16" width="839" height="14" uuid="7d283a42-4aa7-4fcb-8869-afcf5f516736"/>
-				<subreportParameter name="codigoZona">
-					<subreportParameterExpression><![CDATA[$F{cod_zona}.toString()]]></subreportParameterExpression>
+				<reportElement x="-19" y="2" width="839" height="14" uuid="7d283a42-4aa7-4fcb-8869-afcf5f516736"/>
+				<subreportParameter name="ffactur">
+					<subreportParameterExpression><![CDATA[$F{ffactur}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="totalFactura" toVariable="totalFactura" calculation="Sum"/>
 				<returnValue subreportVariable="totalCheques" toVariable="totalCheques" calculation="Sum"/>
 				<returnValue subreportVariable="totalPagares" toVariable="totalPagares" calculation="Sum"/>
 				<returnValue subreportVariable="totalTotal" toVariable="totalTotal" calculation="Sum"/>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "listadoVentasCredito2_subRep.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "listadoVentasCreditoPF_subRep.jasper"]]></subreportExpression>
 			</subreport>
-			<textField>
-				<reportElement x="72" y="2" width="167" height="14" uuid="9cfaa3b1-4b8a-492a-8787-56dae78ce42c"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{descZona}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="28" y="2" width="40" height="14" uuid="0c202e70-17d4-42c3-b096-17a0c23f452d"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{codZona}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>

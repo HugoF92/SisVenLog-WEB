@@ -115,6 +115,10 @@ public class LiVentasCreditoFacade {
             " INTO curfin FROM curfin1 a, zonas_dest b" +
             " WHERE a.cod_zona = b.cod_zona" +
             " GROUP BY a.cod_zona, b.xdesc";
+        }else if ("PF".equals(discriminado) ){
+            sql += " SELECT '' as cod_zona, '' as desc_zona, a.ffactur, sum(a.ftotal) as ftotal, sum(a.tcheques) as tcheques, sum(a.tpagares) as tpagares" +
+            " INTO curfin FROM curfin1 a" +
+            " GROUP BY a.ffactur";
         }else{
             sql += " SELECT a.cod_zona, b.xdesc as desc_zona, a.ffactur, sum(a.ftotal) as ftotal, sum(a.tcheques) as tcheques, sum(a.tpagares) as tpagares" +
             " INTO curfin FROM curfin1 a, zonas_dest b" +
@@ -137,7 +141,15 @@ public class LiVentasCreditoFacade {
         prepararDatosListadoVentasCredito(fechaDocumentoDesde, fechaDocumentoHasta, zona, discriminado);
         
         //obtenemos el resultado
-        String sql = "SELECT * FROM curfin ORDER BY cod_zona";
+        
+        String sql = "";
+        if ("PZ".equals(discriminado)) {
+            sql = "SELECT * FROM curfin ORDER BY cod_zona";
+        }else if ("PF".equals(discriminado)) {
+            sql = "SELECT * FROM curfin ORDER BY ffactur";
+        }else{
+            sql = "SELECT * FROM curfin ORDER BY cod_zona";
+        }
         
         Query q = em.createNativeQuery(sql);
         q = em.createNativeQuery(sql);

@@ -19,8 +19,7 @@ import util.LlamarReportes;
 import dao.ZonasFacade;
 import dao.LiVentasCreditoFacade;
 import javax.ejb.EJB;
-import javax.persistence.Query;
-import util.DateUtil;
+
 /**
  *
  * @author jvera
@@ -43,6 +42,7 @@ public class ListadoVentasCreditoBean implements Serializable{
     @PostConstruct
     public void instanciar(){
         limpiarFormulario();
+        setDiscriminado("PZ");
     }
     
     public void limpiarFormulario(){
@@ -55,7 +55,20 @@ public class ListadoVentasCreditoBean implements Serializable{
             try {
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
-                    String nombreRepo = "PZ".equals(discriminado) ? "listadoVentasCredito" : "listadoVentasCredito2";
+                    
+                    
+                    String nombreRepo = "";
+                    switch (discriminado){
+                        case "PZ":
+                            nombreRepo = "listadoVentasCredito" ;
+                            break;
+                        case "PF":
+                            nombreRepo = "listadoVentasCreditoPF";
+                            break;
+                        case "ZF":
+                            nombreRepo = "listadoVentasCredito2";
+                            break;
+                    }
                     String filename = "PZ".equals(discriminado) ? "rvtascred" : "rvtascred2";
                     String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                     String sql = armarSql(fechaDocumentoDesde, fechaDocumentoHasta, zona, discriminado);
@@ -112,6 +125,8 @@ public class ListadoVentasCreditoBean implements Serializable{
         String sql ="";
         if ("PZ".equals(discriminado)) {
             sql = "SELECT * FROM curfin ORDER BY cod_zona";
+        }else if ("PF".equals(discriminado)) {
+            sql = "SELECT DISTINCT ffactur FROM curfin ORDER BY ffactur";
         }else{
             sql = "SELECT DISTINCT cod_zona, desc_zona FROM curfin ORDER BY cod_zona";
         }
