@@ -122,7 +122,7 @@ public class ListadoRecibosClientesBean implements Serializable{
             }
             sql += ") " +
             "SELECT DISTINCT cod_cliente from principalCTE ORDER BY cod_cliente;";
-            
+            //"SELECT * from principalCTE ORDER BY cod_cliente;";
         }else{ //no discriminar por cliente
             sql = ";WITH principalCTE" + 
             " AS(SELECT r.*,  t.cod_cliente as cod_cliente2, t.xnombre as xnombre, t.xnombre as xnombre2" +
