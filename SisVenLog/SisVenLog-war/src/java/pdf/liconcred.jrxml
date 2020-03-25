@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2020-03-21T17:44:25 -->
+<!-- 2020-03-24T22:59:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liconcred" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="da15e1b6-bdf8-4b65-bda1-060a297efc59">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -57,7 +57,7 @@ FROM #CURDATOS]]>
 	<field name="ttotal" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="xdirec"/>
 	</field>
-	<variable name="totalPromedioCompras" class="java.lang.Integer" resetType="Page" calculation="Sum">
+	<variable name="totalPromedioCompras" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{ttotal} == null? 0 :$F{ttotal}]]></variableExpression>
 	</variable>
 	<variable name="groupTotalPromedioCompras" class="java.lang.Integer" resetType="Group" resetGroup="Zona" calculation="Sum">
@@ -171,12 +171,6 @@ FROM #CURDATOS]]>
 				</textElement>
 				<text><![CDATA[Fecha:]]></text>
 			</staticText>
-			<line>
-				<reportElement x="0" y="80" width="556" height="1" uuid="6459331f-367d-42d5-a0ae-ecddeeafe22a">
-					<property name="local_mesure_unitheight" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-			</line>
 			<staticText>
 				<reportElement x="66" y="36" width="40" height="20" uuid="c1ea4f65-2e15-4601-b76d-8bb4a162a868"/>
 				<textElement textAlignment="Right">
@@ -210,7 +204,7 @@ FROM #CURDATOS]]>
 			</staticText>
 			<staticText>
 				<reportElement x="499" y="24" width="50" height="16" uuid="48eec4bf-ae87-45d9-a7a3-2059d802335b"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[rcliconcred]]></text>
 			</staticText>
 			<textField>
@@ -262,56 +256,65 @@ FROM #CURDATOS]]>
 		<band height="18" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="local_mesure_unitheight" value="pixel"/>
+			<line>
+				<reportElement x="0" y="-14" width="556" height="1" uuid="6459331f-367d-42d5-a0ae-ecddeeafe22a">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
 			<staticText>
 				<reportElement x="2" y="-9" width="50" height="24" uuid="dd028ceb-495c-45f1-bfc1-661635bd3b07"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Cliente]]></text>
+				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="215" y="-9" width="42" height="23" uuid="e54737a6-3142-4a05-a679-b835eaa50dd6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Riesgo]]></text>
+				<text><![CDATA[RIESGO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="265" y="-15" width="50" height="29" uuid="2020e81f-e23b-4881-aa28-6aa3e7325711"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Forma de Pago]]></text>
+				<text><![CDATA[FORMA DE PAGO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="323" y="-15" width="44" height="29" uuid="50064ecf-3412-43f9-8ec2-5ca7af308e74"/>
+				<reportElement x="317" y="-15" width="50" height="29" uuid="50064ecf-3412-43f9-8ec2-5ca7af308e74"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Plazo Credito]]></text>
+				<text><![CDATA[PLAZO CREDITO]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="372" y="-15" width="53" height="29" uuid="ad60b68a-4865-4579-a67b-abe6af82ebd6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Límite de Compra]]></text>
+				<text><![CDATA[LIMITE DE COMPRA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="436" y="-15" width="49" height="29" uuid="a52b2bb8-156c-4e40-b91a-a69c0c022fe0"/>
+				<reportElement x="429" y="-15" width="56" height="29" uuid="a52b2bb8-156c-4e40-b91a-a69c0c022fe0">
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Promedio
-Compras]]></text>
+				<text><![CDATA[PROMEDIO
+COMPRAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="495" y="-15" width="40" height="29" uuid="90213aa7-9dda-44f0-8414-7ac1e6d344cf"/>
+				<reportElement x="495" y="-15" width="44" height="29" uuid="90213aa7-9dda-44f0-8414-7ac1e6d344cf"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Estado
-Actual]]></text>
+				<text><![CDATA[ESTADO
+ACTUAL]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="14" width="556" height="1" uuid="694211e5-0e8a-4a46-9fb6-02458aa31f1b">

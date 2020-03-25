@@ -80,8 +80,8 @@ public class ClientesCreditosBean implements Serializable {
     public void instanciar(){
         this.listadoClientes = new ArrayList<>();
         this.listadoClientesSeleccionados = new ArrayList<>();
-        this.fechaFacDesde = null;
-        this.fechaFacHasta = null;
+        this.fechaFacDesde = new Date();
+        this.fechaFacHasta = new Date();
         this.zona = null;
         this.nroPromedio = 1;
         this.estado = "";

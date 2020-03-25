@@ -104,10 +104,12 @@
                                         </p:selectOneMenu>
 
                                         <p:outputLabel value="Discriminar: " style="float: left; font-weight: bold;"/>
-                                        <p:selectOneRadio id="discriminarId" value="#{clientesCreditosBean.discriminar}">
-                                            <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
-                                            <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
-                                        </p:selectOneRadio>
+                                        <p:fieldset>
+                                            <p:selectOneRadio id="discriminarId" value="#{clientesCreditosBean.discriminar}">
+                                                <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
+                                                <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
+                                            </p:selectOneRadio>
+                                        </p:fieldset>
 
                                         <p:outputLabel for="clientesId" value="Clientes:" style="float: left; font-weight: bold;"/>
                                         <h:panelGrid columns="4" >
