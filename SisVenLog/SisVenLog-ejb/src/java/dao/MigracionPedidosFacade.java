@@ -103,7 +103,7 @@ public class MigracionPedidosFacade extends AbstractFacade<Pedidos> {
     public String generateSQLCurRec(Date fechaInicial, Date fechaFinal,
             Empleados vendedor, CanalesVenta canalVenta) {
         String sql = "INSERT INTO #MIGRADAT "
-                + "SELECT        e.xnombre       as vencod, "
+                + "SELECT        LEFT(e.xnombre, 24)  as vencod, "
                 + "		 p.nro_pedido    as facnro, "
                 + "		 p.cod_cliente   as codnuevo, "
                 + "		 p.fpedido       as facfecha, "
@@ -125,8 +125,8 @@ public class MigracionPedidosFacade extends AbstractFacade<Pedidos> {
                 + "p.cod_empr= 2 "
                 + "AND p.cod_vendedor = e.cod_empleado "
                 + "AND p.cod_cliente = c.cod_cliente "
-                + "AND p.fpedido BETWEEN '" + DateUtil.dateToString(fechaInicial, "yyyy/dd/MM HH:mm:ss") + "' "
-                + "AND '" + DateUtil.dateToString(fechaFinal, "yyyy/dd/MM HH:mm:ss") + "' "
+                + "AND p.fpedido BETWEEN '" + DateUtil.dateToString(fechaInicial, "yyyy/MM/dd") + "' "
+                + "AND '" + DateUtil.dateToString(fechaFinal, "yyyy/MM/dd") + "' "
                 + "AND p.mestado = 'R' ";
 
                 if(Objects.nonNull(vendedor)){
