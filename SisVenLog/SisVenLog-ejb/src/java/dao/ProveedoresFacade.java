@@ -79,8 +79,10 @@ public class ProveedoresFacade extends AbstractFacade<Proveedores> {
     public List<Proveedores> listarProveedoresActivos(){
         Query q = getEntityManager().createNativeQuery("select * from proveedores where mestado = 'A' order by xnombre", Proveedores.class);
         System.out.println(q.toString());
-        List<Proveedores> listaProveedores = new ArrayList<>();
+        @SuppressWarnings({"Convert2Diamond", "UnusedAssignment"})
+        List<Proveedores> listaProveedores = new ArrayList<Proveedores>();
         listaProveedores = q.getResultList();
+        
         return listaProveedores;
     }
     

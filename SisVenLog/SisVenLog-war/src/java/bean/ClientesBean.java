@@ -8,6 +8,7 @@ import entidad.Ciudades;
 import entidad.Clientes;
 import entidad.Rutas;
 import entidad.TiposClientes;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,9 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
@@ -226,18 +229,12 @@ public class ClientesBean implements Serializable {
 
         listaClientes = new ArrayList<Clientes>();
         this.clientes = new Clientes();
+        this.clientes.setMtipoPersona("F");
+        this.reloadDias();
 
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);
         this.setHabBtnInac(true);
-        
-//        this.setLunes(true);
-//        this.setMartes(true);
-//        this.setMiercoles(true);
-//        this.setJueves(true);
-//        this.setViernes(true);
-//        this.setSabado(true);
-
         listar();
         listarTipoCliente();
         listarCiudades();
@@ -253,15 +250,15 @@ public class ClientesBean implements Serializable {
     }
 
     public List<Clientes> listar() {
-        listaClientes = clientesFacade.findAll();
+        listaClientes = clientesFacade.getListaClientesPorFechaAltaDesc();
         return listaClientes;
     }
 
     public void insertar() {
-        
+        short codEmpresa = 2;
         try {
-            if(this.verificarDatos()){
                 Integer maxCod = this.clientesFacade.getMaxId();
+                clientes.setCodEmpr(codEmpresa);
                 clientes.setMtipoPersona(clientes.getMtipoPersona());
                 clientes.setCodCliente(maxCod+1);
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
@@ -278,15 +275,15 @@ public class ClientesBean implements Serializable {
                 clientes.setCodRuta(clientes.getCodRuta());
                 clientes.setXdiasVisita(concatenarDias());
                 clientes.setXobs(clientes.getXobs());
+                clientes.setMformaPago(Character.MIN_VALUE);
                 clientesFacade.create(clientes);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
                 PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
                 instanciar();
-            }else{
-                throw new Exception("Verifique los datos a ingresar.");
-            }
+            
                 
         } catch (Exception e) {
+            e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
@@ -294,10 +291,7 @@ public class ClientesBean implements Serializable {
     public void editar() {
         try {
 
-            if (!this.verificarDatos()) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Veifique los campos"));
-
-            } else {
+            
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
                 clientes.setXcedula(clientes.getXcedula());
                 clientes.setXruc(clientes.getXruc().toUpperCase());
@@ -320,10 +314,11 @@ public class ClientesBean implements Serializable {
                 instanciar();
 
                 listar();
+                
+                reloadDias();
 
                 PrimeFaces.current().executeScript("PF('dlgEditarCliente').hide();");
 
-            }
 
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
@@ -337,11 +332,17 @@ public class ClientesBean implements Serializable {
             this.clientes = new Clientes();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
+            reload();
             PrimeFaces.current().executeScript("PF('dlgInacCliente').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
+    
+   public void reload() throws IOException {
+    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+   }
 
     public void onRowSelect(SelectEvent event) {
         
@@ -447,42 +448,21 @@ public class ClientesBean implements Serializable {
         
     }
     
-    public boolean verificarDatos(){
-
-        if( this.clientes.getXnombre()!= null 
-                && !this.clientes.getXnombre().isEmpty()
-                && this.clientes.getXcedula()!= null
-                && this.clientes.getXcedula().intValue()>0
-                && this.clientes.getXruc() != null 
-                && !this.clientes.getXruc().isEmpty()
-                && this.clientes.getCtipoCliente()!= null 
-                
-                && this.clientes.getXdirec()!= null 
-                && !this.clientes.getXdirec().isEmpty()
-                && this.clientes.getXcontacto()!= null
-                && !this.clientes.getXcontacto().isEmpty()
-                
-                && this.clientes.getCodCiudad() != null
-
-                && this.clientes.getXtelef() != null 
-                && !this.clientes.getXtelef().isEmpty()
-                && this.clientes.getXfax() != null
-                && !this.clientes.getXfax().isEmpty()
-                && this.clientes.getXemail()!=null
-                && !this.clientes.getXemail().isEmpty()
-                && !this.clientes.getXemail().contentEquals("@")
-                && this.clientes.getCodEstado() != null 
-                && !this.clientes.getCodEstado().isEmpty()
-                && this.clientes.getCodRuta() != null
-                
-                && this.clientes.getXdiasVisita()!= null
-                && !this.clientes.getXdiasVisita().isEmpty()
-                && this.clientes.getXobs() != null
-                && !this.clientes.getXobs().isEmpty()
-                ){
-            return true;
+    
+    public String estadoCliente(String estado){
+        if(estado.equals("A")){
+            return "ACTIVO";
         }
-        return false;
+        return "OTRO";
+    }
+    
+    public void reloadDias(){
+        this.lunes = false;
+        this.martes = false;
+        this.miercoles = false;
+        this.jueves = false;
+        this.viernes = false;
+        this.sabado = false;
     }
 
 }

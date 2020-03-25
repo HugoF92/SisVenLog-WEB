@@ -213,4 +213,22 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
 
         return respuesta;
     }
+      
+      
+      
+      public List<TiposDocumentos> listarTipoDocumentosAJNCC() {
+        Query q = getEntityManager().createNativeQuery("select *\n "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ('AJ','NCC')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        @SuppressWarnings({"Convert2Diamond", "UnusedAssignment"})
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
+      
 }

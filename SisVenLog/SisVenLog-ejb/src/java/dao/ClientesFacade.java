@@ -95,6 +95,18 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
     }
     
     
+    public List<Clientes> getListaClientesPorFechaAltaDesc() {
+
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from clientes order by falta desc ", Clientes.class);
+
+        System.out.println(q.toString());
+        List<Clientes> respuesta = new ArrayList<>();
+        respuesta = q.getResultList();
+        return respuesta;
+    }
+    
+    
     
     public Integer getMaxId() {
        try{

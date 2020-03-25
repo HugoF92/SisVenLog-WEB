@@ -39,7 +39,7 @@
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-pencil"
                                     disabled="#{clientesBean.habBtnEdit}"
-                                    update="pnlEditarCliente"/>
+                                    update="pnlEditarCliente pnlEditarCliente2 pnlEditarCliente3"/>
 
                                 <p:commandButton 
                                     value="Borrar" 
@@ -73,7 +73,7 @@
                                 <h:panelGrid columns="2">
                                     
                                     <p:outputLabel value="Tipo Persona" style="font-weight: bold; float: right;"/>
-                                    <p:selectOneRadio id="tipoPersonaCliente" value="#{clientesBean.clientes.mtipoPersona}">
+                                    <p:selectOneRadio id="tipoPersonaCliente" value="#{clientesBean.clientes.mtipoPersona}" required="true">
                                             <f:selectItem itemLabel="Fisica" itemValue="F" />
                                             <f:selectItem itemLabel="Juridica" itemValue="J" />
                                     </p:selectOneRadio>
@@ -81,49 +81,49 @@
 
                                     <p:outputLabel value="Nombre/Razon Social" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="nombreCliente" value="#{clientesBean.clientes.xnombre}" 
+                                    <p:inputText id="nombreCliente"  label="Nombre / Razon Social" value="#{clientesBean.clientes.xnombre}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Cedula de Identidad" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="cedulaCliente" value="#{clientesBean.clientes.xcedula}" 
+                                    <p:inputText id="cedulaCliente" label="Cedula" value="#{clientesBean.clientes.xcedula}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
 
                                     <p:outputLabel value="RUC" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="rucCliente" value="#{clientesBean.clientes.xruc}" 
+                                    <p:inputText id="rucCliente" label="RUC" value="#{clientesBean.clientes.xruc}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Tipo de Cliente " style="font-weight: bold; text-align: left;"/>
-                                    <p:selectOneMenu id="tipoClienteDropDown" value="#{clientesBean.clientes.ctipoCliente}" 
+                                    <p:selectOneMenu label="Tipo de Cliente" id="tipoClienteDropDown" value="#{clientesBean.clientes.ctipoCliente}" 
                                                      filterMatchMode="contains" filter="true"
-                                                     style="width: 300px;">
+                                                     style="width: 300px;" required="true">
                                         <f:selectItems value="#{clientesBean.listaDeTipoCliente}" 
                                                        var="tipoDeCliente"
                                                        itemValue="#{tipoDeCliente.ctipoCliente}"
-                                                       itemLabel="#{tipoDeCliente.xdesc}"/>
+                                                       itemLabel="#{tipoDeCliente.xdesc}" />
                                     </p:selectOneMenu>
 
                                     <p:outputLabel value="Dirección" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="direccionCliente" value="#{clientesBean.clientes.xdirec}" 
+                                    <p:inputText label="Dirección" id="direccionCliente" value="#{clientesBean.clientes.xdirec}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Contacto" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="contactoCliente" value="#{clientesBean.clientes.xcontacto}" 
+                                    <p:inputText label="Contacto" id="contactoCliente" value="#{clientesBean.clientes.xcontacto}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Ciudad" style="font-weight: bold; float: right;"/>
-                                    <p:selectOneMenu id="listaDeCiudadDropDown" value="#{clientesBean.clientes.codCiudad}" 
+                                    <p:selectOneMenu label="Ciudad" id="listaDeCiudadDropDown" value="#{clientesBean.clientes.codCiudad}" 
                                                      filterMatchMode="contains" filter="true"
-                                                     style="width: 300px;">
+                                                     style="width: 300px;" required="true">
                                         <f:selectItems value="#{clientesBean.listaCiudades}" 
                                                        var="ciudad"
                                                        itemValue="#{ciudad.codCiudad}"
@@ -132,34 +132,34 @@
 
                                     <p:outputLabel value="Telefono" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="telefonoCliente" value="#{clientesBean.clientes.xtelef}" 
+                                    <p:inputText label="Telefono" id="telefonoCliente" value="#{clientesBean.clientes.xtelef}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Fax" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="faxCliente" value="#{clientesBean.clientes.xfax}" 
+                                    <p:inputText label="Fax" id="faxCliente" value="#{clientesBean.clientes.xfax}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
-                                    <p:outputLabel value="Correo electronico" style="font-weight: bold; float: right;"/>
+                                    <p:outputLabel value="Correo electrónico" style="font-weight: bold; float: right;" />
 
-                                    <p:inputText id="emailCliente" value="#{clientesBean.clientes.xemail}" 
+                                    <p:inputText label="Correo Electrónico" id="emailCliente" value="#{clientesBean.clientes.xemail}" 
                                                  tabindex="1" style="width: 350px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()" required="true"/>
 
                                     <p:outputLabel value="Estado" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="estadoCliente" value="#{clientesBean.clientes.codEstado}" 
+                                    <p:inputText label="Estado" id="estadoCliente" value="ACTIVO" 
                                                  tabindex="1" style="width: 350px;"
-                                                 label="ACTIVO" disabled="true"/>
+                                                 disabled="true"/>
 
 
                                     <p:outputLabel value="Ruta" style="font-weight: bold; float: right;"/>
 
-                                    <p:selectOneMenu id="listaDeRutaDropDown" value="#{clientesBean.clientes.codRuta}" 
+                                    <p:selectOneMenu label="Ruta" id="listaDeRutaDropDown" value="#{clientesBean.clientes.codRuta}" 
                                                      filterMatchMode="contains" filter="true"
-                                                     style="width: 300px;">
+                                                     style="width: 300px;" required="true">
                                         <f:selectItems value="#{clientesBean.listaRutas}" 
                                                        var="ruta"
                                                        itemValue="#{ruta.rutasPK.codRuta}"
@@ -193,11 +193,11 @@
                                                              itemLabel="Sabado" style="width: 300px;"/>
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel value="Observacion" style="font-weight: bold; float: right;"/>
+                                    <p:outputLabel value="Observación" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputTextarea id="observaionCliente" value="#{clientesBean.clientes.xobs}" 
+                                    <p:inputTextarea label="Observación" id="observaionCliente" value="#{clientesBean.clientes.xobs}" 
                                                      tabindex="1" style="width: 650px; height: 300px;"
-                                                     onkeyup="this.value = this.value.toUpperCase()"/>    
+                                                     onkeyup="this.value = this.value.toUpperCase()" required="true"/>    
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
                                     <p:commandButton
@@ -250,24 +250,24 @@
 
                                     <p:outputLabel value="Nombre" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="nombreClienteEditar" value="#{clientesBean.clientes.xnombre}" 
+                                    <p:inputText label="Nombre" required="true" id="nombreClienteEditar" value="#{clientesBean.clientes.xnombre}" 
                                                  tabindex="2" style="width: 350px;"
                                                  onkeyup="this.value = this.value.toUpperCase()"/>
 
                                     <p:outputLabel value="Cedula de Identidad" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="cedulaClienteEditar" value="#{clientesBean.clientes.xcedula}" 
+                                    <p:inputText label="Cedula" required="true" id="cedulaClienteEditar" value="#{clientesBean.clientes.xcedula}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value = this.value.toUpperCase()"/>
 
                                     <p:outputLabel value="RUC" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="rucClienteEditar" value="#{clientesBean.clientes.xruc}" 
+                                    <p:inputText label="RUC" required="true" id="rucClienteEditar" value="#{clientesBean.clientes.xruc}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value = this.value.toUpperCase()"/>
 
                                     <p:outputLabel value="Tipo de Cliente " style="font-weight: bold; text-align: left;"/>
-                                    <p:selectOneMenu id="tipoClienteDropDownEditar" value="#{clientesBean.clientes.ctipoCliente}" 
+                                    <p:selectOneMenu label="Tipo de Clientes" required="true" id="tipoClienteDropDownEditar" value="#{clientesBean.clientes.ctipoCliente}" 
                                                      filterMatchMode="contains" filter="true"
                                                      style="width: 300px;">
                                         <f:selectItems value="#{clientesBean.listaDeTipoCliente}" 
@@ -278,18 +278,18 @@
                                     
                                     <p:outputLabel value="Dirección" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="direccionClienteEditar" value="#{clientesBean.clientes.xdirec}" 
+                                    <p:inputText label="Dirección" required="true" id="direccionClienteEditar" value="#{clientesBean.clientes.xdirec}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpperCase()"/>
                                     
                                     <p:outputLabel value="Contacto" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="contactoClienteEditar" value="#{clientesBean.clientes.xcontacto}" 
+                                    <p:inputText label="Contacto" required="true" id="contactoClienteEditar" value="#{clientesBean.clientes.xcontacto}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpperCase()"/>
                                     
                                     <p:outputLabel value="Ciudad" style="font-weight: bold; float: right;"/>
-                                    <p:selectOneMenu id="listaDeCiudadDropDownEditar" value="#{clientesBean.clientes.codCiudad}" 
+                                    <p:selectOneMenu  label="Ciudad" required="true" id="listaDeCiudadDropDownEditar" value="#{clientesBean.clientes.codCiudad}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style="width: 300px;">
                                         <f:selectItems value="#{clientesBean.listaCiudades}" 
@@ -300,31 +300,31 @@
                                     
                                     <p:outputLabel value="Telefono" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="telefonoClienteEditar" value="#{clientesBean.clientes.xtelef}" 
+                                    <p:inputText label="Telefono" required="true" id="telefonoClienteEditar" value="#{clientesBean.clientes.xtelef}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpperCase()"/>
                                     
                                     <p:outputLabel value="Fax" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="faxClienteEditar" value="#{clientesBean.clientes.xfax}" 
+                                    <p:inputText label="Fax" required="true" id="faxClienteEditar" value="#{clientesBean.clientes.xfax}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpper Case()"/>
                                     
                                     <p:outputLabel value="Correo electronico" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="emailClienteEditar" value="#{clientesBean.clientes.xemail}" 
+                                    <p:inputText label="Correo Electronico" required="true" id="emailClienteEditar" value="#{clientesBean.clientes.xemail}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpperCase()"/>
                                     
                                     <p:outputLabel value="Estado" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputText id="estadoClienteEditar" value="#{clientesBean.clientes.codEstado}" 
+                                    <p:inputText label="Estado" required="true" id="estadoClienteEditar" value="#{clientesBean.estadoCliente(clientesBean.clientes.codEstado)}" 
                                                  tabindex="1" style="width: 350px;"
                                                  onkeyup="this.value=this.value.toUpperCase()" disabled="true"/>
                                     
                                     <p:outputLabel value="Ruta" style="font-weight: bold; float: right;"/>
 
-                                    <p:selectOneMenu id="listaDeRutaDropDownEditar" value="#{clientesBean.clientes.codRuta}" 
+                                    <p:selectOneMenu label="Ruta" required="true" id="listaDeRutaDropDownEditar" value="#{clientesBean.clientes.codRuta}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style="width: 300px;">
                                         <f:selectItems value="#{clientesBean.listaRutas}" 
@@ -336,7 +336,7 @@
                                 <h:panelGrid>
                                     <p:outputLabel value="Dias de Visita" style="font-weight: bold; float: left;"/>
                                 </h:panelGrid>
-                                <h:panelGrid columns="3">
+                                <h:panelGrid id="pnlEditarCliente2" columns="3">
 
                                     <p:selectBooleanCheckbox id="lunesEditar" value="#{clientesBean.lunes}" 
                                                              itemLabel="Lunes" style="width: 300px; float: right;"/>
@@ -347,7 +347,7 @@
                                     <p:selectBooleanCheckbox id="miercolesEditar" value="#{clientesBean.miercoles}" 
                                                              itemLabel="Miercoles" style="width: 300px;"/>
                                 </h:panelGrid>
-                                <h:panelGrid columns="3">
+                                <h:panelGrid id="pnlEditarCliente3" columns="3">
                                     <p:selectBooleanCheckbox id="juevesEditar" value="#{clientesBean.jueves}" 
                                                              itemLabel="Jueves" style="width: 300px;"/>
 
@@ -358,9 +358,9 @@
                                                              itemLabel="Sabado" style="width: 300px;"/>
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel value="Observacion" style="font-weight: bold; float: right;"/>
+                                    <p:outputLabel value="Observación" style="font-weight: bold; float: right;"/>
 
-                                    <p:inputTextarea id="observaionClienteEditar" value="#{clientesBean.clientes.xobs}" 
+                                    <p:inputTextarea label="Observación" required="true" id="observaionClienteEditar" value="#{clientesBean.clientes.xobs}" 
                                                      tabindex="1" style="width: 650px; height: 300px;"
                                                      onkeyup="this.value = this.value.toUpperCase()"/>    
                                 </h:panelGrid>
@@ -479,27 +479,27 @@
                                                     update="formBtnClientes"/>
 
                                             <p:column headerText="Código" filterBy="#{itemp.codCliente}"
-                                                      sortBy="#{itemp.codCliente}">
+                                                      sortBy="#{itemp.codCliente}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.codCliente}" />
                                             </p:column>
 
                                             <p:column headerText="Nombre/Razon Social" filterBy="#{itemp.xnombre}"
-                                                      sortBy="#{itemp.xnombre}">
+                                                      sortBy="#{itemp.xnombre}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.xnombre}" />
                                             </p:column>
 
                                             <p:column headerText="Cedula" filterBy="#{itemp.xcedula}"
-                                                      sortBy="#{itemp.xcedula}">
+                                                      sortBy="#{itemp.xcedula}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.xcedula}" />
                                             </p:column>
 
                                             <p:column headerText="Ruc" filterBy="#{itemp.xruc}"
-                                                      sortBy="#{itemp.xruc}">
+                                                      sortBy="#{itemp.xruc}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.xruc}" />
                                             </p:column>
 
                                             <p:column headerText="Estado" filterBy="#{itemp.codEstado}"
-                                                      sortBy="#{itemp.codEstado}">
+                                                      sortBy="#{itemp.codEstado}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.codEstado}" />
                                             </p:column>
 
@@ -507,8 +507,12 @@
                                                 <h:outputText value="#{itemp.xdirec}" />
                                             </p:column>
 
-                                            <p:column headerText="Tipo de Persona" filterBy="#{itemp.mtipoPersona}">
+                                            <p:column headerText="Tipo de Persona" filterBy="#{itemp.mtipoPersona}" filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.mtipoPersona}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Fecha Alta" filterBy="#{itemp.falta}" >
+                                                <h:outputText value="#{itemp.falta}" />
                                             </p:column>
 
                                         </p:dataTable>

@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <!--Botones Superiores-->
+                        <h:form id="formBtnDocumentos" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE DOCUMENTOS</h1>
+
+                            <p:growl id="msgFormBtnDocumentos" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Guardar"
+                                    actionListener="#{documentosBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevoDocumento').show()"
+                                    update="formBtnDocumentos"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    disabled="#{documentosBean.habBtnAct}"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Buscar"   
+                                    styleClass="orange-btn raised-btn"
+                                    actionListener="#{documentosBean.buscar()}"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-search"
+                                    ajax="true"
+                                    update="formBtnDocumentos"/>
+
+                                <p:commandButton 
+                                    value="Limpiar"
+                                    actionListener="#{documentosBean.limpiar()}"
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-retweet"
+                                    />
+
+                            </center>
+                            
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <h:panelGrid columns="2">
+                                            <p:outputLabel value="Tipo Documento " style="font-weight: bold; text-align: left;"/>
+                                            <p:selectOneMenu id="tipoDocumentoDropDown" value="#{documentosBean.codTipoDocumento}" 
+                                                             filterMatchMode="contains" filter="true"
+                                                             style="width: 250px;">
+                                                <f:selectItem itemLabel=" " itemValue="#{null}"/>
+                                                <f:selectItems value="#{documentosBean.listaTiposDocumentos}" 
+                                                               var="tipoDocumento"
+                                                               itemValue="#{tipoDocumento.ctipoDocum}"
+                                                               itemLabel="#{tipoDocumento.xdesc} - #{tipoDocumento.ctipoDocum}" />
+                                                
+                                            </p:selectOneMenu>
+
+                                            <p:outputLabel id="proveedorLabel" value="Proveedor" style="font-weight: bold; text-align: left;" 
+                                                           />
+                                            <p:selectOneMenu id="proveedorDropDown" value="#{documentosBean.codProveedor}" 
+                                                             filterMatchMode="contains" filter="true"
+                                                             style="width: 250px;">
+                                                <f:selectItems value="#{documentosBean.listaProveedores}" 
+                                                               var="proveedor"
+                                                               itemValue="#{proveedor.codProveed}"
+                                                               itemLabel="#{proveedor.xnombre}"/>
+                                            </p:selectOneMenu>                                     
+                                            
+
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="4">
+
+                                            <p:outputLabel value="Numero " style="font-weight: bold;text-align: left;width: 150px;margin-right: 60px;"/>
+
+                                            <p:inputText id="nroDocumentoEst" value="#{documentosBean.nroDocumentoEst}" 
+                                                         tabindex="1" style="width: 50px;"
+                                                         onkeyup="this.value = this.value.toUpperCase()" />
+
+                                            <p:inputText id="nroDocumentoExp" value="#{documentosBean.nroDocumentoExp}" 
+                                                         tabindex="1" style="width: 50px;"
+                                                         onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                            <p:inputText id="nroDocumentoNumero" value="#{documentosBean.nroDocumentoNumero}" 
+                                                         tabindex="1" style="width: 150px;"
+                                                         onkeyup="this.value = this.value.toUpperCase()" type="number" />
+
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="2">
+                                            <p:outputLabel value="Observacion" style="font-weight: bold; float: right;margin-right: 27px;"/>
+
+                                            <p:inputTextarea id="observaionDocumentos" value="#{documentosBean.observacion}" 
+                                                             tabindex="1" style="width: 450px; height: 350px;"
+                                                             onkeyup="this.value = this.value.toUpperCase()"/>
+                                        </h:panelGrid>
+
+                                    </div>
+                                </div>
+                            </div> 
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

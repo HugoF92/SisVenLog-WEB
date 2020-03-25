@@ -376,4 +376,23 @@ public class NotasComprasFacade extends AbstractFacade<NotasCompras> {
     }
     
     
+    public NotasCompras getNotasComprasByPK(NotasComprasPK notasComprasPK){
+        try{
+           Query q = getEntityManager().createQuery("SELECT c from NotasCompras c where "
+                   + "c.notasComprasPK.codEmpr=:codEmpr "
+                   + "and c.notasComprasPK.nroNota=:nroNota "
+                   + "and c.notasComprasPK.codProveed = :codProveed")
+                   .setParameter("codEmpr", notasComprasPK.getCodEmpr())
+                   .setParameter("nroNota", notasComprasPK.getNroNota())
+                   .setParameter("codProveed", notasComprasPK.getCodProveed());
+           
+           NotasCompras respuesta = (NotasCompras) q.getSingleResult();
+           return respuesta;
+       }catch(Exception e){
+           e.printStackTrace();
+           return null;
+       }
+    }
+    
+    
 }
