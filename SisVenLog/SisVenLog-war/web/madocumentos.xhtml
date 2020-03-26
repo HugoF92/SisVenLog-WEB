@@ -24,13 +24,12 @@
 
                                 <p:commandButton 
                                     value="Guardar"
-                                    actionListener="#{documentosBean.instanciar()}"
-                                    oncomplete="PF('dlgNuevoDocumento').show()"
+                                    actionListener="#{documentosBean.insertOrUpdate()}"
                                     update="formBtnDocumentos"
                                     icon="fa fa-plus"
                                     styleClass="green-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
-                                    disabled="#{documentosBean.habBtnAct}"
+                                    disabled="#{!documentosBean.habBtnAct}"
                                     ajax="true"/>
 
                                 <p:commandButton 
@@ -48,6 +47,7 @@
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-retweet"
+                                    update="formBtnDocumentos"
                                     />
 
                             </center>
@@ -59,20 +59,23 @@
                                             <p:outputLabel value="Tipo Documento " style="font-weight: bold; text-align: left;"/>
                                             <p:selectOneMenu id="tipoDocumentoDropDown" value="#{documentosBean.codTipoDocumento}" 
                                                              filterMatchMode="contains" filter="true"
-                                                             style="width: 250px;">
+                                                             style="width: 250px;" >
                                                 <f:selectItem itemLabel=" " itemValue="#{null}"/>
                                                 <f:selectItems value="#{documentosBean.listaTiposDocumentos}" 
                                                                var="tipoDocumento"
                                                                itemValue="#{tipoDocumento.ctipoDocum}"
                                                                itemLabel="#{tipoDocumento.xdesc} - #{tipoDocumento.ctipoDocum}" />
+                                                <p:ajax listener="#{documentosBean.onTipoDocumentoDropDownChange()}" update="formBtnDocumentos" />
                                                 
                                             </p:selectOneMenu>
 
-                                            <p:outputLabel id="proveedorLabel" value="Proveedor" style="font-weight: bold; text-align: left;" 
-                                                           />
+                                            <p:outputLabel id="proveedorLabel" value="Proveedor" 
+                                                           rendered="#{documentosBean.onTipoDocumentoDropDownChange()}"
+                                                           style="font-weight: bold; text-align: left;" />
                                             <p:selectOneMenu id="proveedorDropDown" value="#{documentosBean.codProveedor}" 
                                                              filterMatchMode="contains" filter="true"
-                                                             style="width: 250px;">
+                                                             style="width: 250px;"
+                                                             rendered="#{documentosBean.onTipoDocumentoDropDownChange()}">
                                                 <f:selectItems value="#{documentosBean.listaProveedores}" 
                                                                var="proveedor"
                                                                itemValue="#{proveedor.codProveed}"
@@ -83,23 +86,25 @@
                                         </h:panelGrid>
                                         <h:panelGrid columns="4">
 
-                                            <p:outputLabel value="Numero " style="font-weight: bold;text-align: left;width: 150px;margin-right: 60px;"/>
+                                            <p:outputLabel value="Número " style="font-weight: bold;text-align: left;width: 150px;margin-right: 60px;"/>
 
                                             <p:inputText id="nroDocumentoEst" value="#{documentosBean.nroDocumentoEst}" 
                                                          tabindex="1" style="width: 50px;"
-                                                         onkeyup="this.value = this.value.toUpperCase()" />
+                                                         onkeyup="this.value = this.value.toUpperCase()" 
+                                                         rendered="#{documentosBean.onTipoDocumentoDropDownChange()}"/>
 
                                             <p:inputText id="nroDocumentoExp" value="#{documentosBean.nroDocumentoExp}" 
                                                          tabindex="1" style="width: 50px;"
-                                                         onkeyup="this.value = this.value.toUpperCase()"/>
+                                                         onkeyup="this.value = this.value.toUpperCase()" 
+                                                         rendered="#{documentosBean.onTipoDocumentoDropDownChange()}"/>
 
                                             <p:inputText id="nroDocumentoNumero" value="#{documentosBean.nroDocumentoNumero}" 
                                                          tabindex="1" style="width: 150px;"
-                                                         onkeyup="this.value = this.value.toUpperCase()" type="number" />
+                                                         onkeyup="this.value = this.value.toUpperCase()"/>
 
                                         </h:panelGrid>
                                         <h:panelGrid columns="2">
-                                            <p:outputLabel value="Observacion" style="font-weight: bold; float: right;margin-right: 27px;"/>
+                                            <p:outputLabel value="Observación" style="font-weight: bold; float: right;margin-right: 27px;"/>
 
                                             <p:inputTextarea id="observaionDocumentos" value="#{documentosBean.observacion}" 
                                                              tabindex="1" style="width: 450px; height: 350px;"

@@ -45,10 +45,10 @@ public class DocumentosBean implements Serializable {
     
     
     private String codProveedor;
-    private String codTipoDocumento;
+    private String codTipoDocumento = null;
     private String nroDocumentoEst;
     private String nroDocumentoExp;
-    private Long nroDocumentoNumero = 0L;
+    private Long nroDocumentoNumero;
     private String observacion;
     
     
@@ -225,12 +225,12 @@ public class DocumentosBean implements Serializable {
     @PostConstruct
     @SuppressWarnings("Convert2Diamond")
     public void instanciar() {
-        
+        this.setNroDocumentoNumero(0L);
         this.documVarios = new DocumVarios();
         this.notasCompras = new NotasCompras();
         this.documVariosPK = new DocumVariosPK();
         this.setHabBtnBuscar(true);
-        this.setHabBtnAct(true);
+        this.setHabBtnAct(false);
         this.setHabBtnInac(true);
         
 
@@ -240,23 +240,50 @@ public class DocumentosBean implements Serializable {
     }
     
     @SuppressWarnings("Convert2Diamond")
-    public void limpiar() throws IOException {
-        
+    public void limpiar() {
         this.documVarios = new DocumVarios();
         this.notasCompras = new NotasCompras();
-
         this.setHabBtnBuscar(true);
-        this.setHabBtnAct(true);
+        this.setHabBtnAct(false);
         this.setHabBtnInac(true);
+        this.nroDocumentoNumero = 0L;
+        this.nroDocumentoExp = "";
+        this.nroDocumentoEst = "";
+        this.codTipoDocumento = null;
+        this.observacion = "";
         listarTiposDocumentos();
         listarProveedores();
-        this.nroDocumentoNumero = 0L;
-        this.reload();
         
-
+        
     }
     
-    public void reload() throws IOException {
+   @SuppressWarnings("Convert2Diamond")
+    public void insertOrUpdate(){
+        if (this.codTipoDocumento.equals("AJ")) {
+            this.documVarios.setXobs(this.observacion);
+            try {
+                this.documVariosFacade.edit(this.documVarios);
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.setHabBtnAct(false);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar", e.getMessage()+" - "+e.getLocalizedMessage()));
+
+            }
+        }else{
+            try {
+                this.notasCompras.setXobs(this.observacion);
+                notasComprasFacade.edit(this.notasCompras);
+            } catch (Exception e) {
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar", e.getMessage()+" - "+e.getLocalizedMessage()));
+                this.setHabBtnAct(false);
+            }
+            
+        }   
+        this.limpiar();
+    }
+    
+    public void reloadPage() throws IOException {
     ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
     ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
    }
@@ -264,16 +291,17 @@ public class DocumentosBean implements Serializable {
     @SuppressWarnings("Convert2Diamond")
     public void buscar() {
         short codEmpresa = 2;
+        Long numeroNumero = this.nroDocumentoNumero;
         if (this.codTipoDocumento.equals("AJ")) {
             DocumVarios documentosVarios = new DocumVarios();
             documVariosPK.setCtipoDocum(this.codTipoDocumento);
-//        codigo empresa en durango
-            
+//          codigo empresa en durango
             documVariosPK.setCodEmpr(codEmpresa);
             documVariosPK.setNdocum(this.nroDocumentoNumero.intValue());
             this.documVarios.setDocumVariosPK(documVariosPK);
             try {
-                documentosVarios = this.documVariosFacade.find(this.documVariosPK);
+                this.documVarios = this.documVariosFacade.find(this.documVariosPK);
+                documentosVarios = this.documVarios;
 
             } catch (Exception e) {
                 documentosVarios = null;
@@ -282,36 +310,48 @@ public class DocumentosBean implements Serializable {
 
             }
             if (documentosVarios == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error al obtener los datos", "Veifique los campos"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error al obtener los datos", "Documento no encontrado"));
+                this.setHabBtnAct(false);
             } else {
                 this.codTipoDocumento = documentosVarios.getDocumVariosPK().getCtipoDocum();
                 this.nroDocumentoNumero = new Long(documentosVarios.getDocumVariosPK().getNdocum());
                 this.observacion = documentosVarios.getXobs() != null && !documentosVarios.getXobs().isEmpty() ? documentosVarios.getXobs() : "No tiene observacion";
+                this.setHabBtnAct(true);
             }
         }else{
             NotasCompras notasCompraslocal = new NotasCompras();
+            try {
             NotasComprasPK notasComprasPK = new NotasComprasPK();
+//          codigo empresa en durango
             notasComprasPK.setCodEmpr(codEmpresa);
             notasComprasPK.setCodProveed(Short.parseShort(this.codProveedor));
             notasComprasPK.setCtipoDocum(this.codTipoDocumento);
             String nroConcatenado = this.nroDocumentoEst+this.nroDocumentoExp+this.nroDocumentoNumero.toString();
             notasComprasPK.setNroNota(new Long(nroConcatenado));
-            try {
-                notasCompraslocal = notasComprasFacade.getNotasComprasByPK(notasComprasPK);
+            
+                this.notasCompras = notasComprasFacade.getNotasComprasByPK(notasComprasPK);
+                notasCompraslocal = this.notasCompras;
             } catch (Exception e) {
                 e.printStackTrace();
                 notasCompraslocal = null;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+                this.setHabBtnAct(false);
+
+                
             }
-            if(notasCompraslocal!= null){
-                System.out.println("no es nulo");
+            if(notasCompraslocal== null){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error al obtener los datos", "Documento no encontrado"));
+            }else{
+                this.codTipoDocumento = notasCompraslocal.getNotasComprasPK().getCtipoDocum();
+                this.nroDocumentoEst = this.nroDocumentoEst;
+                this.nroDocumentoExp = this.nroDocumentoExp;
+                this.nroDocumentoNumero = numeroNumero;
+                this.observacion = notasCompraslocal.getXobs();
+                this.setHabBtnAct(true);
             }
             
         }
         
-        
-        
-        
-
     }
 
     @SuppressWarnings("Convert2Diamond")
@@ -320,30 +360,7 @@ public class DocumentosBean implements Serializable {
         this.notasCompras = new NotasCompras();
  
     }
-    
-    
-    
-    
-
-    public void verificarCargaDatos() {
-
-       boolean cargado = false;
-
-        if (documVarios != null) {
-
-            if (documVarios.getDocumVariosPK().getCtipoDocum()!= null) {
-                cargado = true;
-            }
-        }
-
-//        if (cargado) {
-//            PrimeFaces.current().executeScript("PF('dlgSinGuardadDocumento').show();");
-//        } else {
-//            PrimeFaces.current().executeScript("PF('dlgNuevoDocumento').hide();");
-//        }
-
-    }
-    
+        
     public List<TiposDocumentos> listarTiposDocumentos(){
         listaTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentosAJNCC();
         return listaTiposDocumentos;
@@ -356,8 +373,14 @@ public class DocumentosBean implements Serializable {
     
     
     
-    public void verificarDatos(){
-
+    public boolean onTipoDocumentoDropDownChange(){
+        if(this.codTipoDocumento != null  && !this.codTipoDocumento.equals("AJ")){
+            if(this.getNroDocumentoNumero()!= null && this.getNroDocumentoNumero().intValue()==0){
+                this.setNroDocumentoNumero(0L);
+            }
+            return true;
+        }
+        return false;
        
     }
     

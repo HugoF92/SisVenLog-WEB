@@ -381,7 +381,7 @@ public class NotasComprasFacade extends AbstractFacade<NotasCompras> {
            Query q = getEntityManager().createQuery("SELECT c from NotasCompras c where "
                    + "c.notasComprasPK.codEmpr=:codEmpr "
                    + "and c.notasComprasPK.nroNota=:nroNota "
-                   + "and c.notasComprasPK.codProveed = :codProveed")
+                   + "and c.notasComprasPK.codProveed=:codProveed", NotasCompras.class)
                    .setParameter("codEmpr", notasComprasPK.getCodEmpr())
                    .setParameter("nroNota", notasComprasPK.getNroNota())
                    .setParameter("codProveed", notasComprasPK.getCodProveed());

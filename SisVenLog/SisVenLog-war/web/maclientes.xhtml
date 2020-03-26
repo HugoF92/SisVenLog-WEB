@@ -208,10 +208,10 @@
                                         styleClass="green-btn raised-btn" 
                                         style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
 
-                                    <p:commandButton value="Cancelar" actionListener="#{clientesBean.verificarCargaDatos()}"
+                                    <p:commandButton value="Cancelar" onclick="PF('dlgNuevoCliente').hide();"
                                                      styleClass="red-btn raised-btn" 
                                                      style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                     icon="fa fa-times"/>
+                                                     icon="fa fa-times" />
 
                                 </h:panelGrid>
 
