@@ -17,6 +17,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.DateUtil;
 import util.StringUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -42,7 +48,7 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
             Date fechaAltaHasta, Boolean todosClientes, List<Clientes> listadoClientesSeleccionados) {
         String sql = "";
         if (conRuteo) {
-            sql += "SELECT  c.cod_cliente, "
+            sql += "SELECT     c.cod_cliente, "
                     + "        c.xpropietario, "
                     + "        c.xnombre, "
                     + "        cod_estado, "
@@ -63,7 +69,8 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
                     + "        r.xdesc as xdesc_ruta ";
         }
 
-        sql += "FROM clientes c, tipos_clientes t, zonas z, rutas r "
+        sql +=    "INTO #MOSTRAR "
+                + "FROM clientes c, tipos_clientes t, zonas z, rutas r "
                 + "WHERE "
                 + "    c.ctipo_cliente = t.ctipo_cliente "
                 + "    AND c.cod_empr = r.cod_empr "
@@ -90,9 +97,9 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
                     sql += " AND cod_estado = 'A' ";
                     break;
                 case "2":
-                    sql += " AND CONVERT(char(10), c.falta, 103) BETWEEN '"
-                            + DateUtil.dateToString(fechaAltaDesde)
-                            + "' AND '" + DateUtil.dateToString(fechaAltaHasta) + "' ";
+                    sql += " AND c.falta BETWEEN '"
+                            + DateUtil.dateToString(fechaAltaDesde, "yyyy/dd/MM")
+                            + "' AND '" + DateUtil.dateToString(fechaAltaHasta, "yyyy/dd/MM") + "' ";
                     break;
                 case "3":
                     sql += " AND cod_estado = 'I' ";
@@ -108,6 +115,50 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
 
         sql += " ORDER BY c.xnombre";
         return sql;
+    }
+
+    public String generateSelectMostrar(Boolean conRuteo) {
+        String sql = "";
+        if (conRuteo) {
+            sql += "SELECT     cod_cliente, "
+                    + "        xpropietario, "
+                    + "        xnombre, "
+                    + "        cod_estado, "
+                    + "        xruc, "
+                    + "        xdirec, "
+                    + "        cod_zona, "
+                    + "        xdesc_zona, "
+                    + "        cod_ruta, "
+                    + "        xdesc_ruta, "
+                    + "        ctipo_cliente, "
+                    + "        xdesc_tipo, "
+                    + "        xtelef ";
+        } else {
+            sql += "SELECT  cod_cliente, "
+                    + "     xnombre, "
+                    + "     xdirec, "
+                    + "     cod_ruta, "
+                    + "     xdesc_ruta ";
+        }
+        sql += "FROM #MOSTRAR ";
+        return sql;
+    }
+    
+    public List<Object[]> listarParaExcel(Statement stmt, String[] columnas, String sql){
+        List<Object[]> lista = new ArrayList<>();
+        try {
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                Object[] row = new Object[columnas.length];
+                for (int i = 0; i < columnas.length; i++) {
+                  row[i] = rs.getObject(columnas[i]);
+                }
+                lista.add(row);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientesRutasZonasFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
     }
     
 }

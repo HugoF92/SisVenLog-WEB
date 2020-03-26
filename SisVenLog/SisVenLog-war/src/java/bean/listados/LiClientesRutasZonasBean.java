@@ -16,6 +16,9 @@ import entidad.Rutas;
 import entidad.TiposClientes;
 import entidad.Zonas;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,8 +89,8 @@ public class LiClientesRutasZonasBean implements Serializable{
     @PostConstruct
     public void instanciar(){
         this.listadoClientes = new ArrayList<>();
-        this.fechaAltaDesde = null;
-        this.fechaAltaHasta = null;
+        this.fechaAltaDesde = new Date();
+        this.fechaAltaHasta = new Date();
         this.tipoCliente = null;
         this.zona = null;
         this.ruta = null;
@@ -101,27 +104,30 @@ public class LiClientesRutasZonasBean implements Serializable{
 
     public void ejecutar(String tipo) {
         try {
-            LlamarReportes rep = new LlamarReportes();
             // validamos las fechas en caso que el estado sea 2
             if(estado.equals("2")){
                 if(!validarFechas())
                     return;
             }
+            LlamarReportes rep = new LlamarReportes();
+            Connection conexion = rep.conexion;
+            Statement stmt = conexion.createStatement();
+            stmt.execute(clientesRutasZonasFacade.generateSqlRuteo(conRuteo,
+                    tipoCliente, zona, ruta, estado, fechaAltaDesde,
+                    fechaAltaHasta, todosClientes,
+                    listadoClientesSeleccionados));
             if (tipo.equals("VIST")) {
                 String usuarioImpresion = "admin";
                 if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("usuario")) {
                     usuarioImpresion = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                 }
+                String fechaDesde = fechaAltaDesde == null? "": DateUtil.dateToString(fechaAltaDesde, "dd/MM/yyyy");
+                String fechaHasta = fechaAltaHasta == null? "": DateUtil.dateToString(fechaAltaHasta, "dd/MM/yyyy");
                 rep.reporteClientesRutasZonas(conRuteo, tipoCliente,
-                        zona, ruta, estado, DateUtil.dateToString(fechaAltaDesde),
-                        DateUtil.dateToString(fechaAltaHasta), todosClientes,
+                        zona, ruta, estado, fechaDesde, fechaHasta, todosClientes,
                         StringUtil.convertirListaAString(listadoClientesSeleccionados),
                         usuarioImpresion);
             } else {
-                String sql = clientesRutasZonasFacade.generateSqlRuteo(conRuteo,
-                        tipoCliente, zona, ruta, estado, fechaAltaDesde,
-                        fechaAltaHasta, todosClientes,
-                        listadoClientesSeleccionados);
                 String filename;
                 List<Object[]> lista;
                 String[] columnas;
@@ -151,10 +157,12 @@ public class LiClientesRutasZonasBean implements Serializable{
                         "xdesc_ruta"};
                     filename = "liclientessinruteo";
                 }
-                lista = excelFacade.listarParaExcel(sql);
+                lista = clientesRutasZonasFacade.listarParaExcel(stmt, columnas,
+                        clientesRutasZonasFacade.generateSelectMostrar(conRuteo));
+                conexion.close();
                 rep.exportarExcel(columnas, lista, filename);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
