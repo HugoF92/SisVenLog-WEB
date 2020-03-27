@@ -28,7 +28,7 @@ import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class DocumentosBean implements Serializable {
+public class DocumentosObservacionesBean implements Serializable {
 
        
     @EJB
@@ -69,7 +69,7 @@ public class DocumentosBean implements Serializable {
     private boolean habBtnAct;
     private boolean habBtnInac;
 
-    public DocumentosBean() {
+    public DocumentosObservacionesBean() {
         this.codTipoDocumento = null;
 
     }

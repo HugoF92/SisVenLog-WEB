@@ -11,7 +11,10 @@ import entidad.TiposClientes;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -29,16 +32,18 @@ public class ClientesBean implements Serializable {
 
     @EJB
     private ClientesFacade clientesFacade;
-    
+
     @EJB
     private TiposClientesFacade tipoCliFacade;
-    
+
     @EJB
     private CiudadesFacade ciudadFacade;
-    
+
     @EJB
     private RutasFacade rutasFacade;
-   
+    
+    private static final Logger LOGGER = Logger.getLogger(ClientesBean.class.getName());
+
     private Clientes clientes = new Clientes();
     @SuppressWarnings("Convert2Diamond")
     private List<Clientes> listaClientes = new ArrayList<Clientes>();
@@ -48,17 +53,14 @@ public class ClientesBean implements Serializable {
     private List<Ciudades> listaCiudades = new ArrayList<Ciudades>();
     @SuppressWarnings("Convert2Diamond")
     private List<Rutas> listaRutas = new ArrayList<Rutas>();
-    
-    
+
 //    Dias a elegist
-    
     private boolean lunes;
     private boolean martes;
     private boolean miercoles;
     private boolean jueves;
     private boolean viernes;
     private boolean sabado;
-    
 
     private boolean habBtnEdit;
     private boolean habBtnAct;
@@ -212,17 +214,6 @@ public class ClientesBean implements Serializable {
         this.sabado = sabado;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
     @PostConstruct
     @SuppressWarnings("Convert2Diamond")
     public void instanciar() {
@@ -246,7 +237,7 @@ public class ClientesBean implements Serializable {
     public void nuevo() {
         this.clientes = new Clientes();
         listaClientes = new ArrayList<Clientes>();
- 
+
     }
 
     public List<Clientes> listar() {
@@ -256,11 +247,26 @@ public class ClientesBean implements Serializable {
 
     public void insertar() {
         short codEmpresa = 2;
-        try {
+        boolean error = false;
+        if (this.clientes.getMtipoPersona().equals("F") && this.verificarExisteErrorPersonaFisica()) {
+            error = true;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR, "Requerido", "Si es Persona Física, campo cédula es requerido."));
+
+        }
+        if (this.clientes.getMtipoPersona().equals("J") && this.verificarExisteErrorPersonaJuridica()) {
+            error = true;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR, "Requerido", "Si es Persona Juridica, campo RUC es requerido."));
+
+        }
+        if (!error) {
+            try {
+
                 Integer maxCod = this.clientesFacade.getMaxId();
                 clientes.setCodEmpr(codEmpresa);
                 clientes.setMtipoPersona(clientes.getMtipoPersona());
-                clientes.setCodCliente(maxCod+1);
+                clientes.setCodCliente(maxCod + 1);
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
                 clientes.setXcedula(clientes.getXcedula());
                 clientes.setXruc(clientes.getXruc().toUpperCase());
@@ -275,23 +281,48 @@ public class ClientesBean implements Serializable {
                 clientes.setCodRuta(clientes.getCodRuta());
                 clientes.setXdiasVisita(concatenarDias());
                 clientes.setXobs(clientes.getXobs());
-                clientes.setMformaPago(Character.MIN_VALUE);
+                //espacion en blanco por defecto
+                Character a = new Character(' ');
+                clientes.setMformaPago(a);
+                clientes.setFalta(new Date());
                 clientesFacade.create(clientes);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
                 PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
                 instanciar();
-            
-                
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
+
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al Crear", e);
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
+            }
         }
+
     }
 
     public void editar() {
         try {
+            boolean error = false;
+            if (this.clientes.getMtipoPersona() != null
+                    && this.clientes.getMtipoPersona().equals("F")
+                    && this.verificarExisteErrorPersonaFisica()) {
+                error = true;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Requerido", "Si es Persona Física, campo Cédula es requerido."));
 
-            
+            }
+            if (this.clientes.getMtipoPersona() != null
+                    && this.clientes.getMtipoPersona().equals("J")
+                    && this.verificarExisteErrorPersonaJuridica()) {
+                error = true;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Requerido", "Si es Persona Juridica, campo RUC es requerido."));
+
+            }
+            if(clientes.getMtipoPersona()==null ||  clientes.getMtipoPersona().isEmpty()){
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR, "Verificar", "Tipo Persona se encuentra nulo."));
+            }
+            if (!error) {
                 clientes.setXnombre(clientes.getXnombre().toUpperCase());
                 clientes.setXcedula(clientes.getXcedula());
                 clientes.setXruc(clientes.getXruc().toUpperCase());
@@ -306,72 +337,74 @@ public class ClientesBean implements Serializable {
                 clientes.setCodRuta(clientes.getCodRuta());
                 clientes.setXdiasVisita(concatenarDias());
                 clientes.setXobs(clientes.getXobs());
-                
+                clientes.setFultimModif(new Date());
                 clientesFacade.edit(clientes);
-
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Guardado con exito."));
 
                 instanciar();
 
                 listar();
-                
+
                 reloadDias();
 
                 PrimeFaces.current().executeScript("PF('dlgEditarCliente').hide();");
 
+            }
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al Actualizar", e);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
 
     public void borrar() {
-       try {
-
+        try {
+            clientes.setCodCliente(-1);
             clientesFacade.remove(clientes);
             this.clientes = new Clientes();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            reload();
             PrimeFaces.current().executeScript("PF('dlgInacCliente').hide();");
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
+            LOGGER.log(Level.SEVERE, "Error al borrar", e);
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()+"-"+e.getLocalizedMessage()));
         }
     }
-    
-   public void reload() throws IOException {
-    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-   }
+
+    public void reload() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+    }
 
     public void onRowSelect(SelectEvent event) {
-        
-        String diasSeleccionads  = this.clientes.getXdiasVisita();
+
+        String diasSeleccionads = this.clientes.getXdiasVisita();
         char l = 'L';
         char t = 'T';
         char m = 'M';
         char j = 'J';
         char v = 'V';
         char s = 'S';
-        
+
         for (char c : diasSeleccionads.toCharArray()) {
-            if(c==l){
+            if (c == l) {
                 this.setLunes(true);
             }
-            if(c==t){
+            if (c == t) {
                 this.setMartes(true);
             }
-            if(c==m){
+            if (c == m) {
                 this.setMiercoles(true);
             }
-            if(c==j){
-                this.setJueves(true) ;
+            if (c == j) {
+                this.setJueves(true);
             }
-            if(c==v){
+            if (c == v) {
                 this.setViernes(true);
             }
-            if(c==s){
-                this.setSabado(true) ;
+            if (c == s) {
+                this.setSabado(true);
             }
         }
 
@@ -385,11 +418,11 @@ public class ClientesBean implements Serializable {
 
     public void verificarCargaDatos() {
 
-       boolean cargado = false;
+        boolean cargado = false;
 
         if (clientes != null) {
 
-            if (clientes.getXnombre()!= null) {
+            if (clientes.getXnombre() != null) {
                 cargado = true;
             }
         }
@@ -401,68 +434,85 @@ public class ClientesBean implements Serializable {
         }
 
     }
-    
+
     public void cerrarDialogosAgregar() {
-        
+
         PrimeFaces.current().executeScript("PF('dlgSinGuardadCliente').hide();");
         PrimeFaces.current().executeScript("PF('dlgNuevoCliente').hide();");
     }
-    
+
     public List<TiposClientes> listarTipoCliente() {
         listaDeTipoCliente = tipoCliFacade.findAll();
         return listaDeTipoCliente;
-    } 
-    
-    public List<Ciudades> listarCiudades(){
+    }
+
+    public List<Ciudades> listarCiudades() {
         listaCiudades = ciudadFacade.findAll();
         return listaCiudades;
     }
-    
-    public List<Rutas> listarRutas(){
+
+    public List<Rutas> listarRutas() {
         listaRutas = rutasFacade.findAll();
         return listaRutas;
     }
-    
-    public String concatenarDias(){
+
+    public String concatenarDias() {
         String dias = "";
-        if(lunes){
-            dias=dias+"L";
+        if (lunes) {
+            dias = dias + "L";
         }
-        if(martes){
-            dias=dias+"T";
+        if (martes) {
+            dias = dias + "T";
         }
-        if(miercoles){
-            dias=dias+"M";
+        if (miercoles) {
+            dias = dias + "M";
         }
-        if(jueves){
-            dias=dias+"J";
+        if (jueves) {
+            dias = dias + "J";
         }
-        if(viernes){
-            dias=dias+"V";
+        if (viernes) {
+            dias = dias + "V";
         }
-        if(sabado){
-            dias=dias+"S";
+        if (sabado) {
+            dias = dias + "S";
         }
-        
+
         return dias.trim();
-        
+
     }
-    
-    
-    public String estadoCliente(String estado){
-        if(estado.equals("A")){
+
+    public String estadoCliente(String estado) {
+        if (estado.equals("A")) {
             return "ACTIVO";
         }
         return "OTRO";
     }
-    
-    public void reloadDias(){
+
+    public void reloadDias() {
         this.lunes = false;
         this.martes = false;
         this.miercoles = false;
         this.jueves = false;
         this.viernes = false;
         this.sabado = false;
+    }
+
+    public boolean verificarExisteErrorPersonaFisica() {
+        if (this.clientes.getXcedula() == null) {
+            return true;
+        } else if (this.clientes.getXcedula() != null && this.clientes.getXcedula().intValue() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verificarExisteErrorPersonaJuridica() {
+        if (this.clientes.getXruc() == null) {
+            return true;
+        } else if (this.clientes.getXruc() != null && this.clientes.getXruc().isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
 }

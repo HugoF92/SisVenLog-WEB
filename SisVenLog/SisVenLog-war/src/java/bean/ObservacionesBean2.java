@@ -19,7 +19,7 @@ import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class ObservacionesBean implements Serializable {
+public class ObservacionesBean2 implements Serializable {
 
     @EJB
     private DocumVariosFacade xdescFacade;
@@ -28,6 +28,7 @@ public class ObservacionesBean implements Serializable {
 
     private DocumVarios xdesc = new DocumVarios();
     private List<DocumVarios> listaDocumVarios = new ArrayList<DocumVarios>();
+    
 
     private TiposDocumentos tiposDocumentos = new TiposDocumentos();
     private List<TiposDocumentos> listarTiposDocumentos = new ArrayList<TiposDocumentos>();
@@ -36,7 +37,7 @@ public class ObservacionesBean implements Serializable {
     private boolean habBtnAct;
     private boolean habBtnInac;
 
-    public ObservacionesBean() {
+    public ObservacionesBean2() {
 
         //instanciar();
     }
@@ -235,6 +236,9 @@ public class ObservacionesBean implements Serializable {
         PrimeFaces.current().executeScript("PF('dlgSinGuardarDocumVarios').hide();");
         PrimeFaces.current().executeScript("PF('dlgNuevDocumVarios').hide();");
 
+    }
+    public List<TiposDocumentos> listaTiposDocumentos(){
+        return this.getListarTiposDocumentos();
     }
 
 }
