@@ -48,6 +48,12 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
             Date fechaAltaHasta, Boolean todosClientes, List<Clientes> listadoClientesSeleccionados) {
         String sql = "";
         if (conRuteo) {
+            sql += "SELECT  c.cod_cliente, "
+                    + "        c.xnombre, "
+                    + "        c.xdirec, "
+                    + "        c.cod_ruta, "
+                    + "        r.xdesc as xdesc_ruta ";
+        } else {
             sql += "SELECT     c.cod_cliente, "
                     + "        c.xpropietario, "
                     + "        c.xnombre, "
@@ -61,12 +67,6 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
                     + "        c.ctipo_cliente, "
                     + "        t.xdesc as xdesc_tipo, "
                     + "        c.xtelef ";
-        } else {
-            sql += "SELECT  c.cod_cliente, "
-                    + "        c.xnombre, "
-                    + "        c.xdirec, "
-                    + "        c.cod_ruta, "
-                    + "        r.xdesc as xdesc_ruta ";
         }
 
         sql +=    "INTO #MOSTRAR "
@@ -98,8 +98,8 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
                     break;
                 case "2":
                     sql += " AND c.falta BETWEEN '"
-                            + DateUtil.dateToString(fechaAltaDesde, "yyyy/dd/MM")
-                            + "' AND '" + DateUtil.dateToString(fechaAltaHasta, "yyyy/dd/MM") + "' ";
+                            + DateUtil.dateToString(fechaAltaDesde, "yyyy/MM/dd")
+                            + "' AND '" + DateUtil.dateToString(fechaAltaHasta, "yyyy/MM/dd") + "' ";
                     break;
                 case "3":
                     sql += " AND cod_estado = 'I' ";
@@ -120,6 +120,12 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
     public String generateSelectMostrar(Boolean conRuteo) {
         String sql = "";
         if (conRuteo) {
+            sql += "SELECT  cod_cliente, "
+                    + "     xnombre, "
+                    + "     xdirec, "
+                    + "     cod_ruta, "
+                    + "     xdesc_ruta ";
+        } else {
             sql += "SELECT     cod_cliente, "
                     + "        xpropietario, "
                     + "        xnombre, "
@@ -133,12 +139,6 @@ public class ClientesRutasZonasFacade extends AbstractFacade<Clientes> {
                     + "        ctipo_cliente, "
                     + "        xdesc_tipo, "
                     + "        xtelef ";
-        } else {
-            sql += "SELECT  cod_cliente, "
-                    + "     xnombre, "
-                    + "     xdirec, "
-                    + "     cod_ruta, "
-                    + "     xdesc_ruta ";
         }
         sql += "FROM #MOSTRAR ";
         return sql;

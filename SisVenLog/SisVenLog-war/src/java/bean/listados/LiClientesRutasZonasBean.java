@@ -7,7 +7,8 @@ package bean.listados;
 
 import dao.ClientesFacade;
 import dao.ClientesRutasZonasFacade;
-import dao.ExcelFacade;
+import org.primefaces.PrimeFaces;
+import javax.faces.event.AjaxBehaviorEvent;
 import dao.RutasFacade;
 import dao.TiposClientesFacade;
 import dao.ZonasFacade;
@@ -60,6 +61,8 @@ public class LiClientesRutasZonasBean implements Serializable{
 
     private Boolean conRuteo;
 
+    private Boolean habilitarCalendario;
+
     private List<Clientes> listadoClientes;
 
     private List<Clientes> listadoClientesSeleccionados;
@@ -82,9 +85,6 @@ public class LiClientesRutasZonasBean implements Serializable{
 
     @EJB
     private ClientesRutasZonasFacade clientesRutasZonasFacade;
-
-    @EJB
-    private ExcelFacade excelFacade;
     
     @PostConstruct
     public void instanciar(){
@@ -95,7 +95,9 @@ public class LiClientesRutasZonasBean implements Serializable{
         this.zona = null;
         this.ruta = null;
         this.estado = "4";
+        this.habilitarCalendario = false;
         this.todosClientes = true;
+        this.seleccionarClientes = false;
         this.listaTiposClientes = this.tiposClientesFacade.findAll();
         this.listaZonas = this.zonasFacade.findAll();
         this.listaRutas = this.rutasFacade.findAll();
@@ -123,8 +125,20 @@ public class LiClientesRutasZonasBean implements Serializable{
                 }
                 String fechaDesde = fechaAltaDesde == null? "": DateUtil.dateToString(fechaAltaDesde, "dd/MM/yyyy");
                 String fechaHasta = fechaAltaHasta == null? "": DateUtil.dateToString(fechaAltaHasta, "dd/MM/yyyy");
-                rep.reporteClientesRutasZonas(conRuteo, tipoCliente,
-                        zona, ruta, estado, fechaDesde, fechaHasta, todosClientes,
+                Zonas z = null;
+                if(zona!=null){
+                    z = zonasFacade.find(zona.getZonasPK());
+                }
+                Rutas r = null;
+                if(ruta!= null){
+                    r = rutasFacade.find(ruta.getRutasPK());
+                }
+                TiposClientes tc = null;
+                if(tipoCliente != null){
+                    tc = tiposClientesFacade.find(tipoCliente.getCtipoCliente());
+                }
+                rep.reporteClientesRutasZonas(conRuteo, tc, z, r, estado,
+                        fechaDesde, fechaHasta, todosClientes,
                         StringUtil.convertirListaAString(listadoClientesSeleccionados),
                         usuarioImpresion);
             } else {
@@ -132,6 +146,14 @@ public class LiClientesRutasZonasBean implements Serializable{
                 List<Object[]> lista;
                 String[] columnas;
                 if (conRuteo) {
+                    columnas = new String[]{
+                        "cod_cliente",
+                        "xnombre",
+                        "xdirec",
+                        "cod_ruta",
+                        "xdesc_ruta"};
+                    filename = "liclientesconruteo";
+                } else {
                     columnas = new String[]{
                         "cod_cliente",
                         "xpropietario",
@@ -147,14 +169,6 @@ public class LiClientesRutasZonasBean implements Serializable{
                         "xdesc_tipo",
                         "xtelef"
                     };
-                    filename = "liclientesconruteo";
-                } else {
-                    columnas = new String[]{
-                        "cod_cliente",
-                        "xnombre",
-                        "xdirec",
-                        "cod_ruta",
-                        "xdesc_ruta"};
                     filename = "liclientessinruteo";
                 }
                 lista = clientesRutasZonasFacade.listarParaExcel(stmt, columnas,
@@ -188,6 +202,16 @@ public class LiClientesRutasZonasBean implements Serializable{
             }
         }
         return true;
+    }
+
+    public void handleEstadoChange(AjaxBehaviorEvent event) {
+         if (estado.equals("2")) {
+            this.setHabilitarCalendario(true);
+        } else {
+            this.setHabilitarCalendario(false);
+        }
+        PrimeFaces.current().ajax().update("fechaAltaDesde");
+        PrimeFaces.current().ajax().update("fechaAltaHasta");
     }
     
     public Date getFechaAltaDesde() {
@@ -268,6 +292,14 @@ public class LiClientesRutasZonasBean implements Serializable{
 
     public void setConRuteo(Boolean conRuteo) {
         this.conRuteo = conRuteo;
+    }
+
+    public Boolean getHabilitarCalendario() {
+        return habilitarCalendario;
+    }
+
+    public void setHabilitarCalendario(Boolean habilitarCalendario) {
+        this.habilitarCalendario = habilitarCalendario;
     }
 
     public List<Clientes> getListadoClientesSeleccionados() {

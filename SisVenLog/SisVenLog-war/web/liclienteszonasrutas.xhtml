@@ -45,17 +45,18 @@
                             <center>
 
                                 <p:panel id="pnlParamLiRetornoRecibo" header="LISTADO DE CLIENTES POR ZONA Y RUTA"
-                                         style="width: 50%;">
+                                         style="width: 70%;">
                                     <h:panelGrid columns="2" >
 
                                         <p:outputLabel value="Fecha Alta Desde:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="fechaAltaDesde" value="#{liClientesRutasZonasBean.fechaAltaDesde}" 
-                                                    showOn="button" style="width: 60px;">  
-                                        </p:calendar>
+                                                    showOn="button" style="width: 60px;"
+                                                    disabled="#{!liClientesRutasZonasBean.habilitarCalendario}"/>
 
                                         <p:outputLabel value="Fecha Alta Hasta:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="fechaAltaHasta" value="#{liClientesRutasZonasBean.fechaAltaHasta}" 
-                                                    showOn="button" style="width: 60px;"/>
+                                                    showOn="button" style="width: 60px;"
+                                                    disabled="#{!liClientesRutasZonasBean.habilitarCalendario}"/>
 
                                         <p:outputLabel value="Tipo Cliente" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu id="tipoCliente" value="#{liClientesRutasZonasBean.tipoCliente}" style="width: 300px;" 
@@ -94,10 +95,11 @@
                                         <p:outputLabel for="estado" value="Seleccionar: " style="float: right; font-weight: bold;"/>
                                         <p:fieldset  style="margin-bottom:20px">
                                             <p:selectOneRadio id="estado" layout="grid" columns="1" value="#{liClientesRutasZonasBean.estado}">
+                                                <f:selectItem itemLabel="TODOS" itemValue="4"/>
                                                 <f:selectItem itemLabel="Activos" itemValue="1"/>
                                                 <f:selectItem itemLabel="Clientes Nuevos" itemValue="2"/>
                                                 <f:selectItem itemLabel="Inactivos" itemValue="3"/>
-                                                <f:selectItem itemLabel="TODOS" itemValue="4"/>
+                                                <p:ajax event="valueChange" listener="#{liClientesRutasZonasBean.handleEstadoChange}"/>
                                             </p:selectOneRadio>
                                         </p:fieldset>
                                         
