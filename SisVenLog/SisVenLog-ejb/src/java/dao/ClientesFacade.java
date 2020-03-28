@@ -144,7 +144,7 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         }catch (IllegalArgumentException | ConstraintViolationException ex){
             ex.printStackTrace();
             if(ex.getMessage().contains("try merging the detached and try the remove again")){
-                return "The DELETE statement conflicted with the REFERENCE constraint";
+                return "Error al eliminar cliente, se encuentra referenciado.";
             }
             return ex.getMessage();
         }catch(Exception e){
