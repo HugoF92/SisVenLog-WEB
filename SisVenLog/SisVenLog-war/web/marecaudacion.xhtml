@@ -51,22 +51,27 @@
                             <div class="ui-g">
                                 <div class="ui-g-12">
                                     <div class="card card-w-title">
-                                        <p:dataTable id="tablaRecaudacion" var="itemp" selectionMode="single" reflow="true"
+                                        <p:dataTable id="tablaRecaudacion" var="itemp" selectionMode="single" 
                                                      paginator="true" rows="10" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
                                                      value="#{recaudacionBean.listaRecaudacion}" 
-                                                     rowKey="#{itemp.recaudacionPK.nroPlanilla}"
+                                                     rowKey="#{itemp.recaudacionPK}"
                                                      sortBy="#{itemp.fplanilla}"
-                                                     selection="#{recaudacionBean.recaudacion}">
+                                                     sortOrder="descending"
+                                                     selection="#{recaudacionBean.recaudacion}"
+                                                     widgetVar="wgdatalist">
 
                                             <p:ajax event="rowSelect"
                                                 listener="#{recaudacionBean.onRowSelect}" update="formBtnRecaudacion,formNuevaRecaudacion"/>
+                                            <p:ajax event="sort" update="tablaRecaudacion" process="@form" listener="#{recaudacionBean.ordenacion}"/>
+                                            <p:ajax event="rowDblselect" oncomplete="PF('dlgviewRecaudacion').show();" update="formViewRecaudacion" />
 
                                             <p:column headerText="Nro Planilla" filterBy="#{itemp.recaudacionPK.nroPlanilla}" width="70">
                                                 <h:outputText value="#{itemp.recaudacionPK.nroPlanilla}" />
                                             </p:column>
 
-                                            <p:column headerText="Fecha" filterBy="#{itemp.fplanilla}" sortBy="#{item.fplanilla}" width="90">
+                                            <p:column headerText="Fecha" filterBy="#{itemp.fplanilla}" sortBy="#{item.fplanilla}" width="90"
+                                                      sortFunction="#{recaudacionBean.customSort}" >
                                                 <f:facet name="filter">
                                                     <p:calendar pattern="dd/MM/yyyy" locale="es" mask="true" size="10">
                                                         <p:ajax event="dateSelect" onstart="PF('wgdatalist').filter()" />
@@ -77,9 +82,9 @@
                                                 </h:outputText>
                                             </p:column>
                                             
-                                            <p:column headerText="Entregador" filterBy="#{recaudacionBean.getEntregador(itemp.codEntregador).xnombre}"
-                                                      sortBy="#{recaudacionBean.getEntregador(itemp.codEntregador).xnombre}" width="200">
-                                                <h:outputText value="#{recaudacionBean.getEntregador(itemp.codEntregador).xnombre}" />
+                                            <p:column headerText="Entregador" filterBy="#{itemp.codEntregador.xnombre}"
+                                                      sortBy="#{itemp.codEntregador.xnombre}" width="200">
+                                                <h:outputText value="#{itemp.codEntregador.xnombre}" />
                                             </p:column>
 
                                             <p:column headerText="Zona" width="70">
@@ -231,7 +236,9 @@
 
                                         <p:commandButton value="Cancelar" onstart="PF('dlgNuevRecaudacion').hide();"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                         icon="fa fa-times"/>
+                                                         icon="fa fa-times" update="formNuevaRecaudacion" process="@this">
+                                            <p:resetInput target="formNuevaRecaudacion" />
+                                        </p:commandButton>
                                     </h:panelGrid>
                                 </center>
                             </p:dialog>
@@ -246,8 +253,30 @@
 
                                 <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
                                 <br></br>
-                                <br></br>
-                                <br></br>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Nro.Planilla: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.recaudacionPK.nroPlanilla}" />
+                                    <p:outputLabel value="Fecha " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.fplanilla}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:outputLabel value="Zona:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codZona}" />
+                                    <p:outputLabel value="Entregador:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codEntregador.xnombre}" />
+                                    <p:outputLabel value="Cant.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.kcheques}" />
+                                    <p:outputLabel value="Tot.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tchequesDia}" />
+                                    <p:outputLabel value="Tot.Efectivo: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tefectivo}" />                                    
+                                    <p:outputLabel value="Tot.Depositos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tdepositos}" />                                    
+                                    <p:outputLabel value="Tot.Monedas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tmonedas}" />                                    
+                                    <p:outputLabel value="Tot.Gastos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tgastos}" />                                    
+                                </h:panelGrid>
                                 <br></br>
                                 <center>
                                     <h:panelGrid columns="2">
@@ -344,6 +373,52 @@
 
                                 </h:panelGrid>
 
+                            </p:dialog>
+                        </h:form>
+                        <h:form id="formViewRecaudacion" prependId="false">
+                            <p:growl id="msgViewRecaudacion" showDetail="true"/>
+                            <p:dialog header="Consultar Recaudacion"
+                                      widgetVar="dlgviewRecaudacion"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320"
+                                      id="viewRecaudacion">
+
+                                <br></br>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Nro.Planilla: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.recaudacionPK.nroPlanilla}" />
+                                    <p:outputLabel value="Fecha " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.fplanilla}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:outputLabel value="Zona:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codZona}" />
+                                    <p:outputLabel value="Entregador:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codEntregador.xnombre}" />
+                                    <p:outputLabel value="Cant.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.kcheques}" />
+                                    <p:outputLabel value="Tot.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tchequesDia}" />
+                                    <p:outputLabel value="Tot.Efectivo: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tefectivo}" />                                    
+                                    <p:outputLabel value="Tot.Depositos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tdepositos}" />                                    
+                                    <p:outputLabel value="Tot.Monedas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tmonedas}" />                                    
+                                    <p:outputLabel value="Tot.Gastos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tgastos}" />                                    
+                                    <p:outputLabel value="Tot.Ventas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tventas}" />                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton type="button" value="Salir" onclick="PF('dlgviewRecaudacion').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
                             </p:dialog>
                         </h:form>
                     </div>

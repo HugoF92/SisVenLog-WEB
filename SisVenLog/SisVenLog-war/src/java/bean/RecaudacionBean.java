@@ -5,7 +5,6 @@ import dao.FacturasFacade;
 import dao.RecaudacionDetFacade;
 import dao.RecaudacionFacade;
 import dao.ZonasFacade;
-import entidad.Bancos;
 import entidad.Empleados;
 import entidad.Recaudacion;
 import entidad.RecaudacionDet;
@@ -15,6 +14,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.data.SortEvent;
 
 @ManagedBean
 @SessionScoped
@@ -51,7 +53,6 @@ public class RecaudacionBean implements Serializable {
     private boolean nuevo;
 
     public RecaudacionBean() {
-
         //instanciar();
     }
 
@@ -92,7 +93,6 @@ public class RecaudacionBean implements Serializable {
         this.setHabBtnAct(true);
         this.setHabBtnInac(true);       
         this.nuevo = true;
-
     }
     
     public void prepareEdit(){
@@ -106,7 +106,7 @@ public class RecaudacionBean implements Serializable {
     public void insertar() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String fecha = format.format(this.recaudacion.getFplanilla());
-        Integer entregador = this.facturasFacade.findFacturaByCodEntregadorFecha(this.recaudacion.getCodEntregador(),fecha);
+        Integer entregador = this.facturasFacade.findFacturaByCodEntregadorFecha(this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado(),fecha);
         if(entregador==null){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "No existen facturas de venta para este entregador en la fecha ."+fecha));
             PrimeFaces.current().executeScript("PF('dlgNuevRecaudacion').hide();");
@@ -118,13 +118,13 @@ public class RecaudacionBean implements Serializable {
             this.recaudacion.setTchequesDif(0);
             this.recaudacion.setTpagares(new Long("0"));
             this.recaudacion.setTnotasAtras(new Long("0"));
-            this.recaudacion.setTventas(this.facturasFacade.totaldeFacturasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()));
-            this.recaudacion.setTnotasDev(this.facturasFacade.totaldeDevolucionesPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()));
-            this.recaudacion.setTcreditos(this.facturasFacade.totaldeCreditosPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()));
-            this.recaudacion.setTnotasOtras(this.facturasFacade.totaldeNotasOtrasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()));
-            this.recaudacion.setTchequesDif(this.facturasFacade.totaldeChequesDiffPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()));
-            this.recaudacion.setTpagares(this.facturasFacade.totaldePagaresPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()).longValue());
-            this.recaudacion.setTnotasAtras(this.facturasFacade.totaldeNotasAtrasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador()).longValue());
+            this.recaudacion.setTventas(this.facturasFacade.totaldeFacturasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()));
+            this.recaudacion.setTnotasDev(this.facturasFacade.totaldeDevolucionesPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()));
+            this.recaudacion.setTcreditos(this.facturasFacade.totaldeCreditosPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()));
+            this.recaudacion.setTnotasOtras(this.facturasFacade.totaldeNotasOtrasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()));
+            this.recaudacion.setTchequesDif(this.facturasFacade.totaldeChequesDiffPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()));
+            this.recaudacion.setTpagares(this.facturasFacade.totaldePagaresPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()).longValue());
+            this.recaudacion.setTnotasAtras(this.facturasFacade.totaldeNotasAtrasPorFechaEntregador(fecha,this.recaudacion.getCodEntregador().getEmpleadosPK().getCodEmpleado()).longValue());
             if(this.nuevo){
                 this.recaudacionFacade.create(this.recaudacion);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Recaudacion creada exitosamente."));
@@ -224,14 +224,34 @@ public class RecaudacionBean implements Serializable {
     }
 
     public List<Empleados> getListaEntregadores() {
-        if(this.recaudacion.getCodZona()!=null){
-            return this.entregadorFacade.findEntregadorByZona(this.recaudacion.getCodZona());
-        }
-        return this.listaEntregadores;
+        return this.entregadorFacade.findEntregadores();
+//        if(this.recaudacion !=null && this.recaudacion.getCodZona()!=null){
+//            return this.entregadorFacade.findEntregadorByZona(this.recaudacion.getCodZona());
+//        }
+//        return this.listaEntregadores;
     }
 
     public void setListaEntregadores(List<Empleados> listaEntregadores) {
         this.listaEntregadores = listaEntregadores;
+    }
+
+    public void ordenacion( SortEvent event) {
+        if(event.getSortColumn().getHeaderText().equals("Fecha")){
+            if(event.isAscending()){
+                Collections.sort(this.listaRecaudacion, new Comparator<Recaudacion>() {
+                    public int compare(Recaudacion h1, Recaudacion h2) {
+                        return h1.getFplanilla().compareTo(h2.getFplanilla());
+                    }
+                });                 
+            }else{
+                //descending
+                Collections.sort(this.listaRecaudacion, new Comparator<Recaudacion>() {
+                    public int compare(Recaudacion h1, Recaudacion h2) {
+                        return h1.getFplanilla().compareTo(h2.getFplanilla())*-1;
+                    }
+                });                 
+            }
+        }
     }
 
 }

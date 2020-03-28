@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -213,4 +214,15 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
 
         return respuesta;
     }
+      
+    public TiposDocumentos getTipoDocumentosByCtipo(String ctipoDocum){
+        try{
+            Query q = getEntityManager().createNativeQuery("select * from tipos_documentos where ctipo_docum = "+ctipoDocum);
+            System.out.println(q.toString());
+            return (TiposDocumentos) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
+    }
+      
 }
