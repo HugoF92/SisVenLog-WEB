@@ -8,6 +8,7 @@ package dao;
 
 import entidad.Clientes;
 import entidad.Recibos;
+import entidad.Zonas;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -42,7 +43,7 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona,
+                                                  Zonas zona,
                                                   String discriminar,
                                                   Boolean todosClientes){
         String sql = "SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion, r.icheques, r.xobs, r.mestado," +
@@ -58,8 +59,8 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
             }
         }
        
-        if (codZona != null) {
-            sql += " AND a.cod_zona = " + codZona;
+        if (zona != null) {
+            sql += " AND a.cod_zona = " + zona.getZonasPK().getCodZona();
         }
         
         if ("ND".equals(discriminar)) {
@@ -82,7 +83,7 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta,
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona,
+                                                  Zonas zona,
                                                   String discriminar,
                                                   Boolean todosClientes){
         
@@ -105,8 +106,8 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
             }
         }
         
-        if (codZona != null) {
-            sql += " AND a.cod_zona = " + codZona;
+        if (zona != null) {
+            sql += " AND a.cod_zona = " + zona.getZonasPK().getCodZona();
         }
         
         sql += " UNION ALL" +
@@ -131,8 +132,8 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
             }
         }
         
-        if (codZona != null) {
-            sql += " AND a.cod_zona = " + codZona;
+        if (zona != null) {
+            sql += " AND a.cod_zona = " + zona.getZonasPK().getCodZona();
         }
         
         if ("ND".equals(discriminar)) {

@@ -186,28 +186,28 @@
 				</textElement>
 				<text><![CDATA[TOTAL CLIENTE]]></text>
 			</staticText>
-			<textField evaluationTime="Report" pattern="#,##0">
+			<textField evaluationTime="Report" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="345" y="9" width="94" height="16" uuid="76957852-77d9-46be-899c-de9115581e16"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="452" y="9" width="79" height="16" uuid="ba20aa1e-a2a0-4acb-ae77-9b0dc9f7f9e9"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="551" y="9" width="81" height="16" uuid="979cab95-98fa-4902-9ab9-45606bfae0dc"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="684" y="9" width="70" height="16" uuid="72208046-c3ec-42e3-8f53-c72591be32de"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>

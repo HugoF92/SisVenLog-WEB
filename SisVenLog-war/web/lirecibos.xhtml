@@ -70,34 +70,34 @@
                                         
                                         <p:outputLabel value="Zonas:" style="float: right; font-weight: bold;"/>
                                         
-                                        <p:selectOneMenu id="seleccionZonas" value="#{listadoRecibosClientesBean.zonaSeleccionada}" 
-                                                         filterMatchMode="contains" filter="true"
+                                        <p:selectOneMenu id="seleccionZonas" value="#{listadoRecibosClientesBean.zona}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{ZonasConverter}"
                                                          style="width: 100px;" >
                                         
                                             <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
-                                            <f:selectItems value="#{zonasBean.listar()}" var="zonaLista" 
-                                                           itemValue="#{zonaLista.zonasPK.codZona}" 
-                                                           itemLabel="#{zonaLista.xdesc}"/>
+                                            <f:selectItems value="#{zonasBean.listar()}" var="zona" 
+                                                           itemValue="#{zona.zonasPK.codZona}" 
+                                                           itemLabel="#{zona.xdesc}"/>
                                         </p:selectOneMenu>
                                         
                                         <p:outputLabel value="Discriminar: " style="float: right; font-weight: bold;"/>
                                         <p:selectOneRadio id="discriminarId" value="#{listadoRecibosClientesBean.discriminar}">
-                                            <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
-                                            <f:selectItem itemLabel="Por Cliente" itemValue="PC" />
+                                            <f:selectItem id="noDiscriminarId" itemLabel="No Discriminar" itemValue="ND"/>
+                                            <f:selectItem itemLabel="Por Cliente" itemValue="PC"/>
                                         </p:selectOneRadio>
                                         
                                         <h:outputText value="Con detalles: " style="float: right; font-weight: bold;"/>   
                                         <p:selectBooleanCheckbox id="detallesId" value="#{listadoRecibosClientesBean.conDetalle}" itemLabel="" style="padding-left: 3px"/>
                                         
-                                        <p:outputLabel for="clientesId" value="Clientes:" style="float: right; font-weight: bold;"/>
-                                        
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
+                                            
                                         <h:panelGrid columns="4" >
                                             <p>Todos</p>
-                                            <h:selectBooleanCheckbox id="ocultarBtn" onclick="ocultarClientes()" value="#{listadoRecibosClientesBean.todosClientes}"/>    
+                                            <h:selectBooleanCheckbox id="ocultarBtn" style="width: 18px; height: 18px;" onclick="ocultarClientes()" value="#{listadoRecibosClientesBean.todosClientes}"/>    
                                             <p>Seleccionar Clientes</p>
-                                            <h:selectBooleanCheckbox id="mostrarBtn" onclick="mostrarClientes()" value="#{listadoRecibosClientesBean.seleccionarClientes}"/>
+                                            <h:selectBooleanCheckbox id="mostrarBtn" style="width: 18px; height: 18px;" onclick="mostrarClientes()" value="#{listadoRecibosClientesBean.seleccionarClientes}"/>
                                         </h:panelGrid>
-                                        
+
                                             
                                         <p></p>
                                             
@@ -153,7 +153,6 @@
                 </div>
             </div>
             <script type="text/javascript">
-                
                     function mostrarClientes() {
                         document.getElementById('ocultarBtn').checked = false;                
                         document.getElementById("clientesId").style.display = "block";
@@ -162,8 +161,7 @@
                         document.getElementById('mostrarBtn').checked = false;
                         document.getElementById("clientesId").style.display = "none";
                         document.getElementById("selectItemsClientes").value = "";
-                    };								 
-                
+                    };
             </script>
 
         </h:body>
