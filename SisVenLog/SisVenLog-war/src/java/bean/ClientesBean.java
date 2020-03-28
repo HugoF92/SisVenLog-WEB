@@ -10,6 +10,7 @@ import entidad.Rutas;
 import entidad.TiposClientes;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
@@ -358,17 +360,19 @@ public class ClientesBean implements Serializable {
     }
 
     public void borrar() {
+        String msg = "";
         try {
-            clientes.setCodCliente(-1);
-            clientesFacade.remove(clientes);
+            msg = clientesFacade.remover(clientes);
+            if(msg!= null){
+                throw new Exception(msg);
+            }
             this.clientes = new Clientes();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
             PrimeFaces.current().executeScript("PF('dlgInacCliente').hide();");
-        } catch (Exception e) {
+        }catch (Exception e){
             LOGGER.log(Level.SEVERE, "Error al borrar", e);
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()+"-"+e.getLocalizedMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ",  e.getMessage()));
         }
     }
 

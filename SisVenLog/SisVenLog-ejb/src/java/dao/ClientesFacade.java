@@ -8,7 +8,10 @@ package dao;
 import entidad.Clientes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -132,5 +135,24 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    public String remover(Clientes entity) {
+        try{
+            System.out.println(entity.toString());
+            getEntityManager().remove(entity);
+        }catch (IllegalArgumentException | ConstraintViolationException ex){
+            ex.printStackTrace();
+            if(ex.getMessage().contains("try merging the detached and try the remove again")){
+                return "The DELETE statement conflicted with the REFERENCE constraint";
+            }
+            return ex.getMessage();
+        }catch(Exception e){
+            e.printStackTrace();
+            return e.getMessage();
+
+        }
+        return null;
+        
     }
 }
