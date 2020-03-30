@@ -126,6 +126,11 @@ public class TiposDocumentos implements Serializable {
         this.ctipoDocum = ctipoDocum;
     }
 
+    public TiposDocumentos(String ctipoDocum, String xdesc) {
+        this.ctipoDocum = ctipoDocum;
+        this.xdesc = xdesc;
+    }
+
     public TiposDocumentos(String ctipoDocum, Character mdebCred, Character mafectaStockRes, Character mafectaCtacte, Character mincluIva, Character mfijoSis, short nmaxFilas) {
         this.ctipoDocum = ctipoDocum;
         this.mdebCred = mdebCred;
@@ -310,7 +315,7 @@ public class TiposDocumentos implements Serializable {
 
     @Override
     public String toString() {
-        return "entidad.TiposDocumentos[ ctipoDocum=" + ctipoDocum + " ]";
+        return "entidad.TiposDocumentos[ ctipoDocum =" + ctipoDocum + ", xdesc = "+ xdesc +" ]";
     }
     
 }
