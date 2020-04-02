@@ -63,6 +63,19 @@ public class DateUtil {
 
         return resultado;
     }
+
+     public static String dateToString(Date fecha, String format) {
+        String resultado = "";
+        try {
+            // Se evalua si se pasa un string vacio, sino se asigna un formato por defecto
+            format = format.isEmpty()? "yyyyMMdd" : format;
+            DateFormat dateFormat = new SimpleDateFormat(format);
+            resultado = dateFormat.format(fecha);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return resultado;
+    }
      
     // Suma los días recibidos a la fecha  
     public static Date sumarRestarDiasFecha(Date fecha, int dias) {

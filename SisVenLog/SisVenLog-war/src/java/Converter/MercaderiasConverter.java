@@ -5,14 +5,18 @@
  */
 package Converter;
 
+import dao.MercaderiasFacade;
 import entidad.Mercaderias;
 import entidad.MercaderiasPK;
 import java.io.Serializable;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
+import java.util.List;
 
 /**
  *
@@ -20,19 +24,28 @@ import javax.inject.Named;
  */
 @Named(value = "MercaderiasConverter")
 @ApplicationScoped
-
 public class MercaderiasConverter  implements Converter, Serializable{
+
+    @EJB
+    private MercaderiasFacade facade;
+
+    private List<Mercaderias> mercaderias;
+
+    @PostConstruct
+    public void instanciar() {
+        mercaderias = facade.listarMercaderiasActivas();
+    }
     
-   @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-    {
-        if (value.trim().equals(""))
-        {
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value.trim().equals("")) {
             return null;
-        }
-        else
-        {
-            return new Mercaderias(new MercaderiasPK(new Short("2"), value));
+        } else {
+            return mercaderias.stream()
+                    .filter(m -> m.getMercaderiasPK().getCodMerca().equals(value))
+                    .findAny()
+                    .orElse(null);
+            //return new Mercaderias(new MercaderiasPK(new Short("2"), value));
             //return new Mercaderias(new MercaderiasPK(Integer.parseInt(value), 0));
         }
     }

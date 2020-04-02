@@ -51,6 +51,17 @@ public class LineasFacade extends AbstractFacade<Lineas> {
         return respuesta;
     }
 
+    public List<Lineas> listarLineasClientesNoCompran() {
+        Query q = getEntityManager().createNativeQuery("SELECT l.cod_linea, l.xdesc "
+                + "FROM lineas l, sublineas s "
+                + "WHERE l.cod_linea = s.cod_linea "
+                + "AND exists (SELECT 1 "
+                + "FROM mercaderias m "
+                + "WHERE m.cod_sublinea = s.cod_sublinea "
+                + "AND m.mestado = 'A')", Lineas.class);
+        return q.getResultList();
+    }
+
     public void insertarLineas(Lineas lineas) {
 
         StoredProcedureQuery q = getEntityManager().createStoredProcedureQuery("InsertarLineas");
