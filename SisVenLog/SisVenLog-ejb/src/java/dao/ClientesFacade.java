@@ -140,6 +140,9 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
     public String remover(Clientes entity) {
         try{
             System.out.println(entity.toString());
+            if (!getEntityManager().contains(entity)) {
+                entity = getEntityManager().merge(entity);
+            }
             getEntityManager().remove(entity);
         }catch (IllegalArgumentException | ConstraintViolationException ex){
             ex.printStackTrace();
