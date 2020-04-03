@@ -284,8 +284,8 @@ public class ClientesBean implements Serializable {
                 clientes.setXdiasVisita(concatenarDias());
                 clientes.setXobs(clientes.getXobs());
                 //espacion en blanco por defecto
-                Character a = new Character(' ');
-                clientes.setMformaPago(a);
+                Character d = new Character('D');
+                clientes.setMformaPago(d);
                 clientes.setFalta(new Date());
                 clientesFacade.create(clientes);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));

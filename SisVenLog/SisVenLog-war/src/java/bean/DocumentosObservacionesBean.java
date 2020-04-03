@@ -260,9 +260,10 @@ public class DocumentosObservacionesBean implements Serializable {
    @SuppressWarnings("Convert2Diamond")
     public void insertOrUpdate(){
         if (this.codTipoDocumento.equals("AJ")) {
-            this.documVarios.setXobs(this.observacion);
+            this.documVarios.setXobs(this.observacion.toUpperCase());
             try {
                 this.documVariosFacade.edit(this.documVarios);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Guardados"));
             } catch (Exception e) {
                 e.printStackTrace();
                 this.setHabBtnAct(false);
@@ -273,6 +274,7 @@ public class DocumentosObservacionesBean implements Serializable {
             try {
                 this.notasCompras.setXobs(this.observacion);
                 notasComprasFacade.edit(this.notasCompras);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Guardados"));
             } catch (Exception e) {
                 e.printStackTrace();
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar", e.getMessage()+" - "+e.getLocalizedMessage()));
@@ -292,7 +294,8 @@ public class DocumentosObservacionesBean implements Serializable {
     public void buscar() {
         short codEmpresa = 2;
         Long numeroNumero = this.nroDocumentoNumero;
-        if (this.codTipoDocumento.equals("AJ")) {
+        if(this.codTipoDocumento != null){
+            if (this.codTipoDocumento.equals("AJ")) {
             DocumVarios documentosVarios = new DocumVarios();
             documVariosPK.setCtipoDocum(this.codTipoDocumento);
 //          codigo empresa en durango
@@ -302,6 +305,7 @@ public class DocumentosObservacionesBean implements Serializable {
             try {
                 this.documVarios = this.documVariosFacade.find(this.documVariosPK);
                 documentosVarios = this.documVarios;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
 
             } catch (Exception e) {
                 documentosVarios = null;
@@ -310,12 +314,12 @@ public class DocumentosObservacionesBean implements Serializable {
 
             }
             if (documentosVarios == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error al obtener los datos", "Documento no encontrado"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Información", "Documento no encontrado"));
                 this.setHabBtnAct(false);
             } else {
                 this.codTipoDocumento = documentosVarios.getDocumVariosPK().getCtipoDocum();
                 this.nroDocumentoNumero = new Long(documentosVarios.getDocumVariosPK().getNdocum());
-                this.observacion = documentosVarios.getXobs() != null && !documentosVarios.getXobs().isEmpty() ? documentosVarios.getXobs() : "No tiene observacion";
+                this.observacion = documentosVarios.getXobs() != null && !documentosVarios.getXobs().isEmpty() ? documentosVarios.getXobs().toUpperCase() : " ";
                 this.setHabBtnAct(true);
             }
         }else{
@@ -326,11 +330,11 @@ public class DocumentosObservacionesBean implements Serializable {
             notasComprasPK.setCodEmpr(codEmpresa);
             notasComprasPK.setCodProveed(Short.parseShort(this.codProveedor));
             notasComprasPK.setCtipoDocum(this.codTipoDocumento);
-            String nroConcatenado = this.nroDocumentoEst+this.nroDocumentoExp+this.nroDocumentoNumero.toString();
+            String nroConcatenado = this.nroDocumentoEst+conversorNumeroExp(this.nroDocumentoExp)+conversorNumeroNota(this.nroDocumentoNumero.toString());
             notasComprasPK.setNroNota(new Long(nroConcatenado));
-            
                 this.notasCompras = notasComprasFacade.getNotasComprasByPK(notasComprasPK);
                 notasCompraslocal = this.notasCompras;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
             } catch (Exception e) {
                 e.printStackTrace();
                 notasCompraslocal = null;
@@ -340,17 +344,21 @@ public class DocumentosObservacionesBean implements Serializable {
                 
             }
             if(notasCompraslocal== null){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error al obtener los datos", "Documento no encontrado"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Información", "Documento no encontrado"));
             }else{
                 this.codTipoDocumento = notasCompraslocal.getNotasComprasPK().getCtipoDocum();
                 this.nroDocumentoEst = this.nroDocumentoEst;
                 this.nroDocumentoExp = this.nroDocumentoExp;
                 this.nroDocumentoNumero = numeroNumero;
-                this.observacion = notasCompraslocal.getXobs();
+                this.observacion = notasCompraslocal.getXobs()!=null && !notasCompraslocal.getXobs().isEmpty()? notasCompraslocal.getXobs().toUpperCase():"";
                 this.setHabBtnAct(true);
             }
             
         }
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe seleccionar un tipo de documento."));
+        }
+        
         
     }
 
@@ -386,8 +394,58 @@ public class DocumentosObservacionesBean implements Serializable {
     
     
     
+    public String conversorNumeroNota(String numeroIngresado){
+        String numero = "0000000";
+        int cantidadDigitosNumeroIngresado = numeroIngresado.length();
+        int numeroFin = numero.length()-cantidadDigitosNumeroIngresado;
+        switch(cantidadDigitosNumeroIngresado){
+            case 1:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 2:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 3:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 4:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 5:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 6:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 7:
+                numero = numeroIngresado;
+                break;
+        }
+        if(cantidadDigitosNumeroIngresado<7){
+            numero = numero+numeroIngresado;
+        }
+        
+        return numero;
+    }
     
     
+    public String conversorNumeroExp(String numeroIngresado){
+        String numero = "00";
+        int cantidadDigitosNumeroIngresado = numeroIngresado.length();
+        int numeroFin = numero.length()-cantidadDigitosNumeroIngresado;
+        switch(cantidadDigitosNumeroIngresado){
+            case 1:
+                numero = numero.substring(0,numeroFin);
+                break;
+            case 2:
+                numero = numeroIngresado;
+                break;
+        }
+        if(cantidadDigitosNumeroIngresado==1){
+            numero = numero+numeroIngresado;
+        }
+        return numero;
+    }
     
     
 

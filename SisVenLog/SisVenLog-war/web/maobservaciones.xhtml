@@ -16,7 +16,7 @@
                         <!--Botones Superiores-->
                         <h:form id="formBtnDocumentos" prependId="false">  
 
-                            <h1 align="center">MANTENIMIENTO DE DOCUMENTOS</h1>
+                            <h1 align="center">MANTENIMIENTO DE OBSERVACIONES</h1>
 
                             <p:growl id="msgFormBtnDocumentos" showDetail="true"/>
 
@@ -31,15 +31,6 @@
                                     style="margin-bottom:10px; width: 100px;"
                                     disabled="#{!documentosObservacionesBean.habBtnAct}"
                                     ajax="true"/>
-
-                                <p:commandButton 
-                                    value="Buscar"   
-                                    styleClass="orange-btn raised-btn"
-                                    actionListener="#{documentosObservacionesBean.buscar()}"
-                                    style="margin-bottom:10px; width: 100px;"
-                                    icon="fa fa-search"
-                                    ajax="true"
-                                    update="formBtnDocumentos"/>
 
                                 <p:commandButton 
                                     value="Limpiar"
@@ -84,24 +75,34 @@
                                             
 
                                         </h:panelGrid>
-                                        <h:panelGrid columns="4">
+                                        <h:panelGrid columns="5">
 
                                             <p:outputLabel value="Número " style="font-weight: bold;text-align: left;width: 150px;margin-right: 60px;"/>
 
                                             <p:inputText id="nroDocumentoEst" value="#{documentosObservacionesBean.nroDocumentoEst}" 
                                                          tabindex="1" style="width: 50px;"
                                                          onkeyup="this.value = this.value.toUpperCase()" 
-                                                         rendered="#{documentosObservacionesBean.onTipoDocumentoDropDownChange()}"/>
+                                                         rendered="#{documentosObservacionesBean.onTipoDocumentoDropDownChange()}"
+                                                         maxlength="1" onkeypress="return isNumberKey(event)"/>
 
                                             <p:inputText id="nroDocumentoExp" value="#{documentosObservacionesBean.nroDocumentoExp}" 
                                                          tabindex="1" style="width: 50px;"
                                                          onkeyup="this.value = this.value.toUpperCase()" 
-                                                         rendered="#{documentosObservacionesBean.onTipoDocumentoDropDownChange()}"/>
+                                                         rendered="#{documentosObservacionesBean.onTipoDocumentoDropDownChange()}"
+                                                         maxlength="2" onkeypress="return isNumberKey(event)"/>
 
                                             <p:inputText id="nroDocumentoNumero" value="#{documentosObservacionesBean.nroDocumentoNumero}" 
                                                          tabindex="1" style="width: 150px;"
-                                                         onkeyup="this.value = this.value.toUpperCase()"/>
-
+                                                         onkeyup="this.value = this.value.toUpperCase()"
+                                                         maxlength="7" onkeypress="return isNumberKey(event)"/>
+                                            <p:commandButton 
+                                                styleClass="orange-btn raised-btn"
+                                                actionListener="#{documentosObservacionesBean.buscar()}"
+                                                style="margin-bottom:10px; width: 50px; margin-top: 10px;"
+                                                icon="fa fa-search"
+                                                ajax="true"
+                                                update="formBtnDocumentos"/>
+                                            
                                         </h:panelGrid>
                                         <h:panelGrid columns="2">
                                             <p:outputLabel value="Observación" style="font-weight: bold; float: right;margin-right: 27px;"/>
