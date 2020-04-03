@@ -284,7 +284,7 @@ public class ClientesBean implements Serializable {
                 clientes.setXdiasVisita(concatenarDias());
                 clientes.setXobs(clientes.getXobs());
                 //espacion en blanco por defecto
-                Character d = new Character('D');
+                Character d = new Character(' ');
                 clientes.setMformaPago(d);
                 clientes.setFalta(new Date());
                 clientesFacade.create(clientes);

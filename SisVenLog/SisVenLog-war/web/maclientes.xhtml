@@ -513,7 +513,9 @@
                                             
                                             <p:column headerText="Fecha Alta" filterBy="#{itemp.falta}" 
                                                       sortBy="#{itemp.falta}">
-                                                <h:outputText value="#{itemp.falta}" />
+                                                <h:outputText value="#{itemp.falta}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
                                             </p:column>
 
                                         </p:dataTable>
