@@ -21,7 +21,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import util.DateUtil;
+import util.ExceptionHandlerView;
 import util.LlamarReportes;
 import util.StringUtil;
 
@@ -47,8 +50,13 @@ public class ListadoRecibosClientesBean implements Serializable{
     private String zonaDes;
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
+    private String filtro;
+    private Clientes clientes;
+    private String contenidoError;
+    private String tituloError;
+    private Integer codigoClienteLab;
+    private String nombreClientLabe;
     
-            
     @EJB
     private ClientesFacade clientesFacade;
     
@@ -64,11 +72,14 @@ public class ListadoRecibosClientesBean implements Serializable{
         listadoClientes = listarClientes();
         setDiscriminar("ND");
         setTodosClientes(true);
+        setSeleccionarClientes(false);
+        listadoClientesSeleccionados = new ArrayList<>();
     }
     
     public void limpiarFormulario(){
         
         listadoClientes = new ArrayList<>();
+        listadoClientesSeleccionados = new ArrayList<>();
         fechaReciboDesde = null;
         fechaReciboHasta = null;
         nroReciboDesde = 0;
@@ -490,7 +501,7 @@ public class ListadoRecibosClientesBean implements Serializable{
     }
     
     public void ejecutar(String tipo) {        
-        if (validar()) {
+        //if (validar()) {
             try {
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
@@ -579,10 +590,10 @@ public class ListadoRecibosClientesBean implements Serializable{
             } catch (Exception e) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Error al generar archivo."));
             }
-        }
+       // }
         
     }
-    private Boolean validar(){
+    /*private Boolean validar(){
         if (fechaReciboDesde == null) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha desde.", "Debe ingresar fecha desde."));            
             return false;
@@ -591,11 +602,11 @@ public class ListadoRecibosClientesBean implements Serializable{
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha hasta."));            
                 return false;
             }else{
-                if (nroReciboDesde == 0) {
+                if (nroReciboDesde < 0) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo desde.", "Debe ingresar un número de recibo desde."));            
                     return false;
                 }else{
-                    if (nroReciboHasta == 0) {
+                    if (nroReciboHasta <= 0) {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo hasta.", "Debe ingresar un número de recibo hasta."));            
                         return false;
                     }
@@ -603,7 +614,42 @@ public class ListadoRecibosClientesBean implements Serializable{
             }
         }
         return true;
+    }*/
+    
+    //JLVC 01-04-2020; seleccion de clientes
+    public void inicializarBuscadorClientes(){
+        listadoClientes = new ArrayList<>();
+        //listadoClientesSeleccionados = new ArrayList<>();
+        clientes = new Clientes();
+        filtro = "";
+        listarClientesBuscador();
+        System.out.println("SE INICIALIZA EL BUSCADOR!!!!!!!!!!_____________");
     }
+    
+    public void listarClientesBuscador(){
+        try{
+            listadoClientes = clientesFacade.buscarPorFiltro(filtro);
+        }catch(Exception e){
+            RequestContext.getCurrentInstance().update("exceptionDialog");
+            contenidoError = ExceptionHandlerView.getStackTrace(e);
+            tituloError = "Error en la lectura de datos de clientes.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
+            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+        }
+        
+    }
+    
+    public void onRowSelect(SelectEvent event) {
+        if (getClientes() != null) {
+            if (getClientes().getXnombre() != null) {
+                codigoClienteLab = getClientes().getCodCliente();
+                nombreClientLabe = getClientes().getXnombre();
+                RequestContext.getCurrentInstance().update("panel_buscador_documentos");
+                RequestContext.getCurrentInstance().execute("PF('dlgBuscarClientes').hide();");
+            }
+        }
+    }
+    
     
     public Date getFechaReciboDesde() {
         return fechaReciboDesde;
@@ -630,18 +676,6 @@ public class ListadoRecibosClientesBean implements Serializable{
 
     public void setListadoClientesSeleccionados(List<Clientes> listadoClientesSeleccionados) {
         this.listadoClientesSeleccionados = listadoClientesSeleccionados;
-    }
-
-    
-    public List<Clientes> getListadoClientes() {
-        if (null == this.listadoClientes) {
-            listadoClientes = new ArrayList<>();
-        }
-        return listadoClientes;
-    }
-
-    public void setListadoClientes(List<Clientes> listadoClientes) {
-        this.listadoClientes = listadoClientes;
     }
 
     public String getDiscriminar() {
@@ -727,4 +761,61 @@ public class ListadoRecibosClientesBean implements Serializable{
             System.out.println("todosClientes: " + this.todosClientes);
         }*/
     }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
+
+    public Clientes getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(Clientes clientes) {
+        this.clientes = clientes;
+    }
+
+    public String getContenidoError() {
+        return contenidoError;
+    }
+
+    public void setContenidoError(String contenidoError) {
+        this.contenidoError = contenidoError;
+    }
+
+    public String getTituloError() {
+        return tituloError;
+    }
+
+    public void setTituloError(String tituloError) {
+        this.tituloError = tituloError;
+    }
+
+    public Integer getCodigoClienteLab() {
+        return codigoClienteLab;
+    }
+
+    public void setCodigoClienteLab(Integer codigoClienteLab) {
+        this.codigoClienteLab = codigoClienteLab;
+    }
+
+    public String getNombreClientLabe() {
+        return nombreClientLabe;
+    }
+
+    public void setNombreClientLabe(String nombreClientLabe) {
+        this.nombreClientLabe = nombreClientLabe;
+    }
+
+    public List<Clientes> getListadoClientes() {
+        return listadoClientes;
+    }
+
+    public void setListadoClientes(List<Clientes> listadoClientes) {
+        this.listadoClientes = listadoClientes;
+    }
+    
 }

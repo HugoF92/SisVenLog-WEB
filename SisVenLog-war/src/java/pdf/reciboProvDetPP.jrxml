@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboProvDetPP" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.024520183047608"/>
-	<property name="ireport.x" value="36"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
@@ -33,13 +33,13 @@
 	<variable name="totalEfe" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
-	<variable name="total_recibo" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
+	<variable name="total_recibo" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
-	<variable name="total_cheque" class="java.math.BigDecimal" incrementType="Column" calculation="Sum">
+	<variable name="total_cheque" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
-	<variable name="total_reten" class="java.math.BigDecimal" incrementType="Column">
+	<variable name="total_reten" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
 	<background>
@@ -227,11 +227,11 @@
 				<text><![CDATA[IMPORTE FACT. / CHEQUE]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="282" y="85" width="73" height="14" uuid="93128d14-416a-446e-a1e9-140abfd3fc66"/>
+				<reportElement x="282" y="85" width="46" height="14" uuid="93128d14-416a-446e-a1e9-140abfd3fc66"/>
 				<textFieldExpression><![CDATA[$P{provCod}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="358" y="85" width="230" height="14" uuid="da2ddc56-32ef-430d-830c-74344c559f22"/>
+				<reportElement x="329" y="85" width="230" height="14" uuid="da2ddc56-32ef-430d-830c-74344c559f22"/>
 				<textFieldExpression><![CDATA[$P{provDesc}]]></textFieldExpression>
 			</textField>
 		</band>
