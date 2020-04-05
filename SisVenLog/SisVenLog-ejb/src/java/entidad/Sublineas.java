@@ -72,6 +72,8 @@ public class Sublineas implements Serializable {
     @JoinColumn(name = "cod_linea", referencedColumnName = "cod_linea")
     @ManyToOne
     private Lineas codLinea;
+    @Column(name = "mestado")
+    private Character mestado;
 
     public Sublineas() {
     }
@@ -170,6 +172,13 @@ public class Sublineas implements Serializable {
         this.cusuario = cusuario;
     }
 
+    public Character getMestado() {
+        return mestado;
+    }
+
+    public void setMestado(Character mestado) {
+        this.mestado = mestado;
+    }
 
     @XmlTransient
     public Collection<Mercaderias> getMercaderiasCollection() {

@@ -67,4 +67,12 @@ public class LineasFacade extends AbstractFacade<Lineas> {
         q.execute();
 
     }
+
+    public List<Lineas> listarLineasActivas() {
+        Query q = getEntityManager().createNativeQuery("SELECT l.cod_linea, l.xdesc "
+                + "FROM lineas l "
+                + "WHERE l.mestado = 'A' "
+                + "ORDER BY l.xdesc", Lineas.class);
+        return q.getResultList();
+    }
 }
