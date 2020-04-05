@@ -13,6 +13,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -69,10 +73,18 @@ public class Recaudacion implements Serializable {
     @Column(name = "fplanilla")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fplanilla;
-    @Basic(optional = false)
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "cod_entregador")
+//    private short codEntregador;
+//    @JoinColumn(name = "cod_entregador", referencedColumnName = "cod_empleado", insertable = false, updatable = false)
+    @JoinColumns({
+        @JoinColumn(name = "cod_entregador", referencedColumnName = "cod_empleado"),
+        @JoinColumn(name = "cod_empr", referencedColumnName = "cod_empr" , insertable = false , updatable = false)    
+    })
+    @ManyToOne(optional = false)
     @NotNull
-    @Column(name = "cod_entregador")
-    private short codEntregador;
+    private Empleados codEntregador;
     @Basic(optional = false)
     @NotNull
     @Column(name = "tventas")
@@ -158,7 +170,7 @@ public class Recaudacion implements Serializable {
         this.recaudacionPK = recaudacionPK;
     }
 
-    public Recaudacion(RecaudacionPK recaudacionPK, Date fplanilla, short codEntregador, long tventas, long tnotasDev, long tchequesDia, long kcheques, long nroBoleta, long tefectivo, long tmonedas, long tcreditos, long tgastos, long tnotasOtras, long tdiferencia, long tchequesDif, String codZona) {
+    public Recaudacion(RecaudacionPK recaudacionPK, Date fplanilla, Empleados codEntregador, long tventas, long tnotasDev, long tchequesDia, long kcheques, long nroBoleta, long tefectivo, long tmonedas, long tcreditos, long tgastos, long tnotasOtras, long tdiferencia, long tchequesDif, String codZona) {
         this.recaudacionPK = recaudacionPK;
         this.fplanilla = fplanilla;
         this.codEntregador = codEntregador;
@@ -197,11 +209,11 @@ public class Recaudacion implements Serializable {
         this.fplanilla = fplanilla;
     }
 
-    public short getCodEntregador() {
+    public Empleados getCodEntregador() {
         return codEntregador;
     }
 
-    public void setCodEntregador(short codEntregador) {
+    public void setCodEntregador(Empleados codEntregador) {
         this.codEntregador = codEntregador;
     }
 

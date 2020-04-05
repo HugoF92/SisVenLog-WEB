@@ -5,18 +5,18 @@ import bean.RutasBean;
 import dao.ZonasFacade;
 import entidad.Zonas;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
 import org.primefaces.PrimeFaces;
-//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class BuscadorZonasBean {
+public class BuscadorZonasBean implements Serializable {
 
     @EJB
     private ZonasFacade zonasFacade;

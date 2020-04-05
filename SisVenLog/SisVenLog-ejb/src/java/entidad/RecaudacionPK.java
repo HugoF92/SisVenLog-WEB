@@ -26,7 +26,7 @@ public class RecaudacionPK implements Serializable {
     @NotNull
     @Column(name = "nro_planilla")
     private long nroPlanilla;
-
+    
     public RecaudacionPK() {
     }
 
@@ -78,6 +78,5 @@ public class RecaudacionPK implements Serializable {
     @Override
     public String toString() {
         return "entidad.RecaudacionPK[ codEmpr=" + codEmpr + ", nroPlanilla=" + nroPlanilla + " ]";
-    }
-    
+    }   
 }

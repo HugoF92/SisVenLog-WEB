@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacND" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.1269722013523695"/>
-	<property name="ireport.x" value="29"/>
+	<property name="ireport.x" value="89"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
@@ -64,7 +64,7 @@
 	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$V{retencion}]]></variableExpression>
 	</variable>
-	<variable name="irecibo_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$V{total}]]></variableExpression>
 	</variable>
 	<background>
@@ -373,28 +373,28 @@
 			<line>
 				<reportElement x="478" y="3" width="324" height="1" uuid="3a8ba28b-1f0d-41f5-96b0-a4e2f6822a0c"/>
 			</line>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="567" y="14" width="68" height="14" uuid="716c7752-5b33-4ba5-800b-895d9b9a206f"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="493" y="14" width="65" height="14" uuid="73e5b8d2-dffb-4481-b94b-efc982afc25c"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="644" y="14" width="67" height="14" uuid="ead39424-4379-48b6-ab8c-09e1204fb56e"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="724" y="14" width="65" height="14" uuid="5606c8ff-b826-4190-b4f1-190be1e6fffc"/>
 				<textElement textAlignment="Right">
 					<font isBold="true" isStrikeThrough="false"/>

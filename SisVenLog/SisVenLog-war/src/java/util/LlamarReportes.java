@@ -10,6 +10,9 @@ import entidad.Bancos;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import entidad.Proveedores;
+import entidad.Rutas;
+import entidad.TiposClientes;
+import entidad.TiposDocumentos;
 import entidad.Zonas;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2253,6 +2257,44 @@ public class LlamarReportes {
         }
     }
 
+    public void reporteClientesCreditos(String fechaFacDesde, String fechaFacHasta,
+            Zonas zona, Integer nroPromedio, Empleados vendedor, String discriminar,
+            String listaCodClientes, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaFacDesde);
+            param.put("fechaHasta", fechaFacHasta);
+            param.put("zona", zona != null? zona.getXdesc():null);
+            param.put("npromedio", nroPromedio);
+            param.put("vendedor", vendedor != null? vendedor.getXnombre():null);
+            param.put("discriminar", discriminar);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = "liconcred.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liconcred.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibos(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, String clientesRepo, String zonaDes,
             String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
@@ -2316,6 +2358,56 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+
+    public void reporteClientesRutasZonas(Boolean conRuteo, TiposClientes tipoCliente,
+            Zonas zona, Rutas ruta, String estado, String fechaAltaDesde,
+            String fechaAltaHasta, Boolean todosClientes, String listaCodClientes,
+            String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("codTipoCliente", tipoCliente == null ? null: tipoCliente.getCtipoCliente());
+            param.put("tipoCliente", tipoCliente == null ? null: tipoCliente.getXdesc());
+            param.put("codZona", zona == null? null:zona.getZonasPK().getCodZona());
+            param.put("zona", zona == null? null: zona.getXdesc());
+            param.put("codRuta", ruta ==null? null : ruta.getRutasPK().getCodRuta());
+            param.put("ruta", ruta ==null? null : ruta.getXdesc());
+            param.put("estado", Integer.parseInt(estado));
+            param.put("fechaAltaDesde", fechaAltaDesde);
+            param.put("fechaAltaHasta", fechaAltaHasta);
+            param.put("todosClientes", todosClientes);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+
+            String report;
+            String filename = "liclientes";
+            
+            if(conRuteo) {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesConRuteo.jasper");
+                filename += "conruteo.pdf";
+            } else {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesSinRuteo.jasper");
+                filename += "sinruteo.pdf";
+            }
+
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibosCom(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, Proveedores provSeleccionado, String usuImprime, String tipo, 
             String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
@@ -2521,6 +2613,38 @@ public class LlamarReportes {
             escapedData = "\"" + data + "\"";
         }
         return escapedData;
+    }
+
+    public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
+            String vendedor, String canalDescripcion,
+            String estado, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("desde", fechaInicial);
+            param.put("hasta", fechaFinal);
+            param.put("vendedor", vendedor);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("canal", canalDescripcion);
+            param.put("estado", Integer.parseInt(estado));
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=limigrapedidos.pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
     
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacSubReport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
 	<property name="ireport.zoom" value="1.9487171000000054"/>
-	<property name="ireport.x" value="213"/>
+	<property name="ireport.x" value="719"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="fechaRecDesde" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -46,16 +46,16 @@ SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irec
 	<field name="frecibo" class="java.sql.Timestamp"/>
 	<field name="mestado" class="java.lang.String"/>
 	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{iefectivo}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{iefectivo}]]></variableExpression>
 	</variable>
 	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{icheques}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{icheques}]]></variableExpression>
 	</variable>
 	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{iretencion}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{iretencion}]]></variableExpression>
 	</variable>
 	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{irecibo}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{irecibo}]]></variableExpression>
 	</variable>
 	<variable name="estado" class="java.lang.String">
 		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO" )]]></variableExpression>
@@ -157,32 +157,32 @@ SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irec
 				</textElement>
 				<text><![CDATA[TOTAL CLIENTE]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="268" y="5" width="161" height="13" uuid="a8cb1042-e563-402c-8a3d-1a4832aedc95"/>
 				<textFieldExpression><![CDATA[$F{xnombre2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="434" y="5" width="100" height="13" uuid="76957852-77d9-46be-899c-de9115581e16"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="545" y="5" width="67" height="13" uuid="ba20aa1e-a2a0-4acb-ae77-9b0dc9f7f9e9"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="619" y="5" width="68" height="13" uuid="979cab95-98fa-4902-9ab9-45606bfae0dc"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="702" y="5" width="65" height="13" uuid="72208046-c3ec-42e3-8f53-c72591be32de"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>

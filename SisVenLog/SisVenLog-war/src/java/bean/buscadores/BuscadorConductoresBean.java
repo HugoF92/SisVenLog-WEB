@@ -4,18 +4,18 @@ import bean.DepositosBean;
 import dao.ConductoresFacade;
 import entidad.Conductores;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
 import org.primefaces.PrimeFaces;
-//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class BuscadorConductoresBean {
+public class BuscadorConductoresBean implements Serializable {
 
     @EJB
     private ConductoresFacade conductoresFacade;

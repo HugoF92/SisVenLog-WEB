@@ -40,5 +40,12 @@ public class CanalesVendedoresFacade extends AbstractFacade<CanalesVendedores> {
         Query q = em.createNativeQuery(sql, CanalesVendedores.class);
         return q.getResultList();
     }
-    
+ 
+    public boolean buscarCanalEnCanalDeVendedores(short codVendedor, String codCanal){
+        String sql = "select * from canales_vendedores where cod_vendedor = "+codVendedor+" and cod_canal = "+codCanal+" order by cod_canal ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        return resultados.size() > 0;
+    }
 }

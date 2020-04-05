@@ -3,13 +3,13 @@ package bean.listados;
 import dao.ExcelFacade;
 import dao.MercaderiasFacade;
 import dao.PersonalizedFacade;
-import dao.TiposDocumentosFacade;
 import dto.LiMercaSinDto;
 import entidad.Mercaderias;
 import entidad.MercaderiasPK;
 import entidad.Zonas;
 import entidad.ZonasPK;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
-import org.primefaces.model.DualListModel;
 import util.LlamarReportes;
 
 @ManagedBean

@@ -5,9 +5,13 @@
  */
 package Converter;
 
+import dao.RutasFacade;
 import entidad.Rutas;
 import entidad.RutasPK;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -19,6 +23,9 @@ import javax.inject.Named;
 @ApplicationScoped
 
 public class RutasConverter  implements Converter, Serializable{
+
+    @EJB
+    private RutasFacade facade;
     
    @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value)
@@ -29,20 +36,26 @@ public class RutasConverter  implements Converter, Serializable{
         }
         else
         {
-            return new Rutas(new RutasPK(new Short("2"), Short.parseShort(value)));
+            return facade.find(new RutasPK(new Short("2"), Short.parseShort(value)));
+            //return new Rutas(new RutasPK(new Short("2"), Short.parseShort(value)));
         }
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value)
     {
-        if (value == null || value.equals(""))
-        {
+        if (value == null || (value instanceof String && ((String) value).length() == 0)) {
             return "";
         }
-        else
-        {
-            return String.valueOf(((Rutas) value).getRutasPK().getCodRuta());
+        if (value instanceof Rutas) {
+            Rutas r = (Rutas) value;
+            return r.getRutasPK().getCodRuta() + "";
+        } else {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+                    "object {0} is of type {1}; expected type: {2}",
+                    new Object[]{value, value.getClass().getName(),
+                        Rutas.class.getName()});
+            return null;
         }
     }
 
