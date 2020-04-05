@@ -9,6 +9,7 @@ import dto.LiMercaSinDto;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import entidad.Proveedores;
+import entidad.TiposDocumentos;
 import entidad.Zonas;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2230,6 +2232,42 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+
+    public void reporteDocumentosFaltantes(Long nroDesde, Long nroHasta,
+            TiposDocumentos tipoDocumento, Date fechaInicial, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("nroDesde", nroDesde);
+            param.put("nroHasta", nroHasta);
+            param.put("tipoDocumento", tipoDocumento == null ? null : tipoDocumento.getXdesc());
+            param.put("fechaInicial", fechaInicial == null ? "" : DateUtil.dateToString(fechaInicial, "dd/MM/yyyy"));
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+            
+
+            String report;
+            String filename = "rfacfalta.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/docFaltantes.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibosCom(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, Proveedores provSeleccionado, String usuImprime, String tipo, 
             String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
