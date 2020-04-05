@@ -8,11 +8,16 @@ package dao;
 import dto.PedidoDto;
 import entidad.Pedidos;
 import entidad.PedidosPK;
+import entidad.TmpPedidos;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -157,4 +162,26 @@ public class PedidosFacade extends AbstractFacade<Pedidos> {
         q.executeUpdate();
     }
     
+    public List<TmpPedidos> datosPendientesPedidos(Short codVendedor ,Date fechaPedido){
+        String fecha = this.dateToString(fechaPedido);
+        String sql = " SELECT * FROM tmp_pedidos WHERE (ESTADO= '' OR ESTADO = 'R') AND facfecha = '"+fecha+"' ";
+        if ( codVendedor !=null){
+            sql += " AND cod_vendedor = "+codVendedor+" ";
+        }
+        sql += " order by nroped ";
+        Query q = this.em.createNativeQuery(sql,TmpPedidos.class);
+        System.out.println(q.toString());
+        return q.getResultList();
+    }
+    
+    private String dateToString(Date fecha) {
+        String resultado = "";
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            resultado = dateFormat.format(fecha);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al convertir fecha"));
+        }
+        return resultado;
+    }
 }

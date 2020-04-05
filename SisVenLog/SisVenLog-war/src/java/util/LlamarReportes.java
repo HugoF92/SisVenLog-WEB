@@ -11,6 +11,7 @@ import entidad.Empleados;
 import entidad.Proveedores;
 import entidad.Rutas;
 import entidad.TiposClientes;
+import entidad.TiposDocumentos;
 import entidad.Zonas;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2262,6 +2264,7 @@ public class LlamarReportes {
                 report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesSinRuteo.jasper");
                 filename += "sinruteo.pdf";
             }
+
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 

@@ -27,7 +27,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import util.ExceptionHandlerView;
 
@@ -121,11 +122,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
         try{
             listadoTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentoParaConsultaDeVentas();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de tipos de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoTiposDocumentos;
     }
@@ -134,22 +137,26 @@ public class ConsultaDocumentoVentasBean implements Serializable{
         if(codigoClienteLab != null){
             if(codigoClienteLab == 0){
                 //mostrar busqueda de clientes
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').show();");
             }else{
                 try{
                     Clientes clienteBuscado = clientesFacade.find(codigoClienteLab);
                     if(clienteBuscado == null){
                         //mostrar busqueda de clientes
-                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+                        PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').show();");
                     }else{
                         this.nombreClientLabe = clienteBuscado.getXnombre();
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de clientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 }
             }
         }
@@ -206,11 +213,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
                                                                 codigoClienteLab, 
                                                                 nroDocumentoLab);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en búsqueda de pedidos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         return listadoPedidosDto;
     }
@@ -227,11 +236,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
                                                                     tipoDocumentoLab, 
                                                                     codigoClienteLab);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en búsqueda de facturas.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         return listadoFacturasDto;
     }
@@ -248,11 +259,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
                                                                             tipoDocumentoLab, 
                                                                             codigoClienteLab);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en búsqueda de notas de ventas.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         return listadoNotaVentaDto;
     }
@@ -279,11 +292,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
         try{
             listaClientes = clientesFacade.buscarPorFiltro(filtro);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de clientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         
     }
@@ -293,8 +308,10 @@ public class ConsultaDocumentoVentasBean implements Serializable{
             if (getClientes().getXnombre() != null) {
                 codigoClienteLab = getClientes().getCodCliente();
                 nombreClientLabe = getClientes().getXnombre();
-                RequestContext.getCurrentInstance().update("panel_buscador_documentos");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').hide();");
+//                RequestContext.getCurrentInstance().update("panel_buscador_documentos");
+                PrimeFaces.current().ajax().update("panel_buscador_documentos");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').hide();");
             }
         }
     }
@@ -308,11 +325,13 @@ public class ConsultaDocumentoVentasBean implements Serializable{
             fechaFacturaSeleccionada = facturaDto == null ? null : facturaDto.getFactura().getFacturasPK().getFfactur();
             listadoCtaCteDto = cuentasCorrientesFacade.listadoDeFacturasCuentasCorrientesPorNrofacturaYFecha(nroFacturaSeleccionada, fechaFacturaSeleccionada);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la busqueda de datos de cuentas corrientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
     

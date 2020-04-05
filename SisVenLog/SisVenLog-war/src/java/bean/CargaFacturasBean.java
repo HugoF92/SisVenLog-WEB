@@ -20,7 +20,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -241,8 +242,8 @@ public class CargaFacturasBean implements Serializable {
             //    facturasFacade.insertarFacturas(facturas);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevCargaF').hide();");
                 instanciar();
 
             
@@ -270,8 +271,8 @@ public class CargaFacturasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditCargaF').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditCargaF').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditCargaF').hide();");
             }
 
         } catch (Exception e) {
@@ -286,7 +287,8 @@ public class CargaFacturasBean implements Serializable {
             this.facturas = new Facturas();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacCargaF').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacCargaF').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacCargaF').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -314,17 +316,20 @@ public class CargaFacturasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCargaF').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCargaF').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCargaF').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCargaF').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCargaF').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCargaF').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCargaF').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCargaF').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCargaF').hide();");
     }
 
 }

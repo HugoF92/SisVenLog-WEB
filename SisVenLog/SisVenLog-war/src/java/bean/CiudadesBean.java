@@ -11,7 +11,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -138,8 +139,8 @@ public class CiudadesBean implements Serializable {
                 ciudadesFacade.insertarCiudad(ciudades);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevCiud').hide();");
                 instanciar();
 
             
@@ -167,8 +168,8 @@ public class CiudadesBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditCiud').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditCiud').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditCiud').hide();");
             }
 
         } catch (Exception e) {
@@ -183,7 +184,8 @@ public class CiudadesBean implements Serializable {
             this.ciudades = new Ciudades();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacCiud').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacCiud').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacCiud').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -211,16 +213,20 @@ public class CiudadesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCiud').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCiud').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCiud').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCiud').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCiud').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCiud').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCiud').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCiud').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCiud').hide();");
 
     }
 

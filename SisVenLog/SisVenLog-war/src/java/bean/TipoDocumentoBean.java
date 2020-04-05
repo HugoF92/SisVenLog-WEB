@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -96,7 +97,8 @@ public class TipoDocumentoBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formTipoDocumento");
+//    RequestContext.getCurrentInstance().update("formTipoDocumento");
+        PrimeFaces.current().ajax().update("formTipoDocumento");
     }
 
     public String getFiltro() {
@@ -136,7 +138,7 @@ public class TipoDocumentoBean implements Serializable {
             tipoDocumentoFacade.create(tipoDocumento);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoDocumento').hide();");
 
             instanciar();
 
@@ -163,7 +165,7 @@ public class TipoDocumentoBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditTipoDocumento').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditTipoDocumento').hide();");
 
             }
 
@@ -178,7 +180,7 @@ public class TipoDocumentoBean implements Serializable {
             tipoDocumentoFacade.remove(tipoDocumento);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacTipoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacTipoDocumento').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -223,16 +225,16 @@ public class TipoDocumentoBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoDocumento').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoDocumento').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoDocumento').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoDocumento').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoDocumento').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoDocumento').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoDocumento').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevTipoDocumento').hide();");
 
     }
 

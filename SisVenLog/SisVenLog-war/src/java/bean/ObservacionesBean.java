@@ -13,7 +13,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -114,7 +115,8 @@ public class ObservacionesBean implements Serializable {
         
         listar();
 
-        RequestContext.getCurrentInstance().update("formDocumVarios");
+//        RequestContext.getCurrentInstance().update("formDocumVarios");
+        PrimeFaces.current().ajax().update("formDocumVarios");
     }
 
     public String getFiltro() {
@@ -150,7 +152,7 @@ public class ObservacionesBean implements Serializable {
           //  xdescFacade.insertarDocumVarios(xdesc);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevDocumVarios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevDocumVarios').hide();");
 
             instanciar();
 
@@ -177,7 +179,7 @@ public class ObservacionesBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditDocumVarios').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditDocumVarios').hide();");
 
             }
 
@@ -193,7 +195,7 @@ public class ObservacionesBean implements Serializable {
             this.xdesc = new DocumVarios();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacDocumVarios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacDocumVarios').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -222,16 +224,16 @@ public class ObservacionesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDocumVarios').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarDocumVarios').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevDocumVarios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevDocumVarios').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDocumVarios').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevDocumVarios').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarDocumVarios').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevDocumVarios').hide();");
 
     }
 

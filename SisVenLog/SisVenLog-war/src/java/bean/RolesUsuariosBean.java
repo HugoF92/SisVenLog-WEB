@@ -18,11 +18,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -217,7 +216,7 @@ public class RolesUsuariosBean implements Serializable {
                 rolesFacade.create(roles);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevDepo').hide();");
 
                 instanciar();
                         
@@ -248,7 +247,7 @@ public class RolesUsuariosBean implements Serializable {
                 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditDepo').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditDepo').hide();");
 
             }
 
@@ -264,7 +263,7 @@ public class RolesUsuariosBean implements Serializable {
             this.roles = new Roles();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacPers').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacPers').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Ocurrió un error."));
         }

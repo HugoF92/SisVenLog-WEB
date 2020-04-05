@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacSubReport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
+	<property name="ireport.zoom" value="1.9487171000000054"/>
+	<property name="ireport.x" value="719"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fechaRecDesde" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fechaRecHasta" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nroRecDesde" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nroRecHasta" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cod_cliente_det" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[;WITH principalCTE
+AS
+(
+	SELECT r.*,  t.cod_cliente as cod_cliente2, t.xnombre as xnombre, t.xnombre as xnombre2
+	FROM recibos r , clientes t, rutas a
+	WHERE r.cod_empr = 2
+	AND r.cod_cliente = t.cod_cliente
+	AND t.cod_ruta = a.cod_ruta
+	AND r.fanul IS NULL
+	AND r.frecibo BETWEEN $P{fechaRecDesde} AND $P{fechaRecHasta}
+	AND r.nrecibo BETWEEN $P{nroRecDesde} AND $P{nroRecHasta}
+)
+SELECT cod_cliente, cod_cliente2, nrecibo, iefectivo, iretencion, icheques, irecibo, xnombre, xnombre2, frecibo, mestado FROM principalCTE WHERE cod_cliente = $P{cod_cliente_det};]]>
+	</queryString>
+	<field name="cod_cliente" class="java.lang.Integer"/>
+	<field name="cod_cliente2" class="java.lang.Integer"/>
+	<field name="nrecibo" class="java.math.BigDecimal"/>
+	<field name="iefectivo" class="java.math.BigDecimal"/>
+	<field name="iretencion" class="java.math.BigDecimal"/>
+	<field name="icheques" class="java.math.BigDecimal"/>
+	<field name="irecibo" class="java.math.BigDecimal"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="xnombre2" class="java.lang.String"/>
+	<field name="frecibo" class="java.sql.Timestamp"/>
+	<field name="mestado" class="java.lang.String"/>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{iefectivo}]]></variableExpression>
+	</variable>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{icheques}]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{iretencion}]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? 0 : $F{irecibo}]]></variableExpression>
+	</variable>
+	<variable name="estado" class="java.lang.String">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO" )]]></variableExpression>
+	</variable>
+	<variable name="efectivo" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{iefectivo})]]></variableExpression>
+	</variable>
+	<variable name="cheques" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{icheques})]]></variableExpression>
+	</variable>
+	<variable name="retencion" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{iretencion})]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{mestado}.toString().equals("X") ? null : $F{irecibo})]]></variableExpression>
+	</variable>
+	<group name="cod_cliente">
+		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="23">
+			<textField>
+				<reportElement x="28" y="4" width="52" height="15" uuid="341a7ebb-13b0-4138-8125-471c58beb575"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="83" y="4" width="293" height="15" uuid="a268667d-c525-4dda-ab33-b4a45a963d1a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField>
+				<reportElement x="68" y="3" width="200" height="13" uuid="b0b686f9-0e49-4004-aeee-ae5300916e71"/>
+				<textFieldExpression><![CDATA[$F{xnombre2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="3" width="48" height="13" uuid="7de77f38-ae76-4919-b679-cd2b726d51d2"/>
+				<textFieldExpression><![CDATA[$F{cod_cliente2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="321" y="3" width="68" height="13" uuid="d96d8609-95e0-49ac-93f3-d687101bd5d2"/>
+				<textFieldExpression><![CDATA[$F{frecibo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="3" width="50" height="13" uuid="7d7d6400-308d-444a-acde-332f1b65a533"/>
+				<textFieldExpression><![CDATA[$F{nrecibo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="396" y="3" width="59" height="13" uuid="3be1f1ec-eb21-497f-8d00-9482bb34b297"/>
+				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="459" y="3" width="75" height="13" uuid="25da86f8-42de-4696-9ff6-ca42842dd7f2">
+					<printWhenExpression><![CDATA[$V{efectivo} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="545" y="3" width="67" height="13" uuid="05fade73-35b8-47dd-9c0e-8db64a2f366f">
+					<printWhenExpression><![CDATA[$V{cheques} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{cheques}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="619" y="3" width="68" height="13" uuid="176b647a-efd9-408c-a5b6-abd7ec073879">
+					<printWhenExpression><![CDATA[$V{retencion} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{retencion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="702" y="3" width="65" height="13" uuid="c94b931c-4140-416a-a55c-d412b8b6836d">
+					<printWhenExpression><![CDATA[$V{total} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="112" y="5" width="147" height="13" uuid="27441384-653f-42e9-b310-d0ddb45c1e76"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL CLIENTE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="268" y="5" width="161" height="13" uuid="a8cb1042-e563-402c-8a3d-1a4832aedc95"/>
+				<textFieldExpression><![CDATA[$F{xnombre2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="434" y="5" width="100" height="13" uuid="76957852-77d9-46be-899c-de9115581e16"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="545" y="5" width="67" height="13" uuid="ba20aa1e-a2a0-4acb-ae77-9b0dc9f7f9e9"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="619" y="5" width="68" height="13" uuid="979cab95-98fa-4902-9ab9-45606bfae0dc"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="702" y="5" width="65" height="13" uuid="72208046-c3ec-42e3-8f53-c72591be32de"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="459" y="0" width="319" height="1" uuid="6c48d492-6a6f-445b-811e-d45d7fdafcf2"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

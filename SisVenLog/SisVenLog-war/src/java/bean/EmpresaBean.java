@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.contextRequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -89,7 +90,8 @@ public class EmpresaBean implements Serializable {
         this.filtro = "";
 
         listar();
-        RequestContext.getCurrentInstance().update("formEmpresa");
+//        RequestContext.getCurrentInstance().update("formEmpresa");
+        PrimeFaces.current().ajax().update("formEmpresa");
     }
 
     public String getFiltro() {
@@ -123,8 +125,8 @@ public class EmpresaBean implements Serializable {
             empresasFacade.insertarEmpresa(empresas);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEmpresa').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -150,8 +152,8 @@ public class EmpresaBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditEmpresa').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditEmpresa').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditEmpresa').hide();");
             }
 
         } catch (Exception e) {
@@ -166,7 +168,8 @@ public class EmpresaBean implements Serializable {
             this.empresas = new Empresas();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacEmpresa').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacEmpresa').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacEmpresa').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -194,17 +197,20 @@ public class EmpresaBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpresa').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpresa').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarEmpresa').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEmpresa').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpresa').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpresa').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarEmpresa').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpresa').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevEmpresa').hide();");
     }
 
 }

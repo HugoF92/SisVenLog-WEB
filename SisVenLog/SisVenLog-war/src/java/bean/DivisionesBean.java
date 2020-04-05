@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,7 +91,8 @@ public class DivisionesBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formDivisiones");
+//    RequestContext.getCurrentInstance().update("formDivisiones");
+        PrimeFaces.current().ajax().update("formDivisiones");
     }
 
     public String getFiltro() {
@@ -121,8 +123,8 @@ public class DivisionesBean implements Serializable {
             divisionesFacade.insertarDivisiones(divisiones);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevDivisiones').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -148,8 +150,8 @@ public class DivisionesBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditDivisiones').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditDivisiones').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditDivisiones').hide();");
             }
 
         } catch (Exception e) {
@@ -163,7 +165,8 @@ public class DivisionesBean implements Serializable {
             divisionesFacade.remove(divisiones);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacDivisiones').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacDivisiones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacDivisiones').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -191,17 +194,20 @@ public class DivisionesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDivisiones').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDivisiones').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarDivisiones').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevDivisiones').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDivisiones').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDivisiones').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarDivisiones').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevDivisiones').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevDivisiones').hide();");
     }
 
 }

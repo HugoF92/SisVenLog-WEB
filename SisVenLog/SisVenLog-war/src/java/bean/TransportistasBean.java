@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -89,7 +90,8 @@ public class TransportistasBean implements Serializable {
         this.filtro = "";
 
         listar();
-        RequestContext.getCurrentInstance().update("formTransportistas");
+//        RequestContext.getCurrentInstance().update("formTransportistas");
+        PrimeFaces.current().ajax().update("formTransportistas");
     }
 
     public String getFiltro() {
@@ -121,7 +123,7 @@ public class TransportistasBean implements Serializable {
             transportistasFacade.insertarTransportistas(transportistas);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTrans').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTrans').hide();");
 
             instanciar();
 
@@ -148,7 +150,7 @@ public class TransportistasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditTrans').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditTrans').hide();");
 
             }
 
@@ -164,7 +166,7 @@ public class TransportistasBean implements Serializable {
             this.transportistas = new Transportistas();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacTrans').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacTrans').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -192,16 +194,16 @@ public class TransportistasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTrans').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTrans').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTrans').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTrans').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTrans').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevTrans').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarTrans').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevTrans').hide();");
 
     }
 

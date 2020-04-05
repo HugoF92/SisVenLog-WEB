@@ -34,11 +34,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import org.primefaces.context.RequestContext;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import java.util.Map;
+import org.primefaces.PrimeFaces;
 
 @ManagedBean
 @SessionScoped
@@ -622,8 +623,8 @@ public class EnviosBean extends LazyDataModel<Envios> implements Serializable {
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEnvios').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -784,8 +785,8 @@ public class EnviosBean extends LazyDataModel<Envios> implements Serializable {
 
                     instanciar();
 
-                    RequestContext.getCurrentInstance().execute("PF('dlgEditEnvios').hide();");
-
+//                    RequestContext.getCurrentInstance().execute("PF('dlgEditEnvios').hide();");
+                    PrimeFaces.current().executeScript("PF('dlgEditEnvios').hide();");
                 }
             }
         } catch (Exception e) {
@@ -840,17 +841,20 @@ public class EnviosBean extends LazyDataModel<Envios> implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEnvios').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEnvios').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarEnvios').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEnvios').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEnvios').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEnvios').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarEnvios').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevEnvios').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevEnvios').hide();");
     }
 
     public void buscadorArticuloTab(AjaxBehaviorEvent event) {

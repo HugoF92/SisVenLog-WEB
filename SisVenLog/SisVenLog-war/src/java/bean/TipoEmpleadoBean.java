@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -142,7 +143,7 @@ public class TipoEmpleadoBean implements Serializable {
                 tipoEmpleadoFacade.create(tipoEmpleado);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevtipoEmpleado').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevtipoEmpleado').hide();");
 
                 instanciar();
 
@@ -171,7 +172,7 @@ public class TipoEmpleadoBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditTipoEmpleado').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditTipoEmpleado').hide();");
 
             }
 
@@ -187,7 +188,7 @@ public class TipoEmpleadoBean implements Serializable {
             this.tipoEmpleado = new TiposEmpleados();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacTipoEmpleado').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacTipoEmpleado').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -215,16 +216,16 @@ public class TipoEmpleadoBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoEmpleado').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoEmpleado').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoEmpleado').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoEmpleado').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoEmpleado').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoEmpleado').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoEmpleado').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoEmpleado').hide();");
 
     }
 

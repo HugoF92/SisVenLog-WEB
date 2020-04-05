@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,7 +91,8 @@ public class ParametrosBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formParametros");
+//    RequestContext.getCurrentInstance().update("formParametros");
+        PrimeFaces.current().ajax().update("formParametros");
     }
 
     public String getFiltro() {
@@ -121,7 +123,7 @@ public class ParametrosBean implements Serializable {
             parametrosFacade.create(parametros);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevParametros').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevParametros').hide();");
 
             instanciar();
 
@@ -148,7 +150,7 @@ public class ParametrosBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditParametros').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditParametros').hide();");
 
             }
 
@@ -163,7 +165,7 @@ public class ParametrosBean implements Serializable {
             parametrosFacade.remove(parametros);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacParametros').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacParametros').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -191,16 +193,16 @@ public class ParametrosBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarParametros').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarParametros').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevParametros').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevParametros').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarParametros').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevParametros').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarParametros').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevParametros').hide();");
 
     }
     

@@ -17,7 +17,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -177,8 +178,8 @@ public class CanalesBean implements Serializable {
             canalesFacade.create(canales);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
             
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
-            
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCanales').hide();");
             instanciar();
             
         } catch (Exception e) {
@@ -204,8 +205,8 @@ public class CanalesBean implements Serializable {
                 
                 listar();
                 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditCanales').hide();");
-                
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditCanales').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditCanales').hide();");
             }
             
         } catch (Exception e) {
@@ -220,7 +221,8 @@ public class CanalesBean implements Serializable {
             this.canales = new CanalesCompra();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacCanales').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacCanales').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacCanales').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -248,17 +250,20 @@ public class CanalesBean implements Serializable {
         }
         
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCanales').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCanales').hide();");
         }
         
     }
     
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
-        
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCanales').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarCanales').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevCanales').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevCanales').hide();");
     }
     
     public void buscarProveedor() {
@@ -280,8 +285,8 @@ public class CanalesBean implements Serializable {
         
         buscadorBean.setTitulo("Proveedor");
         
-        RequestContext.getCurrentInstance().execute("PF('dlgBuscador').show();");
-        
+//        RequestContext.getCurrentInstance().execute("PF('dlgBuscador').show();");
+        PrimeFaces.current().executeScript("PF('dlgBuscador').show();");
     }
     
 }

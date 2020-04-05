@@ -16,7 +16,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -142,7 +143,8 @@ public class SublineasBean implements Serializable {
         
         listar();
 
-        RequestContext.getCurrentInstance().update("formSublineas");
+//        RequestContext.getCurrentInstance().update("formSublineas");
+        PrimeFaces.current().ajax().update("formSublineas");
     }
 
     public String getFiltro() {
@@ -195,7 +197,7 @@ public class SublineasBean implements Serializable {
             xdescFacade.insertarSublineas(xdesc);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevSublineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevSublineas').hide();");
 
             instanciar();
 
@@ -224,7 +226,7 @@ public class SublineasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditSublineas').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditSublineas').hide();");
 
             }
 
@@ -240,7 +242,7 @@ public class SublineasBean implements Serializable {
             this.xdesc = new Sublineas();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacSublineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacSublineas').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -270,16 +272,16 @@ public class SublineasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarSublineas').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarSublineas').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevSublineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevSublineas').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarSublineas').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevSublineas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarSublineas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevSublineas').hide();");
 
     }
 

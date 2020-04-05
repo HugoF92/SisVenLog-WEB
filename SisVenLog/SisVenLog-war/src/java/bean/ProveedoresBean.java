@@ -3,7 +3,6 @@ package bean;
 import dao.ProveedoresFacade;
 import entidad.Proveedores;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,7 +90,8 @@ public class ProveedoresBean implements Serializable {
         this.filtro = "";
 
         listar();
-        RequestContext.getCurrentInstance().update("formProveedores");
+//        RequestContext.getCurrentInstance().update("formProveedores");
+        PrimeFaces.current().ajax().update("formProveedores");
     }
 
     public String getFiltro() {
@@ -129,7 +130,7 @@ public class ProveedoresBean implements Serializable {
             proveedoressFacade.insertarProveedores(proveedoress);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
 
             instanciar();
 
@@ -156,7 +157,7 @@ public class ProveedoresBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditProv').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditProv').hide();");
 
             }
 
@@ -172,7 +173,7 @@ public class ProveedoresBean implements Serializable {
             this.proveedoress = new Proveedores();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacProveedores').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacProveedores').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -200,16 +201,16 @@ public class ProveedoresBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarProv').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarProv').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarProv').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarProv').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
 
     }
 

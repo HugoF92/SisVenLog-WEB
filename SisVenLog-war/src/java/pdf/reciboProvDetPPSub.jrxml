@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboProvDetPPSub" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a439b742-ee65-43cd-ba38-01b291e34f02">
+	<property name="ireport.zoom" value="1.210000000000003"/>
+	<property name="ireport.x" value="112"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="sql_detalle" class="java.lang.String"/>
+	<parameter name="cod_prov_det" class="java.lang.Short"/>
+	<parameter name="sql_det_rec" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[$P!{sql_detalle} + $P{cod_prov_det}]]>
+	</queryString>
+	<field name="nrecibo" class="java.math.BigDecimal"/>
+	<field name="cod_proveed" class="java.lang.Short"/>
+	<field name="frecibo" class="java.sql.Timestamp"/>
+	<field name="irecibo" class="java.math.BigDecimal"/>
+	<field name="iefectivo" class="java.math.BigDecimal"/>
+	<field name="iretencion" class="java.math.BigDecimal"/>
+	<field name="icheques" class="java.math.BigDecimal"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="mestado" class="java.lang.String"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="cod_proveed2" class="java.lang.Short"/>
+	<field name="xnombre2" class="java.lang.String"/>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iefectivo} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{icheques} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iretencion} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{irecibo} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="estado" class="java.lang.String">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? "ANULADO" : "ACTIVO"]]></variableExpression>
+	</variable>
+	<variable name="obs" class="java.lang.String">
+		<variableExpression><![CDATA[$F{xobs}]]></variableExpression>
+	</variable>
+	<variable name="efectivo" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iefectivo} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="cheques" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{icheques} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="retencion" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{iretencion} : 0 )]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[( $F{mestado}.toString().equals("A") ? $F{irecibo} : 0 )]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="24">
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="19" y="5" width="201" height="15" uuid="a268667d-c525-4dda-ab33-b4a45a963d1a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="225" y="5" width="62" height="15" uuid="112caf72-bd68-4708-898e-3062f5a61d5f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_proveed}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="47" splitType="Stretch">
+			<textField>
+				<reportElement x="29" y="16" width="204" height="14" uuid="b0b686f9-0e49-4004-aeee-ae5300916e71"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnombre2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="142" y="0" width="68" height="14" uuid="d96d8609-95e0-49ac-93f3-d687101bd5d2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{frecibo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="29" y="2" width="58" height="14" uuid="7d7d6400-308d-444a-acde-332f1b65a533"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nrecibo}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="false">
+				<reportElement x="15" y="33" width="766" height="9" uuid="75c71958-24a5-457b-a15c-7870ca57c80b">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="nrecibo_det">
+					<subreportParameterExpression><![CDATA[$F{nrecibo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="sql_det">
+					<subreportParameterExpression><![CDATA[$P{sql_det_rec}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboProvDetNDSub.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="233" y="0" width="66" height="14" uuid="806e6b22-f204-4483-a6d2-27146d26845a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="16" width="180" height="14" uuid="3c29849f-1405-42e0-952c-229efd68d91e">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{obs}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="450" y="0" width="92" height="14" uuid="ab0a4e18-6804-485b-b768-8e9b4310f94d">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cheques}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="332" y="0" width="104" height="14" uuid="ada97c05-3792-4cfc-aa05-729ddd76991d">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="558" y="0" width="91" height="14" uuid="ac63b939-abaf-41eb-97a4-af12c975a75c">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{retencion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="668" y="0" width="88" height="14" uuid="a92973d6-6f09-4d93-851e-70ea52bd4721">
+					<printWhenExpression><![CDATA[$F{mestado}.toString().equals("A")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="234" y="16" width="53" height="14" uuid="7fe059d8-b677-44d5-8ab9-f183322a72d1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_proveed2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="189" y="5" width="101" height="15" uuid="27441384-653f-42e9-b310-d0ddb45c1e76"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL PROVEEDOR]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="346" y="5" width="90" height="15" uuid="76957852-77d9-46be-899c-de9115581e16"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="452" y="5" width="90" height="15" uuid="ba20aa1e-a2a0-4acb-ae77-9b0dc9f7f9e9"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="559" y="5" width="90" height="15" uuid="979cab95-98fa-4902-9ab9-45606bfae0dc"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="666" y="5" width="90" height="15" uuid="72208046-c3ec-42e3-8f53-c72591be32de"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="317" y="2" width="454" height="1" uuid="6c48d492-6a6f-445b-811e-d45d7fdafcf2"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

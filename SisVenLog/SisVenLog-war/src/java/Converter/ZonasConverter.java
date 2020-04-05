@@ -44,15 +44,14 @@ public class ZonasConverter  implements Converter, Serializable{
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value)
-    {
+    public String getAsString(FacesContext context, UIComponent component, Object value){
         if (value == null || value.equals(""))
         {
             return "";
         }
-        else
-        {
-            return String.valueOf(((Zonas) value).getZonasPK().getCodZona());
+        else{
+            return (String) value;
+//            return String.valueOf(((Zonas) value).getZonasPK().getCodZona());
         }
     }
 

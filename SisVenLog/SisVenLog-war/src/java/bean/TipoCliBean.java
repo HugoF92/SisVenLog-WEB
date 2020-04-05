@@ -14,7 +14,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -103,7 +104,8 @@ public class TipoCliBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formTipoCli");
+//    RequestContext.getCurrentInstance().update("formTipoCli");
+        PrimeFaces.current().ajax().update("formTipoCli");
     }
 
     public String getFiltro() {
@@ -135,7 +137,7 @@ public class TipoCliBean implements Serializable {
             tipoCliFacade.insertarTipoCliDeposito(tipoCli, depositos);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoCli').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoCli').hide();");
 
             instanciar();
 
@@ -162,7 +164,7 @@ public class TipoCliBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditTipoCli').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditTipoCli').hide();");
 
             }
 
@@ -177,7 +179,7 @@ public class TipoCliBean implements Serializable {
             tipoCliFacade.remove(tipoCli);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacTipoCli').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacTipoCli').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -205,16 +207,16 @@ public class TipoCliBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoCli').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoCli').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoCli').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoCli').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoCli').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoCli').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoCli').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevTipoCli').hide();");
 
     }
 

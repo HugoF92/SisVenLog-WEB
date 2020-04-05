@@ -6,12 +6,13 @@
 package dao;
 
 import entidad.Servicios;
-import entidad.Servicios;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -50,5 +51,13 @@ public class ServiciosFacade extends AbstractFacade<Servicios> {
         
         
         q.execute();
+    }
+	
+    public List<Servicios> listarServiciosOrdenadosPorDescripcion() {
+        String sql = "SELECT * FROM servicios ORDER BY xdesc";
+        Query q = em.createNativeQuery(sql, Servicios.class);
+        System.out.println(q.toString());
+        List<Servicios> resultado = q.getResultList();
+        return resultado;
     }
 }

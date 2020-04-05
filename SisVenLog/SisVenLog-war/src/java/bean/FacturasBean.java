@@ -70,7 +70,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -258,11 +259,13 @@ public class FacturasBean implements Serializable{
                 depositoEnMemoria.put("deposito", depositoSeleccionado);
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al cambiar depósito.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }        
     }
     
@@ -274,11 +277,13 @@ public class FacturasBean implements Serializable{
                 }
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al cambiar plazo cheque.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
     
@@ -297,11 +302,13 @@ public class FacturasBean implements Serializable{
                 }
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al cambiar tipos de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
     
@@ -318,11 +325,13 @@ public class FacturasBean implements Serializable{
                     }
                 }
             } catch (Exception e) {
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la lectura de datos de canales_vendedores.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             }
         }
     }
@@ -432,11 +441,13 @@ public class FacturasBean implements Serializable{
         try{
             listadoMotivos = motivosFacade.findAll();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de motivos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoMotivos;
     }
@@ -446,11 +457,13 @@ public class FacturasBean implements Serializable{
         try{
             listadoEntregadores = empleadosFacade.listarEntregador();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de empleados.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoEntregadores;
     }
@@ -460,11 +473,13 @@ public class FacturasBean implements Serializable{
         try{
             listadoCanales = canalesVendedoresFacade.obtenerCanalesVendedores(codVendedorLbl);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de canales_vendedores.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoCanales;
     }
@@ -474,11 +489,13 @@ public class FacturasBean implements Serializable{
         try{
             listadoVendedores = empleadosZonasFacade.obtenerEmpleadosZonas();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de empleados_zonas.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoVendedores;
     }
@@ -488,11 +505,13 @@ public class FacturasBean implements Serializable{
         try{
             listadoTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentoFactura();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de tipos de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoTiposDocumentos;
     }
@@ -500,24 +519,21 @@ public class FacturasBean implements Serializable{
     public void listarFacturas(){
         
          modelFacturas = new LazyDataModel<Facturas>() {
-            private static final long serialVersionUID = 1L;
+             private static final long serialVersionUID = 1L;
 
             @Override
             public List<Facturas> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-                //List<Envios> envioss;
                 int count = 0;
                 if (filters.size() == 0) {
-                    listadoFacturas = facturasFacade.buscarFacturasEnUnRango(new int[]{first, pageSize});
-                    count = facturasFacade.count();
-                }else {
+                    listadoFacturas = facturasFacade.buscarFacturasClientesEnUnRango(new int[]{first, pageSize});
+                    count = facturasFacade.obtenerCantidadFacturasClientes();
+                } else {
                     if (filters.size() < 2) {
-                        //dd/MM/yyyy
                         String filtroNroRecibo = (String) filters.get("facturasPK.nrofact");
-                        listadoFacturas = facturasFacade.obtenerFacturasPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
-                        count = facturasFacade.obtenerCantidadFacturasPorNro(Long.parseLong(filtroNroRecibo));
+                        listadoFacturas = facturasFacade.obtenerFacturasClientesPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
+                        count = facturasFacade.obtenerCantidadFacturasClientesPorNro(Long.parseLong(filtroNroRecibo));
                     }
-
-                } 
+                }
                 modelFacturas.setRowCount(count);
                 return listadoFacturas;
             }
@@ -525,11 +541,12 @@ public class FacturasBean implements Serializable{
             @Override
             public Facturas getRowData(String rowKey) {
                 String tempIndex = rowKey;
-                System.out.println("1");
+                System.out.println("row key: "+tempIndex);
                 if (tempIndex != null) {
-                    for (Facturas inc : listadoFacturas) {
-                        if (Long.toString(inc.getFacturasPK().getNrofact()).equals(rowKey)) {
-                            return inc;
+                    for (Facturas fac : listadoFacturas) {
+                        String fechaFac = dateToString(fac.getFacturasPK().getFfactur());
+                        if (String.valueOf(fac.getFacturasPK().getNrofact()).concat(" ").concat(fac.getFacturasPK().getCtipoDocum()).concat(" ").concat(fechaFac).equals(rowKey)) {
+                            return fac;
                         }
                     }
                 }
@@ -539,9 +556,11 @@ public class FacturasBean implements Serializable{
 
             @Override
             public Object getRowKey(Facturas f) {
-                return f.getFacturasPK().getNrofact();
+                FacturasPK pk = f != null ? f.getFacturasPK() : null;
+                return pk != null ? pk.getNrofact() + " " + pk.getCtipoDocum() + " " + dateToString(pk.getFfactur()) : null;
             }
-        };
+            
+         };
         
     }
     
@@ -586,11 +605,13 @@ public class FacturasBean implements Serializable{
                         }
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de promociones.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return null;
                 }
             }
@@ -602,7 +623,8 @@ public class FacturasBean implements Serializable{
         
             if(codMercaDet.equals("") || codMercaDet == null){
                 //mostrar busqueda de mercaderías
-                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').show();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusMercaFact').show();");
             }else{
                 try{
                     if(codDepositoLbl == 0){
@@ -626,11 +648,13 @@ public class FacturasBean implements Serializable{
                         return null;
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de mercaderías.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return null;
                 }
             }
@@ -649,11 +673,13 @@ public class FacturasBean implements Serializable{
         try{
             listaClientes = clientesFacade.buscarPorFiltro(filtro);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de clientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         
     }
@@ -663,12 +689,14 @@ public class FacturasBean implements Serializable{
         existencias = new Existencias();
         filtro = "";
         if(codDepositoLbl == 0){
-            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+            PrimeFaces.current().executeScript("PF('dlgBusMercaFact').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar el depósito."));
             return;
         }
         if(codCanalVentaLbl.equals("") || codCanalVentaLbl == null){
-            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+            PrimeFaces.current().executeScript("PF('dlgBusMercaFact').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar el canal de venta."));
             return;
         }
@@ -727,8 +755,10 @@ public class FacturasBean implements Serializable{
                 mPromoPackDet = this.existencias.getMercaderias().getMpromoPack();
                 codSublineaDet = this.existencias.getMercaderias().getCodSublinea().getCodSublinea();
                 nRelacionDet = this.existencias.getMercaderias().getNrelacion() == null ? 0 : this.existencias.getMercaderias().getNrelacion().shortValue();
-                RequestContext.getCurrentInstance().update("panel_buscador_articulo");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+//                RequestContext.getCurrentInstance().update("panel_buscador_articulo");
+                PrimeFaces.current().ajax().update("panel_buscador_articulo");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaFact').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusMercaFact').hide();");
             }
         }
     }
@@ -738,8 +768,10 @@ public class FacturasBean implements Serializable{
             if (getClientes().getXnombre() != null) {
                 codClienteLbl = getClientes().getCodCliente();
                 nombreClienteLbl = getClientes().getXnombre();
-                RequestContext.getCurrentInstance().update("panel_grid_nueva_factura");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').hide();");
+//                RequestContext.getCurrentInstance().update("panel_grid_nueva_factura");
+                PrimeFaces.current().ajax().update("panel_grid_nueva_factura");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').hide();");
             }
         }
     }
@@ -753,11 +785,13 @@ public class FacturasBean implements Serializable{
                 fechaVencImpresLbl = DateUtil.sumarRestarDiasFecha(fechaFactLbl, clienteBuscado.getNplazoImpresion());
             }
         } catch (Exception e) {
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al sumar plazos de crédito a la fecha de la factura.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         
     }
@@ -766,13 +800,15 @@ public class FacturasBean implements Serializable{
         if(codClienteLbl != null){
             if(codClienteLbl == 0){
                 //mostrar busqueda de clientes
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').show();");
             }else{
                 try{
                     clienteBuscado = clientesFacade.find(codClienteLbl);
                     if(clienteBuscado == null){
                         //mostrar busqueda de clientes
-                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaFactura').show();");
+                        PrimeFaces.current().executeScript("PF('dlgBusClieConsultaFactura').show();");
                     }else{
                         this.nombreClienteLbl = clienteBuscado.getXnombre();
                         if(clienteBuscado.getMformaPago() == 'C' && !tipoDocumentoSeleccionadoLbl.getCtipoDocum().equals("FCO")){
@@ -792,31 +828,37 @@ public class FacturasBean implements Serializable{
                             //buscar los tipos de venta habilitados para ese cliente para poblar el combo
                             listadoTiposVentas = tiposVentasFacade.obtenerTiposVentasDelCliente(codClienteLbl);
                         }catch(Exception e){
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+//                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en la lectura de tipos de ventas de clientes.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                             return null;
                         }
                         try {
                             //busar los depositos habilitados para poblar el combo
                             listadoDepositos = depositosFacade.obtenerDepositosPorTipoCliente(clienteBuscado.getCtipoCliente());
                         } catch (Exception e) {
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+//                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en la lectura de depósitos.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                             return null;
                         }
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de clientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return null;
                 }
             }
@@ -843,11 +885,13 @@ public class FacturasBean implements Serializable{
                 mostrarPlazosChequesLbl = true;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al verificar la fecha de vencimiento.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return null;
         }
         return null;
@@ -872,25 +916,20 @@ public class FacturasBean implements Serializable{
                 mostrarPlazosChequesLbl = true;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al verificar la fecha de vencimiento de impresión.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return null;
         }
         return null;
     }
     
     public String visualizarFactura(){
-        //limpiarFormulario();    //inicialmente.
         try{
-            FacturasPK facturaPK = new FacturasPK();
-            facturaPK.setCodEmpr(Short.parseShort("2"));
-            facturaPK.setCtipoDocum(facturaSeleccionada.getFacturasPK().getCtipoDocum());
-            facturaPK.setFfactur(facturaSeleccionada.getFacturasPK().getFfactur());
-            facturaPK.setNrofact(facturaSeleccionada.getFacturasPK().getNrofact());
-            facturaSeleccionada = facturasFacade.find(facturaPK);
             if (facturaSeleccionada.getFacturasPK().getFfactur() == null) {
                 //cabecera de la factura
                 try {
@@ -939,20 +978,24 @@ public class FacturasBean implements Serializable{
                                 listadoDetalle.add(fddto);
                             }
                         } catch (Exception e) {
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+//                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error al obtener detalles de la factura.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                             return null;
                         }
                     }
                 } catch (Exception e) {
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error al obtener datos de la factura.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                     return null;
                 }
             }else{
@@ -1007,21 +1050,25 @@ public class FacturasBean implements Serializable{
                             listadoDetalle.add(fddto);
                         }
                     } catch (Exception e) {
-                        RequestContext.getCurrentInstance().update("exceptionDialog");
+//                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                        PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al obtener detalles de la factura.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                     }
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al visualizar la factura.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             return null;
         }
         return null;
@@ -1029,12 +1076,6 @@ public class FacturasBean implements Serializable{
     
     public String anularFactura(){
         try{
-            FacturasPK facturaPK = new FacturasPK();
-            facturaPK.setCodEmpr(Short.parseShort("2"));
-            facturaPK.setCtipoDocum(facturaSeleccionada.getFacturasPK().getCtipoDocum());
-            facturaPK.setFfactur(facturaSeleccionada.getFacturasPK().getFfactur());
-            facturaPK.setNrofact(facturaSeleccionada.getFacturasPK().getNrofact());
-            facturaSeleccionada = facturasFacade.find(facturaPK);
             long lNroFactura = facturaSeleccionada.getFacturasPK().getNrofact();
             Date lFFactura = facturaSeleccionada.getFacturasPK().getFfactur();
             String lFFacturaStr = dateToString(lFFactura);
@@ -1050,11 +1091,13 @@ public class FacturasBean implements Serializable{
                        //String lFFactura = dateToString(fechaFactLbl);
                        listadoFacturasDet = facturasDetFacade.obtenerDetallesDeFacturas(lCTipoDocum, lNroFactura, lFFacturaStr);
                    }catch(Exception e){
-                       RequestContext.getCurrentInstance().update("exceptionDialog");
+//                       RequestContext.getCurrentInstance().update("exceptionDialog");
+                       PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al obtener los datos del detalle de factura.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                    }
                    if(!listadoFacturasDet.isEmpty()){
@@ -1104,7 +1147,8 @@ public class FacturasBean implements Serializable{
                                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                                 tituloError = "Error al insertar en movimientos mercaderías.";
                                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                 return null;
                            }
                            //reservar las cantidades en camion si el motivo es 15
@@ -1129,7 +1173,8 @@ public class FacturasBean implements Serializable{
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al obtener datos en movimientos mercaderías.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                    }
                    //INSERCION EN CUENTAS CORRIENTES
@@ -1169,7 +1214,8 @@ public class FacturasBean implements Serializable{
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error al insertar en cuentas corrientes.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                             return null;
                        }
                    }
@@ -1188,7 +1234,8 @@ public class FacturasBean implements Serializable{
                                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                                 tituloError = "Error al actualizar pedidos.";
                                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                 return null;
                            }
                        }
@@ -1196,7 +1243,8 @@ public class FacturasBean implements Serializable{
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al obtener datos de facturas.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                    }
                     //actualizar facturas
@@ -1208,12 +1256,14 @@ public class FacturasBean implements Serializable{
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al actualizar facturas.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                     }
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Factura anulada.", ""));
                     limpiarFormulario();
-                    RequestContext.getCurrentInstance().execute("PF('dlgAnularFactura').hide();");
+//                    RequestContext.getCurrentInstance().execute("PF('dlgAnularFactura').hide();");
+                    PrimeFaces.current().executeScript("PF('dlgAnularFactura').hide();");
                     return null;
                 }
             }else{
@@ -1221,11 +1271,13 @@ public class FacturasBean implements Serializable{
                 return null;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al anular la factura.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             return null;
         }
         return null;
@@ -1238,15 +1290,16 @@ public class FacturasBean implements Serializable{
     
     private boolean validarDatosAnulacion(){
         if(fechaAnulacionLbl == null){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención", "Debe ingresar fecha de anulación."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe ingresar fecha de anulación."));
             return false;
         }else{
             if(cMotivoLbl == 0){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención", "Debe seleccionar un motivo de anulación."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Debe seleccionar un motivo de anulación."));
                 return false;
             }else{
                 if(fechaAnulacionLbl.compareTo(DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)) == 1){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atención", "Fecha máxima de anulación: "+DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2)));
+                    Date fechaMaxima = DateUtil.sumarRestarDiasFecha(fechaFactLbl, 2);
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Fecha máxima de anulación es: "+DateUtil.formaterDateToString(fechaMaxima)));
                     return false;
                 }
             }
@@ -1269,11 +1322,13 @@ public class FacturasBean implements Serializable{
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al borrar un detalle de la grilla de facturas.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
     }
     
@@ -1325,11 +1380,13 @@ public class FacturasBean implements Serializable{
                 descPromoDet = null;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al agregar una mercadería.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return null;
         }
         return null;
@@ -1361,11 +1418,13 @@ public class FacturasBean implements Serializable{
                         return false;
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error al leer datos de mercaderías.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return false;
                 }
                 //BUSCA SI YA EXISTE EN LA FACTURA 
@@ -1395,11 +1454,13 @@ public class FacturasBean implements Serializable{
                         return false;
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error al leer datos de mercaderías_canales.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return false;
                 }
                 //PRECIOS
@@ -1423,11 +1484,13 @@ public class FacturasBean implements Serializable{
                         }
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error al leer datos de precios.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return false;
                 }
                 //El precio recuperado es SIN IVA    
@@ -1535,11 +1598,13 @@ public class FacturasBean implements Serializable{
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al verificar una mercadería.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return false;
         }
         return true;
@@ -1590,22 +1655,26 @@ public class FacturasBean implements Serializable{
                 retorno.put("pimpuest", gImpuesto.longValue());
                 retorno.put("calcula_bien", Long.parseLong("1"));
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la generación del cursor de impuestos.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 retorno.put("precio_caja", lPrecioCaja);
                 retorno.put("precio_unidad", lPrecioUnidad);
                 retorno.put("pimpuest", gImpuesto.longValue());
                 retorno.put("calcula_bien", Long.parseLong("0"));
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al calcular el precio.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             retorno.put("precio_caja", lPrecioCaja);
             retorno.put("precio_unidad", lPrecioUnidad);
             retorno.put("pimpuest", gImpuesto.longValue());
@@ -1677,11 +1746,13 @@ public class FacturasBean implements Serializable{
                     }
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error al obtener facturas.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 return null;
             }
             //validar rango de documentos
@@ -1692,11 +1763,13 @@ public class FacturasBean implements Serializable{
                     return null;
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error al obtener rango de documentos.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 return null;
             }
             //validar existencia
@@ -1721,11 +1794,13 @@ public class FacturasBean implements Serializable{
                             }
                         }
                     }catch(Exception e){
-                        RequestContext.getCurrentInstance().update("exceptionDialog");
+//                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                        PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al validar existencia.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                         return null;
                     }
                 }
@@ -1817,11 +1892,13 @@ public class FacturasBean implements Serializable{
                                                 plazosChequesLbl,
                                                 nroPedidoLbl == 0 ? null: nroPedidoLbl);
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error al insertar en facturas.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 return null;
             }
             if(tipoDocumentoSeleccionadoLbl.getMafectaCtacte() == 'S'){
@@ -1855,11 +1932,13 @@ public class FacturasBean implements Serializable{
                     c.setFfactur(fechaFactLbl);
                     cuentasCorrientesFacade.insertarCuentas(c);
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error al insertar en cuentas corrientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                     return null;
                 }
             }
@@ -1926,11 +2005,13 @@ public class FacturasBean implements Serializable{
                                     }
                                 }
                             }catch(Exception e){
-                                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                                RequestContext.getCurrentInstance().update("exceptionDialog");
+                                PrimeFaces.current().ajax().update("exceptionDialog");
                                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                                 tituloError = "Error al obtener promociones.";
                                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                                 return null;
                             }
                         }
@@ -1956,11 +2037,13 @@ public class FacturasBean implements Serializable{
                                                                 nroPromoDet, 
                                                                 lFFactura);
                     }catch(Exception e){
-                        RequestContext.getCurrentInstance().update("exceptionDialog");
+//                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                        PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al insertar un detalle de facturas.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                         return null;
                     }
                     //INSERTAR EN MOVIMIENTOS MERCA
@@ -1994,25 +2077,30 @@ public class FacturasBean implements Serializable{
                         mov.setCusuario(usuario);
                         movimientosMercaFacade.insertarMovimientosMerca(mov);
                     }catch(Exception e){
-                         RequestContext.getCurrentInstance().update("exceptionDialog");
+//                         RequestContext.getCurrentInstance().update("exceptionDialog");
+                         PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error al insertar un movimiento merca.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                         return null;
                     }
                 }
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Datos grabados con éxito."));
             limpiarFormulario(); //volvemos a instanciar
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevFactura').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevFactura').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevFactura').hide();");
             return null;
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al agregar una nueva factura.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return null;
         }
     }
@@ -2055,21 +2143,25 @@ public class FacturasBean implements Serializable{
                         try{
                             listadoMercaPromo = promocionesFacade.obtenerMercaderiasPromociones(lNroPromo);
                         }catch(Exception e){
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+//                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en la lectura de mercaderías de promoción.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                             return false;
                         }
                         try{
                             listadoMercaPromo = promocionesFacade.obtenerMercaderiasPromocionesPorSublinea(lNroPromo);
                         }catch(Exception e){
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+//                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en la lectura de mercaderías de promoción por sublinea.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                             return false;
                         }
                         List<String> listaCodMercaDet = new ArrayList<>();
@@ -2221,19 +2313,23 @@ public class FacturasBean implements Serializable{
                     return false;
                 }
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+//                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error al obtener datos de promoción.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 return false;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al validar una promoción.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return false;
         }
         return true;
@@ -2277,11 +2373,13 @@ public class FacturasBean implements Serializable{
             long totalPedido = pedidosFacade.obtenerTotalPedidosPorClienteFecha(codClienteLbl, fechaStr);
             deuda = saldoInicial + totalPedido;
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al calcular la deuda del cliente.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         return deuda;
     }
@@ -2305,11 +2403,13 @@ public class FacturasBean implements Serializable{
                 saldoInicial += totalMovim;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al calcular el saldo inicial.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
         return saldoInicial;
     }
@@ -2328,19 +2428,24 @@ public class FacturasBean implements Serializable{
     
     public void onRowSelect(SelectEvent event) {
         if(facturaSeleccionada != null){
-            if(facturaSeleccionada.getFacturasPK().getNrofact() != 0){
-                setHabilitaBotonEliminar(false);
-                setHabilitaBotonVisualizar(false);
-            }else{
-                setHabilitaBotonEliminar(true);
-                setHabilitaBotonVisualizar(true);
+            FacturasPK pk = facturaSeleccionada.getFacturasPK();
+            if(pk != null){
+                if(pk.getNrofact() != 0 && !pk.getCtipoDocum().equals("")){
+                    setHabilitaBotonEliminar(false);
+                    setHabilitaBotonVisualizar(false);
+                }else{
+                    setHabilitaBotonEliminar(true);
+                    setHabilitaBotonVisualizar(true);
+                }
             }
         }
     }
     
     public void cerrarDialogoSinGuardar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRecibos').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevReciboCompra').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRecibos').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarRecibos').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevReciboCompra').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevReciboCompra').hide();");
     }
     
     public static String convertidorFecha(Date fecha){
@@ -3030,9 +3135,5 @@ public class FacturasBean implements Serializable{
     public LazyDataModel<Facturas> getModelFacturas() {
         return modelFacturas;
     }
-
-    public void setModelFacturas(LazyDataModel<Facturas> modelFacturas) {
-        this.modelFacturas = modelFacturas;
-    }
-    
+ 
 }

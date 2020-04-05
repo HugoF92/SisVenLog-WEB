@@ -9,13 +9,13 @@ import entidad.Mercaderias;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
@@ -42,9 +42,9 @@ public class AsociarMercaderiaBean implements Serializable {
     @PostConstruct
     public void init() {
         listaDepositos = depositoFacade.listarDepositosActivos();
-        mercaderiaSource = new ArrayList<Mercaderias>();
-        mercaderiaTarget = new ArrayList<Mercaderias>();
-        listaMercaderiaMovAdd = new ArrayList<Mercaderias>();
+//        mercaderiaSource = new ArrayList<Mercaderias>();
+//        mercaderiaTarget = new ArrayList<Mercaderias>();
+//        listaMercaderiaMovAdd = new ArrayList<Mercaderias>();
         listaMercaderiaMovRemove = new ArrayList<Mercaderias>();
         dualMercaderia = new DualListModel<>(new ArrayList<Mercaderias>(), new ArrayList<Mercaderias>());
     }
@@ -91,76 +91,64 @@ public class AsociarMercaderiaBean implements Serializable {
 
     public void onChangeDepositoSelected() {
         if (depositoSeleccionado != null) {
-            System.out.println("ACA");
-            this.mercaderiaSource = this.mercadoFacade.listarMercaderiasActivasNoEnDeposito(this.depositoSeleccionado.getDepositosPK().getCodDepo());
-//            mercaderiaSource = mercadoFacade.listarMercaderiasActivas();
-//            List<Existencias> exiTarget = existenciaFacade.listarExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
-//            for (int i = 0; i < exiTarget.size(); i++) {
-//                for (int j = 0; j < mercaderiaSource.size(); j++) {
-//                    if (Objects.equals(exiTarget.get(i).getExistenciasPK().getCodMerca(), mercaderiaSource.get(j).getMercaderiasPK().getCodMerca())) {
-//                        mercaderiaSource.remove(mercaderiaSource.get(j));
-//                    }
-//                }
-//            }
-            mercaderiaTarget = existenciaFacade.listarMercaderiasByExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
-            dualMercaderia = new DualListModel<>(mercaderiaSource, mercaderiaTarget);
+            dualMercaderia.setSource(this.mercadoFacade.listarMercaderiasActivasNoEnDeposito(this.depositoSeleccionado.getDepositosPK().getCodDepo()));
+            dualMercaderia.setTarget(existenciaFacade.listarMercaderiasByExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo()));
+//            dualMercaderia.setSource(mercaderiaSource);
+//            mercaderiaTarget);
+//            dualMercaderia = new DualListModel<>(mercaderiaSource, mercaderiaTarget);
         }
     }
 
     public void onTransfer(TransferEvent event) {
-        for (Object item : event.getItems()) {
-            if (event.isAdd()) {
-                if (!listaMercaderiaMovAdd.contains(((Mercaderias) item))) {
-                    listaMercaderiaMovAdd.add(((Mercaderias) item));
+        if(event.isRemove()){
+            for (Object item : event.getItems()) {
+                List<Existencias> e = existenciaFacade.findExistenciasByMerc(depositoSeleccionado.getDepositosPK().getCodDepo(),((Mercaderias) item).getMercaderiasPK().getCodMerca());
+                Boolean flag = false;
+                if(!e.isEmpty()){
+                    for(Existencias ex : e){
+                        if(ex.getCantCajas()>0 || ex.getCantUnid()>0 || ex.getReserCajas()>0 || ex.getReserUnid()>0){
+                            this.getDualMercaderia().getTarget().add((Mercaderias)item);
+                            this.getDualMercaderia().getSource().remove((Mercaderias)item);
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "No se puede desasociar la mercaderia "+((Mercaderias) item).getXdesc()+" ya que posee stock en el deposito."));
+                            flag = true;
+                        }
+                    }
                 }
-            } else if (event.isRemove()) {
-                if (!listaMercaderiaMovRemove.contains(((Mercaderias) item))) {
+                if (!flag && !listaMercaderiaMovRemove.contains(((Mercaderias) item))) {
                     listaMercaderiaMovRemove.add(((Mercaderias) item));
                 }
             }
         }
+        PrimeFaces.current().executeScript("PF('blockUI').hide();");
     }
 
     public void guardar() {
-        if (depositoSeleccionado == null) {
-            return;
-        }
-
-        List<Mercaderias> lista = existenciaFacade.listarMercaderiasByExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
+        if (depositoSeleccionado == null) return;
         List<Existencias> exiTarget = existenciaFacade.listarExistencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo());
-
-        for (Mercaderias m : listaMercaderiaMovAdd) {//Lista de agregados
-            boolean existe = false;
-            for (Existencias exi : exiTarget) {//Lista de existencias que hay en la base de datos.
-                if (exi.getExistenciasPK().getCodMerca().equals(m.getMercaderiasPK().getCodMerca())) {//Verificar mercaderiasiguales
-                    existe = true;
-                }
-            }
-            if (!existe) {
-                Existencias e = new Existencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo(), m.getMercaderiasPK().getCodMerca());
-                e.setCantCajas(0);
-                e.setCantUnid(0);
-                e.setReserCajas(0);
-                e.setReserUnid(0);
-                existenciaFacade.create(e);
-            }
+        for (Mercaderias m : this.dualMercaderia.getTarget()){
+          boolean existe = false;
+          for (Existencias exi : exiTarget) {//Lista de existencias que hay en la base de datos.
+              if (exi.getExistenciasPK().getCodMerca().equals(m.getMercaderiasPK().getCodMerca())) {//Verificar mercaderiasiguales
+                  existe = true;
+              }
+          }
+          if (!existe) {
+              Existencias e = new Existencias(new Short("2"), depositoSeleccionado.getDepositosPK().getCodDepo(), m.getMercaderiasPK().getCodMerca());
+              e.setCantCajas(0);
+              e.setCantUnid(0);
+              e.setReserCajas(0);
+              e.setReserUnid(0);
+              existenciaFacade.create(e);
+          }
         }
-
         for (Mercaderias m : listaMercaderiaMovRemove) {//Lista de eliminados
             for (Existencias exi : exiTarget) {//Lista de existencias que hay en la base de datos.
                 if (exi.getExistenciasPK().getCodMerca().equals(m.getMercaderiasPK().getCodMerca())) {//Verificar mercaderiasiguales
-                    if (exi.getCantUnid() == 0 && exi.getCantCajas() == 0) {//
-                        existenciaFacade.remove(exi);
-                    }
+                    existenciaFacade.remove(exi);
                 }
             }
-
         }
-        mercaderiaSource = new ArrayList<Mercaderias>();
-        mercaderiaTarget = new ArrayList<Mercaderias>();
-        listaMercaderiaMovAdd = new ArrayList<Mercaderias>();
         listaMercaderiaMovRemove = new ArrayList<Mercaderias>();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Asociado con éxito."));
-
     }
 }

@@ -19,12 +19,11 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.validation.ConstraintViolationException;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -233,9 +232,10 @@ public class DepositosBean implements Serializable {
                 depositosFacade.insertarDeposito(depositos);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().update("formDepositoss");
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
-
+//                RequestContext.getCurrentInstance().update("formDepositoss");
+                PrimeFaces.current().ajax().update("formDepositoss");
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevDepo').hide();");
                 instanciar();
 
             }
@@ -268,8 +268,8 @@ public class DepositosBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditDepo').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditDepo').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditDepo').hide();");
             }
 
         } catch (Exception e) {
@@ -286,7 +286,8 @@ public class DepositosBean implements Serializable {
             this.depositos = new Depositos();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacPers').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacPers').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacPers').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -423,17 +424,20 @@ public class DepositosBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDepo').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDepo').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarDepo').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevDepo').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDepo').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarDepo').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarDepo').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevDepo').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevDepo').hide();");
     }
 
 }
