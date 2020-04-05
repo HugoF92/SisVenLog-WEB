@@ -9,6 +9,8 @@ import dto.LiMercaSinDto;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import entidad.Proveedores;
+import entidad.Rutas;
+import entidad.TiposClientes;
 import entidad.TiposDocumentos;
 import entidad.Zonas;
 import java.io.BufferedInputStream;
@@ -2233,22 +2235,36 @@ public class LlamarReportes {
         }
     }
 
-    public void reporteDocumentosFaltantes(Long nroDesde, Long nroHasta,
-            TiposDocumentos tipoDocumento, Date fechaInicial, String usuarioImpresion) {
+    public void reporteClientesRutasZonas(Boolean conRuteo, TiposClientes tipoCliente,
+            Zonas zona, Rutas ruta, String estado, String fechaAltaDesde,
+            String fechaAltaHasta, Boolean todosClientes, String listaCodClientes,
+            String usuarioImpresion) {
         try {
             Map param = new HashMap();
-            param.put("nroDesde", nroDesde);
-            param.put("nroHasta", nroHasta);
-            param.put("tipoDocumento", tipoDocumento == null ? null : tipoDocumento.getXdesc());
-            param.put("fechaInicial", fechaInicial == null ? "" : DateUtil.dateToString(fechaInicial, "dd/MM/yyyy"));
+            param.put("codTipoCliente", tipoCliente == null ? null: tipoCliente.getCtipoCliente());
+            param.put("tipoCliente", tipoCliente == null ? null: tipoCliente.getXdesc());
+            param.put("codZona", zona == null? null:zona.getZonasPK().getCodZona());
+            param.put("zona", zona == null? null: zona.getXdesc());
+            param.put("codRuta", ruta ==null? null : ruta.getRutasPK().getCodRuta());
+            param.put("ruta", ruta ==null? null : ruta.getXdesc());
+            param.put("estado", Integer.parseInt(estado));
+            param.put("fechaAltaDesde", fechaAltaDesde);
+            param.put("fechaAltaHasta", fechaAltaHasta);
+            param.put("todosClientes", todosClientes);
+            param.put("listaCodClientes", listaCodClientes);
             param.put("usuarioImpresion", usuarioImpresion);
-            param.put("REPORT_LOCALE", new Locale("es", "PY"));
-            
 
             String report;
-            String filename = "rfacfalta.pdf";
+            String filename = "liclientes";
+            
+            if(conRuteo) {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesConRuteo.jasper");
+                filename += "conruteo.pdf";
+            } else {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesSinRuteo.jasper");
+                filename += "sinruteo.pdf";
+            }
 
-            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/docFaltantes.jasper");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 
