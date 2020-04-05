@@ -6,7 +6,6 @@
 package dao;
 
 import entidad.Existencias;
-import entidad.ExistenciasPK;
 import entidad.Mercaderias;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -117,14 +116,11 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
                     Existencias.class);
 
             System.out.println(q.toString());
-
             int respuesta = q.getResultList().size();
             return respuesta;
-
         } catch (Exception e) {
             return 0;
         }
-
     }
 
     //4
@@ -190,7 +186,7 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
         Query q = getEntityManager().createNativeQuery("select  m.* from  existencias e, mercaderias m "
                 + "  where m.cod_merca = e.cod_merca and e.cod_empr=" + cod_emp
                 + " and e.cod_depo=" + cod_depo, Mercaderias.class);
-        System.out.println(q.toString());
+//        System.out.println(q.toString());
         return q.getResultList();
     }
     
@@ -217,5 +213,30 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
                         "AND cod_depo = "+lCodDepo;
         Query q = em.createNativeQuery(sql);
         q.executeUpdate();
+    }
+    
+    public List<Existencias> findExistenciasByMerc(short lCodDepo,String lCodMerca){
+        String sql = "select * from existencias where  cod_merca ='"+lCodMerca+"' and cod_depo = "+lCodDepo;
+        System.out.println("SQL: "+sql);
+        Query q = em.createNativeQuery(sql,Existencias.class);
+        return q.getResultList();
+    }
+    
+    public Existencias buscarexistenciasPorCodigoDepositoMerca(String codMerca, Short codDep,String codEmp) {
+        try {
+            Query q = getEntityManager().createNativeQuery("select e.*, m.* "
+                    + "from  existencias e,  mercaderias m "
+                    + "where e.cod_merca = "+codMerca
+                    + " and e.cod_empr = "+codEmp
+                    + " and e.cod_depo =  "+codDep
+                    + " and e.cod_empr=m.cod_empr "
+                    + " and e.cod_merca=m.cod_merca ", Existencias.class);
+            System.out.println(q.toString());
+            Existencias respuesta = (Existencias) q.getSingleResult();
+            return respuesta;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

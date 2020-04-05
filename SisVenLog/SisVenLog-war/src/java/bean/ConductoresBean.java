@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,7 +91,8 @@ public class ConductoresBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formConductores");
+//    RequestContext.getCurrentInstance().update("formConductores");
+        PrimeFaces.current().ajax().update("formConductores");
     }
 
     public String getFiltro() {
@@ -123,8 +125,8 @@ public class ConductoresBean implements Serializable {
             conductoresFacade.insertarConductores(conductores);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevConductores').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -150,8 +152,8 @@ public class ConductoresBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditConductores').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditConductores').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditConductores').hide();");
             }
 
         } catch (Exception e) {
@@ -166,7 +168,8 @@ public class ConductoresBean implements Serializable {
             this.conductores = new Conductores();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacConductores').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacConductores').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacConductores').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -194,18 +197,20 @@ public class ConductoresBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConductores').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConductores').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarConductores').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevConductores').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConductores').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarConductores').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarConductores').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevConductores').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevConductores').hide();");
     }
 
 }
-

@@ -8,6 +8,10 @@ package dao;
 
 import entidad.Clientes;
 import entidad.Recibos;
+import entidad.RecibosPK;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -150,13 +154,14 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
         return resultados;
     }
     
-     public long obtenerCantidadRecibos(long lNroRecibo){
+    public int obtenerCantidadRecibos(long lNroRecibo){
         String sql =    "SELECT * FROM recibos " +
                         "WHERE nrecibo = "+lNroRecibo+" "+
-                        "AND cod_empr = 2";
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
         Query q = em.createNativeQuery(sql, Recibos.class);
         System.out.println(q.toString());
-        long cantidadRegistros = q.getResultList().size();
+        int cantidadRegistros = q.getResultList().size();
         return cantidadRegistros;
     }
     
@@ -188,17 +193,49 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
     }
     
     public List<Recibos> obtenerRecibos(){
-        Query q = getEntityManager().createNativeQuery("select * from recibos order by frecibo desc ",
-                Recibos.class);
-        return q.getResultList();
+        Query q = getEntityManager().createNativeQuery("select nrecibo, frecibo, cod_cliente, irecibo, mestado from recibos where mestado = 'A' order by frecibo desc ");
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<Recibos> listadoRecibos = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            RecibosPK recibosPK = new RecibosPK();
+            recibosPK.setNrecibo(Long.parseLong(resultado[0].toString()));
+            Recibos recibo = new Recibos();
+            recibo.setRecibosPK(recibosPK);
+            if(resultado[1] != null){
+                Timestamp timeStamp_1 = (Timestamp) resultado[1];
+                java.util.Date dateResult_1 = new Date(timeStamp_1.getTime());                
+                recibo.setFrecibo(dateResult_1);
+            }else{
+                recibo.setFrecibo(null); 
+            }
+            recibo.setCodCliente(resultado[2] == null ? null : Integer.parseInt(resultado[2].toString()));
+            recibo.setIrecibo(Long.parseLong(resultado[3].toString()));
+            char cEstado = resultado[4] == null ? 0 : resultado[4].toString().charAt(0);
+            recibo.setMestado(cEstado);
+            listadoRecibos.add(recibo);
+        }
+        return listadoRecibos;
     }
     
     public List<Recibos> findRangeSort(int[] range) {
-        Query q = getEntityManager().createNativeQuery("select * from recibos order by nrecibo desc ",
+        Query q = getEntityManager().createNativeQuery("select * from recibos where mestado = 'A' order by nrecibo desc ",
                 Recibos.class);
+        System.out.println(q.toString());
         q.setMaxResults(range[1]);
         q.setFirstResult(range[0]);
-
+        return q.getResultList();
+    }
+    
+    public List<Recibos> obtenerRecibosPorNroEnUnRango(long lNroRecibo, int[] range){
+        String sql =    "SELECT * FROM recibos " +
+                        "WHERE nrecibo = "+lNroRecibo+" "+
+                        "AND cod_empr = 2 "+
+                        "AND mestado = 'A'";
+        Query q = em.createNativeQuery(sql, Recibos.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
         return q.getResultList();
     }
 }

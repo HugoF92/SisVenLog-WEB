@@ -9,7 +9,6 @@ import bean.EnviosBean;
 import dao.ExistenciasFacade;
 import entidad.CanalesVenta;
 import entidad.Depositos;
-import entidad.Envios;
 import entidad.Existencias;
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,7 +22,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -122,8 +122,9 @@ public class BuscadorExistenciasBean extends LazyDataModel<Existencias> implemen
                 enviosBean.setExistencias(this.existencias);
                 enviosBean.setArticulo(this.existencias.getExistenciasPK().getCodMerca());
 
-                RequestContext.getCurrentInstance().update("descripcionesMerca");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaderia').hide();");
+//                RequestContext.getCurrentInstance().update("descripcionesMerca");
+                PrimeFaces.current().ajax().update("descripcionesMerca");
+                PrimeFaces.current().executeScript("PF('dlgBusMercaderia').hide();");
             }
 
         }
@@ -139,7 +140,7 @@ public class BuscadorExistenciasBean extends LazyDataModel<Existencias> implemen
 
         if (depos == null) {
             
-            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaderia').hide();");
+            PrimeFaces.current().executeScript("PF('dlgBusMercaderia').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Se requiere deposito origen para continuar."));
             
             return;
@@ -148,7 +149,7 @@ public class BuscadorExistenciasBean extends LazyDataModel<Existencias> implemen
         
         if (canalVen == null) {
             
-            RequestContext.getCurrentInstance().execute("PF('dlgBusMercaderia').hide();");
+            PrimeFaces.current().executeScript("PF('dlgBusMercaderia').hide();");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Se requiere canal de venta para continuar."));
             
             return;

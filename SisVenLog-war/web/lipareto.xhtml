@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body> 
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiRetornoRecibo" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiRetornoRecibo" header="LEY DE PARETO"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="2" >
+
+                                        <p:outputLabel value="Fecha Fact. Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaReciboDesde" value="#{listadoLeyDeParetoBean.fechaFacturacionDesde}" 
+                                                    showOn="button" style="width: 60px;"/>  
+
+                                        <p:outputLabel value="Fecha Fact. Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaReciboHasta" value="#{listadoLeyDeParetoBean.fechaFacturacionHasta}" 
+                                                    showOn="button" style="width: 60px;"/>
+                                        
+                                        <p:outputLabel value="Linea:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="seleccionLinea" value="#{listadoLeyDeParetoBean.linea}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{LineasConverter}"
+                                                         style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems id="lineaItem" value="#{lineasBean.listar()}" var="linea" 
+                                                           itemValue="#{linea}" 
+                                                           itemLabel="#{linea.xdesc}"/>
+
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Cliente:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="seleccionTipoCliente" value="#{listadoLeyDeParetoBean.tipoCliente}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{TiposClientesConverter}"
+                                                         style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems id="tipoClienteItem" value="#{tipoCliBean.listar()}" var="tipoCliente" 
+                                                           itemValue="#{tipoCliente}" 
+                                                           itemLabel="#{tipoCliente.xdesc}"/>
+
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Zona:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="seleccionZona" value="#{listadoLeyDeParetoBean.zonas}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{ZonasConverter}"
+                                                         style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems id="zonaItem" value="#{zonasBean.listar()}" var="zona" 
+                                                           itemValue="#{zona}" 
+                                                           itemLabel="#{zona.xdesc}"/>
+
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal de Vta.:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="seleccionCanalVenta" value="#{listadoLeyDeParetoBean.canalesVenta}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{CanalesVentaConverter}"
+                                                         style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems id="canalesVentasItem" value="#{canalesVenBean.listar()}" var="canaleVenta" 
+                                                           itemValue="#{canaleVenta}" 
+                                                           itemLabel="#{canaleVenta.xdesc}"/>
+
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Discriminar: " style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneButton id="discriminarId" value="#{listadoLeyDeParetoBean.discriminar}">
+                                            <f:selectItem itemLabel="Por Linea" itemValue="PL"/>
+                                            <f:selectItem itemLabel="Por Cliente" itemValue="PC" />
+                                        </p:selectOneButton>
+                                        
+                                        <p:outputLabel value="Filtrar por: " style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneButton id="filtrarId" value="#{listadoLeyDeParetoBean.factorSeleccionado}">
+                                            <f:selectItem id="coeficiente" itemLabel="Coeficiente" itemValue="COE"/>
+                                            <f:selectItem id="monto" itemLabel="Monto" itemValue="MON" />
+                                            <p:ajax update=":factor"/>
+                                        </p:selectOneButton>
+                                        
+                                        <p id="espacioFactorPYG"></p>
+                                        <p:inputNumber id="factor" value="#{listadoLeyDeParetoBean.factor}" 
+                                                       decimalSeparator="," decimalPlaces="1" thousandSeparator="." /> 
+                                    </h:panelGrid>
+
+                                    <br></br>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoLeyDeParetoBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoLeyDeParetoBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+
+
+                                </p:panel>
+
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </h:body>
+
+    </ui:define>
+</ui:composition>

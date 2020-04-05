@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -90,7 +91,8 @@ public class MotivosBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formMotivos");
+//    RequestContext.getCurrentInstance().update("formMotivos");
+        PrimeFaces.current().ajax().update("formMotivos");
     }
 
     public String getFiltro() {
@@ -121,7 +123,7 @@ public class MotivosBean implements Serializable {
             motivosFacade.insertarMotivos(motivos);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevMotivos').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevMotivos').hide();");
 
             instanciar();
 
@@ -148,7 +150,7 @@ public class MotivosBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditMotivos').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditMotivos').hide();");
 
             }
 
@@ -163,7 +165,7 @@ public class MotivosBean implements Serializable {
             motivosFacade.remove(motivos);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacMotivos').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacMotivos').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -191,16 +193,16 @@ public class MotivosBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarMotivos').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarMotivos').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevMotivos').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevMotivos').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarMotivos').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevMotivos').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarMotivos').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevMotivos').hide();");
 
     }
 

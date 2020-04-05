@@ -3,20 +3,19 @@ package bean.buscadores;
 import bean.DepositosBean;
 import dao.TransportistasFacade;
 import entidad.Transportistas;
-import entidad.Transportistas;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class BuscadorTtransportistasBean {
+public class BuscadorTtransportistasBean  implements Serializable {
 
     @EJB
     private TransportistasFacade transportistasFacade;
@@ -90,9 +89,11 @@ public class BuscadorTtransportistasBean {
 
             if (this.transportistas.getXtransp() != null) {
                 depositosBean.setTransportistas(this.transportistas);
-                RequestContext.getCurrentInstance().update("agreDepoPnlTrans");
-                RequestContext.getCurrentInstance().update("editDepoPnlTrans");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusTrans').hide();");
+//                RequestContext.getCurrentInstance().update("agreDepoPnlTrans");
+                PrimeFaces.current().ajax().update("agreDepoPnlTrans");
+//                RequestContext.getCurrentInstance().update("editDepoPnlTrans");
+                PrimeFaces.current().ajax().update("editDepoPnlTrans");
+                PrimeFaces.current().executeScript("PF('dlgBusTrans').hide();");
             }
 
         }

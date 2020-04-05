@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -141,7 +142,7 @@ public class MarcaBean implements Serializable {
                 marcaFacade.insertarMarca(marca);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevMarca').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevMarca').hide();");
 
                 instanciar();
 
@@ -170,7 +171,7 @@ public class MarcaBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditMarca').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditMarca').hide();");
 
             }
 
@@ -186,7 +187,7 @@ public class MarcaBean implements Serializable {
             this.marca = new MarcasComerciales();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacMarca').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacMarca').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -214,16 +215,16 @@ public class MarcaBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarMarca').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarMarca').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevMarca').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevMarca').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarMarca').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevMarca').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarMarca').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevMarca').hide();");
 
     }
 

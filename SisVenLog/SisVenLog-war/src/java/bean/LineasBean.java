@@ -14,7 +14,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -115,7 +116,8 @@ public class LineasBean implements Serializable {
         
        listar();
 
-    RequestContext.getCurrentInstance().update("formLineas");
+//    RequestContext.getCurrentInstance().update("formLineas");
+        PrimeFaces.current().ajax().update("formLineas");
     }
 
     public String getFiltro() {
@@ -159,7 +161,7 @@ public class LineasBean implements Serializable {
             xdescFacade.insertarLineas(xdesc);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevLineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevLineas').hide();");
 
             instanciar();
 
@@ -186,7 +188,7 @@ public class LineasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditLineas').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditLineas').hide();");
 
             }
 
@@ -202,7 +204,7 @@ public class LineasBean implements Serializable {
             this.xdesc = new Lineas();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacLineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacLineas').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -233,16 +235,16 @@ public class LineasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarLineas').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarLineas').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevLineas').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevLineas').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarLineas').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevLineas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarLineas').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevLineas').hide();");
 
     }
 

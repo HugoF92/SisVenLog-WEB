@@ -24,7 +24,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import util.ExceptionHandlerView;
 
@@ -115,11 +116,13 @@ public class ChequesBean implements Serializable{
         try{
             listaClientes = clientesFacade.buscarPorFiltro(filtro);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de clientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         
     }
@@ -139,11 +142,13 @@ public class ChequesBean implements Serializable{
                                                                                 fechaCobro);
             
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de cheques.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }   
     }
     
@@ -178,11 +183,13 @@ public class ChequesBean implements Serializable{
                                         //actualizar cheques no cobrados
                                         int resultado = chequesFacade.actualizarChequesNoCobrados(cheque);
                                     }catch(Exception e){
-                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+//                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                         tituloError = "Error en la actualización de cheques.";
                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                         return null;
                                     }
                                     
@@ -206,11 +213,13 @@ public class ChequesBean implements Serializable{
                                             cuentasCorrientesFacade.insertarCuentas(cuentasCorrientes);
                                         }
                                     }catch(Exception sqle){
-                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+//                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                         contenidoError = ExceptionHandlerView.getStackTrace(sqle);
                                         tituloError = "Error en la insersión de movimietos en cuentas corrientes.";
                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+//                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                         return null;
                                     }
                                 }
@@ -225,11 +234,13 @@ public class ChequesBean implements Serializable{
                 return null;
             }
          }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+//            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al confirmar la operación.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
             return null;
         }
     }
@@ -238,22 +249,26 @@ public class ChequesBean implements Serializable{
         if(codigoCliente != null){
             if(codigoCliente == 0){
                 //mostrar busqueda de clientes
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').show();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieCobroRechazoCheque').show();");
             }else{
                 try{
                     Clientes clienteBuscado = clientesFacade.find(codigoCliente);
                     if(clienteBuscado == null){
                         //mostrar busqueda de clientes
-                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').show();");
+//                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').show();");
+                        PrimeFaces.current().executeScript("PF('dlgBusClieCobroRechazoCheque').show();");
                     }else{
                         this.nombreCliente = clienteBuscado.getXnombre();
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+//                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de clientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+//                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 }
             }
         }
@@ -264,8 +279,10 @@ public class ChequesBean implements Serializable{
             if (getClientes().getXnombre() != null) {
                 codigoCliente = getClientes().getCodCliente();
                 nombreCliente = getClientes().getXnombre();
-                RequestContext.getCurrentInstance().update("panel_buscador_cheques");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').hide();");
+//                RequestContext.getCurrentInstance().update("panel_buscador_cheques");
+                PrimeFaces.current().ajax().update("panel_buscador_cheques");
+//                RequestContext.getCurrentInstance().execute("PF('dlgBusClieCobroRechazoCheque').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieCobroRechazoCheque').hide();");
             }
         }
     }

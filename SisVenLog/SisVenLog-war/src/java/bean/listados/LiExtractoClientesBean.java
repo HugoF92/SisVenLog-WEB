@@ -1,17 +1,10 @@
 package bean.listados;
 
-import dao.CanalesCompraFacade;
-import dao.DepositosFacade;
 import dao.ClientesFacade;
 import dao.ExcelFacade;
-import dto.LiMercaSinDto;
-import entidad.CanalesCompra;
-import entidad.CanalesCompraPK;
-import entidad.Depositos;
-import entidad.DepositosPK;
-import entidad.Clientes;
 import entidad.Clientes;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

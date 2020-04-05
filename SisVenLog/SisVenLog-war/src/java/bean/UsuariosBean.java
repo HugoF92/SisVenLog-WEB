@@ -16,7 +16,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -169,7 +170,7 @@ public class UsuariosBean implements Serializable {
             usuariosFacade.create(usuarios);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevUsuarios').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevUsuarios').hide();");
 
             instanciar();
 
@@ -191,7 +192,7 @@ public class UsuariosBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditUsuarios').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditUsuarios').hide();");
 
 
         } catch (Exception e) {
@@ -206,7 +207,7 @@ public class UsuariosBean implements Serializable {
             this.usuarios = new Usuarios();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacPers').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacPers').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Ocurrió un error."));
         }

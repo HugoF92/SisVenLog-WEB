@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -141,7 +142,7 @@ public class GrupoCargaBean implements Serializable {
                // gruposCargaFacade.insertarGruposCarga(gruposCarga);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevGruposCarga').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevGruposCarga').hide();");
 
                 instanciar();
 
@@ -170,7 +171,7 @@ public class GrupoCargaBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditGruposCarga').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditGruposCarga').hide();");
 
             }
 
@@ -186,7 +187,7 @@ public class GrupoCargaBean implements Serializable {
             this.gruposCarga = new GruposCarga();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacGruposCarga').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacGruposCarga').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -214,16 +215,16 @@ public class GrupoCargaBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarGruposCarga').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarGruposCarga').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevGruposCarga').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevGruposCarga').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarGruposCarga').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevGruposCarga').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarGruposCarga').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevGruposCarga').hide();");
 
     }
 

@@ -1,8 +1,6 @@
 package bean.buscadores;
 
-import bean.DepositosBean;
 import bean.EnviosBean;
-import bean.RutasBean;
 import dao.MercaderiasFacade;
 import entidad.Mercaderias;
 import java.io.IOException;
@@ -11,8 +9,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -96,8 +94,9 @@ public class BuscadorMercaderiasBean {
 
             if (this.mercaderias.getXdesc() != null) {
                 enviosBean.setMercaderias(this.mercaderias);
-                RequestContext.getCurrentInstance().update("agreEnvioPnlArticulo");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusMercaderia').hide();");
+//                RequestContext.getCurrentInstance().update("agreEnvioPnlArticulo");
+                PrimeFaces.current().ajax().update("agreEnvioPnlArticulo");
+                PrimeFaces.current().executeScript("PF('dlgBusMercaderia').hide();");
             }
 
         }

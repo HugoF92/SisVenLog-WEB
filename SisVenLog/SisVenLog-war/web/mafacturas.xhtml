@@ -25,7 +25,7 @@
 
                         <h:form id="formRecibosCompras" prependId="false">  
 
-                            <h1 align="center">MANTENIMIENTO DE FACTURAS</h1>
+                            <h1 align="center">MANTENIMIENTO DE FACTURAS DE VENTAS</h1>
 
                             <p:growl id="msgRecibosCom" showDetail="true"/>
 
@@ -46,7 +46,8 @@
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
-                                    update="formInacReciboCompra"
+                                    update="formAnularFactura"
+                                    actionListener="#{facturasBean.visualizarFactura}"
                                     disabled="#{facturasBean.habilitaBotonEliminar}"
                                     oncomplete="PF('dlgAnularFactura').show()"/>
                                 
@@ -73,42 +74,36 @@
                                         <p:dataTable id="tablaRecibosCompras" var="itemp"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
-                                                     selectionMode="single" reflow="true"
-                                                     value="#{facturasBean.listadoFacturas}" 
-                                                     rowKey="#{itemp.facturasPK.nrofact}"
+                                                     selectionMode="single" reflow="true" lazy="true"
+                                                     value="#{facturasBean.modelFacturas}" 
                                                      selection="#{facturasBean.facturaSeleccionada}">
 
                                             <p:ajax event="rowSelect"
                                                     listener="#{facturasBean.onRowSelect(event)}"
                                                     update="formRecibosCompras"/>
                                             
-                                            <p:column headerText="TipoDoc." filterBy="#{itemp.facturasPK.ctipoDocum}"
-                                                      sortBy="#{itemp.facturasPK.ctipoDocum}">
-                                                <h:outputText value="#{itemp.facturasPK.ctipoDocum}" />
-                                            </p:column>
-                                            
-                                            <p:column headerText="NroFactura" filterBy="#{itemp.facturasPK.nrofact}"
-                                                      sortBy="#{itemp.facturasPK.nrofact}">
+                                            <p:column headerText="NroFactura" filterBy="#{itemp.facturasPK.nrofact}">
                                                 <h:outputText value="#{itemp.facturasPK.nrofact}" />
                                             </p:column>
                                             
-                                            <p:column headerText="FechaFactura" filterBy="#{facturasBean.convertidorFecha(itemp.facturasPK.ffactur)}"
-                                                      sortBy="#{itemp.facturasPK.ffactur}">
+                                            <p:column headerText="TipoDoc.">
+                                                <h:outputText value="#{itemp.facturasPK.ctipoDocum}" />
+                                            </p:column>
+                                                                                        
+                                            <p:column headerText="FechaFactura">
                                                 <h:outputText value="#{itemp.facturasPK.ffactur}">
                                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                                 </h:outputText>
                                             </p:column>
                                             
-                                            <p:column headerText="Total" filterBy="#{itemp.ttotal}"
-                                                      sortBy="#{itemp.ttotal}">
+                                            <p:column headerText="Total">
                                                 <h:outputText value="#{itemp.ttotal}" >
                                                     <f:convertNumber type="number"/>
                                                 </h:outputText>
                                             </p:column>
                                             
-                                            <p:column headerText="Estado" filterBy="#{itemp.mestado}"
-                                                      sortBy="#{itemp.mestado}" filterMatchMode="contains">
-                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'ANULADO'}" />
+                                            <p:column headerText="Estado">
+                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'INACTIVO'}"></h:outputText>
                                             </p:column>
                                             
                                         </p:dataTable>
@@ -807,67 +802,322 @@
 
                         </h:form>
                         
-                        <h:form id="formInacReciboCompra" prependId="false">
+                        <h:form id="formAnularFactura"  prependId="false">
+                            <p:growl id="msgAnularFactura" showDetail="true"/>
 
-                            <p:growl id="msgInacFactura" showDetail="true"/>
-
-                            <p:dialog header="Borrar Factura"
+                            <p:dialog header="Anular Factura"
                                       widgetVar="dlgAnularFactura"
                                       modal="true"
                                       responsive="true"
-                                      width="400">
-
-                                <p:ajax event="open" listener="#{facturasBean.inicializarDatosAnulacion}" update="fecha_anulacion_id motivo_anulacion_id"/>      
-                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
-
-                                <br></br>
-                                <br></br>
-
-                                <center>
-                                    
-                                    <div class="ui-fluid">
-                                    <p:panelGrid    id="panel_grid_borrar_factura" 
-                                                    columns="2" 
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
+                                
+                                <p:ajax event="open" listener="#{facturasBean.inicializarDatosAnulacion}" update="fecha_anulacion_id motivo_anulacion_id"/> 
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_nueva_factura_a" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
                                                     styleClass="ui-panelgrid-blank ui-fluid">
                                         
-                                        <p:outputLabel value="Fecha Anulación: " style="font-weight: bold; text-align: right;"/>
-                                        <p:calendar id="fecha_anulacion_id" size="8" value="#{facturasBean.fechaAnulacionLbl}" showOn="button" style="width: 100px;"/>
-                                            
-                                        
-                                        <p:outputLabel value="Motivo: " style="font-weight: bold; text-align: left;"/>
-                                        <p:selectOneMenu id="motivo_anulacion_id" value="#{facturasBean.motivoLbl}" 
-                                                         filterMatchMode="contains" filter="true"
-                                                         style="width: 150px;">
-                                            <f:selectItem itemLabel="Todos" itemValue="0"/> 
-                                            <f:selectItems value="#{facturasBean.listarMotivos()}" 
-                                                           var="motivo"
-                                                           itemValue="#{motivo.cmotivo}"
-                                                           itemLabel="#{motivo.xdesc}"/>
-                                            <p:ajax event="change" update="@this"/>
+                                        <p:outputLabel value="Tipo de Documento: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="tipo_documento_id_a" value="#{facturasBean.tipoDocumentoSeleccionadoLbl}" 
+                                                         filterMatchMode="contains" filter="true" disabled="true"
+                                                         style="width: 150px;" converter="#{TiposDocumentosConverter}">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{facturasBean.listarTiposDocumentos()}" 
+                                                           var="tipoDocumento"
+                                                           itemValue="#{tipoDocumento}"
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
                                         </p:selectOneMenu>
                                         
+                                        <p:outputLabel value="Fecha Factura: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_factura_id_a" size="8" value="#{facturasBean.fechaFactLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_a" columns="2">
+                                            <p:inputText id="codigo_cliente_id_a" value="#{facturasBean.codClienteLbl}" style="width: 60px;" disabled="true"/>
+                                            <p:outputLabel id="cliente_descripcion_a" value="#{facturasBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Nro. Factura:  " style="font-weight: bold; text-align: left;"/>    
+                                        <h:panelGrid id="panel_nro_factura_a" columns="3">
+                                            <p:inputText id="nro_establec_id_a" value="#{facturasBean.NPuntoEstabLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_expedic_id_a" value="#{facturasBean.NPuntoExpedLbl}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nro_factura_id_a" value="#{facturasBean.nroFactLbl}" style="width: 100px;" disabled="true"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Tipo de Venta: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="tipo_venta_id_a" value="#{facturasBean.ctipoVtaLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{0}"/>
+                                            <f:selectItems value="#{facturasBean.listadoTiposVentas}" 
+                                                           var="tipoVenta"
+                                                           itemValue="#{tipoVenta.tiposVentasPK.ctipoVta}"
+                                                           itemLabel="#{tipoVenta.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Vendedor: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="vendedor_id_a" value="#{facturasBean.codVendedorLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{0}"/>
+                                            <f:selectItems value="#{facturasBean.listarVendedoresZonas()}" 
+                                                           var="vendedor"
+                                                           itemValue="#{vendedor.empleados.empleadosPK.codEmpleado}"
+                                                           itemLabel="#{vendedor.empleados.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Depósito: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="deposito_id_a" value="#{facturasBean.codDepositoLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{0}"/>
+                                            <f:selectItems value="#{facturasBean.listadoDepositos}" 
+                                                           var="deposito"
+                                                           itemValue="#{deposito.depositosPK.codDepo}"
+                                                           itemLabel="#{deposito.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Fecha Venc.: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_id_a" size="8" value="#{facturasBean.fechaVencLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Fecha Venc. Impre.: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_imp_id_a" size="8" value="#{facturasBean.fechaVencImpresLbl}" showOn="button" style="width: 100px;" disabled="true"/>
+                                                                                
+                                        <p:outputLabel value="Canal Venta: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="canal_vta_id_a" value="#{facturasBean.codCanalVentaLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{0}"/>
+                                            <f:selectItems value="#{facturasBean.listarCanales()}" 
+                                                           var="canalvta"
+                                                           itemValue="#{canalvta.canalesVenta.codCanal}"
+                                                           itemLabel="#{canalvta.canalesVenta.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Nro. Pedido:  " style="font-weight: bold; text-align: left;"/> 
+                                        <p:inputText id="nro_pedido_id_a" value="#{facturasBean.nroPedidoLbl}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Plazo Cheque:  " style="font-weight: bold; text-align: left;"/> 
+                                        <h:panelGrid id="panel_plazo_cheque_a" columns="3">
+                                            <p:inputText id="dias_cheques_id_a" value="#{facturasBean.cantDiasChequesLbl}" style="width: 100px;" disabled="true"/>
+                                            <p:selectOneMenu id="plazos_cheques_id_a" value="#{facturasBean.plazosChequesLbl}" 
+                                                             style="width: 100px;" disabled="true">
+                                                <f:selectItem itemLabel="Ninguno" itemValue="#{0}"/> 
+                                                <f:selectItem itemLabel="8" itemValue="#{8}"/>
+                                                <f:selectItem itemLabel="15" itemValue="#{15}"/>
+                                                <f:selectItem itemLabel="21" itemValue="#{21}"/>
+                                                <f:selectItem itemLabel="30" itemValue="#{30}"/>
+                                                <f:selectItem itemLabel="45" itemValue="#{45}"/>
+                                            </p:selectOneMenu>
+                                            <p:inputText id="dias_cheques_impres_id_a" value="#{facturasBean.cantDiasImpresionChequesLbl}" style="width: 100px;" disabled="true"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Entregador: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="entregador_id_a" value="#{facturasBean.codEntregadorLbl}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 150px;" disabled="true">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{0}"/>
+                                            <f:selectItems value="#{facturasBean.listarEntregadores()}" 
+                                                           var="entregador"
+                                                           itemValue="#{entregador.empleadosPK.codEmpleado}"
+                                                           itemLabel="#{entregador.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Observaciones: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id_a" value="#{facturasBean.observacionLbl}" cols="20" rows="3" disabled="true"></p:inputTextarea>
+                                        
                                     </p:panelGrid>
-                                    </div>    
+                                </div>
+                                
+                                <p:panel header="Detalle">
                                     
-                                    <br></br>
-                                    <br></br>
-                                    
-                                    <h:panelGrid columns="2">
+                                    <table width="100%" border="0" cellspacing="0" cellpaddiSng="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Facturas</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
 
+                                                            <!-- LISTADO DE FACTURAS   -->
+                                                            <p:dataTable id="tablaRecibosComprasDet_a" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{facturasBean.listadoDetalle}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         editable="true" editMode="cell"
+                                                                         reflow="true" selectionMode="single"
+                                                                         rowKey="#{itemd.facturasDet.facturasDetPK.nrofact}"
+                                                                         selection="#{facturasBean.facturaDetDtoSeleccionada}"
+                                                                         style="width: 800px;">
+
+                                                                <p:column headerText="Artículo" width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.facturasDetPK.codMerca}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Descripción" width="300">
+                                                                    <h:outputText value="#{itemd.facturasDet.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Cant. Cajas" width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.cantCajas}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Cant. Unid." width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.cantUnid}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Cant. Cajas Bonif." width="150">
+                                                                    <h:outputText value="#{itemd.facturasDet.cajasBonif}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Cant. Unid. Bonif." width="150">
+                                                                    <h:outputText value="#{itemd.facturasDet.unidBonif}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="% Desc." width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.pdesc}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Exentas" width="100">
+                                                                    <h:outputText value="#{itemd.facturasDet.iexentas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Gravadas" width="100">
+                                                                    <h:outputText value="#{itemd.facturasDet.igravadas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Tipo Impuesto" width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.pimpues}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Impuestos" width="100">
+                                                                    <h:outputText value="#{itemd.facturasDet.impuestos}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Descuentos" width="100">
+                                                                    <h:outputText value="#{itemd.facturasDet.idescuentos}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Total" width="100">
+                                                                    <h:outputText value="#{itemd.facturasDet.itotal}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Nro. Promoción" width="80">
+                                                                    <h:outputText value="#{itemd.facturasDet.nroPromo}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Descripción" width="300">
+                                                                    <h:outputText value="#{itemd.descPromo}" />
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                   
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="3">
+                                        
+                                        <p:outputLabel value="PARCIALES:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_gravadas_id_a" value="#{facturasBean.totalGravadas}" style="width: 100px;" disabled="true"/>
+                                        <p:inputNumber id="total_exentas_id_a" value="#{facturasBean.totalExentas}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="I.V.A:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_iva_id_a" value="#{facturasBean.totalIva}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="DESCUENTOS:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_descuento_id_a" value="#{facturasBean.totalDescuentos}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="TOTAL:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_id_a" value="#{facturasBean.totalFinal}" style="width: 100px;" disabled="true"/>
+                                        <p:spacer></p:spacer>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <div class="ui-fluid">
+                                        <p:panelGrid    id="panel_grid_anular_factura" 
+                                                        columns="2" 
+                                                        styleClass="ui-panelgrid-blank ui-fluid">
+
+                                            <p:outputLabel value="Fecha Anulación: " style="font-weight: bold; text-align: right;"/>
+                                            <p:calendar id="fecha_anulacion_id" size="8" value="#{facturasBean.fechaAnulacionLbl}" showOn="button" style="width: 100px;"/>
+
+
+                                            <p:outputLabel value="Motivo: " style="font-weight: bold; text-align: left;"/>
+                                            <p:selectOneMenu id="motivo_anulacion_id" value="#{facturasBean.motivoLbl}" 
+                                                             filterMatchMode="contains" filter="true"
+                                                             style="width: 150px;">
+                                                <f:selectItem itemLabel="Todos" itemValue="0"/> 
+                                                <f:selectItems value="#{facturasBean.listarMotivos()}" 
+                                                               var="motivo"
+                                                               itemValue="#{motivo.cmotivo}"
+                                                               itemLabel="#{motivo.xdesc}"/>
+                                                <p:ajax event="change" update="@this"/>
+                                            </p:selectOneMenu>
+
+                                        </p:panelGrid>
+                                    </div>    
+                                </center>
+                                
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        
                                         <p:commandButton
                                             value="Borrar"
                                             actionListener="#{facturasBean.anularFactura}"
-                                            update="msgInacFactura formRecibosCompras formListadoRecibosCompras"
+                                            update="msgAnularFactura formRecibosCompras formListadoRecibosCompras"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
 
-
-                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgAnularFactura').hide();" 
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgAnularFactura').hide()"
+                                                         update="formListadoRecibosCompras formAnularFactura"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>
+                                        
                                     </h:panelGrid>
                                 </center>
+                                
                             </p:dialog>
 
                         </h:form>

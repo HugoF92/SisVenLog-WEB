@@ -5,17 +5,18 @@ import bean.listados.LiFacServBean;
 import dao.ClientesFacade;
 import entidad.Clientes;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.*;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class BuscadorClientesBean {
+public class BuscadorClientesBean implements Serializable {
 
     @EJB
     private ClientesFacade clientesFacade;
@@ -106,7 +107,7 @@ public class BuscadorClientesBean {
                 //RequestContext.getCurrentInstance().update("liExtractoCliPnlClie");
                 //RequestContext.getCurrentInstance().update("lifactPnlClie");
                 //RequestContext.getCurrentInstance().update("lifactClientesSel");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClie').hide();");
+                PrimeFaces.current().executeScript("PF('dlgBusClie').hide();");
             }
 
         }

@@ -6,7 +6,13 @@
 package util;
 
 import dto.LiMercaSinDto;
+import entidad.CanalesVenta;
+import entidad.Empleados;
 import entidad.Proveedores;
+import entidad.Rutas;
+import entidad.TiposClientes;
+import entidad.TiposDocumentos;
+import entidad.Zonas;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -22,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2228,6 +2235,55 @@ public class LlamarReportes {
         }
     }
 
+    public void reporteClientesRutasZonas(Boolean conRuteo, TiposClientes tipoCliente,
+            Zonas zona, Rutas ruta, String estado, String fechaAltaDesde,
+            String fechaAltaHasta, Boolean todosClientes, String listaCodClientes,
+            String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("codTipoCliente", tipoCliente == null ? null: tipoCliente.getCtipoCliente());
+            param.put("tipoCliente", tipoCliente == null ? null: tipoCliente.getXdesc());
+            param.put("codZona", zona == null? null:zona.getZonasPK().getCodZona());
+            param.put("zona", zona == null? null: zona.getXdesc());
+            param.put("codRuta", ruta ==null? null : ruta.getRutasPK().getCodRuta());
+            param.put("ruta", ruta ==null? null : ruta.getXdesc());
+            param.put("estado", Integer.parseInt(estado));
+            param.put("fechaAltaDesde", fechaAltaDesde);
+            param.put("fechaAltaHasta", fechaAltaHasta);
+            param.put("todosClientes", todosClientes);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+
+            String report;
+            String filename = "liclientes";
+            
+            if(conRuteo) {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesConRuteo.jasper");
+                filename += "conruteo.pdf";
+            } else {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesSinRuteo.jasper");
+                filename += "sinruteo.pdf";
+            }
+
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibosCom(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, Proveedores provSeleccionado, String usuImprime, String tipo, 
             String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
@@ -2256,6 +2312,113 @@ public class LlamarReportes {
                 String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
                 param.put("SUBREPORT_DIR", subReportDir);
             }
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    public void reporteLiPedidos(String sql, 
+                                 String sqlDetalle,
+                                 Date fechaDesde,
+                                 Date fechaHasta,
+                                 String seleccionTipo,
+                                 String seleccionFecha,
+                                 Empleados vendedor,
+                                 CanalesVenta canal,
+                                 Zonas zona,
+                                 String usuImprime, 
+                                 String tipo,
+                                 String nombreReporte, 
+                                 String filename) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("sqlDetalle", sqlDetalle);
+            param.put("fechaDesde", fechaDesde);
+            param.put("fechaHasta", fechaHasta);
+            
+            //titulo para el reporte
+            switch(seleccionTipo){
+                case "TD":
+                    param.put("titulo", "LISTADO DE PEDIDOS");
+                    break;
+                case "AU":
+                    param.put("titulo", "LISTADO DE PEDIDOS AUTOMATICOS");
+                    break;
+                case "MA":
+                    param.put("titulo", "LISTADO DE PEDIDOS MANUALES");
+                    break;
+                default:
+                    param.put("titulo", "LISTADO DE PEDIDOS");
+                    break;
+            }
+            
+            //tipo de fecha
+            switch(seleccionFecha){
+                case "FP":
+                    param.put("txtFchDesde", "Fecha de Pedido Desde:");
+                    param.put("txtFchHasta", "Fecha de Pedido Hasta:");
+                    break;
+                case "FC":
+                    param.put("txtFchDesde", "Fecha de Carga Desde:");
+                    param.put("txtFchHasta", "Fecha de Carga Hasta:");
+                    break;
+            }
+
+            //vendedor
+            if (vendedor != null) {
+                String vend = vendedor.getXnombre();
+                System.out.println("vendedor: " + vend);
+                param.put("txtVendedor", vend);
+            }else{
+                param.put("txtVendedor", "Todos");
+            }
+            
+            //canal
+            if (canal != null) {
+                param.put("txtCanalVta", canal.getXdesc());
+            }else{
+                param.put("txtCanalVta", "Todos");
+            }
+            
+            //zona
+            if (zona != null) {
+                param.put("txtZona", zona.getXdesc());
+            } else {
+                param.put("txtZona", "Todos");
+            }
+            param.put("nombreRepo", filename);
+            param.put("usu_imprime", usuImprime);
+            param.put("sqlDet", sqlDetalle);            
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+            String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+            param.put("SUBREPORT_DIR", subReportDir);
+
 
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
 

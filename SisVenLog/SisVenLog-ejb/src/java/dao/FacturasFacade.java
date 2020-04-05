@@ -15,7 +15,9 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.CacheStoreMode;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -437,5 +439,311 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
             listadoFacturas.add(f);
         }
         return listadoFacturas;
+    }
+    
+    public List<Facturas> buscarFacturasServiciosEnUnRango(int[] range) {
+        List<Facturas> resultado = new ArrayList<>();
+        Query q = em.createNativeQuery("select * from facturas where ctipo_docum in ('FCS', 'FCP') and cod_empr = 2 order by nrofact desc",Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        resultado = q.getResultList();
+        return resultado;
+    }
+    
+    public int obtenerCantidadFacturasServicios(){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+        
+    public List<Facturas> obtenerFacturasServiciosPorNroEnUnRango(long lNroFactura, int[] range){
+        String sql =    "select * from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and nrofact = "+lNroFactura+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        return q.getResultList();
+    }
+    
+    public int obtenerCantidadFacturasServiciosPorNro(long lNroFact){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCS', 'FCP') " +
+                        "and nrofact = "+lNroFact+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+    
+    public List<Facturas> buscarFacturasClientesEnUnRango(int[] range) {
+        List<Facturas> resultado = new ArrayList<>();
+        Query q = em.createNativeQuery("select * from facturas where ctipo_docum in ('FCO', 'FCR') and cod_empr = 2 order by nrofact desc",Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        resultado = q.getResultList();
+        return resultado;
+    }
+    
+    public int obtenerCantidadFacturasClientes(){
+        String sql = "select count(*) from facturas where ctipo_docum in ('FCO', 'FCR') and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+        
+    public List<Facturas> obtenerFacturasClientesPorNroEnUnRango(long lNroFactura, int[] range){
+        String sql =    "select * from facturas where ctipo_docum in ('FCO', 'FCR') " +
+                        "and nrofact = "+lNroFactura+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql, Facturas.class);
+        System.out.println(q.toString());
+        q.setMaxResults(range[1]);
+        q.setFirstResult(range[0]);
+        q.setHint("javax.persistence.cache.storeMode", CacheStoreMode.REFRESH);
+        return q.getResultList();
+    }
+    
+    public int obtenerCantidadFacturasClientesPorNro(long lNroFact){
+        String sql =    "select count(*) from facturas where ctipo_docum in ('FCO', 'FCR') " +
+                        "and nrofact = "+lNroFact+" "+
+                        "and cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        List<Integer> resultados = q.getResultList();
+        int respuesta = 0;
+        for(Integer resultado: resultados){
+            if(resultado != null){
+                respuesta = Integer.parseInt(resultado.toString());
+            }
+        }
+        return respuesta;
+    }
+    
+    public void borrarFactura(long lNroFact, String lFFactura, String lCTipoDoc){
+        String sql =    "DELETE FROM facturas " +
+                        "WHERE cod_empr = 2 AND nrofact = "+lNroFact+" "+
+                        "AND ffactur = '"+lFFactura+"' AND ctipo_docum = '"+lCTipoDoc+"' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
+    
+    public void insertarFactura(    String lCTipoDoc,
+                                    long lNroFact,
+                                    Integer lCodCliente,
+                                    String lFFactura,
+                                    Character lCTipoVta,
+                                    String lXObs,
+                                    long lTExentas,
+                                    long lTGravadas,
+                                    long lTImpuestos,
+                                    long lTTotal,
+                                    long lISaldo,
+                                    long lTDescuentos,
+                                    String lXDirec,
+                                    String lXRazonSocial,
+                                    String lXRuc,
+                                    String lXTelef,
+                                    String lXCiudad,
+                                    String lFVenc,
+                                    long lTGravadas10,
+                                    long lTGravadas5,
+                                    BigDecimal lTImpuestos10,
+                                    BigDecimal lTImpuestos5,
+                                    String lXFactura){
+        String sql = "";
+        if(!lFVenc.equals("")){
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre,  tgravadas_10, tgravadas_5, " +
+                "timpuestos_10, timpuestos_5, xfactura) values ( " +
+                "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                "null, null, null, null, '"+lFFactura+"', " +
+                "'"+lCTipoVta+"', '"+lXObs+"', null, 'A', "+lTExentas+", " +
+                ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", null, "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', '"+lFVenc+"', null, "+lTGravadas10+", "+lTGravadas5+", " +
+                ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"')";
+        }else{
+            sql =    "INSERT INTO facturas (cod_empr, ctipo_docum, nrofact, cod_cliente, cod_canal, cod_depo, cod_zona, cod_ruta, " +
+                "ffactur, ctipo_vta, xobs, cod_vendedor, mestado, texentas, tgravadas, " +
+                "timpuestos, ttotal, cod_entregador, isaldo, tdescuentos, xdirec, xrazon_social, xruc, xtelef, xciudad, fvenc, fvenc_impre,  tgravadas_10, tgravadas_5, " +
+                "timpuestos_10, timpuestos_5, xfactura) values ( " +
+                "2, '"+lCTipoDoc+"', "+lNroFact+", "+lCodCliente+", " +
+                "null, null, null, null, '"+lFFactura+"', " +
+                "'"+lCTipoVta+"', '"+lXObs+"', null, 'A', "+lTExentas+", " +
+                ""+lTGravadas+", "+lTImpuestos+", "+lTTotal+", null, "+lISaldo+", "+lTDescuentos+", '"+lXDirec+"', " +
+                "'"+lXRazonSocial+"', '"+lXRuc+"', '"+lXTelef+"', '"+lXCiudad+"', null, null, "+lTGravadas10+", "+lTGravadas5+", " +
+                ""+lTImpuestos10+", "+lTImpuestos5+", '"+lXFactura+"')";
+        }
+        
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
+    
+    public Integer findFacturaByCodEntregadorFecha(Short codEntregador,String fecha){
+        try{
+            Query q = getEntityManager().createNativeQuery("select Top 1 nrofact from facturas where cod_empr = 2 and cod_entregador ="+codEntregador+
+                " and ffactur =convert(smalldatetime,'"+fecha+"',102)");
+            System.out.println(q.toString());
+            return (Integer) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
+    }
+    
+    public Integer totaldeFacturasPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT SUM(ttotal) as ttotal FROM facturas WHERE mestado = 'A' "
+                    + "AND ffactur =convert(smalldatetime,'"+fecha+"',102) AND cod_entregador ="+codEntregador+" GROUP BY cod_zona");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldeDevolucionesPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(N.ttotal),0) as ttotal "
+                +" FROM notas_ventas N, facturas f WHERE n.mestado = 'A' AND n.fdocum =convert(smalldatetime,'"+fecha+"',102) "
+                +" AND f.cod_empr = 2 AND f.ffactur = n.ffactur AND f.ctipo_docum = n.fac_ctipo_docum AND f.nrofact = n.nrofact " 
+                +" AND n.ctipo_docum = 'NCV' AND n.cconc = 'DEV' AND n.cod_empr = 2 AND n.cod_entregador = "+codEntregador
+                +" AND (EXISTS (SELECT * FROM facturas f where n.fac_ctipo_docum = f.ctipo_docum AND n.nrofact = f.nrofact AND "
+                +" n.ffactur = f.ffactur AND f.ctipo_docum ='FCO' AND cod_empr = 2 AND f.cod_entregador ="+codEntregador
+                +" ) OR (EXISTS (SELECT * FROM facturas f where n.fac_ctipo_docum = f.ctipo_docum AND n.nrofact = f.nrofact AND "
+                +" n.ffactur = f.ffactur AND f.ctipo_docum ='FCR' AND f.ffactur = convert(smalldatetime,'"+fecha+"',102) AND "
+                +" cod_empr = 2 AND f.cod_entregador = "+codEntregador+" ))) GROUP BY f.cod_zona");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldeCreditosPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(F.ttotal),0) as ttotal FROM facturas f "
+                +" WHERE f.mestado = 'A' AND cod_empr = 2 AND ffactur = convert(smalldatetime,'"+fecha+"',102) AND ctipo_docum = 'FCR' "
+                +" AND cod_entregador = "+codEntregador+" and NOT EXISTS (SELECT * FROM recibos_det D, recibos r where d.nrecibo = r.nrecibo "
+                +" AND r.frecibo = convert(smalldatetime,'"+fecha+"',102) AND r.mestado = 'A' AND r.cod_empr = 2 AND f.cod_cliente = r.cod_cliente"
+                +" AND d.ctipo_docum = f.ctipo_docum AND d.ndocum = f.nrofact ) GROUP BY f.cod_zona");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            sum += rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+            q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(f.ttotal - d.itotal),0) as itotal "
+                +" FROM facturas f , recibos_det d, recibos r WHERE f.mestado = 'A' AND f.cod_empr = 2 AND "
+                +" f.ffactur = convert(smalldatetime,'"+fecha+"',102) AND f.ctipo_docum = 'FCR' AND f.cod_entregador = "+codEntregador
+                +" AND f.ttotal > d.itotal and d.nrecibo = r.nrecibo AND r.frecibo = convert(smalldatetime,'"+fecha+"',102) "
+                +" AND r.mestado = 'A' AND r.cod_empr = 2 AND f.cod_cliente = r.cod_cliente AND d.ctipo_docum = f.ctipo_docum "
+                +" AND d.ndocum = f.nrofact GROUP BY f.cod_zona");
+            System.out.println(q.toString());
+            rows = q.getResultList();
+            sum += rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(0, Integer::sum);
+            q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(N.ttotal),0) as ttotal FROM notas_ventas N, facturas f "
+                +" WHERE n.mestado = 'A' AND n.cod_empr = 2 AND n.ffactur = convert(smalldatetime,'"+fecha+"',102) AND "
+                +" n.fdocum = convert(smalldatetime,'"+fecha+"',102) AND n.ctipo_docum = 'NCV' AND n.fac_ctipo_docum = 'FCR' AND n.ffactur = f.ffactur "
+                +" AND n.fac_ctipo_docum = f.ctipo_docum AND n.nrofact = f.nrofact AND n.cod_entregador = "+codEntregador+" and f.cod_empr = 2 "
+                +" GROUP BY f.cod_zona");
+            System.out.println(q.toString());
+            rows = q.getResultList();
+            sum += rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(0, Integer::sum);
+            return sum;
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldeNotasOtrasPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(n.ttotal),0) as ttotal "
+                +" FROM notas_ventas n, facturas f WHERE n.mestado = 'A' AND n.fdocum = convert(smalldatetime,'"+fecha+"',102) "
+                +" AND n.ctipo_docum = 'NCV' AND n.cconc != 'DEV' AND n.cod_empr = 2 AND n.cod_entregador = "+codEntregador+" "
+                +" AND n.fac_ctipo_docum = f.ctipo_docum AND n.nrofact = f.nrofact AND f.ffactur = n.fdocum AND f.cod_empr= 2 GROUP BY f.cod_zona");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldeChequesDiffPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(icheque),0) as ttotal FROM cheques c "
+                +" WHERE femision = convert(smalldatetime,'"+fecha+"',102) AND mtipo = 'D' AND cod_empr= 2 "
+                +" AND cod_entregador = "+codEntregador+" ");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldeNotasAtrasPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT ISNULL(SUM(n.ttotal),0) as ttotal "
+                +" FROM notas_ventas N, facturas f WHERE n.mestado = 'A' AND f.mestado = 'A' AND fdocum = convert(smalldatetime,'"+fecha+"',102) "
+                +" AND n.ctipo_docum = 'NCV' AND n.cod_empr = 2 AND n.nrofact = f.nrofact AND n.ffactur = f.ffactur "
+                +" AND n.fac_ctipo_docum = f.ctipo_docum AND f.cod_empr = 2 AND n.cod_entregador = "+codEntregador
+                +" AND n.cod_entregador = f.cod_entregador AND n.fac_ctipo_docum = 'FCR' AND n.fdocum != f.ffactur GROUP BY f.cod_zona ");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
+    }
+    
+    public Integer totaldePagaresPorFechaEntregador(String fecha,Short codEntregador){
+        try{
+            Query q = getEntityManager().createNativeQuery(" SELECT ISNULL(SUM(ipagare),0) as ipagare FROM pagares p "
+                +" WHERE p.mestado = 'A' AND femision = convert(smalldatetime,'"+fecha+"',102) AND p.cod_empr = 2 "
+                +" AND p.cod_entregador = "+codEntregador+" ");
+            System.out.println(q.toString());
+            List<Object[]> rows = q.getResultList();
+            Integer sum  = 0;
+            return rows.stream().map((row) -> ((BigDecimal) row[0]).intValue()).reduce(sum, Integer::sum);
+        }catch(NoResultException ex){
+            return 0;
+        }
     }
 }

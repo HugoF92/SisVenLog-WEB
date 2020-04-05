@@ -6,10 +6,8 @@
 package dao;
 
 import entidad.Depositos;
-import entidad.Lineas;
 import entidad.TiposClientes;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -59,5 +57,11 @@ public class TiposClientesFacade extends AbstractFacade<TiposClientes> {
         respuesta = q.getResultList();
 
         return respuesta;
+    }
+    
+    public List<Short> getCodDepoByTipoClienteDepo(Character cTipoCliente){
+        Query q = getEntityManager().createNativeQuery(" select cod_depo from tipocli_depositos where ctipo_cliente ="+cTipoCliente,Short.class);
+        System.out.println(q.toString());
+        return q.getResultList();
     }
 }

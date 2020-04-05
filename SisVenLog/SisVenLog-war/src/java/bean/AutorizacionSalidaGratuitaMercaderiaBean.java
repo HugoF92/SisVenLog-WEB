@@ -28,8 +28,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 
 @Named(value = "autoSGMercaBean")
 @ViewScoped

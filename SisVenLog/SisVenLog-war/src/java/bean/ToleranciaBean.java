@@ -18,7 +18,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -241,7 +242,7 @@ public class ToleranciaBean implements Serializable {
                 proveedoresFacade.insertarProveedores(proveedores);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
 
                 instanciar();
 
@@ -270,7 +271,7 @@ public class ToleranciaBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditProv').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditProv').hide();");
 
             }
 
@@ -286,7 +287,7 @@ public class ToleranciaBean implements Serializable {
             this.proveedores = new Proveedores();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacProv').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -314,16 +315,16 @@ public class ToleranciaBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarProv').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarProv').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarProv').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarProv').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevProv').hide();");
 
     }
 

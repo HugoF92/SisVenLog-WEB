@@ -33,7 +33,6 @@
 
                                 <p:commandButton 
                                     value="Agregar"
-                                    actionListener="#{recibosClientesBean.limpiarReciboAClientes}"
                                     oncomplete="PF('dlgNuevReciboCompra').show()"
                                     update="formNuevoReciboCompra"
                                     icon="fa fa-plus"
@@ -49,6 +48,15 @@
                                     update="formInacReciboCompra"
                                     disabled="#{recibosClientesBean.habilitaBotonEliminar}"
                                     oncomplete="PF('dlgAnularReciboCompra').show()"/>
+                                
+                                <p:commandButton 
+                                    value="Visualizar"   
+                                    styleClass="yelow-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-search"
+                                    update="formVisuaReciboCompra"
+                                    disabled="#{recibosClientesBean.habilitaBotonVisualizar}"
+                                    oncomplete="PF('dlgVisuaReciboCompra').show()"/>
 
                             </center>
 
@@ -62,42 +70,33 @@
                                         <p:dataTable id="tablaRecibosCompras" var="itemp"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
-                                                     selectionMode="single" reflow="true"
-                                                     value="#{recibosClientesBean.listadoRecibos}" 
+                                                     selectionMode="single" reflow="true" lazy="true"
                                                      rowKey="#{itemp.recibosPK.nrecibo}"
+                                                     value="#{recibosClientesBean.model}"
                                                      selection="#{recibosClientesBean.reciboSeleccionado}">
-
+                                            
                                             <p:ajax event="rowSelect"
                                                     listener="#{recibosClientesBean.onRowSelect(event)}"
                                                     update="formRecibosCompras"/>
 
-                                            <p:column headerText="NroRecibo" filterBy="#{itemp.recibosPK.nrecibo}"
-                                                      sortBy="#{itemp.recibosPK.nrecibo}">
+                                            <p:column headerText="NroRecibo" filterBy="#{itemp.recibosPK.nrecibo}">
                                                 <h:outputText value="#{itemp.recibosPK.nrecibo}" />
                                             </p:column>
                                             
-                                            <p:column headerText="CodigoCliente" filterBy="#{itemp.codCliente}"
-                                                      sortBy="#{itemp.codCliente}" filterMatchMode="contains">
+                                            <p:column headerText="CodigoCliente">
                                                 <h:outputText value="#{itemp.codCliente}" />
                                             </p:column>
                                             
-                                            <p:column headerText="FechaRecibo" filterBy="#{recibosClientesBean.convertidorFecha(itemp.frecibo)}"
-                                                      sortBy="#{itemp.frecibo}">
+                                            <p:column headerText="FechaRecibo">
                                                 <h:outputText value="#{itemp.frecibo}">
                                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                                 </h:outputText>
                                             </p:column>
                                             
-                                            <p:column headerText="Monto" filterBy="#{itemp.irecibo}"
-                                                      sortBy="#{itemp.irecibo}">
+                                            <p:column headerText="Monto">
                                                 <h:outputText value="#{itemp.irecibo}" >
                                                     <f:convertNumber type="number"/>
                                                 </h:outputText>
-                                            </p:column>
-                                            
-                                            <p:column headerText="Estado" filterBy="#{itemp.mestado}"
-                                                      sortBy="#{itemp.mestado}" filterMatchMode="contains">
-                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'ANULADO'}" />
                                             </p:column>
                                             
                                         </p:dataTable>
@@ -119,6 +118,14 @@
                                       resizable="false"
                                       positionType="absolute">
                                 
+                                <p:ajax event="open"
+                                        listener="#{recibosClientesBean.limpiarReciboAClientes}"
+                                        update="panel_grid_nuevo_recibo_compra 
+                                                panel_grid_nuevo_detalle_recibo_compra 
+                                                tablaRecibosComprasDet
+                                                panel_cheques_cli"/>
+
+                                
                                 <div class="ui-fluid">
                                     <p:panelGrid    id="panel_grid_nuevo_recibo_compra" 
                                                     columns="4" 
@@ -133,14 +140,16 @@
                                             </p:inputText>
                                             <p:commandButton 
                                                 oncomplete="PF('dlgBusClieConsultaDocumentoVenta').show()"
-                                                update="formNuevoReciboCompra"
                                                 icon="fa fa-search"
                                                 styleClass="blue-btn raised-btn" 
                                                 style="width: 30px;"
                                                 ajax="true"/>
                                             <p:outputLabel id="cliente_descripcion" value="#{recibosClientesBean.nombreClienteLbl}" 
-                                                           style="width: 350px;"/>
+                                                           style="width: 500px;"/>
                                         </h:panelGrid>
+                                        
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
                                         
                                         <p:outputLabel value="Fecha Recibo: " style="font-weight: bold; text-align: left;"/>
                                         <p:calendar id="fecha_recibo_id" size="8" value="#{recibosClientesBean.fechaReciboLbl}" showOn="button" style="width: 100px;"  />
@@ -159,7 +168,7 @@
                                     </p:panelGrid>
                                 </div>
                                 
-                                <p:panel header="Detalle">
+                                <p:panel header="Detalle" id="panel_cheques_cli">
                                     
                                     <table width="100%" border="0" cellspacing="0" cellpadding="1">
                                         <tr bgcolor="#3984b8" align="center">
@@ -182,7 +191,7 @@
                                                                     <p:outputLabel value="Tipo Documento: " style="font-weight: bold; text-align: left;"/>
                                                                     <p:selectOneMenu id="tipo_documento_id" value="#{recibosClientesBean.tipoDocumentoSeleccionadoDet}" 
                                                                                      filterMatchMode="contains" filter="true"
-                                                                                     style="width: 150px;" converter="#{TiposDocumentosConverter}">
+                                                                                     style="width: 250px;" converter="#{TiposDocumentosConverter}">
                                                                         <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
                                                                         <f:selectItems value="#{recibosClientesBean.listarTiposDocumentos()}" 
                                                                                        var="tipoDocumento"
@@ -199,7 +208,7 @@
                                                                     <p:outputLabel value="Monto A Pagar: " style="font-weight: bold; float: right;"/>
                                                                     <p:inputNumber id="monto_a_pagar_id" value="#{recibosClientesBean.montoAPagarDet}" 
                                                                                    thousandSeparator="."
-                                                                                   tabindex="1" style="width: 100px;"
+                                                                                   tabindex="1" style="width: 80px;"
                                                                                    decimalPlaces="0"/>
 
                                                                     <p:commandButton
@@ -223,7 +232,7 @@
                                     
                                     <table width="100%" border="0" cellspacing="0" cellpadding="1">
                                         <tr bgcolor="#3984b8" align="center">
-                                            <td><b><font color="#FFFFFF">Listado de Documentos</font></b></td>
+                                            <td><b><font color="#FFFFFF">Documentos</font></b></td>
                                         </tr>
                                         <tr bgcolor="#3984b8">
                                             <td>
@@ -240,7 +249,7 @@
                                                                          reflow="true" selectionMode="single"
                                                                          rowKey="#{itemd.tipoDocumento.ctipoDocum}"
                                                                          selection="#{recibosClientesBean.documentoVentaDtoSeleccionadoDet}"
-                                                                         style="width: 600px;">
+                                                                         style="width: 800px;">
 
                                                                 <p:ajax event="cellEdit" listener="#{recibosClientesBean.onCellEditDocumento}" update="tablaRecibosComprasDet msgAgreReciboCompra"/>
 
@@ -308,182 +317,188 @@
                                     <hr/>
                                     <p:spacer></p:spacer>
                                     
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
-                                        <tr bgcolor="#3984b8" align="center">
-                                            <td><b><font color="#FFFFFF">Agregar Cheque</font></b></td>
-                                        </tr>
-                                        <tr bgcolor="#3984b8">
-                                            <td>
-                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
-                                                    <tr bgcolor="#FFFFFF">
-                                                        <td>
+                                    <p:accordionPanel activeIndex="">
+                                        <p:tab title="Cheques">
+                                            <h:panelGrid columns="1">
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                                <tr bgcolor="#3984b8" align="center">
+                                                    <td><b><font color="#FFFFFF">Agregar Cheque</font></b></td>
+                                                </tr>
+                                                <tr bgcolor="#3984b8">
+                                                    <td>
+                                                        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                            <tr bgcolor="#FFFFFF">
+                                                                <td>
 
-                                                            <!-- CHEQUES   -->
-                                                            <div class="ui-fluid">
-                                                                <p:panelGrid    id="panel_grid_nuevo_cheque_emitido" 
-                                                                                columns="4" 
-                                                                                layout="grid"
-                                                                                columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
-                                                                                styleClass="ui-panelgrid-blank ui-fluid">
+                                                                    <!-- CHEQUES   -->
+                                                                    <div class="ui-fluid">
+                                                                        <p:panelGrid    id="panel_grid_nuevo_cheque_emitido" 
+                                                                                        columns="4" 
+                                                                                        layout="grid"
+                                                                                        columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                                                        styleClass="ui-panelgrid-blank ui-fluid">
 
-                                                                    <p:outputLabel value="Banco: " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:selectOneMenu id="bancos_id" value="#{recibosClientesBean.bancoSeleccionadoDet}" 
-                                                                                     filterMatchMode="contains" filter="true"
-                                                                                     style="width: 150px;" converter="#{BancosConverter}">
-                                                                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{bancoBean.listar()}" 
-                                                                                       var="banco"
-                                                                                       itemValue="#{banco}"
-                                                                                       itemLabel="#{banco.xdesc}"/>
-                                                                    </p:selectOneMenu>
+                                                                            <p:outputLabel value="Banco: " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:selectOneMenu id="bancos_id" value="#{recibosClientesBean.bancoSeleccionadoDet}" 
+                                                                                             filterMatchMode="contains" filter="true"
+                                                                                             style="width: 150px;" converter="#{BancosConverter}">
+                                                                                <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                                                                <f:selectItems value="#{bancoBean.listar()}" 
+                                                                                               var="banco"
+                                                                                               itemValue="#{banco}"
+                                                                                               itemLabel="#{banco.xdesc}"/>
+                                                                            </p:selectOneMenu>
 
-                                                                    <p:outputLabel value="Tipo Cheque: " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:selectOneMenu id="tipo_cheque_id" value="#{recibosClientesBean.tipoChequeDet}" 
-                                                                                     style="width: 100px;">
-                                                                        <f:selectItem itemLabel="Diferido" itemValue="#{'D'}"/>
-                                                                        <f:selectItem itemLabel="Cobro Crédito" itemValue="#{'R'}"/>
-                                                                        <f:selectItem itemLabel="Del Día" itemValue="#{'I'}"/>
-                                                                    </p:selectOneMenu>
+                                                                            <p:outputLabel value="Tipo Cheque: " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:selectOneMenu id="tipo_cheque_id" value="#{recibosClientesBean.tipoChequeDet}" 
+                                                                                             style="width: 100px;">
+                                                                                <f:selectItem itemLabel="Diferido" itemValue="#{'D'}"/>
+                                                                                <f:selectItem itemLabel="Cobro Crédito" itemValue="#{'R'}"/>
+                                                                                <f:selectItem itemLabel="Del Día" itemValue="#{'I'}"/>
+                                                                            </p:selectOneMenu>
 
-                                                                    <p:outputLabel value="Nro Cheque:  " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:inputText id="nro_cheque_id" value="#{recibosClientesBean.nroChequeDet}" style="width: 100px;"/>
+                                                                            <p:outputLabel value="Nro Cheque:  " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:inputText id="nro_cheque_id" value="#{recibosClientesBean.nroChequeDet}" style="width: 100px;"/>
 
-                                                                    <p:outputLabel value="Cta. Bancaria:  " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:inputText id="nro_cta_banco_id" value="#{recibosClientesBean.nroCtaBancaria}" style="width: 100px;"/>
+                                                                            <p:outputLabel value="Cta. Bancaria:  " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:inputText id="nro_cta_banco_id" value="#{recibosClientesBean.nroCtaBancaria}" style="width: 100px;"/>
 
-                                                                    <p:outputLabel value="Fecha Cheque: " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:calendar id="fecha_cheque_id" size="8" value="#{recibosClientesBean.fechaChequeDet}" showOn="button" style="width: 100px;"  />
+                                                                            <p:outputLabel value="Fecha Cheque: " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:calendar id="fecha_cheque_id" size="8" value="#{recibosClientesBean.fechaChequeDet}" showOn="button" style="width: 100px;"  />
 
-                                                                    <p:outputLabel value="Fecha Emisión: " style="font-weight: bold; text-align: left;"/>
-                                                                    <p:calendar id="fecha_emision_id" size="8" value="#{recibosClientesBean.fechaEmisionDet}" showOn="button" style="width: 100px;"  />
+                                                                            <p:outputLabel value="Fecha Emisión: " style="font-weight: bold; text-align: left;"/>
+                                                                            <p:calendar id="fecha_emision_id" size="8" value="#{recibosClientesBean.fechaEmisionDet}" showOn="button" style="width: 100px;"  />
 
-                                                                    <p:outputLabel value="Importe Cheque: " style="font-weight: bold; float: right;"/>
-                                                                    <p:inputNumber id="importe_cheque_id" value="#{recibosClientesBean.importeChequeDet}" 
-                                                                                   thousandSeparator="."
-                                                                                   tabindex="1" style="width: 100px;"
-                                                                                   decimalPlaces="0"/>
+                                                                            <p:outputLabel value="Importe Cheque: " style="font-weight: bold; float: right;"/>
+                                                                            <p:inputNumber id="importe_cheque_id" value="#{recibosClientesBean.importeChequeDet}" 
+                                                                                           thousandSeparator="."
+                                                                                           tabindex="1" style="width: 100px;"
+                                                                                           decimalPlaces="0"/>
 
-                                                                    <p:outputLabel value="Importe A Pagar: " style="font-weight: bold; float: right;"/>
-                                                                    <p:inputNumber id="importe_cheque_a_pagar_id" value="#{recibosClientesBean.importeAPagarChequeDet}" 
-                                                                                   thousandSeparator="."
-                                                                                   tabindex="1" style="width: 100px;"
-                                                                                   decimalPlaces="0"/>
+                                                                            <p:outputLabel value="Importe A Pagar: " style="font-weight: bold; float: right;"/>
+                                                                            <p:inputNumber id="importe_cheque_a_pagar_id" value="#{recibosClientesBean.importeAPagarChequeDet}" 
+                                                                                           thousandSeparator="."
+                                                                                           tabindex="1" style="width: 100px;"
+                                                                                           decimalPlaces="0"/>
 
-                                                                    <p:commandButton 
-                                                                        process="formNuevoReciboCompra"
-                                                                        action="#{recibosClientesBean.cargarDetalleCheques}"
-                                                                        update="tablaChequesDet bancos_id nro_cheque_id nro_cta_banco_id fecha_cheque_id fecha_emision_id importe_cheque_id importe_cheque_a_pagar_id total_cheques_id msgAgreReciboCompra"
-                                                                        icon="fa fa-plus"
-                                                                        ajax="true"
-                                                                        styleClass="blue-btn raised-btn"
-                                                                        style="margin-left:10px; width: 40px;"/>
+                                                                            <p:commandButton 
+                                                                                process="formNuevoReciboCompra"
+                                                                                action="#{recibosClientesBean.cargarDetalleCheques}"
+                                                                                update="tablaChequesDet bancos_id nro_cheque_id nro_cta_banco_id fecha_cheque_id fecha_emision_id importe_cheque_id importe_cheque_a_pagar_id total_cheques_id msgAgreReciboCompra"
+                                                                                icon="fa fa-plus"
+                                                                                ajax="true"
+                                                                                styleClass="blue-btn raised-btn"
+                                                                                style="margin-left:10px; width: 40px;"/>
 
-                                                                </p:panelGrid>
-                                                            </div>
+                                                                        </p:panelGrid>
+                                                                    </div>
 
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table> 
-                                    
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
-                                        <tr bgcolor="#3984b8" align="center">
-                                            <td><b><font color="#FFFFFF">Listado de Cheques</font></b></td>
-                                        </tr>
-                                        <tr bgcolor="#3984b8">
-                                            <td>
-                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
-                                                    <tr bgcolor="#FFFFFF">
-                                                        <td>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table> 
 
-                                                            <!-- LISTADO DE CHEQUES   -->
-                                                            <p:dataTable id="tablaChequesDet" var="itemc"
-                                                                         emptyMessage="Sin datos para mostrar."
-                                                                         value="#{recibosClientesBean.listaChequesDet}"
-                                                                         paginator="true" rows="5" paginatorPosition="bottom"
-                                                                         editable="true" editMode="cell"
-                                                                         reflow="true" selectionMode="single"
-                                                                         rowKey="#{itemc.cheque.chequesPK.nroCheque}"
-                                                                         selection="#{recibosClientesBean.chequeSeleccionadoDet}"
-                                                                         style="width: 600px;">
-                                                                
-                                                                <p:ajax event="cellEdit" listener="#{recibosClientesBean.onCellEditBanco}" update="tablaChequesDet msgAgreReciboCompra"/>
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                                <tr bgcolor="#3984b8" align="center">
+                                                    <td><b><font color="#FFFFFF">Listado de Cheques</font></b></td>
+                                                </tr>
+                                                <tr bgcolor="#3984b8">
+                                                    <td>
+                                                        <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                            <tr bgcolor="#FFFFFF">
+                                                                <td>
 
-                                                                <p:column width="30">
-                                                                    <p:commandButton 
-                                                                        process="formNuevoReciboCompra"
-                                                                        action="#{recibosClientesBean.borrarFilaCheque(itemc)}"
-                                                                        update="tablaChequesDet total_cheques_id msgAgreReciboCompra"
-                                                                        icon="fa fa-minus"
-                                                                        ajax="true"                                                        
-                                                                        style="width: 30px;"/>
-                                                                </p:column>
+                                                                    <!-- LISTADO DE CHEQUES   -->
+                                                                    <p:dataTable id="tablaChequesDet" var="itemc"
+                                                                                 emptyMessage="Sin datos para mostrar."
+                                                                                 value="#{recibosClientesBean.listaChequesDet}"
+                                                                                 paginator="true" rows="5" paginatorPosition="bottom"
+                                                                                 editable="true" editMode="cell"
+                                                                                 reflow="true" selectionMode="single"
+                                                                                 rowKey="#{itemc.cheque.chequesPK.nroCheque}"
+                                                                                 selection="#{recibosClientesBean.chequeSeleccionadoDet}"
+                                                                                 style="width: 800px;">
 
-                                                                <p:column headerText="Descripción" width="80">
-                                                                    <h:outputText value="#{itemc.cheque.bancos.xdesc}" />
-                                                                </p:column>
+                                                                        <p:ajax event="cellEdit" listener="#{recibosClientesBean.onCellEditBanco}" update="tablaChequesDet msgAgreReciboCompra"/>
 
-                                                                <p:column headerText="Nro. Cheque" width="80">
-                                                                    <h:outputText value="#{itemc.cheque.chequesPK.nroCheque}" />
-                                                                </p:column>
+                                                                        <p:column width="30">
+                                                                            <p:commandButton 
+                                                                                process="formNuevoReciboCompra"
+                                                                                action="#{recibosClientesBean.borrarFilaCheque(itemc)}"
+                                                                                update="tablaChequesDet total_cheques_id msgAgreReciboCompra"
+                                                                                icon="fa fa-minus"
+                                                                                ajax="true"                                                        
+                                                                                style="width: 30px;"/>
+                                                                        </p:column>
 
-                                                                <p:column headerText="Total Cheque">
-                                                                    <h:outputText value="#{itemc.cheque.icheque}">
-                                                                        <f:convertNumber pattern="###,###.##" />
-                                                                    </h:outputText>
-                                                                </p:column>
+                                                                        <p:column headerText="Descripción" width="120">
+                                                                            <h:outputText value="#{itemc.cheque.bancos.xdesc}" />
+                                                                        </p:column>
 
-                                                                <p:column headerText="Fecha Cheque" width="200">
-                                                                    <h:outputText value="#{itemc.cheque.fcheque}" >
-                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                                    </h:outputText>
-                                                                </p:column>
+                                                                        <p:column headerText="Nro. Cheque" width="80">
+                                                                            <h:outputText value="#{itemc.cheque.chequesPK.nroCheque}" />
+                                                                        </p:column>
 
-                                                                <p:column headerText="Cta. Bancaria" width="80">
-                                                                    <h:outputText value="#{itemc.cheque.chequesPK.xcuentaBco}" />
-                                                                </p:column>
-
-                                                                <p:column headerText="Fecha Emisión" width="200">
-                                                                    <h:outputText value="#{itemc.cheque.femision}" >
-                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                                    </h:outputText>
-                                                                </p:column>
-
-                                                                <p:column headerText="Titular" width="300">
-                                                                    <h:outputText value="#{itemc.cheque.xtitular}" />
-                                                                </p:column>
-                                                                
-                                                                <p:column headerText="Importe Cheque" width="200">
-                                                                    <h:outputText value="#{itemc.cheque.icheque}">
-                                                                        <f:convertNumber type="number"/>
-                                                                    </h:outputText>
-                                                                </p:column>
-                                                                
-                                                                <p:column headerText="A Pagar" width="100">
-                                                                    <p:cellEditor>
-                                                                        <f:facet name="output">
-                                                                            <h:outputText value="#{itemc.importePagado}">
+                                                                        <p:column headerText="Importe Cheque" width="150">
+                                                                            <h:outputText value="#{itemc.cheque.icheque}">
                                                                                 <f:convertNumber type="number"/>
                                                                             </h:outputText>
-                                                                        </f:facet>
-                                                                        <f:facet name="input">
-                                                                            <p:inputNumber value="#{itemc.importePagado}" 
-                                                                                           style="width: 100px;"/>
-                                                                        </f:facet>
-                                                                    </p:cellEditor>
-                                                                </p:column>
+                                                                        </p:column>
 
-                                                            </p:dataTable>
+                                                                        <p:column headerText="Fecha Cheque" width="100">
+                                                                            <h:outputText value="#{itemc.cheque.fcheque}" >
+                                                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                            </h:outputText>
+                                                                        </p:column>
 
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table> 
+                                                                        <p:column headerText="Cta. Bancaria" width="80">
+                                                                            <h:outputText value="#{itemc.cheque.chequesPK.xcuentaBco}" />
+                                                                        </p:column>
 
+                                                                        <p:column headerText="Fecha Emisión" width="100">
+                                                                            <h:outputText value="#{itemc.cheque.femision}" >
+                                                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                            </h:outputText>
+                                                                        </p:column>
+
+                                                                        <p:column headerText="Titular" width="300">
+                                                                            <h:outputText value="#{itemc.cheque.xtitular}" />
+                                                                        </p:column>
+
+                                                                        <p:column headerText="Total Cheque" width="80">
+                                                                            <h:outputText value="#{itemc.cheque.icheque}">
+                                                                                <f:convertNumber pattern="###,###.##" />
+                                                                            </h:outputText>
+                                                                        </p:column>
+
+                                                                        <p:column headerText="A Pagar" width="150">
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output">
+                                                                                    <h:outputText value="#{itemc.importePagado}">
+                                                                                        <f:convertNumber type="number"/>
+                                                                                    </h:outputText>
+                                                                                </f:facet>
+                                                                                <f:facet name="input">
+                                                                                    <p:inputNumber value="#{itemc.importePagado}" 
+                                                                                                   style="width: 100px;"/>
+                                                                                </f:facet>
+                                                                            </p:cellEditor>
+                                                                        </p:column>
+
+                                                                    </p:dataTable>
+
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table> 
+                                            </h:panelGrid>
+                                        </p:tab>
+                                    </p:accordionPanel>
+                                    
                                 </p:panel>
                                 
                                 <p:spacer></p:spacer>
@@ -534,6 +549,235 @@
 
                         </h:form>
                         
+                        <h:form id="formVisuaReciboCompra"  prependId="false">
+                            <p:growl id="msgVisReciboCompra" showDetail="true"/>
+
+                            <p:dialog header="Visualizar Recibo"
+                                      widgetVar="dlgVisuaReciboCompra"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
+                                
+                                <p:ajax event="open"
+                                        listener="#{recibosClientesBean.visualizarRecibo}"
+                                        update="panel_grid_visua_recibo_compra panel_grid_nuevo_detalle_recibo_compra tablaRecibosComprasDetVis tablaChequesDetVis total_efectivo_id_vis total_retencion_id_vis total_cheques_id_vis"/>
+
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_visua_recibo_compra" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_vis" columns="3">
+                                            <p:outputLabel id="cliente_descripcion_vis" value="#{recibosClientesBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Recibo: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_recibo_id_vis" size="8" value="#{recibosClientesBean.fechaReciboLbl}" showOn="button" style="width: 100px;" disabled="true" />
+                                        
+                                        <p:outputLabel value="Nro. Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nro_recibo_id_vis" value="#{recibosClientesBean.nroReciboLbl}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Por Concepto de: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id_vis" value="#{recibosClientesBean.observacionLbl}" cols="20" rows="3" disabled="true"></p:inputTextarea>
+                                        
+                                        <p:outputLabel value="Total Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_recibo_id_vis" value="#{recibosClientesBean.totalReciboLbl}" style="width: 100px;" disabled="true">
+                                            <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                        
+                                    </p:panelGrid>
+                                </div>
+                                
+                                <p:panel header="Detalle">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Documentos</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE DOCUMENTOS   -->
+                                                            <p:dataTable id="tablaRecibosComprasDetVis" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaDocumentoVentaDto}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         style="width: 800px;">
+
+                                                                
+                                                                <p:column headerText="Tipo Doc." width="80">
+                                                                    <h:outputText value="#{itemd.tipoDocumento.ctipoDocum}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha" width="200">
+                                                                    <h:outputText value="#{itemd.fechaDocumento}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Docum." width="80">
+                                                                    <h:outputText value="#{itemd.nroDcumento}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Total Factura" width="100">
+                                                                    <h:outputText value="#{itemd.montoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Saldo Factura" width="100">
+                                                                    <h:outputText value="#{itemd.saldoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Monto a Pagar" width="100">
+                                                                    <h:outputText value="#{itemd.montoAPagarDocumento}">
+                                                                            <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                    
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Cheques</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE CHEQUES   -->
+                                                            <p:dataTable id="tablaChequesDetVis" var="itemc"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaChequesDet}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         style="width: 800px;">
+                                                                                                                                
+
+                                                                <p:column headerText="Descripción" width="120">
+                                                                    <h:outputText value="#{itemc.cheque.bancos.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Cheque" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.nroCheque}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Importe Cheque" width="150">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Fecha Cheque" width="100">
+                                                                    <h:outputText value="#{itemc.cheque.fcheque}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Cta. Bancaria" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.xcuentaBco}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Fecha Emisión" width="100">
+                                                                    <h:outputText value="#{itemc.cheque.femision}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Titular" width="300">
+                                                                    <h:outputText value="#{itemc.cheque.xtitular}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Total Cheque" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber pattern="###,###.##" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="A Pagar" width="100">
+                                                                    <h:outputText value="#{itemc.importePagado}">
+                                                                            <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="8">
+                                        
+                                        <p:outputLabel value="Efectivo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_efectivo_id_vis" value="#{recibosClientesBean.totalEfectivo}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Retención:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_retencion_id_vis" value="#{recibosClientesBean.totalRetencion}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Total Cheques:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_cheques_id_vis" value="#{recibosClientesBean.totalCheques}" style="width: 100px;" disabled="true">
+                                             <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgVisuaReciboCompra').hide()"
+                                                         update="formListadoRecibosCompras formVisuaReciboCompra"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                        
+                                    </h:panelGrid>
+                                </center>
+                                
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        
                         <h:form id="formInacReciboCompra" prependId="false">
 
                             <p:growl id="msgInacReciboCompra" showDetail="true"/>
@@ -542,19 +786,215 @@
                                       widgetVar="dlgAnularReciboCompra"
                                       modal="true"
                                       responsive="true"
-                                      width="320">
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
 
 
-                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+                                <p:ajax event="open"
+                                        listener="#{recibosClientesBean.visualizarRecibo}"
+                                        update="panel_grid_eli_recibo_compra panel_grid_nuevo_detalle_recibo_compra tablaRecibosComprasDetEli tablaChequesDetEli total_efectivo_id_eli total_retencion_id_eli total_cheques_id_eli"/>
 
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_eli_recibo_compra" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_eli" columns="3">
+                                            <p:outputLabel id="cliente_descripcion_eli" value="#{recibosClientesBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Recibo: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_recibo_id_eli" size="8" value="#{recibosClientesBean.fechaReciboLbl}" showOn="button" style="width: 100px;" disabled="true" />
+                                        
+                                        <p:outputLabel value="Nro. Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nro_recibo_id_eli" value="#{recibosClientesBean.nroReciboLbl}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Por Concepto de: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id_eli" value="#{recibosClientesBean.observacionLbl}" cols="20" rows="3" disabled="true"></p:inputTextarea>
+                                        
+                                        <p:outputLabel value="Total Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_recibo_id_eli" value="#{recibosClientesBean.totalReciboLbl}" style="width: 100px;" disabled="true">
+                                            <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                        
+                                    </p:panelGrid>
+                                </div>
+                                
+                                <p:panel header="Detalle">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Documentos</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE DOCUMENTOS   -->
+                                                            <p:dataTable id="tablaRecibosComprasDetEli" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaDocumentoVentaDto}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         style="width: 800px;">
+
+                                                                
+                                                                <p:column headerText="Tipo Doc." width="80">
+                                                                    <h:outputText value="#{itemd.tipoDocumento.ctipoDocum}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha" width="200">
+                                                                    <h:outputText value="#{itemd.fechaDocumento}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Docum." width="80">
+                                                                    <h:outputText value="#{itemd.nroDcumento}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Total Factura" width="100">
+                                                                    <h:outputText value="#{itemd.montoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Saldo Factura" width="100">
+                                                                    <h:outputText value="#{itemd.saldoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Monto a Pagar" width="100">
+                                                                    <h:outputText value="#{itemd.montoAPagarDocumento}">
+                                                                            <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                    
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Cheques</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE CHEQUES   -->
+                                                            <p:dataTable id="tablaChequesDetEli" var="itemc"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaChequesDet}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         style="width: 800px;">
+                                                                                                                                
+
+                                                                <p:column headerText="Descripción" width="120">
+                                                                    <h:outputText value="#{itemc.cheque.bancos.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Cheque" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.nroCheque}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Importe Cheque" width="150">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Fecha Cheque" width="100">
+                                                                    <h:outputText value="#{itemc.cheque.fcheque}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Cta. Bancaria" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.xcuentaBco}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Fecha Emisión" width="100">
+                                                                    <h:outputText value="#{itemc.cheque.femision}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Titular" width="300">
+                                                                    <h:outputText value="#{itemc.cheque.xtitular}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Total Cheque" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber pattern="###,###.##" />
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="A Pagar" width="100">
+                                                                    <h:outputText value="#{itemc.importePagado}">
+                                                                            <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="8">
+                                        
+                                        <p:outputLabel value="Efectivo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_efectivo_id_eli" value="#{recibosClientesBean.totalEfectivo}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Retención:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_retencion_id_eli" value="#{recibosClientesBean.totalRetencion}" style="width: 100px;" disabled="true"/>
+                                        
+                                        <p:outputLabel value="Total Cheques:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_cheques_id_eli" value="#{recibosClientesBean.totalCheques}" style="width: 100px;" disabled="true">
+                                             <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
 
                                 <center>
                                     <h:panelGrid columns="2">
-
+                                        
                                         <p:commandButton
                                             value="Borrar"
                                             actionListener="#{recibosClientesBean.anularRecibo}"
@@ -562,13 +1002,15 @@
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
-
-
-                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgAnularReciboCompra').hide();" 
+                                        
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgAnularReciboCompra').hide()"
+                                                         update="formListadoRecibosCompras formInacReciboCompra"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>
+                                        
                                     </h:panelGrid>
                                 </center>
+
                             </p:dialog>
 
                         </h:form>

@@ -13,7 +13,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -122,7 +123,7 @@ public class ZonasBean implements Serializable {
             zonasFacade.create(zonas);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevZon').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevZon').hide();");
 
             instanciar();
 
@@ -149,7 +150,7 @@ public class ZonasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditZon').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditZon').hide();");
 
             }
 
@@ -165,7 +166,7 @@ public class ZonasBean implements Serializable {
             this.zonas = new Zonas(new ZonasPK());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacZon').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacZon').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -193,16 +194,16 @@ public class ZonasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarZon').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarZon').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevZon').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevZon').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarZon').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevZon').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarZon').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevZon').hide();");
 
     }
 

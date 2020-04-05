@@ -27,7 +27,9 @@ import entidad.CuentasCorrientes;
 import entidad.Facturas;
 import entidad.NotasVentas;
 import entidad.Recibos;
+import entidad.RecibosCheques;
 import entidad.RecibosDet;
+import entidad.RecibosPK;
 import entidad.TiposDocumentos;
 import entidad.Zonas;
 import entidad.ZonasPK;
@@ -39,16 +41,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.context.RequestContext;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import util.DateUtil;
 import util.ExceptionHandlerView;
 
@@ -122,6 +128,7 @@ public class RecibosClientesBean implements Serializable{
     private long importeChequeDet;
     private long importeAPagarChequeDet; 
     private boolean habilitaBotonEliminar;
+    private boolean habilitaBotonVisualizar;
     private List<Recibos> listadoRecibos;
     private String codigoZonaSeleccionadoLbl;
     private Zonas zonaSeleccionadaLbl;
@@ -139,6 +146,7 @@ public class RecibosClientesBean implements Serializable{
     private List<Clientes> listaClientes;
     private String filtro;
     private List<TiposDocumentos> listadoTiposDocumentos;
+    private LazyDataModel<Recibos> model;
     
     @PostConstruct
     public void init(){
@@ -152,7 +160,7 @@ public class RecibosClientesBean implements Serializable{
         chequeSeleccionadoDet = new ChequeDetalleDto();
         contenidoError = null;
         tituloError = null;
-        fechaReciboLbl = null;
+        fechaReciboLbl = new Date();
         nroReciboLbl = 0;
         observacionLbl = null;
         totalReciboLbl = 0;
@@ -191,6 +199,7 @@ public class RecibosClientesBean implements Serializable{
         filtro = null;
         listadoTiposDocumentos = new ArrayList<>();
         habilitaBotonEliminar = true;
+        habilitaBotonVisualizar = true;
         listarRecibos();
     }
     
@@ -203,8 +212,9 @@ public class RecibosClientesBean implements Serializable{
             if (getClientes().getXnombre() != null) {
                 clienteSeleccionadoLbl = getClientes().getCodCliente();
                 nombreClienteLbl = getClientes().getXnombre();
-                RequestContext.getCurrentInstance().update("panel_grid_nuevo_recibo_compra");
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').hide();");
+//                PrimeFaces.current().ajax().update("panel_grid_nuevo_recibo_compra");
+                PrimeFaces.current().ajax().update("panel_grid_nuevo_recibo_compra");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').hide();");
             }
         }
     }
@@ -213,15 +223,84 @@ public class RecibosClientesBean implements Serializable{
         if(reciboSeleccionado != null){
             if(reciboSeleccionado.getRecibosPK().getNrecibo() != 0){
                 setHabilitaBotonEliminar(false);
+                setHabilitaBotonVisualizar(false);
             }else{
                 setHabilitaBotonEliminar(true);
+                setHabilitaBotonVisualizar(true);
             }
         }
+    }
+    
+    public String visualizarRecibo(){
+        listaDocumentoVentaDto = new ArrayList<>();
+        listaChequesDet = new ArrayList<>();    
+        try{
+            RecibosPK reciboPK = new RecibosPK();
+            reciboPK.setCodEmpr(Short.parseShort("2"));
+            reciboPK.setNrecibo(reciboSeleccionado.getRecibosPK().getNrecibo());
+            reciboSeleccionado = recibosFacade.find(reciboPK);
+            nombreClienteLbl = clientesFacade.find(reciboSeleccionado.getCodCliente()).getXnombre();
+            fechaReciboLbl = reciboSeleccionado.getFrecibo();
+            nroReciboLbl = reciboSeleccionado.getRecibosPK().getNrecibo();
+            observacionLbl = reciboSeleccionado.getXobs();
+            totalReciboLbl = reciboSeleccionado.getIrecibo();
+            Collection<RecibosDet> listaRecibosDet =  reciboSeleccionado.getRecibosDetCollection();
+            for(RecibosDet rd: listaRecibosDet){
+               DocumentoVentaDto documento = new DocumentoVentaDto();
+               documento.setTipoDocumento(tiposDocumentosFacade.find(rd.getRecibosDetPK().getCtipoDocum()));
+               documento.setFechaDocumento(rd.getFfactur());
+               documento.setNroDcumento(rd.getRecibosDetPK().getNdocum());
+               documento.setMontoDocumento(rd.getTtotal());
+               documento.setSaldoDocumento(rd.getIsaldo());
+               documento.setMontoAPagarDocumento(rd.getItotal());
+               listaDocumentoVentaDto.add(documento);
+            }            
+            Collection<RecibosCheques> listaRecibosCheques = reciboSeleccionado.getRecibosChequesCollection();
+            for(RecibosCheques rc: listaRecibosCheques){
+                ChequeDetalleDto chequeDetalleDto = new ChequeDetalleDto();
+                Cheques cheque = new Cheques();
+                cheque.setBancos(bancosFacade.find(rc.getRecibosChequesPK().getCodBanco()));
+                ChequesPK chequePK = new ChequesPK();
+                chequePK.setCodEmpr(Short.parseShort("2"));
+                chequePK.setCodBanco(rc.getRecibosChequesPK().getCodBanco());
+                chequePK.setNroCheque(rc.getRecibosChequesPK().getNroCheque());
+                //esta busqueda de cheques se aplica cuando se ingresa el nro. de cheque en el detalle, por ese motivo utilizamos el mismo metodo en este caso.
+                List<Cheques> listaDeCheques = chequesFacade.listadoChequesNoRechazadosPorNroBancoCheque(rc.getRecibosChequesPK().getNroCheque(), rc.getRecibosChequesPK().getCodBanco());
+                if(!listaDeCheques.isEmpty()){
+                    for(Cheques c: listaDeCheques){
+                        chequePK.setXcuentaBco(c.getChequesPK().getXcuentaBco());
+                        cheque.setChequesPK(chequePK);
+                        cheque.setIcheque(c.getIcheque());
+                        cheque.setFcheque(c.getFcheque());
+                        cheque.setFemision(c.getFemision());
+                        cheque.setXtitular(c.getXtitular());
+                    }
+                }
+                chequeDetalleDto.setImportePagado(rc.getIpagado());
+                chequeDetalleDto.setCheque(cheque);
+                listaChequesDet.add(chequeDetalleDto);
+            }
+            totalEfectivo = reciboSeleccionado.getIefectivo();
+            totalRetencion = reciboSeleccionado.getIretencion();
+            totalCheques = reciboSeleccionado.getIcheques();
+        }catch(Exception e){
+            PrimeFaces.current().ajax().update("exceptionDialog");
+            
+            contenidoError = ExceptionHandlerView.getStackTrace(e);
+            tituloError = "Error al visualizar un recibo.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
+        }
+        return null;
     }
     
     public String anularRecibo(){
         try{
             boolean notasActualizadas = true;
+            RecibosPK reciboPK = new RecibosPK();
+            reciboPK.setCodEmpr(Short.parseShort("2"));
+            reciboPK.setNrecibo(reciboSeleccionado.getRecibosPK().getNrecibo());
+            reciboSeleccionado = recibosFacade.find(reciboPK);
             if(reciboSeleccionado.getMestado() == 'A'){
                 Collection<RecibosDet> listaRecibosDet =  reciboSeleccionado.getRecibosDetCollection();
                 //Collection<RecibosCheques> listaRecibosCheques = reciboSeleccionado.getRecibosChequesCollection();
@@ -251,11 +330,11 @@ public class RecibosClientesBean implements Serializable{
                                 cc.setFfactur(rd.getFfactur());
                                 cuentasCorrientesFacade.insertarCuentas(cc);
                             }catch(Exception e){
-                                RequestContext.getCurrentInstance().update("exceptionDialog");
+                                PrimeFaces.current().ajax().update("exceptionDialog");
                                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                                 tituloError = "Error en inserción de cuentas corrientes recibos detalles.";
                                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                 return null;
                             }
                         }
@@ -267,30 +346,30 @@ public class RecibosClientesBean implements Serializable{
                     try{
                         recibosFacade.actualizarEstadoRegistro(reciboSeleccionado.getRecibosPK().getNrecibo());
                     }catch(Exception e){
-                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                        PrimeFaces.current().ajax().update("exceptionDialog");
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error en anulación de recibos.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return null;
                     }
                     //operacion exitosa
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Recibo anulado."));
                     limpiarFormulario();
-                    RequestContext.getCurrentInstance().execute("PF('dlgAnularReciboCompra').hide();");
+                    PrimeFaces.current().executeScript("PF('dlgAnularReciboCompra').hide();");
                     return null;
                 }
             }else{
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Estado inválido del recibo."));
-                RequestContext.getCurrentInstance().execute("PF('dlgAnularReciboCompra').hide();");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Estado inválido del recibo."));
+                PrimeFaces.current().executeScript("PF('dlgAnularReciboCompra').hide();");
                 return null;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al anular un recibo.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return null;
     }
@@ -299,39 +378,39 @@ public class RecibosClientesBean implements Serializable{
         try{
             for(ChequeDetalleDto cd: listaChequesDet){
                 if(cd.getCheque().getFcheque().compareTo(cd.getCheque().getFemision()) < 0){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "La fecha del cheque debe ser mayor o igual a la fecha de emisión."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "La fecha del cheque debe ser mayor o igual a la fecha de emisión."));
                     return null;
                 }
             }
             if(nroReciboLbl == 0){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Nro de recibo inválido."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Nro de recibo inválido."));
                 return null;
             }else{
                 long cantRecibos = 0;
                 try{
                     cantRecibos = recibosFacade.obtenerCantidadRecibos(nroReciboLbl);
                     if(cantRecibos > 0){
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Ya existe este nro. de recibo."));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Ya existe este nro. de recibo."));
                         return null;
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la validación del nro. de recibo.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 }
             }
             if(clienteSeleccionadoLbl == null){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Cliente inválido."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Cliente inválido."));
                 return null;
             }else{
                 if(clienteSeleccionadoLbl == 0){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Cliente inválido."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Cliente inválido."));
                     return null;
                 }else{
                     if(fechaReciboLbl == null){
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Fecha inválida de recibo."));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Fecha inválida de recibo."));
                         return null;
                     }else{
                         long total = 0;
@@ -339,11 +418,11 @@ public class RecibosClientesBean implements Serializable{
                             total += dv.getMontoAPagarDocumento();
                         }
                         if(total != totalReciboLbl){
-                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Total monto a pagar no coincide con el total recibo."));
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Total monto a pagar no coincide con el total recibo."));
                             return null;
                         }
                         if((totalEfectivo + totalRetencion + totalCheques) != totalReciboLbl){
-                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Total deudas no coincide con el total recibo."));
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Total deudas no coincide con el total recibo."));
                             return null;
                         }
                         for(DocumentoVentaDto dv: listaDocumentoVentaDto){
@@ -353,11 +432,11 @@ public class RecibosClientesBean implements Serializable{
                                         String lFFacturaStr = dateToString(dv.getFechaDocumento());
                                         listadoFacturas = facturasFacade.listadoDeFacturas(dv.getTipoDocumento().getCtipoDocum(), lFFacturaStr, dv.getNroDcumento());
                                     }catch(Exception e){
-                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                         tituloError = "Error en la lectura de facturas.";
                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                         return null;
                                     }
                                 }
@@ -365,28 +444,28 @@ public class RecibosClientesBean implements Serializable{
                                     try{
                                         listadoNotasVentasDto = notasVentasFacade.listadoDeNotasDeVentasPorNroNota(dv.getNroRecibo());
                                     }catch(Exception e){
-                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                         tituloError = "Error en la lectura de notas de créditos.";
                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                         return null;
                                     }
                                     if(listadoNotasVentasDto == null){
-                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe nota de crédito."));
+                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "No existe nota de crédito."));
                                         return null;
                                     }else{
                                         if(listadoNotasVentasDto.isEmpty()){
-                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe nota de crédito."));
+                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "No existe nota de crédito."));
                                             return null;
                                         }else{
                                             for(NotaVentaDto nvdto: listadoNotasVentasDto){
                                                 if(nvdto.getNotaVenta().getIsaldo() <= 0){
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Nota de crédito ya utilizada totalmente."));
+                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Nota de crédito ya utilizada totalmente."));
                                                     return null;
                                                 }
                                                 if(nvdto.getNotaVenta().getCodCliente() != Integer.parseInt(String.valueOf(clienteSeleccionadoLbl))){
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "La nota de crédito no pertenece al cliente del recibo."));
+                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "La nota de crédito no pertenece al cliente del recibo."));
                                                     return null;
                                                 }
                                                 long saldo = 0;
@@ -395,19 +474,19 @@ public class RecibosClientesBean implements Serializable{
                                                         String lFFacturaStr = dateToString(nvdto.getNotaVenta().getFfactur());
                                                         saldo = facturasFacade.obtenerSaldoDeFacturas(lFFacturaStr, nvdto.getNotaVenta().getNotasVentasPK().getCtipoDocum(), nvdto.getNotaVenta().getNrofact());
                                                         if(saldo == 0){
-                                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe factura "+nvdto.getNotaVenta().getNrofact()+" de la NCV."));
+                                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "No existe factura "+nvdto.getNotaVenta().getNrofact()+" de la NCV."));
                                                             return null;
                                                         }
                                                         if(saldo > 0){
-                                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "La factura "+nvdto.getNotaVenta().getNrofact()+" de la NCV está pendiente."));
+                                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "La factura "+nvdto.getNotaVenta().getNrofact()+" de la NCV está pendiente."));
                                                             return null;
                                                         }
                                                     }catch(Exception e){
-                                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                         tituloError = "Error en la lectura de saldos de facturas.";
                                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                         return null;
                                                     }
                                                 }
@@ -424,15 +503,15 @@ public class RecibosClientesBean implements Serializable{
                                             importe = recibosChequesFacade.obtenerImportePagadoRecibosCheques(cd.getCheque().getChequesPK().getNroCheque(), cd.getCheque().getChequesPK().getCodBanco());
                                             long tTotal = cd.getCheque().getIcheque() - importe;
                                             if(tTotal < cd.getImportePagado()){
-                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "El nro. de cheque "+cd.getCheque().getChequesPK().getNroCheque()+" ya tiene utilizado "+importe+" en otras facturas."));
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "El nro. de cheque "+cd.getCheque().getChequesPK().getNroCheque()+" ya tiene utilizado "+importe+" en otras facturas."));
                                                 return null;
                                             }
                                         }catch(Exception e){
-                                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                                            PrimeFaces.current().ajax().update("exceptionDialog");
                                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                                             tituloError = "Error en control de totales de cheques.";
                                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                             return null;
                                         }
                                     }
@@ -449,11 +528,11 @@ public class RecibosClientesBean implements Serializable{
                                                                     totalCheques, 
                                                                     observacionLbl);
                                 }catch(Exception e){
-                                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                                    PrimeFaces.current().ajax().update("exceptionDialog");
                                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                                     tituloError = "Error en inserción de recibos.";
                                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                     return null;
                                 }
                                 //detalle recibos
@@ -470,11 +549,11 @@ public class RecibosClientesBean implements Serializable{
                                                                                     docventa.getMontoDocumento(), 
                                                                                     docventa.getSaldoDocumento());
                                         }catch(Exception e){
-                                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                                            PrimeFaces.current().ajax().update("exceptionDialog");
                                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                                             tituloError = "Error en inserción de recibos detalles.";
                                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                             return null;
                                         }
                                         docventa.setTipoDocumento(tiposDocumentosFacade.find(docventa.getTipoDocumento().getCtipoDocum()));
@@ -503,11 +582,11 @@ public class RecibosClientesBean implements Serializable{
                                                 cuentaCorriente.setNrofact(docventa.getNroDcumento());
                                                 cuentasCorrientesFacade.insertarCuentas(cuentaCorriente);
                                             }catch(Exception e){
-                                                RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                PrimeFaces.current().ajax().update("exceptionDialog");
                                                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                 tituloError = "Error en inserción de cuentas corrientes recibos detalles.";
                                                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                 return null;
                                             }
                                         }
@@ -527,11 +606,11 @@ public class RecibosClientesBean implements Serializable{
                                                                                  lFCheque, lFEmision, cd.getCheque().getIcheque(), 
                                                                                  clienteSeleccionadoLbl, cd.getCheque().getXtitular(), cd.getCheque().getMtipo());
                                                 }catch(Exception e){
-                                                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                    PrimeFaces.current().ajax().update("exceptionDialog");
                                                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                     tituloError = "Error en inserción de nuevos cheques.";
                                                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                     return null;
                                                 }
                                                 TiposDocumentos tipoDocumento = tiposDocumentosFacade.find("CHQ");
@@ -550,11 +629,11 @@ public class RecibosClientesBean implements Serializable{
                                                         cc.setCodBanco(bancosFacade.find(cd.getCheque().getChequesPK().getCodBanco()));
                                                         cuentasCorrientesFacade.insertarCuentas(cc);
                                                     }catch(Exception e){
-                                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                         tituloError = "Error en inserción de cuentas corrientes.";
                                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                         return null;
                                                     }
                                                 }
@@ -565,11 +644,11 @@ public class RecibosClientesBean implements Serializable{
                                                                                                 cd.getCheque().getChequesPK().getNroCheque(), 
                                                                                                 cd.getImportePagado());
                                                 }catch(Exception e){
-                                                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                    PrimeFaces.current().ajax().update("exceptionDialog");
                                                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                     tituloError = "Error en inserción de recibos cheques.";
                                                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                     return null;
                                                 }
                                                 //operacion exitosa
@@ -584,17 +663,17 @@ public class RecibosClientesBean implements Serializable{
                         //operacion exitosa
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Datos Grabados."));
                         limpiarFormulario(); //volvemos a instanciar
-                        RequestContext.getCurrentInstance().execute("PF('dlgNuevReciboCompra').hide();");
+                        PrimeFaces.current().executeScript("PF('dlgNuevReciboCompra').hide();");
                         return null;
                     }
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al agregar un recibo.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
             return null;
         }
     }
@@ -605,11 +684,11 @@ public class RecibosClientesBean implements Serializable{
             try{
                 listadoNotasVentas = notasVentasFacade.listadoDeNotasDeVentasPorNroFactura(lNroDocum);
             }catch(Exception e){
-                RequestContext.getCurrentInstance().update("exceptionDialog");
+                PrimeFaces.current().ajax().update("exceptionDialog");
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la lectura de notas de ventas.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return false;
             }
             if(!listadoNotasVentas.isEmpty() && lIDeuda > 0){
@@ -628,7 +707,7 @@ public class RecibosClientesBean implements Serializable{
                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                         tituloError = "Error en la actualización de saldos de notas.";
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         return false;
                     }
                 }
@@ -657,14 +736,14 @@ public class RecibosClientesBean implements Serializable{
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la actualización de saldos de notas.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                     return false;
                 }
             }catch(Exception e){
                 contenidoError = ExceptionHandlerView.getStackTrace(e);
                 tituloError = "Error en la lectura de notas de ventas.";
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                 return false;
             }
             
@@ -674,66 +753,65 @@ public class RecibosClientesBean implements Serializable{
     
     private boolean validarNroDocumento() {
         if (tipoDocumentoSeleccionadoDet == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe seleccionar un tipo de documento."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un tipo de documento."));
             return false;
         } else {
             if (tipoDocumentoSeleccionadoDet.getCtipoDocum() == null || tipoDocumentoSeleccionadoDet.getCtipoDocum().equals("")) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe seleccionar un tipo de documento."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un tipo de documento."));
                 return false;
             } else {
                 if (clienteSeleccionadoLbl == null) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar un cliente."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar un cliente."));
                     return false;
                 } else {
                     if (nroDocumentoDet == 0) {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar un nro. de documento"));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar un nro. de documento"));
                         return false;
                     } else {
                         if (tipoDocumentoSeleccionadoDet.getCtipoDocum().equals("FCR") || tipoDocumentoSeleccionadoDet.getCtipoDocum().equals("FCP")) {
-                            if (montoAPagarDet == 0) {    //monto a pagar en la grilla (ideuda).
-                                try {
-                                    if (fechaDocumentoDet == null) {
-                                        listadoFacturas = facturasFacade.listadoDeFacturasPorTipoNroFactura(tipoDocumentoSeleccionadoDet.getCtipoDocum(), nroDocumentoDet);
-                                    } else {
-                                        String lFFacturaStr = dateToString(fechaDocumentoDet);
-                                        listadoFacturas = facturasFacade.listadoDeFacturasActivas(tipoDocumentoSeleccionadoDet.getCtipoDocum(), lFFacturaStr, nroDocumentoDet);
-                                    }
-                                    if (listadoFacturas == null) {
-                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "No existe factura crédito."));
+                            //monto a pagar en la grilla (ideuda).
+                            try {
+                                if (fechaDocumentoDet == null) {
+                                    listadoFacturas = facturasFacade.listadoDeFacturasPorTipoNroFactura(tipoDocumentoSeleccionadoDet.getCtipoDocum(), nroDocumentoDet);
+                                } else {
+                                    String lFFacturaStr = dateToString(fechaDocumentoDet);
+                                    listadoFacturas = facturasFacade.listadoDeFacturasActivas(tipoDocumentoSeleccionadoDet.getCtipoDocum(), lFFacturaStr, nroDocumentoDet);
+                                }
+                                if (listadoFacturas == null) {
+                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "No existe factura crédito."));
+                                    return false;
+                                } else {
+                                    if (listadoFacturas.isEmpty()) {
+                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "No existe factura crédito."));
                                         return false;
                                     } else {
-                                        if (listadoFacturas.isEmpty()) {
-                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "No existe factura crédito."));
-                                            return false;
-                                        } else {
-                                            for (Facturas f : listadoFacturas) {
-                                                if (f.getIsaldo() <= 0) {
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Factura sin saldo pendiente."));
-                                                    return false;
-                                                }
-                                            }
-                                            for (Facturas f : listadoFacturas) {
-                                                if (f.getCodCliente().getCodCliente().compareTo(clienteSeleccionadoLbl) != 0) {
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "La factura no pertenece al cliente del recibo."));
-                                                    return false;
-                                                }
-                                            }
-                                            for (Facturas f : listadoFacturas) {
-                                                fechaDocumentoDet = f.getFacturasPK().getFfactur();
-                                                montoAPagarDet = f.getIsaldo();
-                                                fechaVencimientoDocDet = f.getFvenc();
-                                                saldoDocumentoDet = montoAPagarDet;
-                                                montoFacturaDet = f.getTtotal();
+                                        for (Facturas f : listadoFacturas) {
+                                            if (f.getIsaldo() <= 0) {
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Factura sin saldo pendiente."));
+                                                return false;
                                             }
                                         }
+                                        for (Facturas f : listadoFacturas) {
+                                            if (f.getCodCliente().getCodCliente().compareTo(clienteSeleccionadoLbl) != 0) {
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "La factura no pertenece al cliente del recibo."));
+                                                return false;
+                                            }
+                                        }
+                                        for (Facturas f : listadoFacturas) {
+                                            fechaDocumentoDet = f.getFacturasPK().getFfactur();
+                                            montoAPagarDet = f.getIsaldo();
+                                            fechaVencimientoDocDet = f.getFvenc();
+                                            saldoDocumentoDet = montoAPagarDet;
+                                            montoFacturaDet = f.getTtotal();
+                                        }
                                     }
-                                } catch (Exception e) {
-                                    RequestContext.getCurrentInstance().update("exceptionDialog");
-                                    contenidoError = ExceptionHandlerView.getStackTrace(e);
-                                    tituloError = "Error en la lectura de facturas.";
-                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
                                 }
+                            } catch (Exception e) {
+                                PrimeFaces.current().ajax().update("exceptionDialog");
+                                contenidoError = ExceptionHandlerView.getStackTrace(e);
+                                tituloError = "Error en la lectura de facturas.";
+                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
+                                PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                             }
                             if(!listaDocumentoVentaDto.isEmpty()){
                                 for (DocumentoVentaDto dv : listaDocumentoVentaDto) {
@@ -754,30 +832,30 @@ public class RecibosClientesBean implements Serializable{
                                             listadoNotasVentasDto = notasVentasFacade.listadoDeNotasDeVentasPorFechaNroNota(lFDocum, nroDocumentoDet);
                                         }
                                     } catch (Exception e) {
-                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                         tituloError = "Error en la lectura de notas de créditos.";
                                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                         return false;
                                     }
                                     if (listadoNotasVentasDto == null) {
-                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "No existe nota de crédito."));
+                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "No existe nota de crédito."));
                                         return false;
                                     } else {
                                         if (listadoNotasVentasDto.isEmpty()) {
-                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "No existe nota de crédito."));
+                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "No existe nota de crédito."));
                                             return false;
                                         } else {
                                             for (NotaVentaDto nv : listadoNotasVentasDto) {
                                                 if (nv.getNotaVenta().getIsaldo() <= 0) {
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Nota de crédito ya utilizada totalmente."));
+                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Nota de crédito ya utilizada totalmente."));
                                                     return false;
                                                 }
                                             }
                                             for (NotaVentaDto nv : listadoNotasVentasDto) {
                                                 if (nv.getNotaVenta().getCodCliente() != Integer.parseInt(clienteSeleccionadoLbl.toString())) {
-                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "La nota de crédito no pertenece al cliente del recibo."));
+                                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "La nota de crédito no pertenece al cliente del recibo."));
                                                     return false;
                                                 }
                                             }
@@ -789,22 +867,22 @@ public class RecibosClientesBean implements Serializable{
                                                         //String lFFacturaStr = dateToString(nv.getNotaVenta().getFfactur()); fecha de la factura?
                                                         saldo = facturasFacade.obtenerSaldoDeFacturas(lFFacturaStr, nv.getNotaVenta().getFacCtipoDocum(), nv.getNotaVenta().getNrofact());
                                                     } catch (Exception e) {
-                                                        RequestContext.getCurrentInstance().update("exceptionDialog");
+                                                        PrimeFaces.current().ajax().update("exceptionDialog");
                                                         contenidoError = ExceptionHandlerView.getStackTrace(e);
                                                         tituloError = "Error en la lectura de saldo de facturas.";
-                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));
-                                                        RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, tituloError, tituloError));
+                                                        PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                                                         return false;
                                                     }
                                                     if (saldo == 0) {
-                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "No existe factura " + nv.getNotaVenta().getNrofact() + " de la NCV."));
+                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "No existe factura " + nv.getNotaVenta().getNrofact() + " de la NCV."));
                                                         return false;
                                                     }
                                                     if (nv.getNotaVenta().getIsaldo() > 0) {
-                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "La factura " + nv.getNotaVenta().getNrofact() + " de la NCV está pendiente."));
+                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "La factura " + nv.getNotaVenta().getNrofact() + " de la NCV está pendiente."));
                                                         return false;
                                                     } else if (nv.getNotaVenta().getIsaldo() == 0) {
-                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "La factura " + nv.getNotaVenta().getNrofact() + " de la NCV está cancelada."));
+                                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "La factura " + nv.getNotaVenta().getNrofact() + " de la NCV está cancelada."));
                                                         return false;
                                                     } else if (nv.getNotaVenta().getIsaldo() < 0) {
                                                         iSaldoFact = nv.getNotaVenta().getIsaldo();
@@ -824,7 +902,7 @@ public class RecibosClientesBean implements Serializable{
                                     if(!listaDocumentoVentaDto.isEmpty()){
                                         for (DocumentoVentaDto dv : listaDocumentoVentaDto) {
                                             if (dv.getNroDcumento() == nroDocumentoDet && dv.getTipoDocumento().getCtipoDocum().equals(tipoDocumentoSeleccionadoDet.getCtipoDocum())) {
-                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Esta nota de crédito ya ha sido registrada."));
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Esta nota de crédito ya ha sido registrada."));
                                                 return false;
                                             }
                                         }
@@ -844,13 +922,13 @@ public class RecibosClientesBean implements Serializable{
     private boolean validarMontoAPagar(DocumentoVentaDto documentoVentaDto, long montoAPagarNuevo){
         if((documentoVentaDto.getTipoDocumento().getCtipoDocum().equals("FCR") || documentoVentaDto.getTipoDocumento().getCtipoDocum().equals("FCP")) 
                 && montoAPagarNuevo > documentoVentaDto.getSaldoDocumento() ){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "El monto a pagar debe ser menor o igual a "+documentoVentaDto.getSaldoDocumento()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "El monto a pagar debe ser menor o igual a "+documentoVentaDto.getSaldoDocumento()));
             return false;
         }
         
         if(documentoVentaDto.getTipoDocumento().getCtipoDocum().equals("NCV")){
             if(montoAPagarNuevo > documentoVentaDto.getMontoDocumento()){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "El monto a pagar debe ser menor o igual a "+documentoVentaDto.getMontoDocumento()));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "El monto a pagar debe ser menor o igual a "+documentoVentaDto.getMontoDocumento()));
                 return false;
             }
             if(montoAPagarNuevo > documentoVentaDto.getSaldoFactura()){
@@ -858,7 +936,7 @@ public class RecibosClientesBean implements Serializable{
                 return false;
             }
             if(montoAPagarNuevo > 0){
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "El valor de la nota de crédito debe ser negativo."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "El valor de la nota de crédito debe ser negativo."));
                 return false;
             }
         }
@@ -871,7 +949,7 @@ public class RecibosClientesBean implements Serializable{
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
             resultado = dateFormat.format(fecha);
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al convertir fecha"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atencion", "Error al convertir fecha"));
         }
 
         return resultado;
@@ -913,11 +991,11 @@ public class RecibosClientesBean implements Serializable{
                 importeAPagarChequeDet = 0;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al cargar un detalle de cheques.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
      
@@ -932,53 +1010,58 @@ public class RecibosClientesBean implements Serializable{
     
     private boolean validarIngresoCheques() {
         if (clienteSeleccionadoLbl == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe seleccionar un cliente."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un cliente."));
             return false;
         } else {
             if (bancoSeleccionadoDet == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe seleccionar un banco."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un banco."));
                 return false;
             } else {
                 if (bancoSeleccionadoDet.getCodBanco() == 0) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe seleccionar un banco."));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un banco."));
                     return false;
                 } else {
                     if (nroChequeDet.equals("") || nroChequeDet == null) {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar un nro. de cheque."));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar un nro. de cheque."));
                         return false;
                     } else {
                         //validar ingreso de nro. de cheque
                         try{
                             listadoCheques = chequesFacade.listadoChequesNoRechazadosPorNroBancoCheque(nroChequeDet, bancoSeleccionadoDet.getCodBanco());
-                            for(Cheques c: listadoCheques){
-                                importeChequeDet = c.getIcheque();
-                                nroCtaBancaria = c.getChequesPK().getXcuentaBco();
-                                fechaEmisionDet = c.getFemision();
-                                fechaChequeDet = c.getFcheque();
-                                importeChequeDet = c.getIcheque();
-                                titularChequeDet = c.getXtitular();
+                            if(!listadoCheques.isEmpty()){
+                                for(Cheques c: listadoCheques){
+                                    importeChequeDet = c.getIcheque();
+                                    nroCtaBancaria = c.getChequesPK().getXcuentaBco();
+                                    fechaEmisionDet = c.getFemision();
+                                    fechaChequeDet = c.getFcheque();
+                                    importeChequeDet = c.getIcheque();
+                                    titularChequeDet = c.getXtitular();
+                                }
+                            }else{
+                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "No existe el nro. de cheque"));
+                                return false;
                             }
                         }catch(Exception e){
-                            RequestContext.getCurrentInstance().update("exceptionDialog");
+                            PrimeFaces.current().ajax().update("exceptionDialog");
                             contenidoError = ExceptionHandlerView.getStackTrace(e);
                             tituloError = "Error en la búsqueda de cheques.";
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+                            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
                         }
                         if (nroCtaBancaria.equals("") || nroCtaBancaria == null) {
-                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar un nro. de cuenta bancaria."));
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar un nro. de cuenta bancaria."));
                             return false;
                         } else {
                             if (fechaChequeDet == null) {
-                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar la fecha del cheque."));
+                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar la fecha del cheque."));
                                 return false;
                             } else {
                                 if (fechaEmisionDet == null) {
-                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar la fecha de emisión del cheque."));
+                                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar la fecha de emisión del cheque."));
                                     return false;
                                 } else {
                                     if (importeChequeDet == 0) {
-                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "Debe ingresar el importe del cheque."));
+                                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar el importe del cheque."));
                                         return false;
                                     }
                                 }
@@ -1006,11 +1089,11 @@ public class RecibosClientesBean implements Serializable{
                 } 
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al borrar un detalle de la grilla de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
     }
     
@@ -1028,11 +1111,11 @@ public class RecibosClientesBean implements Serializable{
                 }
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al borrar un detalle de la grilla de cheques.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
         }
     }
     
@@ -1070,11 +1153,11 @@ public class RecibosClientesBean implements Serializable{
                 nroDocumentoDet = 0;
             }
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error al cargar un detalle de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
     }
     
@@ -1091,37 +1174,72 @@ public class RecibosClientesBean implements Serializable{
         if(clienteSeleccionadoLbl != null){
             if(clienteSeleccionadoLbl == 0){
                 //mostrar busqueda de clientes
-                RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+                PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').show();");
             }else{
                 try{
                     Clientes clienteBuscado = clientesFacade.find(clienteSeleccionadoLbl);
                     if(clienteBuscado == null){
                         //mostrar busqueda de clientes
-                        RequestContext.getCurrentInstance().execute("PF('dlgBusClieConsultaDocumentoVenta').show();");
+                        PrimeFaces.current().executeScript("PF('dlgBusClieConsultaDocumentoVenta').show();");
                     }else{
                         this.nombreClienteLbl = clienteBuscado.getXnombre();
                     }
                 }catch(Exception e){
-                    RequestContext.getCurrentInstance().update("exceptionDialog");
+                    PrimeFaces.current().ajax().update("exceptionDialog");
                     contenidoError = ExceptionHandlerView.getStackTrace(e);
                     tituloError = "Error en la lectura de datos de clientes.";
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-                    RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();"); 
+                    PrimeFaces.current().executeScript("PF('exceptionDialog').show();"); 
                 }
             }
         }
     }
     
     public void listarRecibos(){
-        try{
-            listadoRecibos = recibosFacade.obtenerRecibos();
-        }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
-            contenidoError = ExceptionHandlerView.getStackTrace(e);
-            tituloError = "Error en la lectura de datos de recibos.";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
-        }
+        
+        model = new LazyDataModel<Recibos>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<Recibos> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+                //List<Envios> envioss;
+                int count = 0;
+                if (filters.size() == 0) {
+                    listadoRecibos = recibosFacade.findRangeSort(new int[]{first, pageSize});
+                    count = recibosFacade.count();
+                }else {
+                    if (filters.size() < 2) {
+                        //dd/MM/yyyy
+                        String filtroNroRecibo = (String) filters.get("recibosPK.nrecibo");
+                        listadoRecibos = recibosFacade.obtenerRecibosPorNroEnUnRango(Long.parseLong(filtroNroRecibo), new int[]{first, pageSize});
+                        count = recibosFacade.obtenerCantidadRecibos(Long.parseLong(filtroNroRecibo));
+                    }
+
+                } 
+                model.setRowCount(count);
+                return listadoRecibos;
+            }
+
+            @Override
+            public Recibos getRowData(String rowKey) {
+                String tempIndex = rowKey;
+                System.out.println("1");
+                if (tempIndex != null) {
+                    for (Recibos inc : listadoRecibos) {
+                        if (Long.toString(inc.getRecibosPK().getNrecibo()).equals(rowKey)) {
+                            return inc;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            public Object getRowKey(Recibos recibo) {
+                return recibo.getRecibosPK().getNrecibo();
+            }
+        };
     }
     
      public void inicializarBuscadorClientes(){
@@ -1135,11 +1253,11 @@ public class RecibosClientesBean implements Serializable{
         try{
             listaClientes = clientesFacade.buscarPorFiltro(filtro);
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de clientes.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         
     }
@@ -1149,11 +1267,11 @@ public class RecibosClientesBean implements Serializable{
         try{
             listadoTiposDocumentos = tiposDocumentosFacade.listarTipoDocumentoParaReciboVentaCliente();
         }catch(Exception e){
-            RequestContext.getCurrentInstance().update("exceptionDialog");
+            PrimeFaces.current().ajax().update("exceptionDialog");
             contenidoError = ExceptionHandlerView.getStackTrace(e);
             tituloError = "Error en la lectura de datos de tipos de documentos.";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
-            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+            PrimeFaces.current().executeScript("PF('exceptionDialog').show();");
         }
         return listadoTiposDocumentos;
     }
@@ -1185,8 +1303,8 @@ public class RecibosClientesBean implements Serializable{
     }
     
     public void cerrarDialogoSinGuardar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRecibos').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevReciboCompra').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarRecibos').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevReciboCompra').hide();");
     }
     
     public List<DocumentoVentaDto> getListaDocumentoVentaDto() {
@@ -1525,4 +1643,20 @@ public class RecibosClientesBean implements Serializable{
         this.listadoTiposDocumentos = listadoTiposDocumentos;
     }
 
+    public boolean isHabilitaBotonVisualizar() {
+        return habilitaBotonVisualizar;
+    }
+
+    public void setHabilitaBotonVisualizar(boolean habilitaBotonVisualizar) {
+        this.habilitaBotonVisualizar = habilitaBotonVisualizar;
+    }
+
+    public LazyDataModel<Recibos> getModel() {
+        return model;
+    }
+
+    public void setModel(LazyDataModel<Recibos> model) {
+        this.model = model;
+    }
+    
 }

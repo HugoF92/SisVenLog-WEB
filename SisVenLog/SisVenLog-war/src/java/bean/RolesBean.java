@@ -18,11 +18,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -217,7 +216,7 @@ public class RolesBean implements Serializable {
                 rolesFacade.insertarRoles(roles);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevRoles').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevRoles').hide();");
 
                 instanciar();
                         
@@ -248,7 +247,7 @@ public class RolesBean implements Serializable {
                 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditRoles').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditRoles').hide();");
 
             }
 
@@ -264,7 +263,7 @@ public class RolesBean implements Serializable {
             this.roles = new Roles();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacRoles').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacRoles').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Ocurrió un error."));
         }
@@ -292,16 +291,16 @@ public class RolesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRoles').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarRoles').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevRoles').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevRoles').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarRoles').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevRoles').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarRoles').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevRoles').hide();");
 
     }
 

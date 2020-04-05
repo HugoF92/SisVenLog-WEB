@@ -14,7 +14,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -93,7 +94,8 @@ public class AplicacionesBean implements Serializable {
         
         listar();
 
-    RequestContext.getCurrentInstance().update("formAplicaciones");
+//    RequestContext.getCurrentInstance().update("formAplicaciones");
+    PrimeFaces.current().ajax().update("formAplicaciones");
     }
 
     public String getFiltro() {
@@ -130,7 +132,8 @@ public class AplicacionesBean implements Serializable {
              aplicacionesFacade.create(aplicaciones);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevAplicaciones').hide();");
 
             instanciar();
 
@@ -157,7 +160,8 @@ public class AplicacionesBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditAplicaciones').hide();");
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditAplicaciones').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditAplicaciones').hide();");
 
             }
 
@@ -172,7 +176,8 @@ public class AplicacionesBean implements Serializable {
             aplicacionesFacade.remove(aplicaciones);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacAplicaciones').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacAplicaciones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacAplicaciones').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -200,17 +205,20 @@ public class AplicacionesBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarAplicaciones').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarAplicaciones').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarAplicaciones').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevAplicaciones').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarAplicaciones').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarAplicaciones').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarAplicaciones').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevAplicaciones').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevAplicaciones').hide();");
     }
     
    

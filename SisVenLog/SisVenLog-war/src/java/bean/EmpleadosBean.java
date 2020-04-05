@@ -19,7 +19,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -141,7 +142,8 @@ public class EmpleadosBean implements Serializable {
         this.filtro = "";
 
         listar();
-        RequestContext.getCurrentInstance().update("formEmpleados");
+//        RequestContext.getCurrentInstance().update("formEmpleados");
+        PrimeFaces.current().ajax().update("formEmpleados");
     }
 
     public String getFiltro() {
@@ -184,8 +186,8 @@ public class EmpleadosBean implements Serializable {
             empleadosFacade.insertarEmpleados(empleados);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEmpleados').hide();");
             instanciar();
 
         } catch (Exception e) {
@@ -213,8 +215,8 @@ public class EmpleadosBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditEmpleados').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditEmpleados').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditEmpleados').hide();");
             }
 
         } catch (Exception e) {
@@ -229,7 +231,8 @@ public class EmpleadosBean implements Serializable {
             this.empleados = new Empleados();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacEmpleados').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacEmpleados').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacEmpleados').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -264,17 +267,20 @@ public class EmpleadosBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpleados').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpleados').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarEmpleados').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevEmpleados').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpleados').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
-
+//        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarEmpleados').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarEmpleados').hide();");
+//        RequestContext.getCurrentInstance().execute("PF('dlgNuevEmpleados').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevEmpleados').hide();");
     }
 
 }

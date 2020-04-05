@@ -12,7 +12,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -152,8 +153,8 @@ public class CategoriasBean implements Serializable {
                 categoriasFacade.insertarCategorias(categorias);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-                RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
+                PrimeFaces.current().executeScript("PF('dlgNuevCategorias').hide();");
                 instanciar();
 
             
@@ -181,8 +182,8 @@ public class CategoriasBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditCategorias').hide();");
-
+//                RequestContext.getCurrentInstance().execute("PF('dlgEditCategorias').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditCategorias').hide();");
             }
 
         } catch (Exception e) {
@@ -197,7 +198,8 @@ public class CategoriasBean implements Serializable {
             this.categorias = new Categorias();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacCategorias').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgInacCategorias').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacCategorias').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -226,17 +228,20 @@ public class CategoriasBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCategorias').show();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCategorias').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCategorias').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCategorias').hide();");
         }
 
     }
     
     public void cerrarDialogosAgregar() {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCategorias').hide();");
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
-
+//            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarCategorias').hide();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarCategorias').hide();");
+//            RequestContext.getCurrentInstance().execute("PF('dlgNuevCategorias').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevCategorias').hide();");
     }
 
 }

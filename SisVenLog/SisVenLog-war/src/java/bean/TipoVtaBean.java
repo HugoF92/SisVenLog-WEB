@@ -13,7 +13,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
+//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -123,7 +124,7 @@ public class TipoVtaBean implements Serializable {
             tipoVtaFacade.create(tipoVta);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
 
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoVta').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoVta').hide();");
 
             instanciar();
 
@@ -150,7 +151,7 @@ public class TipoVtaBean implements Serializable {
 
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditTipoVta').hide();");
+                PrimeFaces.current().executeScript("PF('dlgEditTipoVta').hide();");
 
             }
 
@@ -166,7 +167,7 @@ public class TipoVtaBean implements Serializable {
             this.tipoVta = new TiposVentas(new TiposVentasPK());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             instanciar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacTipoVta').hide();");
+            PrimeFaces.current().executeScript("PF('dlgInacTipoVta').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
@@ -194,16 +195,16 @@ public class TipoVtaBean implements Serializable {
         }
 
         if (cargado) {
-            RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoVta').show();");
+            PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoVta').show();");
         } else {
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoVta').hide();");
+            PrimeFaces.current().executeScript("PF('dlgNuevTipoVta').hide();");
         }
 
     }
 
     public void cerrarDialogosAgregar() {
-        RequestContext.getCurrentInstance().execute("PF('dlgSinGuardarTipoVta').hide();");
-        RequestContext.getCurrentInstance().execute("PF('dlgNuevTipoVta').hide();");
+        PrimeFaces.current().executeScript("PF('dlgSinGuardarTipoVta').hide();");
+        PrimeFaces.current().executeScript("PF('dlgNuevTipoVta').hide();");
 
     }
 
