@@ -2490,5 +2490,37 @@ public class LlamarReportes {
         }
         return escapedData;
     }
+
+    public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
+            String vendedor, String canalDescripcion,
+            String estado, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("desde", fechaInicial);
+            param.put("hasta", fechaFinal);
+            param.put("vendedor", vendedor);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("canal", canalDescripcion);
+            param.put("estado", Integer.parseInt(estado));
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=limigrapedidos.pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     
 }

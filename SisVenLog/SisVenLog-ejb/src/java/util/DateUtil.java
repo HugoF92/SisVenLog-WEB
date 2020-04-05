@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -63,9 +64,8 @@ public class DateUtil {
 
         return resultado;
     }
-
-     public static String dateToString(Date fecha, String format) {
-
+     
+    public static String dateToString(Date fecha, String format) {
         String resultado = "";
         try {
             // Se evalua si se pasa un string vacio, sino se asigna un formato por defecto
