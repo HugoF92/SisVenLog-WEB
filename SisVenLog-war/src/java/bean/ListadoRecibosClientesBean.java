@@ -10,6 +10,7 @@ import dao.ClientesFacade;
 import dao.RecibosFacade;
 import dao.ZonasFacade;
 import entidad.Clientes;
+import entidad.Zonas;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import util.DateUtil;
+import util.ExceptionHandlerView;
 import util.LlamarReportes;
 import util.StringUtil;
 
@@ -42,13 +46,17 @@ public class ListadoRecibosClientesBean implements Serializable{
     private long nroReciboDesde;
     private long nroReciboHasta;
     private String clientesRepo;
+    private Zonas zona;
     private String zonaDes;
     private Boolean todosClientes;
     private Boolean seleccionarClientes;
+    private String filtro;
+    private Clientes clientes;
+    private String contenidoError;
+    private String tituloError;
+    private Integer codigoClienteLab;
+    private String nombreClientLabe;
     
-    
-    private String zonaSeleccionada;
-            
     @EJB
     private ClientesFacade clientesFacade;
     
@@ -62,16 +70,21 @@ public class ListadoRecibosClientesBean implements Serializable{
     public void instanciar(){
         limpiarFormulario();
         listadoClientes = listarClientes();
+        setDiscriminar("ND");
+        setTodosClientes(true);
+        setSeleccionarClientes(false);
+        listadoClientesSeleccionados = new ArrayList<>();
     }
     
     public void limpiarFormulario(){
         
         listadoClientes = new ArrayList<>();
+        listadoClientesSeleccionados = new ArrayList<>();
         fechaReciboDesde = null;
         fechaReciboHasta = null;
         nroReciboDesde = 0;
         nroReciboHasta = 0;
-        zonaSeleccionada = null;
+        zona = null;
     }
     
     private List<Clientes> listarClientes(){
@@ -89,7 +102,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sql = "";
         if ("PC".equals(discriminar)) {
            sql = ";WITH principalCTE " +
@@ -112,15 +125,15 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sql += " AND a.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
             sql += ") " +
             "SELECT DISTINCT cod_cliente from principalCTE ORDER BY cod_cliente;";
-            
+            //"SELECT * from principalCTE ORDER BY cod_cliente;";
         }else{ //no discriminar por cliente
             sql = ";WITH principalCTE" + 
             " AS(SELECT r.*,  t.cod_cliente as cod_cliente2, t.xnombre as xnombre, t.xnombre as xnombre2" +
@@ -136,9 +149,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND a.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -152,7 +165,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sql = "";
         if ("ND".equals(discriminar)) {
             sql += ";WITH principalCTE" +
@@ -177,9 +190,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -207,9 +220,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -238,9 +251,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -268,9 +281,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sql += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+             if (zona != null) {
+                sql += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -285,7 +298,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sqlDetalle = "";    
         if ("ND".equals(discriminar)) {
             sqlDetalle += ";WITH principalCTE" +
@@ -310,9 +323,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -340,9 +353,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -371,9 +384,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -401,9 +414,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalle += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalle += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -418,7 +431,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                                                   long nroReciboDesde, 
                                                   long nroReciboHasta, 
                                                   List<Clientes> listaCodCliente,
-                                                  String codZona){
+                                                  Zonas zona){
         String sqlDetalleRec = "";    
         if ("ND".equals(discriminar)) {  //no existe corte de control por cliente
             sqlDetalleRec = null;
@@ -445,9 +458,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalleRec += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalleRec += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -475,9 +488,9 @@ public class ListadoRecibosClientesBean implements Serializable{
                     clientesRepo = StringUtil.convertirListaAString(listaCodCliente);
                 }
             }
-            if (codZona != null) {
-                sqlDetalleRec += " AND a.cod_zona = " + codZona;
-                zonaDes = zonasFacade.buscarPorCodigo(codZona).getXdesc();
+            if (zona != null) {
+                sqlDetalleRec += " AND u.cod_zona = '" + zona.getZonasPK().getCodZona() + "'";
+                zonaDes = zona.getXdesc();
             }else{
                 zonaDes = "TODAS";
             }
@@ -488,14 +501,14 @@ public class ListadoRecibosClientesBean implements Serializable{
     }
     
     public void ejecutar(String tipo) {        
-        if (validar()) {
+        //if (validar()) {
             try {
                 LlamarReportes rep = new LlamarReportes();
                 if (tipo.equals("VIST")) {
                     if (!conDetalle) {
                         String nombreRepo = "ND".equals(discriminar) ? "reciboFacND" : "reciboFac";
                         rep.reporteLiRecibos(
-                                armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
+                                armarSqlSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
                                 fechaReciboDesde,
                                 fechaReciboHasta,
                                 nroReciboDesde,
@@ -511,7 +524,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                     } else {
                         String nombreRepoDet = "ND".equals(discriminar) ? "reciboFacDetND" : "reciboFacDetPC";
                         rep.reporteLiRecibos(
-                        armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
+                        armarSqlConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
                         fechaReciboDesde,
                         fechaReciboHasta,
                         nroReciboDesde,
@@ -522,8 +535,8 @@ public class ListadoRecibosClientesBean implements Serializable{
                         tipo,
                         nombreRepoDet,
                         "RrecibosDet",
-                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada),
-                        armarSqlDetalleRecibos(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada));
+                        armarSqlDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona),
+                        armarSqlDetalleRecibos(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona));
                     }
 
                 } else {
@@ -551,7 +564,7 @@ public class ListadoRecibosClientesBean implements Serializable{
                         columnas[16] = "xnombre2";
                         columnas[17] = "d.itotal";
 
-                        lista = recibosFacade.listaRecibosConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada, discriminar, todosClientes);
+                        lista = recibosFacade.listaRecibosConDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona, discriminar, todosClientes);
                         rep.exportarExcel(columnas, lista, "lirecibosDet");
 
                     } else {
@@ -570,17 +583,17 @@ public class ListadoRecibosClientesBean implements Serializable{
                         columnas[9] = "cod_cliente2";
                         columnas[10] = "xnombre";
 
-                        lista = recibosFacade.listaRecibosSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zonaSeleccionada, discriminar, todosClientes);
+                        lista = recibosFacade.listaRecibosSinDetalle(DateUtil.dateToString(fechaReciboDesde), DateUtil.dateToString(fechaReciboHasta), nroReciboDesde, nroReciboHasta, listadoClientesSeleccionados, zona, discriminar, todosClientes);
                         rep.exportarExcel(columnas, lista, "lirecibos");
                     }
                 }
             } catch (Exception e) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Error al generar archivo."));
             }
-        }
+       // }
         
     }
-    private Boolean validar(){
+    /*private Boolean validar(){
         if (fechaReciboDesde == null) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha desde.", "Debe ingresar fecha desde."));            
             return false;
@@ -589,11 +602,11 @@ public class ListadoRecibosClientesBean implements Serializable{
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha hasta."));            
                 return false;
             }else{
-                if (nroReciboDesde == 0) {
+                if (nroReciboDesde < 0) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo desde.", "Debe ingresar un número de recibo desde."));            
                     return false;
                 }else{
-                    if (nroReciboHasta == 0) {
+                    if (nroReciboHasta <= 0) {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo hasta.", "Debe ingresar un número de recibo hasta."));            
                         return false;
                     }
@@ -601,7 +614,42 @@ public class ListadoRecibosClientesBean implements Serializable{
             }
         }
         return true;
+    }*/
+    
+    //JLVC 01-04-2020; seleccion de clientes
+    public void inicializarBuscadorClientes(){
+        listadoClientes = new ArrayList<>();
+        //listadoClientesSeleccionados = new ArrayList<>();
+        clientes = new Clientes();
+        filtro = "";
+        listarClientesBuscador();
+        System.out.println("SE INICIALIZA EL BUSCADOR!!!!!!!!!!_____________");
     }
+    
+    public void listarClientesBuscador(){
+        try{
+            listadoClientes = clientesFacade.buscarPorFiltro(filtro);
+        }catch(Exception e){
+            RequestContext.getCurrentInstance().update("exceptionDialog");
+            contenidoError = ExceptionHandlerView.getStackTrace(e);
+            tituloError = "Error en la lectura de datos de clientes.";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, tituloError, tituloError));            
+            RequestContext.getCurrentInstance().execute("PF('exceptionDialog').show();");
+        }
+        
+    }
+    
+    public void onRowSelect(SelectEvent event) {
+        if (getClientes() != null) {
+            if (getClientes().getXnombre() != null) {
+                codigoClienteLab = getClientes().getCodCliente();
+                nombreClientLabe = getClientes().getXnombre();
+                RequestContext.getCurrentInstance().update("panel_buscador_documentos");
+                RequestContext.getCurrentInstance().execute("PF('dlgBuscarClientes').hide();");
+            }
+        }
+    }
+    
     
     public Date getFechaReciboDesde() {
         return fechaReciboDesde;
@@ -628,18 +676,6 @@ public class ListadoRecibosClientesBean implements Serializable{
 
     public void setListadoClientesSeleccionados(List<Clientes> listadoClientesSeleccionados) {
         this.listadoClientesSeleccionados = listadoClientesSeleccionados;
-    }
-
-    
-    public List<Clientes> getListadoClientes() {
-        if (null == this.listadoClientes) {
-            listadoClientes = new ArrayList<>();
-        }
-        return listadoClientes;
-    }
-
-    public void setListadoClientes(List<Clientes> listadoClientes) {
-        this.listadoClientes = listadoClientes;
     }
 
     public String getDiscriminar() {
@@ -674,14 +710,6 @@ public class ListadoRecibosClientesBean implements Serializable{
         this.nroReciboHasta = nroReciboHasta;
     }
 
-    public String getZonaSeleccionada() {
-        return zonaSeleccionada;
-    }
-
-    public void setZonaSeleccionada(String zonaSeleccionada) {
-        this.zonaSeleccionada = zonaSeleccionada;
-    }
-
     public String getClientesRepo() {
         return clientesRepo;
     }
@@ -690,6 +718,18 @@ public class ListadoRecibosClientesBean implements Serializable{
         this.clientesRepo = clientesRepo;
     }
 
+    public Zonas getZona() {
+        return zona;
+    }
+
+    public void setZona(Zonas zona) {
+        if (zona != null) {
+            this.zona = zonasFacade.buscarPorCodigo(zona.getZonasPK().getCodZona());
+        } else {
+            this.zona = zona;
+        }
+    }
+    
     public String getZonaDes() {
         return zonaDes;
     }
@@ -720,5 +760,62 @@ public class ListadoRecibosClientesBean implements Serializable{
             System.out.println("seleccionarClientes: " + this.seleccionarClientes);
             System.out.println("todosClientes: " + this.todosClientes);
         }*/
-    }    
+    }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
+
+    public Clientes getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(Clientes clientes) {
+        this.clientes = clientes;
+    }
+
+    public String getContenidoError() {
+        return contenidoError;
+    }
+
+    public void setContenidoError(String contenidoError) {
+        this.contenidoError = contenidoError;
+    }
+
+    public String getTituloError() {
+        return tituloError;
+    }
+
+    public void setTituloError(String tituloError) {
+        this.tituloError = tituloError;
+    }
+
+    public Integer getCodigoClienteLab() {
+        return codigoClienteLab;
+    }
+
+    public void setCodigoClienteLab(Integer codigoClienteLab) {
+        this.codigoClienteLab = codigoClienteLab;
+    }
+
+    public String getNombreClientLabe() {
+        return nombreClientLabe;
+    }
+
+    public void setNombreClientLabe(String nombreClientLabe) {
+        this.nombreClientLabe = nombreClientLabe;
+    }
+
+    public List<Clientes> getListadoClientes() {
+        return listadoClientes;
+    }
+
+    public void setListadoClientes(List<Clientes> listadoClientes) {
+        this.listadoClientes = listadoClientes;
+    }
+    
 }

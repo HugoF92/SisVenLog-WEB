@@ -6,8 +6,6 @@
 package dao;
 
 import entidad.Zonas;
-import entidad.Zonas;
-import entidad.Zonas;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -89,4 +87,9 @@ public class ZonasFacade extends AbstractFacade<Zonas> {
         return q.getResultList();
     }
 
+    public List<Zonas> listarZonasActivas() {
+        Query q = getEntityManager().createNativeQuery("select * from zonas order by  xdesc", Zonas.class);
+        System.out.println(q.toString());
+        return q.getResultList();
+    }
 }

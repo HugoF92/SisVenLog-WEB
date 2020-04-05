@@ -9,8 +9,10 @@ import entidad.Rutas;
 import java.util.Date;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -48,5 +50,15 @@ public class RutasFacade extends AbstractFacade<Rutas> {
         q.execute();
 
     
+    }
+    
+    public Rutas findByCodigo(Short codRuta){
+        try{
+            Query q = getEntityManager().createNativeQuery(" select * from cod_ruta = "+codRuta);
+            System.out.println(q.toString());
+            return (Rutas) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
     }
 }

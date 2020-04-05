@@ -9,10 +9,13 @@ import dto.PromocionDto;
 import dto.PromocionesDetDto;
 import entidad.Promociones;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -73,7 +76,13 @@ public class PromocionesFacade extends AbstractFacade<Promociones> {
                 + "FROM promociones  \n"
                 + "WHERE nro_promo=" + nroPromo, Promociones.class);
         return q.getResultList();
+    }
 
+    public List<Promociones> findByNroPromo(String nroPromo , String empresa) {
+        Query q = getEntityManager().createNativeQuery("SELECT * \n"
+                + "FROM promociones  \n"
+                + "WHERE nro_promo=" + nroPromo+" and cod_empr = "+empresa, Promociones.class);
+        return q.getResultList();
     }
     
     public List<Promociones> findAllOrderXDesc() {
@@ -192,6 +201,20 @@ public class PromocionesFacade extends AbstractFacade<Promociones> {
             listado.add(p);
         }
         return listado;
+    }
+    
+    public Object[] getNroPromoAndPdesc(Integer codMerca,Date fpedido,String ctipoVta){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String fpedidos = format.format(fpedido);
+        try{
+            Query q = getEntityManager().createNativeQuery("SELECT D.nro_promo, D.pdesc FROM promociones_det d, promociones p WHERE p.cod_empr = 2 "
+                +" and d.nro_promo= p.nro_promo AND d.cod_merca = "+codMerca+" AND p.frige_desde <= "+fpedidos+" AND p.frige_hasta >= "+fpedidos
+                +" AND d.mestado = 'A' AND d.ctipo_vta = "+ctipoVta+" AND p.mtipo = 'T'");
+            System.out.println(q.toString());
+            return (Object[]) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
     }
 
 }

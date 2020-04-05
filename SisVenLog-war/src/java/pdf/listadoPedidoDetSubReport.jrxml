@@ -145,6 +145,9 @@ $F{morigen}.toString().equals("P") ? "Automatico" : "Migrado Sis. Anterior"]]></
 			</textField>
 			<subreport>
 				<reportElement x="5" y="42" width="795" height="28" uuid="de19b535-aadb-4c01-859a-86efe6e86219"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="sqlDetalleDetSub">
 					<subreportParameterExpression><![CDATA[$P{sqlDetalleDetSub} + $F{nro_pedido}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -180,7 +183,7 @@ $F{morigen}.toString().equals("P") ? "Automatico" : "Migrado Sis. Anterior"]]></
 				<reportElement x="456" y="8" width="172" height="14" uuid="171c0872-1ee2-46fb-8884-f8d95a1079aa"/>
 				<textFieldExpression><![CDATA[$F{xnomb_vendedor}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="656" y="8" width="100" height="14" uuid="4fd1bfa2-4e76-48ca-ad69-bd6d5b9a49e0"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{totalVendedor}]]></textFieldExpression>

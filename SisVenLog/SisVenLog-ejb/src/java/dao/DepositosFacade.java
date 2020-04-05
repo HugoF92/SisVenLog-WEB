@@ -171,4 +171,9 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
         return listado;
     }
     
+    public List<Depositos> findByZonayTipo(String zona,String mTipo){
+        Query q = getEntityManager().createNativeQuery(" select * from depositos where cod_zona = "+zona+" and mtipo = "+mTipo,Depositos.class);
+        System.out.println(q.toString());
+        return q.getResultList();
+    }
 }

@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 /**
@@ -90,19 +89,23 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
     }
 
     public Mercaderias buscarPorCodigoMercaderia(String codMerca) {
-        Query q = getEntityManager().createNativeQuery("select m.*\n"
-                + "from  mercaderias m\n"
-                + "where m.mestado = 'A'\n"
-                + "and upper(m.cod_merca) like upper('" + codMerca + "')\n",
-                Mercaderias.class);
+        try {
+            Query q = getEntityManager().createNativeQuery("select m.*\n"
+                    + "from  mercaderias m\n"
+                    + "where m.mestado = 'A'\n"
+                    + "and upper(m.cod_merca) like upper('" + codMerca + "')\n",
+                    Mercaderias.class);
 
-        System.out.println(q.toString());
+            System.out.println(q.toString());
 
-        Mercaderias respuesta = new Mercaderias();
+            Mercaderias respuesta = new Mercaderias();
 
-        respuesta = (Mercaderias) q.getSingleResult();
+            respuesta = (Mercaderias) q.getSingleResult();
 
-        return respuesta;
+            return respuesta;
+        }catch(NoResultException ex){
+            return null;
+        }
     }
 
     public List<Mercaderias> listarMercaderias() {

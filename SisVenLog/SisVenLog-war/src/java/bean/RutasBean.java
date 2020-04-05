@@ -110,7 +110,7 @@ public class RutasBean implements Serializable {
         listar();
 
 //    RequestContext.getCurrentInstance().update("formRutas");
-        PrimeFaces.current().ajax().update("formRutas");
+//        PrimeFaces.current().ajax().update("formRutas");
     }
 
     public String getFiltro() {

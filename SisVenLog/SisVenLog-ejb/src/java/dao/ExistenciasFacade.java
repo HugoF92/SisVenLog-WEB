@@ -6,7 +6,6 @@
 package dao;
 
 import entidad.Existencias;
-import entidad.ExistenciasPK;
 import entidad.Mercaderias;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -117,14 +116,11 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
                     Existencias.class);
 
             System.out.println(q.toString());
-
             int respuesta = q.getResultList().size();
             return respuesta;
-
         } catch (Exception e) {
             return 0;
         }
-
     }
 
     //4
@@ -224,5 +220,23 @@ public class ExistenciasFacade extends AbstractFacade<Existencias> {
         System.out.println("SQL: "+sql);
         Query q = em.createNativeQuery(sql,Existencias.class);
         return q.getResultList();
+    }
+    
+    public Existencias buscarexistenciasPorCodigoDepositoMerca(String codMerca, Short codDep,String codEmp) {
+        try {
+            Query q = getEntityManager().createNativeQuery("select e.*, m.* "
+                    + "from  existencias e,  mercaderias m "
+                    + "where e.cod_merca = "+codMerca
+                    + " and e.cod_empr = "+codEmp
+                    + " and e.cod_depo =  "+codDep
+                    + " and e.cod_empr=m.cod_empr "
+                    + " and e.cod_merca=m.cod_merca ", Existencias.class);
+            System.out.println(q.toString());
+            Existencias respuesta = (Existencias) q.getSingleResult();
+            return respuesta;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

@@ -1,0 +1,429 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+        <h:body>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="formBtnRecaudacion" prependId="false">  
+                            <h1 align="center">MANTENIMIENTO DE RECAUDACION DIARIA</h1>
+                            <p:growl id="msgRecaudacion" showDetail="true"/>
+                            <center>
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{recaudacionBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevRecaudacion').show()"
+                                    update="formNuevaRecaudacion"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    actionListener="#{recaudacionBean.prepareEdit()}"
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgNuevRecaudacion').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{recaudacionBean.habBtnEdit}"
+                                    update="pnlEditBanc"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{recaudacionBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacRecaudacion').show()"
+                                    update="formInacRecaudacion"/>
+
+                            </center>
+                        </h:form>
+                        <h:form id="formRecaudacion" prependId="false">  
+                            <p:growl id="msg2Recaudacion" showDetail="true"/>
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaRecaudacion" var="itemp" selectionMode="single" 
+                                                     paginator="true" rows="10" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{recaudacionBean.listaRecaudacion}" 
+                                                     rowKey="#{itemp.recaudacionPK}"
+                                                     sortBy="#{itemp.fplanilla}"
+                                                     sortOrder="descending"
+                                                     selection="#{recaudacionBean.recaudacion}"
+                                                     widgetVar="wgdatalist">
+
+                                            <p:ajax event="rowSelect"
+                                                listener="#{recaudacionBean.onRowSelect}" update="formBtnRecaudacion,formNuevaRecaudacion"/>
+                                            <p:ajax event="sort" update="tablaRecaudacion" process="@form" listener="#{recaudacionBean.ordenacion}"/>
+                                            <p:ajax event="rowDblselect" oncomplete="PF('dlgviewRecaudacion').show();" update="formViewRecaudacion" />
+
+                                            <p:column headerText="Nro Planilla" filterBy="#{itemp.recaudacionPK.nroPlanilla}" width="70">
+                                                <h:outputText value="#{itemp.recaudacionPK.nroPlanilla}" />
+                                            </p:column>
+
+                                            <p:column headerText="Fecha" filterBy="#{itemp.fplanilla}" sortBy="#{item.fplanilla}" width="90"
+                                                      sortFunction="#{recaudacionBean.customSort}" >
+                                                <f:facet name="filter">
+                                                    <p:calendar pattern="dd/MM/yyyy" locale="es" mask="true" size="10">
+                                                        <p:ajax event="dateSelect" onstart="PF('wgdatalist').filter()" />
+                                                    </p:calendar>
+                                                </f:facet>
+                                                <h:outputText value="#{itemp.fplanilla}" >
+                                                    <f:convertDateTime locale="es" pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Entregador" filterBy="#{itemp.codEntregador.xnombre}"
+                                                      sortBy="#{itemp.codEntregador.xnombre}" width="200">
+                                                <h:outputText value="#{itemp.codEntregador.xnombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Zona" width="70">
+                                                <h:outputText value="#{itemp.codZona}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Tot.Vtas" width="70">
+                                                <h:outputText value="#{itemp.tventas}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Tot.Ntas.Dev" width="90">
+                                                <h:outputText value="#{itemp.tnotasAtras}" />
+                                            </p:column>                                 
+                                            
+                                            <p:column headerText="Tot.Ch.Dia" width="70">
+                                                <h:outputText value="#{itemp.tchequesDia}" />
+                                            </p:column>                                 
+
+                                            <p:column headerText="Cant.Cheques" width="90" >
+                                                <h:outputText value="#{itemp.kcheques}" />
+                                            </p:column>    
+                                            
+                                            <p:column headerText="Nro.Boleta" width="70">
+                                                <h:outputText value="#{itemp.nroBoleta}" />
+                                            </p:column>    
+                                            
+                                            <p:column headerText="Cod.Banco" width="70">
+                                                <h:outputText value="#{itemp.codBanco}" />
+                                            </p:column>    
+                                            
+                                            <p:column headerText="Tot.Efectivo" width="100">
+                                                <h:outputText value="#{itemp.tefectivo}" />
+                                            </p:column>    
+                                                                                        
+                                            <p:column headerText="Tot.Monedas" width="90">
+                                                <h:outputText value="#{itemp.tmonedas}" />
+                                            </p:column>    
+                                            
+                                            <p:column headerText="Tot.Creditos" width="90">
+                                                <h:outputText value="#{itemp.tcreditos}" />
+                                            </p:column>    
+                                            
+                                            <p:column headerText="Tot.Gastos" width="70">
+                                                <h:outputText value="#{itemp.tgastos}" />
+                                            </p:column>    
+
+                                            <p:column headerText="Tot.Notas otras" width="90">
+                                                <h:outputText value="#{itemp.tnotasOtras}" />
+                                            </p:column>   
+
+                                            <p:column headerText="Tot.Diferencia" width="90">
+                                                <h:outputText value="#{itemp.tdiferencia}" />
+                                            </p:column>   
+
+                                            <p:column headerText="Falta" width="100">
+                                                <h:outputText value="#{itemp.falta}" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                                                </h:outputText>
+                                            </p:column>   
+
+                                            <p:column headerText="C.Usuario" width="90">
+                                                <h:outputText value="#{itemp.cusuario}" />
+                                            </p:column>   
+
+                                            <p:column headerText="Fecha Ultima Modificacion" width="100">
+                                                <h:outputText value="#{itemp.fultimModif}" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="es"/>
+                                                </h:outputText>
+                                            </p:column>   
+
+                                            <p:column headerText="C.Usuario Modif" width="100">
+                                                <h:outputText value="#{itemp.cusuarioModif}" />
+                                            </p:column>   
+
+                                            <p:column headerText="Tot.Cheques Dif" width="100">
+                                                <h:outputText value="#{itemp.tchequesDif}" />
+                                            </p:column>   
+
+                                            <p:column headerText="Nro.Planilla Cob" width="90">
+                                                <h:outputText value="#{itemp.nplanillaCob}" />
+                                            </p:column>   
+                                            
+                                            <p:column headerText="Tot.Pagares" width="90">
+                                                <h:outputText value="#{itemp.tpagares}" />
+                                            </p:column>   
+                                            
+                                            <p:column headerText="Tot.Depositos" width="90">
+                                                <h:outputText value="#{itemp.tdepositos}" />
+                                            </p:column>   
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <h:form id="formNuevaRecaudacion"  prependId="false">
+                            <p:growl id="msgAgreRecaudacion" showDetail="true"/>
+                            <p:dialog header="Agregar Recaudacion"
+                                      widgetVar="dlgNuevRecaudacion"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Nro.Planilla: " />
+                                    <p:inputText id="nroPlanilla" value="#{recaudacionBean.recaudacion.recaudacionPK.nroPlanilla}" disabled="true"/>
+                                    <p:outputLabel value="Fecha " />
+                                    <p:calendar value="#{recaudacionBean.recaudacion.fplanilla}" pattern="dd/MM/yyyy" locale="es" required="true"/>
+                                    <p:outputLabel value="Zona:" />
+                                    <p:selectOneMenu value="#{recaudacionBean.recaudacion.codZona}" 
+                                                     filterMatchMode="contains" filter="true" required="true"
+                                                     style=" width: 300px;">
+                                        <f:selectItems value="#{recaudacionBean.listaZonas}" var="item"
+                                                       itemValue="#{item.zonasPK.codZona}"
+                                                       itemLabel="#{item.xdesc}"/>
+                                        <p:ajax event="itemSelect" update="entregador" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Entregador:" />
+                                    <p:selectOneMenu value="#{recaudacionBean.recaudacion.codEntregador}" 
+                                                     id="entregador" required="true"
+                                                     filterMatchMode="contains" filter="true"
+                                                     style=" width: 300px;">
+                                        <f:selectItems value="#{recaudacionBean.listaEntregadores}" var="item"
+                                                       itemValue="#{item.empleadosPK.codEmpleado}"
+                                                       itemLabel="#{item.xnombre}"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Cant.Cheques dia: " />
+                                    <p:inputText id="kcheque" value="#{recaudacionBean.recaudacion.kcheques}" />
+                                    <p:outputLabel value="Tot.Cheques dia: " />
+                                    <p:inputText id="tcheque" value="#{recaudacionBean.recaudacion.tchequesDia}" />
+                                    <p:outputLabel value="Tot.Efectivo: " />
+                                    <p:inputText id="tefectivo" value="#{recaudacionBean.recaudacion.tefectivo}" />                                    
+                                    <p:outputLabel value="Tot.Depositos " />
+                                    <p:inputText id="tedeposito" value="#{recaudacionBean.recaudacion.tdepositos}" />                                    
+                                    <p:outputLabel value="Tot.Monedas " />
+                                    <p:inputText id="tmonedas" value="#{recaudacionBean.recaudacion.tmonedas}" />                                    
+                                    <p:outputLabel value="Tot.Gastos " />
+                                    <p:inputText id="tgastos" value="#{recaudacionBean.recaudacion.tgastos}" />                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{recaudacionBean.insertar()}"
+                                            update="msgAgreRecaudacion formRecaudacion"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+                                        <p:commandButton value="Cancelar" onstart="PF('dlgNuevRecaudacion').hide();"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times" update="formNuevaRecaudacion" process="@this">
+                                            <p:resetInput target="formNuevaRecaudacion" />
+                                        </p:commandButton>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+                        </h:form>
+                        <h:form id="formInacRecaudacion" prependId="false">
+                            <p:growl id="msgInacRecaudacion" showDetail="true"/>
+                            <p:dialog header="Borrar Recaudacion"
+                                      widgetVar="dlgInacRecaudacion"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+                                <br></br>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Nro.Planilla: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.recaudacionPK.nroPlanilla}" />
+                                    <p:outputLabel value="Fecha " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.fplanilla}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:outputLabel value="Zona:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codZona}" />
+                                    <p:outputLabel value="Entregador:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codEntregador.xnombre}" />
+                                    <p:outputLabel value="Cant.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.kcheques}" />
+                                    <p:outputLabel value="Tot.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tchequesDia}" />
+                                    <p:outputLabel value="Tot.Efectivo: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tefectivo}" />                                    
+                                    <p:outputLabel value="Tot.Depositos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tdepositos}" />                                    
+                                    <p:outputLabel value="Tot.Monedas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tmonedas}" />                                    
+                                    <p:outputLabel value="Tot.Gastos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tgastos}" />                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{recaudacionBean.borrar()}"
+                                            update="msgInacRecaudacion formBtnRecaudacion formRecaudacion"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacRecaudacion').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+                        </h:form>
+                        <h:form id="formEditarRecaudacion"  prependId="false">
+                            <p:growl id="msgEditRecaudacion" showDetail="true"/>
+                            <p:dialog header="Editar Recaudacion"
+                                      widgetVar="dlgEditBanc"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{recaudacionBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditBanc" columns="2">
+                                
+                                        <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="codBancoEdit" value="#{bancoBean.bancos.codBanco}" 
+                                                     tabindex="1" style="width: 50px;" disabled="true"
+                                                     onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                        <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                        <p:inputText id="descBancEdit" value="#{bancoBean.bancos.xdesc}" 
+                                                     tabindex="2" style="width: 200px;"
+                                                     onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{bancoBean.editar()}"
+                                            update="msgEditRecaudacion formBtnRecaudacion formRecaudacion"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditBanc').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarRecaudacion" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarBanc">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{recaudacionBean.cerrarDialogosAgregar()}" 
+                                        update="formRecaudacion"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarBanc').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+                        </h:form>
+                        <h:form id="formViewRecaudacion" prependId="false">
+                            <p:growl id="msgViewRecaudacion" showDetail="true"/>
+                            <p:dialog header="Consultar Recaudacion"
+                                      widgetVar="dlgviewRecaudacion"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320"
+                                      id="viewRecaudacion">
+
+                                <br></br>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Nro.Planilla: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.recaudacionPK.nroPlanilla}" />
+                                    <p:outputLabel value="Fecha " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.fplanilla}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:outputLabel value="Zona:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codZona}" />
+                                    <p:outputLabel value="Entregador:" />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.codEntregador.xnombre}" />
+                                    <p:outputLabel value="Cant.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.kcheques}" />
+                                    <p:outputLabel value="Tot.Cheques dia: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tchequesDia}" />
+                                    <p:outputLabel value="Tot.Efectivo: " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tefectivo}" />                                    
+                                    <p:outputLabel value="Tot.Depositos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tdepositos}" />                                    
+                                    <p:outputLabel value="Tot.Monedas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tmonedas}" />                                    
+                                    <p:outputLabel value="Tot.Gastos " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tgastos}" />                                    
+                                    <p:outputLabel value="Tot.Ventas " />
+                                    <h:outputText value="#{recaudacionBean.recaudacion.tventas}" />                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton type="button" value="Salir" onclick="PF('dlgviewRecaudacion').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>

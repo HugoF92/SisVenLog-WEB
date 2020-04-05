@@ -31,7 +31,7 @@ public class CanalesVentaConverter  implements Converter, Serializable{
         }
         else
         {
-            return new CanalesVenta(value);
+            return new CanalesVenta(value.trim());
             //return new Depositos(new DepositosPK(Integer.parseInt(value), 0));
         }
     }

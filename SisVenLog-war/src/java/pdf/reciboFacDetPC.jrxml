@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboFacDetPC" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
 	<property name="ireport.zoom" value="1.1269722013523686"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="87"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="usu_imprime" class="java.lang.String"/>
 	<parameter name="fechaDesde" class="java.util.Date">
@@ -337,28 +337,28 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="371" y="12" width="68" height="16" uuid="111616c0-ba19-4774-96c2-550c833a5cbb"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totalEfe}]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report" pattern="#,##0">
+			<textField evaluationTime="Report" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="686" y="12" width="78" height="16" uuid="1f1a10c2-a851-4b4a-b92d-f6b03e30eda7"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_recibo}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="467" y="12" width="68" height="16" uuid="d41e6574-fc1f-42fd-8590-e15ac12af265"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_cheque}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="568" y="12" width="68" height="16" uuid="a41480ac-df79-4041-a83e-da1ef47dd627"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>

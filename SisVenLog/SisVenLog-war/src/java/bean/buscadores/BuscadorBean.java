@@ -4,6 +4,7 @@ import bean.CanalesBean;
 import dao.BuscadorFacade;
 import dto.buscadorDto;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -11,12 +12,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
-//import org.primefaces.context?.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
-public class BuscadorBean {
+public class BuscadorBean implements Serializable {
 
     @EJB
     private BuscadorFacade buscadorFacade;

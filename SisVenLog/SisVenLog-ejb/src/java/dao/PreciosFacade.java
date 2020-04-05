@@ -9,6 +9,7 @@ import entidad.Precios;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -40,6 +41,18 @@ public class PreciosFacade extends AbstractFacade<Precios> {
         System.out.println(q.toString());
         List<Precios> resultado = q.getResultList();
         return resultado;
+    }
+    
+    public Precios findPreciosByDepoMerca(String codEmpr,Short codDepo,String codMerca,String ctipVta){
+        try{
+            Query q = getEntityManager().createNativeQuery("select * from precios where cod_empr = "+codEmpr+" and cod_depo = "+codDepo
+                    +" and cod_merca = "+codMerca+" and ctipo_vta = "+ctipVta+" order by  frige_desde desc ");
+            System.out.println(q.toString());
+            q.setMaxResults(1);
+            return (Precios) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
     }
     
 }

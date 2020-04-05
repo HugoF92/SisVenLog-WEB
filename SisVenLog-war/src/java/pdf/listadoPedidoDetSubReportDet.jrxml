@@ -139,7 +139,7 @@
 				</textElement>
 				<text><![CDATA[TOTAL DETALLES]]></text>
 			</staticText>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="691" y="7" width="100" height="14" uuid="fd369425-d854-48f6-9320-a6fa19a2dd83"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{totalDetalle}]]></textFieldExpression>

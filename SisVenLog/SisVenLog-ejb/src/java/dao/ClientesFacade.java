@@ -6,10 +6,12 @@
 package dao;
 
 import entidad.Clientes;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -92,4 +94,25 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
         return respuesta;
     }
     
+    public Integer tmpClientesCodNuevo(String cliCod, short codVendedor){
+        try{
+            Query q = getEntityManager().createNativeQuery(" select codnuevo  from tmp_clientes where clicod = "+cliCod+" and cod_vendedor = "+codVendedor+" ");
+            System.out.println(q.toString());
+            Integer codNuevo = (Integer) q.getSingleResult();
+            return codNuevo;
+        }catch(NoResultException ex){
+            return null;
+        }
+    }
+    
+    public BigDecimal clienteMaxDescuento(Short codSublinea,Integer codCliente){
+        try{
+            Query q = getEntityManager().createNativeQuery("select pdesc_max from clientes_descuentos where cod_cliente = "+codCliente
+                    +" and cod_sublinea = "+codSublinea);
+            System.out.println(q.toString());
+            return (BigDecimal) q.getSingleResult();
+        }catch(NoResultException ex){
+            return null;
+        }
+    }
 }
