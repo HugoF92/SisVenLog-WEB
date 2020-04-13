@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2020-04-06T19:47:05 -->
+<!-- 2020-04-13T23:18:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cliNoCompran" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="da15e1b6-bdf8-4b65-bda1-060a297efc59">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -417,7 +417,7 @@ FROM #MOSTRAR]]>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

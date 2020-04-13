@@ -21,7 +21,6 @@ import entidad.Zonas;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -29,7 +28,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.model.DualListModel;
 import javax.faces.application.FacesMessage;
-import util.DateUtil;
 import util.LlamarReportes;
 
 /**
@@ -98,7 +96,7 @@ public class LiClientesNoCompranBean {
         this.estado = "T";
         this.zonas = this.zonasFacade.findAll();
         this.rutas = this.rutasFacade.findAll();
-        this.lineas = this.lineasFacade.listarLineasClientesNoCompran();
+        this.lineas = this.lineasFacade.listarLineasActivas();
         this.vendedores = this.empleadosFacade.getEmpleadosVendedoresActivosPorCodEmp(2);
         mercaderiasActivas = mercaderiasFacade.listarMercaderiasActivas();
         mercaderias = new DualListModel<>(mercaderiasActivas, new ArrayList<>());
@@ -115,10 +113,16 @@ public class LiClientesNoCompranBean {
             Connection conexion = rep.conexion;
             Statement stmt = conexion.createStatement();
             // Insertamos las mercaderias seleccionadas en la tabla tmp_mercaderias
+            List<Mercaderias> mercaderiasSeleccionadas =
+                    (mercaderias.getTarget().isEmpty())? mercaderiasActivas:
+                    mercaderias.getTarget();
             clientesNoCompranFacade.insertarMercaderiasSeleccionadas(stmt,
-                    mercaderias.getTarget(), mercaderiasActivas);
+                    mercaderiasSeleccionadas, mercaderiasActivas);
+            List<Sublineas> sublineasSeleccionadas =
+                    (sublineas.getTarget().isEmpty())? sublineasActivas:
+                    sublineas.getTarget();
             clientesNoCompranFacade.insertarSublineasSeleccionadas(stmt,
-                    sublineas.getTarget(), sublineasActivas);
+                    sublineasSeleccionadas, sublineasActivas);
             //Generamos la tabla temporal mostrar
             clientesNoCompranFacade.generateTableMostrar(stmt, fechaDesde,
                     fechaHasta, zona, ruta, estado, linea, vendedor);
@@ -185,14 +189,7 @@ public class LiClientesNoCompranBean {
                                 "Debe ingresar fecha facturacion hasta.",
                                 "Debe ingresar fecha facturacion hasta."));
                 return false;
-        } else if (sublineas.getTarget().isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Debe ingresar sublineas.",
-                            "Debe ingresar sublineas."));
-            return false;
         }
-        
         return true;
     }
 

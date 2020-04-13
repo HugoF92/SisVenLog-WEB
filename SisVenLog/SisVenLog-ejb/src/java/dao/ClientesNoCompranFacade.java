@@ -32,10 +32,11 @@ public class ClientesNoCompranFacade {
         return em;
     }
 
+    private static final String DATE_FORMAT = "yyyy/MM/dd";
+
     public void generateTableMostrar(Statement stmt, Date fechaDesde, Date fechaHasta,
             Zonas zona, Rutas ruta, String estado, Lineas linea, Empleados vendedor) throws SQLException {
         String sql = "";
-        String dateFormat = "yyyy/MM/dd";
         sql += "SELECT DISTINCT r.cod_zona, z.xdesc AS xdesc_zona, c.cod_cliente, c.xnombre, c.xdirec, "
         + " c.xtelef, c.cod_estado "
         + " INTO #MOSTRAR "
@@ -51,8 +52,8 @@ public class ClientesNoCompranFacade {
         + " AND f.cod_empr= 2 "
         + " AND d.cod_empr= 2 "
         + " AND f.mestado = 'A' "
-        + " AND (f.ffactur BETWEEN '" + DateUtil.dateToString(fechaDesde, dateFormat) + "' "
-        + " AND '" + DateUtil.dateToString(fechaHasta, dateFormat) + "') "
+        + " AND (f.ffactur BETWEEN '" + DateUtil.dateToString(fechaDesde, DATE_FORMAT) + "' "
+        + " AND '" + DateUtil.dateToString(fechaHasta, DATE_FORMAT) + "') "
         + " AND f.ctipo_docum IN ('FCR','FCO') "
         + " AND d.cod_merca = m.cod_merca "
         + " AND t.cod_sublinea = s.cod_sublinea "
@@ -167,22 +168,22 @@ public class ClientesNoCompranFacade {
                 + ")");
         if (sublineas.size() > 0) {
             Sublineas aux;
-            String dateFormat = "yyyy/MM/dd";
             for (Sublineas s : sublineas) {
                 aux = sublineasActivas.stream()
                         .filter(sa -> sa.equals(s))
                         .findAny()
                         .orElse(null);
                 if(Objects.nonNull(aux)){
-                    stmt.execute("INSERT INTO #TMP_SUBLINEAS (cod_sublinea, xdesc, cod_linea, "
+                    String insert = "INSERT INTO #TMP_SUBLINEAS (cod_sublinea, xdesc, cod_linea, "
                         + "cusuario, falta, cusuario_modif, fultim_modif, cod_gcarga) "
-                        + "VALUES (" + aux.getCodSublinea()+",'" + aux.getXdesc() + "', "
+                        + "VALUES (" + aux.getCodSublinea()+",'" + aux.getXdesc().replace("'", "''") + "', "
                         + aux.getCodLinea().getCodLinea() + ", "
                         + "'" + aux.getCusuario() + "', "
-                        + "'" + DateUtil.dateToString(aux.getFalta(), dateFormat) + "', "
+                        + "'" + DateUtil.dateToString(aux.getFalta(), DATE_FORMAT) + "', "
                         + "'" + aux.getCusuarioModif() + "', "
-                        + "'" + DateUtil.dateToString(aux.getFultimModif(), dateFormat) + "', "
-                        + aux.getCodGcarga().getCodGcarga() + " )");
+                        + "'" + DateUtil.dateToString(aux.getFultimModif(), DATE_FORMAT) + "', "
+                        + aux.getCodGcarga().getCodGcarga() + " )";
+                    stmt.execute(insert);
                 }
             }
         }

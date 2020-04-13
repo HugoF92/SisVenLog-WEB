@@ -62,6 +62,13 @@ public class LineasFacade extends AbstractFacade<Lineas> {
         return q.getResultList();
     }
 
+    public List<Lineas> listarLineasActivas() {
+        Query q = getEntityManager().createNativeQuery("SELECT l.cod_linea, l.xdesc "
+                + "FROM lineas l "
+                + "WHERE l.mestado = 'A' ", Lineas.class);
+        return q.getResultList();
+    }
+
     public void insertarLineas(Lineas lineas) {
 
         StoredProcedureQuery q = getEntityManager().createStoredProcedureQuery("InsertarLineas");
