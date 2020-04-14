@@ -8,34 +8,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import dao.ComprasVentasFacade;
 import dao.DepositosFacade;
-import dao.EmpleadosFacade;
 import dao.LineasFacade;
 import dao.MercaderiasFacade;
 import dao.ProveedoresFacade;
-import dao.RutasFacade;
 import dao.SublineasFacade;
-import dao.ZonasFacade;
 import entidad.CanalesVenta;
 import entidad.Depositos;
-import entidad.Empleados;
 import entidad.Lineas;
 import entidad.Mercaderias;
 import entidad.Proveedores;
-import entidad.Rutas;
 import entidad.Sublineas;
-import entidad.Zonas;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.model.DualListModel;
-import javax.faces.application.FacesMessage;
-import util.DateUtil;
 import util.LlamarReportes;
 
 /**
@@ -148,8 +139,20 @@ public class LiComprasVentasBean {
                         .filter(c -> c.equals(canal))
                         .findAny()
                         .orElse(null);
-                rep.reporteComprasVentas(fechaDesde, fechaHasta, prov, cv,
-                        sinIva, discriminado, usuarioImpresion);
+                Lineas ln = lineas.stream()
+                        .filter(l -> l.equals(linea))
+                        .findAny()
+                        .orElse(null);
+                Sublineas sln = sublineas.stream()
+                        .filter(sl -> sl.equals(sublinea))
+                        .findAny()
+                        .orElse(null);
+                Depositos dep = depositos.stream()
+                        .filter(d -> d.equals(deposito))
+                        .findAny()
+                        .orElse(null);
+                rep.reporteComprasVentas(fechaDesde, fechaHasta, prov, cv, ln,
+                        sln, dep, sinIva, discriminado, usuarioImpresion);
             } else {
                 String sql = comprasVentasFacade.generateSelectUltimo();
                 String[] columnas = new String[]{

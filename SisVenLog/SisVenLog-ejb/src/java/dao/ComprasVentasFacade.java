@@ -391,8 +391,7 @@ public class ComprasVentasFacade {
             + "    cajas_ventas,  unid_ventas, tot_ventas, "
             + "    peso_vcajas, peso_vunid "
             + "INTO #ULTIMO "
-            + "FROM #CUR_AMBOS "
-            + "ORDER BY codigo ";
+            + "FROM #CUR_AMBOS ";
         stmt.execute(sql);
         sql = "INSERT INTO #ULTIMO "
             + "SELECT "
@@ -400,8 +399,7 @@ public class ComprasVentasFacade {
             + "    tot_compras, peso_ccajas, peso_cunid, "
             + "    cajas_ventas,  unid_ventas, tot_ventas, "
             + "    peso_vcajas, peso_vunid "
-            + "FROM #CUR_COMPRAS "
-            + "ORDER BY codigo ";
+            + "FROM #CUR_COMPRAS ";
         stmt.execute(sql);
         sql = "INSERT INTO #ULTIMO "
             + "SELECT "
@@ -409,8 +407,7 @@ public class ComprasVentasFacade {
             + "    tot_compras, peso_ccajas, peso_cunid, "
             + "    cajas_ventas,  unid_ventas, tot_ventas, "
             + "    peso_vcajas, peso_vunid "
-            + "FROM #CUR_VENTAS "
-            + "ORDER BY codigo ";
+            + "FROM #CUR_VENTAS ";
         stmt.execute(sql);
     }
 
@@ -420,7 +417,8 @@ public class ComprasVentasFacade {
                     + "    tot_compras, peso_ccajas, peso_cunid, "
                     + "    cajas_ventas,  unid_ventas, tot_ventas, "
                     + "    peso_vcajas, peso_vunid "
-                    + "FROM #ULTIMO ";
+                    + "FROM #ULTIMO "
+                    + "ORDER BY codigo";
         return sql;
     }
 }

@@ -39,7 +39,7 @@
                         <h:form id="form" prependId="false">
                             <p:growl id="messageComprasVentas" showDetail="true"/>
                             <center>
-                                <p:panel id="pnlDocFaltantes" header="COMPRAS/VENTAS DE MERCADERIAS"
+                                <p:panel id="pnlDocFaltantes" header="Compras/Ventas de Mercaderias"
                                          style="width: 60%;">
                                     <h:panelGrid columns="2" >
                                         <p:outputLabel value="Fecha desde:" for="fechaDesde"
@@ -65,7 +65,7 @@
                                         <p:outputLabel value="Proveedor: " style="font-weight: bold; float: right;"/>
                                         <p:selectOneMenu id="proveedor" value="#{liComprasVentasBean.proveedor}" 
                                                          filterMatchMode="contains" filter="true"
-                                                         style="width: 150px;" converter="#{ProveedoresConverter}">
+                                                         style="width: 300px;" converter="#{ProveedoresConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
                                             <f:selectItems value="#{liComprasVentasBean.proveedores}" 
                                                            var="proveedor"
