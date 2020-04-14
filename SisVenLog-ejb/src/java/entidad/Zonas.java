@@ -46,6 +46,9 @@ public class Zonas implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ZonasPK zonasPK;
+    
+    @Column(name = "cod_zona")
+    private String codZona;
     //@Size(max = 50)
     @Column(name = "xdesc")
     private String xdesc;
@@ -81,6 +84,14 @@ public class Zonas implements Serializable {
 
     public void setZonasPK(ZonasPK zonasPK) {
         this.zonasPK = zonasPK;
+    }
+
+    public String getCodZona() {
+        return codZona;
+    }
+
+    public void setCodZona(String codZona) {
+        this.codZona = codZona;
     }
 
     public String getXdesc() {

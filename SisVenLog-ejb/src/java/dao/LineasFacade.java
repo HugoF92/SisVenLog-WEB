@@ -67,4 +67,8 @@ public class LineasFacade extends AbstractFacade<Lineas> {
         q.execute();
 
     }
+    
+    public List<Lineas> listarLineasActivas() {
+        return getEntityManager().createNativeQuery("SELECT * FROM lineas where estado = 'A'", Lineas.class).getResultList();
+    }
 }

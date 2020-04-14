@@ -43,6 +43,8 @@ public class Rutas implements Serializable {
     @Size(max = 50)
     @Column(name = "xdesc")
     private String xdesc;
+    @Column(name = "cod_ruta")
+    private Short codRuta;
     @Size(max = 30)
     @Column(name = "cusuario")
     private String cusuario;
@@ -72,6 +74,14 @@ public class Rutas implements Serializable {
 
     public void setRutasPK(RutasPK rutasPK) {
         this.rutasPK = rutasPK;
+    }
+
+    public Short getCodRuta() {
+        return codRuta;
+    }
+
+    public void setCodRuta(Short codRuta) {
+        this.codRuta = codRuta;
     }
 
     public String getXdesc() {

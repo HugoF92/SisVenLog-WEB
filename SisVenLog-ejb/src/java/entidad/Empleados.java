@@ -58,6 +58,8 @@ public class Empleados implements Serializable {
     private String xnombre;
     @Column(name = "cod_depo")
     private Short codDepo;
+    @Column(name = "cod_empleado")
+    private Short codEmpleado;
     @Basic(optional = false)
    //@NotNull
     @Column(name = "mestado")
@@ -200,6 +202,14 @@ public class Empleados implements Serializable {
 
     public void setCtipoEmp(TiposEmpleados ctipoEmp) {
         this.ctipoEmp = ctipoEmp;
+    }
+
+    public Short getCodEmpleado() {
+        return codEmpleado;
+    }
+
+    public void setCodEmpleado(Short codEmpleado) {
+        this.codEmpleado = codEmpleado;
     }
 
     @XmlTransient

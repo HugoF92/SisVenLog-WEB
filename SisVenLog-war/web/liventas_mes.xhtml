@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlLiVentMes" header="LISTADO VENTAS MES"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="4" >
+                                        <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liVentMesDesde" value="#{liVentasMesBean.desde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">                                            
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liVentMesHasta" value="#{liVentasMesBean.hasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es" mindate="#{liAnudocBean.desde}"/>
+
+                                        <p:outputLabel value="Ruta:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.rutaSelected}"
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarRutas()}" var="ruta"
+                                                           itemValue="#{ruta.codRuta}" itemLabel="#{ruta.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal Venta:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.canalVentaSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarCanalesVenta()}" var="canalVenta"
+                                                           itemValue="#{canalVenta.codCanal}"
+                                                           itemLabel="#{canalVenta.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Zona:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.zonaSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarZonas()}" var="zona"
+                                                           itemValue="#{zona.codZona}"
+                                                           itemLabel="#{zona.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Proveedor:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.proveedorSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarProveedores()}" var="proveedor"
+                                                           itemValue="#{proveedor.codProveed}"
+                                                           itemLabel="#{proveedor.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="SubLinea:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.subLineaSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarSubLineas()}" var="sublinea"
+                                                           itemValue="#{sublinea.codSublinea}"
+                                                           itemLabel="#{sublinea.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Linea:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.lineaSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarLineas()}" var="linea"
+                                                           itemValue="#{linea.codLinea}"
+                                                           itemLabel="#{linea.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="División:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.divisionSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarDivisiones()}" var="division"
+                                                           itemValue="#{division.codDivision}"
+                                                           itemLabel="#{division.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Venta" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.tipoVentaSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems   value="#{liVentasMesBean.listarTipoVenta()}" var="tipoVenta"
+                                                             itemValue="#{tipoVenta.ctipoVta}"
+                                                           itemLabel="#{tipoVenta.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Cliente:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.tipoClienteSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarTipoClientes()}" var="tipoCliente"
+                                                           itemValue="#{tipoCliente.ctipoCliente}"
+                                                           itemLabel="#{tipoCliente.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Ciudad Cliente:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.ciudadClienteSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarCiudadClientes()}" var="ciudad"
+                                                           itemValue="#{ciudad.codCiudad}"
+                                                           itemLabel="#{ciudad.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Vendedor:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVentasMesBean.vendedorSelected}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="0"/>
+                                            <f:selectItems value="#{liVentasMesBean.listarVendedores()}" var="vendedor"
+                                                           itemValue="#{vendedor.codEmpleado}"
+                                                           itemLabel="#{vendedor.xnombre}"/>                                                                                      
+                                        </p:selectOneMenu>
+                                        
+                                    </h:panelGrid>
+                                    <br></br>
+                                    <p:commandLink title="Reporte Exccell"
+                                                   action="#{liVentasMesBean.generarArchivo('EXCELL')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" >
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+
+                                </p:panel>
+
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

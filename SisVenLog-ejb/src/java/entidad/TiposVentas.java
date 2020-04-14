@@ -33,6 +33,8 @@ public class TiposVentas implements Serializable {
     @Size(max = 50)
     @Column(name = "xdesc")
     private String xdesc;
+    @Column(name = "ctipo_vta")
+    private String ctipoVta;
     @Size(max = 30)
     @Column(name = "cusuario")
     private String cusuario;
@@ -71,6 +73,14 @@ public class TiposVentas implements Serializable {
 
     public void setXdesc(String xdesc) {
         this.xdesc = xdesc;
+    }
+
+    public String getCtipoVta() {
+        return ctipoVta;
+    }
+
+    public void setCtipoVta(String ctipoVta) {
+        this.ctipoVta = ctipoVta;
     }
 
     public String getCusuario() {

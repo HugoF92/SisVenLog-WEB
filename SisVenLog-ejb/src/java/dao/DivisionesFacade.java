@@ -67,4 +67,8 @@ public class DivisionesFacade extends AbstractFacade<Divisiones> {
         q.execute();
 
     }
+    
+    public List<Divisiones> listarDivisionesActivas() {
+        return getEntityManager().createNativeQuery("SELECT * FROM divisiones where estado = 'A'", Divisiones.class).getResultList();
+    }
 }
