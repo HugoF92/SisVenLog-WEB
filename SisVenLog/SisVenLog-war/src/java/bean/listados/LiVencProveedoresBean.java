@@ -95,8 +95,13 @@ public class LiVencProveedoresBean {
                         .findAny()
                         .orElse(null);
 
+                TiposDocumentos td = tiposDocumentos.stream()
+                        .filter(tdd -> tdd.equals(tipoDocumento))
+                        .findAny()
+                        .orElse(null);
+
                 rep.reporteVencProveedores(fechaDesde, fechaHasta,
-                        prov, cc, discriminado, usuarioImpresion);
+                        prov, cc, td, discriminado, usuarioImpresion);
             } else {
                 String sql = vencProveedoresFacade.generateSelectMosDatos();
                 String[] columnas = new String[]{

@@ -2684,14 +2684,15 @@ public void reporteDocumentosFaltantes(Long nroDesde, Long nroHasta,
 }
 
 public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
-            Proveedores proveedor, CanalesCompra canalCompra, String discriminado,
-            String usuarioImpresion) {
+            Proveedores proveedor, CanalesCompra canalCompra, TiposDocumentos td,
+            String discriminado, String usuarioImpresion) {
         try {
             Map param = new HashMap();
             param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
             param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
             param.put("proveedor", proveedor == null ? null : proveedor.getXnombre());
             param.put("canalCompra", canalCompra == null ? null : canalCompra.getXdesc());
+            param.put("tipoDocumento", td == null ? null : td.getXdesc());
             param.put("discriminar", discriminado);
             param.put("usuarioImpresion", usuarioImpresion);
             param.put("REPORT_LOCALE", new Locale("es", "PY"));
