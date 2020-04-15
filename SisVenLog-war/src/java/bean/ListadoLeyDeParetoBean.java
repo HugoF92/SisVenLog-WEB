@@ -5,7 +5,11 @@
  */
 package bean;
 
+import dao.CanalesVentaFacade;
 import dao.LeyParetoFacade;
+import dao.LineasFacade;
+import dao.TiposClientesFacade;
+import dao.ZonasFacade;
 import entidad.Proveedores;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,12 +45,24 @@ public class ListadoLeyDeParetoBean implements Serializable{
     private Zonas zonas;
     private CanalesVenta canalesVenta;
     private String discriminar;
-    private String filtar;
+    private String filtrar;
     private String factorSeleccionado;
     private Integer factor;
     
     @EJB
     private LeyParetoFacade leyParetoFacade;
+    
+    @EJB
+    private LineasFacade lineasFacade;
+
+    @EJB
+    private TiposClientesFacade tiposClientesFacade;
+    
+    @EJB
+    private ZonasFacade zonasFacade;
+    
+    @EJB
+    private CanalesVentaFacade canalesVentaFacade;
     
     @PostConstruct
     public void instanciar(){
@@ -62,11 +78,55 @@ public class ListadoLeyDeParetoBean implements Serializable{
         if (validar()) {
             try {
                 LlamarReportes rep = new LlamarReportes();
-                if (tipo.equals("VIST")) {
+                leyParetoFacade.prepararDatosListadoPareto(fechaFacturacionDesde, 
+                                                               fechaFacturacionHasta, 
+                                                               linea, 
+                                                               tipoCliente, 
+                                                               zonas, 
+                                                               canalesVenta, 
+                                                               discriminar,
+                                                               factorSeleccionado,
+                                                               factor);
+                if (tipo.equals("VIST")) {                   
+                    String sql, filename, usuImprime, nombreRepo;
                     if ("PC".equals(discriminar)) {
-                        
+                        filename = "rpareto1";
+                        nombreRepo = "rpareto1";
+                        usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                        sql = "SELECT * FROM tpareto ORDER BY itotal DESC";
+                        rep.listadoLeyPareto(sql, 
+                                             fechaFacturacionDesde, 
+                                             fechaFacturacionHasta, 
+                                             linea, 
+                                             tipoCliente, 
+                                             zonas, 
+                                             canalesVenta, 
+                                             discriminar,
+                                             factorSeleccionado,
+                                             factor,
+                                             usuImprime, 
+                                             tipo, 
+                                             nombreRepo,
+                                             filename);
                     }else{ //por linea
-                        
+                        filename = "rpareto2";
+                        nombreRepo = "rpareto2";
+                        usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                        sql = "SELECT DISTINCT cod_linea, xdesc_linea FROM tpareto ORDER BY cod_linea";
+                        rep.listadoLeyPareto(sql, 
+                                             fechaFacturacionDesde, 
+                                             fechaFacturacionHasta, 
+                                             linea, 
+                                             tipoCliente, 
+                                             zonas, 
+                                             canalesVenta, 
+                                             discriminar,
+                                             filtrar,
+                                             factor,
+                                             usuImprime, 
+                                             tipo, 
+                                             nombreRepo,
+                                             filename);
                     }
  
                 } else { //Excel
@@ -424,7 +484,11 @@ public class ListadoLeyDeParetoBean implements Serializable{
     }
 
     public void setLinea(Lineas linea) {
-        this.linea = linea;
+        if (linea != null) {
+            this.linea = lineasFacade.buscarPorCodigo(linea.getCodLinea());
+        }else{
+            this.linea = linea;
+        }
     }
 
     public TiposClientes getTipoCliente() {
@@ -432,7 +496,11 @@ public class ListadoLeyDeParetoBean implements Serializable{
     }
 
     public void setTipoCliente(TiposClientes tipoCliente) {
-        this.tipoCliente = tipoCliente;
+        if (tipoCliente != null) {
+            this.tipoCliente = tiposClientesFacade.buscarPorCodigo(tipoCliente.getCtipoCliente());
+        } else {
+            this.tipoCliente = tipoCliente;
+        }
     }
 
     public Zonas getZonas() {
@@ -440,7 +508,11 @@ public class ListadoLeyDeParetoBean implements Serializable{
     }
 
     public void setZonas(Zonas zonas) {
-        this.zonas = zonas;
+        if (zonas != null) {
+            this.zonas = zonasFacade.buscarPorCodigo(zonas.getZonasPK().getCodZona());
+        } else {
+            this.zonas = zonas;
+        }
     }
 
     public CanalesVenta getCanalesVenta() {
@@ -448,7 +520,11 @@ public class ListadoLeyDeParetoBean implements Serializable{
     }
 
     public void setCanalesVenta(CanalesVenta canalesVenta) {
-        this.canalesVenta = canalesVenta;
+        if (canalesVenta != null) {
+            this.canalesVenta = canalesVentaFacade.buscarPorCodigo(canalesVenta.getCodCanal());
+        } else {
+            this.canalesVenta = canalesVenta;
+        }
     }
 
     public String getDiscriminar() {
@@ -459,12 +535,12 @@ public class ListadoLeyDeParetoBean implements Serializable{
         this.discriminar = discriminar;
     }
 
-    public String getFiltar() {
-        return filtar;
+    public String getFiltrar() {
+        return filtrar;
     }
 
-    public void setFiltar(String filtar) {
-        this.filtar = filtar;
+    public void setFiltrar(String filtrar) {
+        this.filtrar = filtrar;
     }
     
     public String getFactorSeleccionado(){

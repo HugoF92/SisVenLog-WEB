@@ -65,6 +65,22 @@ public class LineasFacade extends AbstractFacade<Lineas> {
         q.setParameter("cusuario", lineas.getCusuario());
 
         q.execute();
+    }
+    
+    //JLVC 15-04-2020
+    public Lineas buscarPorCodigo(Short filtro) {
 
+        Query q = getEntityManager().createNativeQuery("select * from lineas where cod_linea = " + filtro, Lineas.class);
+
+        //System.out.println(q.toString());
+        Lineas respuesta = new Lineas();
+
+        if (q.getResultList().size() <= 0) {
+            respuesta = null;
+        } else {
+            respuesta = (Lineas) q.getSingleResult();
+        }
+
+        return respuesta;
     }
 }
