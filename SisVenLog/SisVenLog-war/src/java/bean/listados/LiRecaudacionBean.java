@@ -27,14 +27,11 @@ import util.LlamarReportes;
  */
 @ManagedBean
 @SessionScoped
-public class LiConCliBean implements Serializable{
+public class LiRecaudacionBean implements Serializable{
     
-    private Date desde;
-    
-    private Date hasta;
-    
+    private Date desde,hasta;
+    private Empleados entregador;
     private Zonas zonas;
-    private Empleados vendedor;
     
     @EJB
     private ZonasFacade zonasFacade;
@@ -50,7 +47,7 @@ public class LiConCliBean implements Serializable{
     @PostConstruct
     public void instanciar() {
         this.seleccion = new String();
-        this.vendedor = new Empleados(new EmpleadosPK());
+        this.entregador = new Empleados(new EmpleadosPK());
         this.zonas = new Zonas(new ZonasPK());
         this.nuevo =  false;
         this.desde = new Date();
@@ -65,9 +62,9 @@ public class LiConCliBean implements Serializable{
             extras += " AND f.cod_zona = '"+this.zonas.getZonasPK().getCodZona()+"' ";
             extras2 += " AND f.cod_zona = '"+this.zonas.getZonasPK().getCodZona()+"' ";
         }
-        if (this.vendedor != null){
-            extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
-        }
+//        if (this.vendedor != null){
+//            extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
+//        }
         if ( this.nuevo ) {
             String ldesde = fdesde + "00:00:00";
             String lhasta = fhasta + "23:59:00";
@@ -326,14 +323,6 @@ public class LiConCliBean implements Serializable{
         this.zonas = zonas;
     }
 
-    public Empleados getVendedor() {
-        return vendedor;
-    }
-
-    public void setVendedor(Empleados vendedor) {
-        this.vendedor = vendedor;
-    }
-
     public String getSeleccion() {
         return seleccion;
     }
@@ -356,6 +345,14 @@ public class LiConCliBean implements Serializable{
 
     public void setNuevo(Boolean nuevo) {
         this.nuevo = nuevo;
+    }
+
+    public Empleados getEntregador() {
+        return entregador;
+    }
+
+    public void setEntregador(Empleados entregador) {
+        this.entregador = entregador;
     }
 
 }

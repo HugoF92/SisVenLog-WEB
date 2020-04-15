@@ -6,8 +6,6 @@ import dao.MercaderiasFacade;
 import dao.PersonalizedFacade;
 import dao.SublineasFacade;
 import entidad.Divisiones;
-import entidad.Mercaderias;
-import entidad.MercaderiasPK;
 import entidad.Sublineas;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -20,7 +18,6 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
-import org.primefaces.model.DualListModel;
 import util.LlamarReportes;
 
 @ManagedBean
