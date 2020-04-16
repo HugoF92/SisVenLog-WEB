@@ -49,7 +49,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
@@ -475,17 +477,46 @@ public class LiVentasMesBean {
             //System.out.println(ventasVendedor.toString());
             String TITULO = "VENTAS A CLIENTES POR MES";
             String NOMBRE_REPORTE = "rventas_mes";
-
             parameters.put("fechaDesde", this.desde);
             parameters.put("fechaHasta", this.hasta);
             parameters.put("titulo", TITULO);
             parameters.put("nombreRepo", NOMBRE_REPORTE);
-            parameters.put("txtCanalVta", this.canalVenta.getCodCanal() + " - " + this.canalVenta.getXdesc());
-            parameters.put("txtVendedor", this.vendedor.getCodEmpleado() + " - " + this.vendedor.getXnombre());
-            parameters.put("txtZona", this.zona.getCodZona() + " - " + this.zona.getXdesc());
-            parameters.put("txtSubLinea", this.sublinea.getCodSublinea() + " - " + this.sublinea.getXdesc());
-            parameters.put("txtProveedor", this.proveedor.getCodProveed() + " - " + this.proveedor.getXnombre());
-            parameters.put("txtLinea", this.linea.getCodLinea() + " - " + this.linea.getXdesc());
+            if(this.canalVentaSelected.equalsIgnoreCase("0")){
+                 parameters.put("txtCanalVta", "TODOS");
+            }else{
+                parameters.put("txtCanalVta", this.canalVenta.getCodCanal() + " - " + this.canalVenta.getXdesc());
+            }
+            if(this.vendedorSelected == 0){
+                parameters.put("txtVendedor", "TODOS");
+            }else{
+                parameters.put("txtVendedor", this.vendedor.getCodEmpleado() + " - " + this.vendedor.getXnombre());
+            }
+            
+            if(this.zonaSelected.equalsIgnoreCase("0")){
+                parameters.put("txtZona", "TODOS");
+            }else{
+                parameters.put("txtZona", this.zona.getCodZona() + " - " + this.zona.getXdesc());
+            }
+            if(this.subLineaSelected ==  0){
+                parameters.put("txtSubLinea", "TODOS");
+            }else{
+                parameters.put("txtSubLinea", this.sublinea.getCodSublinea() + " - " + this.sublinea.getXdesc());
+            }
+            if(this.proveedorSelected == 0){
+                parameters.put("txtProveedor", "TODOS");
+            }else{
+                parameters.put("txtProveedor", this.proveedor.getCodProveed() + " - " + this.proveedor.getXnombre());
+            }
+            if(this.lineaSelected == 0){
+                parameters.put("txtLinea", "TODOS");
+            }else{
+                parameters.put("txtLinea", this.linea.getCodLinea() + " - " + this.linea.getXdesc());
+            }            
+            if(this.divisionSelected == 0){
+                parameters.put("txtDivision", "TODOS");
+            }else{
+                parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
+            }  
             parameters.put("SUBREPORT_DIR", "/pdf/");
             parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
             System.out.print("hola 1");
@@ -808,16 +839,7 @@ public class LiVentasMesBean {
                 //----------------------------------------------------------------------------------------------
                 InputStream reporte = getClass().getClassLoader().getResourceAsStream("/pdf/liVentasMes.jasper");
                 JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, new JRMapCollectionDataSource(cabecera));        
-                //exportar pdf para pruebas
-                //JasperExportManager.exportReportToPdf(jasperPrint);
-                //JasperExportManager.exportReportToPdfFile(jasperPrint,"C:/jasperoutput/StyledTextReport.pdf");
                 //exportar excell
-                JRXlsExporter xlsExporter = new JRXlsExporter();
-                xlsExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                //xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:/jasperoutput/sample_report.xls"));
-                xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-                //config
                 SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();                
                 configuration.setOnePagePerSheet(false);
                 configuration.setDetectCellType(true);
@@ -825,26 +847,45 @@ public class LiVentasMesBean {
                 configuration.setRemoveEmptySpaceBetweenRows(true);
                 configuration.setFontSizeFixEnabled(true);
                 configuration.setCollapseRowSpan(false);
-
                 configuration.setCellLocked(true);
-                xlsExporter.setConfiguration(configuration);
-                xlsExporter.exportReport();
-                //
-                
                 FacesContext context = FacesContext.getCurrentInstance();  
                 HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();  
-                response.setContentType("application/vnd.ms-excel"); //fill in contentType  
-                response.setHeader("Content-disposition", "attachment; filename=rventas_mes.xls");
-                OutputStream os = response.getOutputStream();  
-                os.write(out.toByteArray()); //fill in bytes  
-                os.flush();  
-                os.close();  
-                FacesContext faces = FacesContext.getCurrentInstance();
-                
-                faces.responseComplete();  
+                switch(tipoArchivo)
+                {
+                    case "EXCELL" :
+                        JRXlsExporter xlsExporter = new JRXlsExporter();
+                        xlsExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        //xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:/jasperoutput/sample_report.xls"));
+                        xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+                        //config
+                        xlsExporter.setConfiguration(configuration);
+                        xlsExporter.exportReport();
+                        //
+                        response.setContentType("application/vnd.ms-excel"); //fill in contentType  
+                        response.setHeader("Content-disposition", "attachment; filename=rventas_mes.xls");
+                        OutputStream os = response.getOutputStream();  
+                        os.write(out.toByteArray()); //fill in bytes  
+                        os.flush();  
+                        os.close();                          
+                        break;
+                    case "PDF" :
+                        String disposition = "inline";
+                        response.addHeader("Content-disposition", disposition + "; filename=rventas_mes.pdf");
+                        response.addHeader("Content-type", "application/pdf");
+                        ServletOutputStream servletStream = response.getOutputStream();
+                        JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);                  
+                        break; 
+                    default : 
+                        break; 
+                }
+                FacesContext faces = FacesContext.getCurrentInstance();                
+                faces.responseComplete(); 
                 limpiarDatos();
             }catch(Exception ex){
-                System.out.println(ex.getStackTrace());
+                System.out.println(ex);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reporte.", "Ocurrió un error al generar el reporte"));
+                
             }
         }else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            

@@ -175,7 +175,16 @@
                                         
                                     </h:panelGrid>
                                     <br></br>
-                                    <p:commandLink title="Reporte Exccell"
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liVentasMesBean.generarArchivo('PDF')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                    <p:commandLink title="Planilla Exccell"
                                                    action="#{liVentasMesBean.generarArchivo('EXCELL')}"
                                                    ajax="false" immediate="false" update="messageImpreFact" >
 
