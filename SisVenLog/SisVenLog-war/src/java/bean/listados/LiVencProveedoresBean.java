@@ -75,8 +75,9 @@ public class LiVencProveedoresBean {
             LlamarReportes rep = new LlamarReportes();
             Connection conexion = rep.conexion;
             Statement stmt = conexion.createStatement();
+            String tdoc = tipoDocumento == null? "": tipoDocumento.getCtipoDocum();
             vencProveedoresFacade.generateTableMostrar(stmt, fechaDesde, fechaHasta,
-                    discriminado, "", proveedor, canalCompra);
+                    discriminado, tdoc, proveedor, canalCompra);
             if (tipo.equals("VIST")) {
                 String usuarioImpresion = "";
                 if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("usuario")) {
