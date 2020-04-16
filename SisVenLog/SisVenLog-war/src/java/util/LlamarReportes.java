@@ -12,6 +12,7 @@ import entidad.Empleados;
 import entidad.Proveedores;
 import entidad.Rutas;
 import entidad.TiposClientes;
+import entidad.TiposDocumentos;
 import entidad.Zonas;
 import java.io.IOException;
 import java.math.BigDecimal;
