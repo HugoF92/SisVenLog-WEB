@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2020-04-13T23:18:42 -->
+<!-- 2020-04-16T19:10:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cliNoCompran" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="da15e1b6-bdf8-4b65-bda1-060a297efc59">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -60,7 +60,7 @@ FROM #MOSTRAR]]>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_zona} == null? "": $F{cod_zona}]]></textFieldExpression>
 				</textField>
@@ -76,7 +76,7 @@ FROM #MOSTRAR]]>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_zona} == null? "": $F{xdesc_zona}]]></textFieldExpression>
 				</textField>
@@ -510,7 +510,7 @@ FROM #MOSTRAR]]>
 				<text><![CDATA[***FIN DEL INFORME***]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="90" height="20" uuid="735814d5-8851-43af-9100-76011b4ce365">
+				<reportElement x="87" y="0" width="90" height="20" uuid="735814d5-8851-43af-9100-76011b4ce365">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unity" value="pixel"/>
@@ -524,7 +524,7 @@ FROM #MOSTRAR]]>
 				<text><![CDATA[TOTAL CLIENTES]]></text>
 			</staticText>
 			<textField pattern="">
-				<reportElement x="91" y="0" width="68" height="20" uuid="44a0dfcf-6a8b-4c25-bbe1-6bd8b0bd9b47">
+				<reportElement x="178" y="0" width="68" height="20" uuid="44a0dfcf-6a8b-4c25-bbe1-6bd8b0bd9b47">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>

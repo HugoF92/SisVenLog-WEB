@@ -140,7 +140,7 @@ public class ClientesNoCompranFacade {
                     stmt.execute("INSERT INTO #TMP_MERCADERIAS (cod_merca, "
                         + "cod_barra, xdesc, nrelacion,cant_cajas, cant_unid ) "
                         + "VALUES ('" + aux.getMercaderiasPK().getCodMerca()
-                        + "', '" + aux.getCodBarra() + "', '" + aux.getXdesc()
+                        + "', '" + aux.getCodBarra() + "', '" + aux.getXdesc().replace("'", "''")
                         + "', " + aux.getNrelacion() + ",0,0 )");
                 }
             }
