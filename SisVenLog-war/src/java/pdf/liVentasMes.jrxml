@@ -71,7 +71,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["E:\\Proyectos\\venlog\\repositorio\\SisVenLog-WEB\\SisVenLog-war\\src\\java\\pdf\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["E:\\Proyectos\\venlog\\repositorio\\SisVenLog-WEB\\SisVenLog-war\\src\\java\\pdf\\liVentasMesVendedoresDet.jasper"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="titulo" class="java.lang.String"/>
 	<parameter name="txtVendedor" class="java.lang.String"/>
@@ -279,7 +279,7 @@
 				<subreportParameter name="txtLinea"/>
 				<subreportParameter name="txtDivision"/>
 				<dataSourceExpression><![CDATA[$F{detalleVendedor}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "liVentasMesVendedoresDet.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement x="185" y="0" width="211" height="14" uuid="799b73e2-d65e-4db6-9318-2fbaca13f99d"/>

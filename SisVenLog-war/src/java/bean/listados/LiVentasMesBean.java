@@ -457,19 +457,19 @@ public class LiVentasMesBean {
         if(this.desde != null && this.hasta != null){            
             //
             String consultaVentaVendedor = generarConsultaAgrupacion("VENDEDOR", "VENTA");
-            System.out.println(String.format("CONSULTA VENTA VENDEDOR: [%s]", consultaVentaVendedor));
+            //System.out.println(String.format("CONSULTA VENTA VENDEDOR: [%s]", consultaVentaVendedor));
             String consultaNotaVendedor = generarConsultaAgrupacion("VENDEDOR", "NOTAS");
-            System.out.println(String.format("CONSULTA NOTA VENDEDOR: [%s]", consultaNotaVendedor));
+            //System.out.println(String.format("CONSULTA NOTA VENDEDOR: [%s]", consultaNotaVendedor));
             //
             String consultaVentaZona = generarConsultaAgrupacion("ZONA", "VENTA");
-            System.out.println(String.format("CONSULTA VENTA ZONA: [%s]", consultaVentaZona));
+            //System.out.println(String.format("CONSULTA VENTA ZONA: [%s]", consultaVentaZona));
             String consultaNotaZona = generarConsultaAgrupacion("ZONA", "NOTAS");
-            System.out.println(String.format("CONSULTA NOTA ZONA: [%s]", consultaNotaZona));
+            //System.out.println(String.format("CONSULTA NOTA ZONA: [%s]", consultaNotaZona));
             //
             String consultaVentaRuta = generarConsultaAgrupacion("RUTA", "VENTA");
-            System.out.println(String.format("CONSULTA VENTA RUTA: [%s]", consultaVentaRuta));
+            //System.out.println(String.format("CONSULTA VENTA RUTA: [%s]", consultaVentaRuta));
             String consultaNotaRuta = generarConsultaAgrupacion("RUTA", "NOTAS");
-            System.out.println(String.format("CONSULTA NOTA RUTA: [%s]", consultaNotaRuta));
+            //System.out.println(String.format("CONSULTA NOTA RUTA: [%s]", consultaNotaRuta));
             //realizar la llamada al Facade para obtener los datos del reporte 
             Map<String, Map<String, List<LiVentas>>> ventasVendedor = ventasFacade.obtenerConsultaVendedores(consultaVentaVendedor, 
                     consultaNotaVendedor, consultaVentaZona, consultaNotaZona, consultaVentaRuta, consultaNotaRuta);
@@ -481,6 +481,7 @@ public class LiVentasMesBean {
             parameters.put("fechaHasta", this.hasta);
             parameters.put("titulo", TITULO);
             parameters.put("nombreRepo", NOMBRE_REPORTE);
+            parameters.put("usu_imprime", "admin");
             if(this.canalVentaSelected.equalsIgnoreCase("0")){
                  parameters.put("txtCanalVta", "TODOS");
             }else{
@@ -511,15 +512,14 @@ public class LiVentasMesBean {
                 parameters.put("txtLinea", "TODOS");
             }else{
                 parameters.put("txtLinea", this.linea.getCodLinea() + " - " + this.linea.getXdesc());
-            }            
+            }             
             if(this.divisionSelected == 0){
                 parameters.put("txtDivision", "TODOS");
             }else{
                 parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
             }  
-            parameters.put("SUBREPORT_DIR", "/pdf/");
-            parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
-            System.out.print("hola 1");
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liVentasMesVendedoresDet.jasper");
+            parameters.put("SUBREPORT_DIR", report);            
             //-------agregar total del reporte
             Map<String, List<LiVentas>> totalVenta = ventasVendedor.get("TOTAL_VENTA");
             for(Map.Entry<String, List<LiVentas>> vendedor : totalVenta.entrySet()){
@@ -837,7 +837,10 @@ public class LiVentasMesBean {
                     cabecera.add(detalleVendedores);
                 }
                 //----------------------------------------------------------------------------------------------
-                InputStream reporte = getClass().getClassLoader().getResourceAsStream("/pdf/liVentasMes.jasper");
+                
+                //String reportLiVentas = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
+                //InputStream reporte = getClass().getClassLoader().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
+                InputStream reporte = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
                 JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, new JRMapCollectionDataSource(cabecera));        
                 //exportar excell
                 SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();                
@@ -1063,46 +1066,46 @@ public class LiVentasMesBean {
     private String generarConsulta(String consultaBase, String tipo){
         //--------------------------------------------------------------------------------------------------------------------------
         //verificar filtro vendedor
-       System.out.println(String.format("Consulta Base Recibida: [%s]", ""));
+       //System.out.println(String.format("Consulta Base Recibida: [%s]", ""));
        
-        System.out.println(this.vendedorSelected);
-        System.out.println(this.getVendedorSelected());
+        //System.out.println(this.vendedorSelected);
+        //System.out.println(this.getVendedorSelected());
         if(this.getVendedorSelected() != 0 ){
             consultaBase = consultaBase.concat(" AND f.cod_vendedor = " + this.vendedor.getCodEmpleado());
         }
-        System.out.println(this.subLineaSelected);
-        System.out.println(getSubLineaSelected());
+        //System.out.println(this.subLineaSelected);
+        //System.out.println(getSubLineaSelected());
         if(getSubLineaSelected() != 0 ){
             consultaBase = consultaBase.concat(" AND m.cod_sublinea = " + this.sublinea.getCodSublinea());
         }
         //verificar filtro de linea
-        System.out.println(this.lineaSelected);
+        //System.out.println(this.lineaSelected);
         if(getLineaSelected() != 0 ){
             consultaBase = consultaBase.concat(" AND l.cod_linea = " + this.linea.getCodLinea());
         }
         //verificar filtro de divisiones
-        System.out.println(this.divisionSelected);
+        //System.out.println(this.divisionSelected);
         if(getDivisionSelected() != 0 ){
             consultaBase = consultaBase.concat(" AND v.cod_division = " + this.division.getCodDivision());
         }
         //verificar filtro de zona
-        System.out.println(this.zonaSelected);
-        System.out.println("zona selected get: " + getZonaSelected() + this.zonaSelected);
+        //System.out.println(this.zonaSelected);
+        //System.out.println("zona selected get: " + getZonaSelected() + this.zonaSelected);
         if(!getZonaSelected().equalsIgnoreCase("0") ){
             consultaBase = consultaBase.concat(" AND f.cod_zona = '" + this.zona.getCodZona()+"'");
         }
         //verificar filtro canales venta 
-        System.out.println(this.canalVentaSelected);
+        //System.out.println(this.canalVentaSelected);
         if(!getCanalVentaSelected().equalsIgnoreCase("0") ){
             consultaBase = consultaBase.concat(" AND f.cod_canal = '" + this.canalVenta.getCodCanal()+"'");
         }
         //verificar filtro rutas
-        System.out.println(this.rutaSelected);
+        //System.out.println(this.rutaSelected);
         if(getRutaSelected() != 0 ){
             consultaBase = consultaBase.concat(" AND f.cod_ruta = " + this.ruta.getCodRuta());
         }
         //verificar filtro proveedor
-        System.out.println(this.proveedorSelected);
+        //System.out.println(this.proveedorSelected);
         if(getProveedorSelected() != 0){
             if(tipo.equalsIgnoreCase("VENTA")){
                 consultaBase = consultaBase.concat(" AND m.cod_proveed = " + this.proveedor.getCodProveed());
@@ -1110,28 +1113,28 @@ public class LiVentasMesBean {
         }
         //verificar filtro por codigo cliente solo este falta agregar
         //verificar filtro por tipo ventas 
-        System.out.println(this.tipoVentaSelected);
+        //System.out.println(this.tipoVentaSelected);
         if(!getTipoVentaSelected().equalsIgnoreCase("0") ){
             if(tipo.equalsIgnoreCase("VENTA")){
                 consultaBase = consultaBase.concat(" AND f.ctipo_vta = '" + this.tipoVenta.getCtipoVta()+"'");
             }
         }
         //verificar filtro por ciudad cliente
-        System.out.println(this.ciudadClienteSelected);
+        //System.out.println(this.ciudadClienteSelected);
         if(getCiudadClienteSelected() != 0){
             if(tipo.equalsIgnoreCase("VENTA")){
                 consultaBase = consultaBase.concat(" AND c.cod_ciudad = " + this.ciudadCliente.getCodCiudad());
             }
         }
         //verificar filtro por tipo cliente
-        System.out.println(this.tipoClienteSelected);
+        //System.out.println(this.tipoClienteSelected);
         if(!getTipoClienteSelected().equalsIgnoreCase("0")){
             if(tipo.equalsIgnoreCase("VENTA")){
                 consultaBase = consultaBase.concat(" AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente()+"'");
             }
         }
         //--------------------------------------------------------------------------------------------------------------------------
-        System.out.println(String.format("Consulta Base Final: [%s]", ""));
+        //System.out.println(String.format("Consulta Base Final: [%s]", ""));
         return consultaBase;
     }
     
