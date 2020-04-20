@@ -363,7 +363,7 @@ public class ClientesBean implements Serializable {
         String msg = "";
         try {
             msg = clientesFacade.remover(clientes);
-            if(msg!= null){
+            if(!msg.equals("Eliminado con exito")){
                 throw new Exception(msg);
             }
             this.clientes = new Clientes();
@@ -372,6 +372,7 @@ public class ClientesBean implements Serializable {
             PrimeFaces.current().executeScript("PF('dlgInacCliente').hide();");
         }catch (Exception e){
             LOGGER.log(Level.SEVERE, "Error al borrar", e);
+            e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ",  e.getMessage()));
         }
     }

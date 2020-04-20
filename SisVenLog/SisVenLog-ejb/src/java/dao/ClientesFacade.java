@@ -14,9 +14,11 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 /**
  *
@@ -27,6 +29,7 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
 
     @PersistenceContext(unitName = "SisVenLog-ejbPU")
     private EntityManager em;
+    String msg = "";
 
     @Override
     protected EntityManager getEntityManager() {
@@ -104,7 +107,7 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
                 + "from clientes order by falta desc ", Clientes.class);
 
         System.out.println(q.toString());
-        List<Clientes> respuesta = new ArrayList<>();
+        List<Clientes> respuesta = new ArrayList<Clientes>();
         respuesta = q.getResultList();
         return respuesta;
     }
@@ -138,24 +141,30 @@ public class ClientesFacade extends AbstractFacade<Clientes> {
     }
     
     public String remover(Clientes entity) {
-        try{
+        Object respuesta = 0;
+        Query query = null;
+        try {
             System.out.println(entity.toString());
             if (!getEntityManager().contains(entity)) {
                 entity = getEntityManager().merge(entity);
             }
-            getEntityManager().remove(entity);
-        }catch (IllegalArgumentException | ConstraintViolationException ex){
-            ex.printStackTrace();
-            if(ex.getMessage().contains("try merging the detached and try the remove again")){
-                return "Error al eliminar cliente, se encuentra referenciado.";
-            }
-            return ex.getMessage();
-        }catch(Exception e){
+            query = getEntityManager().createNativeQuery("delete from clientes where cod_cliente=? ");
+            query.setParameter(1, entity.getCodCliente());
+            int a = query.executeUpdate();
+            System.out.println(a);
+            //getEntityManager().remove(entity);
+            this.getEntityManager().flush();
+        } catch (PersistenceException p) {
+            p.printStackTrace();
+            System.out.println("---------------PersistenceException-------------");
+            return p.getMessage();
+
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("---------------Exception-------------");
             return e.getMessage();
 
         }
-        return null;
-        
+        return "Eliminado con exito";
     }
 }

@@ -59,5 +59,14 @@ public class DocumVariosFacade extends AbstractFacade<DocumVarios> {
             return -1;
         }
     }
+    
+    
+    
+    public DocumVarios verificarObjecto(DocumVarios entity){
+        if (!getEntityManager().contains(entity)) {
+                entity = getEntityManager().merge(entity);
+        }
+        return entity;
+    }
 
 }

@@ -262,7 +262,8 @@ public class DocumentosObservacionesBean implements Serializable {
         if (this.codTipoDocumento.equals("AJ")) {
             this.documVarios.setXobs(this.observacion.toUpperCase());
             try {
-                this.documVariosFacade.edit(this.documVarios);
+                this.documVarios = this.documVariosFacade.verificarObjecto(documVarios);
+                this.documVariosFacade.edit(documVarios);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Guardados"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -273,7 +274,8 @@ public class DocumentosObservacionesBean implements Serializable {
         }else{
             try {
                 this.notasCompras.setXobs(this.observacion);
-                notasComprasFacade.edit(this.notasCompras);
+                this.notasCompras = notasComprasFacade.verificarObjecto(this.notasCompras);
+                notasComprasFacade.edit(notasCompras);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Guardados"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -305,8 +307,10 @@ public class DocumentosObservacionesBean implements Serializable {
             try {
                 this.documVarios = this.documVariosFacade.find(this.documVariosPK);
                 documentosVarios = this.documVarios;
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
-
+                if(documentosVarios!= null){
+                   FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos")); 
+                }
+                
             } catch (Exception e) {
                 documentosVarios = null;
                 e.printStackTrace();
@@ -334,7 +338,9 @@ public class DocumentosObservacionesBean implements Serializable {
             notasComprasPK.setNroNota(new Long(nroConcatenado));
                 this.notasCompras = notasComprasFacade.getNotasComprasByPK(notasComprasPK);
                 notasCompraslocal = this.notasCompras;
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
+                if(notasCompraslocal!= null){
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 notasCompraslocal = null;

@@ -397,4 +397,12 @@ public class NotasComprasFacade extends AbstractFacade<NotasCompras> {
     }
     
     
+     public NotasCompras verificarObjecto(NotasCompras entity){
+        if (!getEntityManager().contains(entity)) {
+                entity = getEntityManager().merge(entity);
+        }
+        return entity;
+    }
+    
+    
 }

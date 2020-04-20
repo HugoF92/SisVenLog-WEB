@@ -469,10 +469,11 @@
                                 <div class="ui-g-12">
                                     <div class="card card-w-title">
                                         <p:dataTable id="tablaClientes" var="itemp" selectionMode="single" reflow="true"
-                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     paginator="true" rows="5" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
                                                      value="#{clientesBean.listaClientes}" rowKey="#{itemp.xnombre}"
-                                                     selection="#{clientesBean.clientes}">
+                                                     selection="#{clientesBean.clientes}"
+                                                     class="table table-hover">
 
                                             <p:ajax event="rowSelect"
                                                     listener="#{clientesBean.onRowSelect(event)}"
