@@ -308,7 +308,7 @@ public class DocumentosObservacionesBean implements Serializable {
                 this.documVarios = this.documVariosFacade.find(this.documVariosPK);
                 documentosVarios = this.documVarios;
                 if(documentosVarios!= null){
-                   FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos")); 
+                   FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obtenidos")); 
                 }
                 
             } catch (Exception e) {
@@ -323,7 +323,7 @@ public class DocumentosObservacionesBean implements Serializable {
             } else {
                 this.codTipoDocumento = documentosVarios.getDocumVariosPK().getCtipoDocum();
                 this.nroDocumentoNumero = new Long(documentosVarios.getDocumVariosPK().getNdocum());
-                this.observacion = documentosVarios.getXobs() != null && !documentosVarios.getXobs().isEmpty() ? documentosVarios.getXobs().toUpperCase() : " ";
+                this.observacion = documentosVarios.getXobs() != null && !documentosVarios.getXobs().isEmpty() ? documentosVarios.getXobs().toUpperCase().trim() : " ";
                 this.setHabBtnAct(true);
             }
         }else{
@@ -339,7 +339,7 @@ public class DocumentosObservacionesBean implements Serializable {
                 this.notasCompras = notasComprasFacade.getNotasComprasByPK(notasComprasPK);
                 notasCompraslocal = this.notasCompras;
                 if(notasCompraslocal!= null){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obenitos"));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"", "Datos Obtenidos"));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -356,7 +356,7 @@ public class DocumentosObservacionesBean implements Serializable {
                 this.nroDocumentoEst = this.nroDocumentoEst;
                 this.nroDocumentoExp = this.nroDocumentoExp;
                 this.nroDocumentoNumero = numeroNumero;
-                this.observacion = notasCompraslocal.getXobs()!=null && !notasCompraslocal.getXobs().isEmpty()? notasCompraslocal.getXobs().toUpperCase():"";
+                this.observacion = notasCompraslocal.getXobs()!=null && !notasCompraslocal.getXobs().isEmpty()? notasCompraslocal.getXobs().toUpperCase().trim():"";
                 this.setHabBtnAct(true);
             }
             

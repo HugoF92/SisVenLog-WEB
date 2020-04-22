@@ -18,7 +18,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 /**
  *
