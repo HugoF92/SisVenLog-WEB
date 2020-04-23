@@ -20,7 +20,7 @@ import util.LlamarReportes;
 
 @ManagedBean
 @SessionScoped
-public class LiExtractoClientesBean {
+public class LiExtractoClientesBean implements Serializable{
 
     @EJB
     private ClientesFacade clientesFacade;
