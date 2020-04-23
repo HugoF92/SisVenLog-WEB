@@ -2440,7 +2440,7 @@ public class LlamarReportes {
             if (tipoCliente != null) {
                 param.put("tipoCliente", tipoCliente.getXdesc());
             }else{
-                param.put("tipoCliente", "Todas");
+                param.put("tipoCliente", "Todos");
             }
             //zona
             if (zonas != null) {

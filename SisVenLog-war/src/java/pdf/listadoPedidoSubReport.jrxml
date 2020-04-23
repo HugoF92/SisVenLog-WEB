@@ -127,11 +127,11 @@ $F{morigen}.toString().equals("P") ? "Automatico" : "Migrado Sis. Anterior"]]></
 				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="403" y="4" width="80" height="14" uuid="3100a26b-6b9f-430a-ac49-797e1d02bbd8"/>
+				<reportElement x="399" y="4" width="80" height="14" uuid="3100a26b-6b9f-430a-ac49-797e1d02bbd8"/>
 				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="482" y="4" width="70" height="14" uuid="e228500a-702f-4b44-bbfd-11a5032ab61b">
+				<reportElement x="478" y="4" width="70" height="14" uuid="e228500a-702f-4b44-bbfd-11a5032ab61b">
 					<printWhenExpression><![CDATA[$F{falta} != null]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$V{fechaAlta}]]></textFieldExpression>
