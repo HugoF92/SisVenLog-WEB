@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +47,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -88,8 +86,8 @@ public class LiVentasMesBean {
     private static final String SQL_GROUP_BY_VENDEDOR = " GROUP BY MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre ";    
     private static final String SQL_NOTAS_GROUP_BY_VENDEDOR = " GROUP BY MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre, n.ctipo_docum ";    
     /*--------------------------------------------*/
-    private static final String SQL_GROUP_BY_ZONA = "  GROUP BY f.cod_zona, MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, z.xdesc ";
-    private static final String SQL_NOTAS_GROUP_BY_ZONA = "   GROUP BY f.cod_zona, MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, z.xdesc, n.ctipo_docum ";
+    private static final String SQL_GROUP_BY_ZONA = "  GROUP BY f.cod_zona, MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, z.xdesc, z.cod_empr ";
+    private static final String SQL_NOTAS_GROUP_BY_ZONA = "   GROUP BY f.cod_zona, MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, z.xdesc, n.ctipo_docum, z.cod_empr ";
     /*--------------------------------------------*/
     private static final String SQL_GROUP_BY_RUTA = " GROUP BY MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, f.cod_ruta, r.xdesc ";
     private static final String SQL_NOTAS_GROUP_BY_RUTA = "  GROUP BY MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, f.cod_ruta, r.xdesc, n.ctipo_docum ";
@@ -299,7 +297,7 @@ public class LiVentasMesBean {
 
     public Short getProveedorSelected() {
         for(Proveedores cv : this.proveedores){
-            if(cv.getCodProveed()==this.proveedorSelected){
+            if(cv.getCodProveed().compareTo(this.proveedorSelected)==0){
                 this.proveedor = cv;
             }
         }
@@ -308,7 +306,7 @@ public class LiVentasMesBean {
 
     public Short getSubLineaSelected() {
         for(Sublineas cv : this.sublineas){
-            if(cv.getCodSublinea()==this.subLineaSelected){
+            if(cv.getCodSublinea().compareTo(this.subLineaSelected)==0){
                 this.sublinea = cv;
             }
         }
@@ -317,7 +315,7 @@ public class LiVentasMesBean {
 
     public Short getLineaSelected() {
         for(Lineas cv : this.lineas){
-            if(cv.getCodLinea()==this.lineaSelected){
+            if(cv.getCodLinea().compareTo(this.lineaSelected)==0){
                 this.linea = cv;
             }
         }
@@ -326,7 +324,7 @@ public class LiVentasMesBean {
 
     public Short getDivisionSelected() {
         for(Divisiones cv : this.divisiones){
-            if(cv.getCodDivision()==this.divisionSelected){
+            if(cv.getCodDivision().compareTo(this.divisionSelected)==0){
                 this.division = cv;
             }
         }
@@ -344,7 +342,7 @@ public class LiVentasMesBean {
 
     public Short getCiudadClienteSelected() {
         for(Ciudades cv : this.ciudadClientes){
-            if(cv.getCodCiudad()==this.ciudadClienteSelected){
+            if(cv.getCodCiudad().compareTo(this.ciudadClienteSelected)==0){
                 this.ciudadCliente = cv;
             }
         }
@@ -363,7 +361,7 @@ public class LiVentasMesBean {
     
     public Short getRutaSelected() {
         for(Rutas ruta :  this.rutas){
-            if(this.rutaSelected==ruta.getCodRuta()){
+            if(this.rutaSelected.compareTo(ruta.getCodRuta())==0){
                 this.ruta = ruta;
             }
         }
@@ -427,7 +425,7 @@ public class LiVentasMesBean {
 
     public Short getVendedorSelected() {        
         for(Empleados e: this.vendedores){
-            if(e.getCodEmpleado() == this.vendedorSelected){
+            if(e.getCodEmpleado().compareTo(this.vendedorSelected) == 0){
                 this.vendedor = e;    
                 System.out.println("getvendedorselected" + e.getCodEmpleado() + e.getXnombre());
                 
@@ -482,12 +480,13 @@ public class LiVentasMesBean {
             parameters.put("titulo", TITULO);
             parameters.put("nombreRepo", NOMBRE_REPORTE);
             parameters.put("usu_imprime", "admin");
+            short comparar=0;
             if(this.canalVentaSelected.equalsIgnoreCase("0")){
                  parameters.put("txtCanalVta", "TODOS");
             }else{
                 parameters.put("txtCanalVta", this.canalVenta.getCodCanal() + " - " + this.canalVenta.getXdesc());
             }
-            if(this.vendedorSelected == 0){
+            if(this.vendedorSelected.compareTo(comparar) == 0){
                 parameters.put("txtVendedor", "TODOS");
             }else{
                 parameters.put("txtVendedor", this.vendedor.getCodEmpleado() + " - " + this.vendedor.getXnombre());
@@ -498,22 +497,22 @@ public class LiVentasMesBean {
             }else{
                 parameters.put("txtZona", this.zona.getCodZona() + " - " + this.zona.getXdesc());
             }
-            if(this.subLineaSelected ==  0){
+            if(this.subLineaSelected.compareTo(comparar) == 0){
                 parameters.put("txtSubLinea", "TODOS");
             }else{
                 parameters.put("txtSubLinea", this.sublinea.getCodSublinea() + " - " + this.sublinea.getXdesc());
             }
-            if(this.proveedorSelected == 0){
+            if(this.proveedorSelected.compareTo(comparar) == 0){
                 parameters.put("txtProveedor", "TODOS");
             }else{
                 parameters.put("txtProveedor", this.proveedor.getCodProveed() + " - " + this.proveedor.getXnombre());
             }
-            if(this.lineaSelected == 0){
+            if(this.lineaSelected.compareTo(comparar) == 0){
                 parameters.put("txtLinea", "TODOS");
             }else{
                 parameters.put("txtLinea", this.linea.getCodLinea() + " - " + this.linea.getXdesc());
             }             
-            if(this.divisionSelected == 0){
+            if(this.divisionSelected.compareTo(comparar) == 0){
                 parameters.put("txtDivision", "TODOS");
             }else{
                 parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
@@ -967,7 +966,7 @@ public class LiVentasMesBean {
             case "ZONA": 
                 if(tipo.equalsIgnoreCase("VENTA")){
                     String SQL_BASE_VENTAS_ZONA = " SELECT   f.cod_zona, MONTH(f.ffactur) AS nmes, f.cod_cliente,  f.xrazon_social, SUM(d.itotal) AS iventas,  "+
-                        " z.xdesc as xdesc_zona  "+
+                        " z.xdesc as xdesc_zona, z.cod_empr "+
                         " FROM   facturas f INNER JOIN  "+
                         " empleados e ON f.cod_vendedor = e.cod_empleado, zonas z , rutas r, facturas_det d, mercaderias m, sublineas s, lineas l, divisiones v, categorias g, clientes c  "+
                         " WHERE    f.cod_empr = 2 AND e.cod_empr = 2 AND  (f.ffactur BETWEEN '" + formatter.format(this.desde) + "' AND '" + formatter.format(this.hasta) + "') AND (f.mestado = 'A')  "+
@@ -988,7 +987,7 @@ public class LiVentasMesBean {
                     consultaGenerada = consultaGenerada.concat(SQL_GROUP_BY_ZONA);                    
                 }else{
                     String SQL_BASE_NOTAS_CREDITO_ZONA = " SELECT f.cod_zona, MONTH(n.fdocum) AS nmes, f.cod_cliente,  "+
-                        "    f.xrazon_social, SUM(d.igravadas+d.iexentas) AS ttotal, z.xdesc as xdesc_zona , n.ctipo_docum   "+
+                        "    f.xrazon_social, SUM(d.igravadas+d.iexentas) AS ttotal, z.xdesc as xdesc_zona , n.ctipo_docum, z.cod_empr "+
                         "    FROM         notas_ventas n , empleados e, zonas z , rutas r, facturas f, notas_ventas_det d, mercaderias m, sublineas s, lineas l, categorias g, divisiones v  "+
                         "    WHERE    f.cod_empr = 2 AND e.cod_empr = 2 AND  (n.fdocum BETWEEN '" + formatter.format(this.desde) + "' AND '" + formatter.format(this.hasta) + "') AND (f.mestado = 'A')  "+
                         "    AND f.cod_zona = z.cod_zona  "+
@@ -1008,7 +1007,7 @@ public class LiVentasMesBean {
                         "    and f.cod_vendedor = e.cod_empleado  "+
                         "    AND n.mestado = 'A'  "+
                         "    AND n.fac_ctipo_docum = f.ctipo_docum ";
-                    consultaGenerada = generarConsulta(SQL_BASE_NOTAS_CREDITO_ZONA, "ZONA");
+                    consultaGenerada = generarConsulta(SQL_BASE_NOTAS_CREDITO_ZONA, "NOTA");
                     consultaGenerada = consultaGenerada.concat(SQL_NOTAS_GROUP_BY_ZONA);
                 }
                 break;
@@ -1055,7 +1054,7 @@ public class LiVentasMesBean {
                         "   and f.cod_vendedor = e.cod_empleado  "+
                         "   AND n.mestado = 'A'  "+
                         "   AND n.fac_ctipo_docum = f.ctipo_docum ";
-                    consultaGenerada = generarConsulta(SQL_BASE_NOTAS_CREDITO_RUTA, "ZONA");
+                    consultaGenerada = generarConsulta(SQL_BASE_NOTAS_CREDITO_RUTA, "NOTA");
                     consultaGenerada = consultaGenerada.concat(SQL_NOTAS_GROUP_BY_RUTA);
                 }
                 break;

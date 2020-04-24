@@ -251,8 +251,9 @@ public class LiVentasFacade {
         consultaSql = consultaSql.concat("("+ consultaNotas +") notas  ");
         String sqlJoin = " ON "+
             "   (notas.nmes= facturas.nmes "+
-            "   and notas.cod_cliente = facturas.cod_cliente "+
-            "   and notas.cod_zona = facturas.cod_zona) ";
+            "   and notas.cod_cliente = facturas.cod_cliente "+            
+            "   and notas.cod_zona = facturas.cod_zona " +
+            " and notas.cod_empr = facturas.cod_empr )" ;
         consultaSql = consultaSql.concat(sqlJoin);
         System.out.println("CONSULTA SQL FINAL DE ZONA");
         System.out.println(consultaSql);
