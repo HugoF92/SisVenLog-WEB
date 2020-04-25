@@ -1,0 +1,236 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formPagare" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlLiPagares" header="LISTADO PAGARES"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="4" id="pnlGridPagare">
+                                        <p:outputLabel value="Emisión Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="desdeEmision" value="#{liPagaresBean.desdeEmision}" 
+                                                    showOn="button" style="width: 60px;" locale="es">                                            
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Emisión Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liVentMesHasta" value="#{liPagaresBean.hastaEmision}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Vencimiento Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="desdeVencimiento" value="#{liPagaresBean.desdeVencimiento}" 
+                                                    showOn="button" style="width: 60px;" locale="es">                                            
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Vencimiento Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="hastaVencimiento" value="#{liPagaresBean.hastaVencimiento}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="Cobro Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="desdeCobro" value="#{liPagaresBean.desdeCobro}" 
+                                                    showOn="button" style="width: 60px;" locale="es">                                            
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Cobro Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="hastaCobro" value="#{liPagaresBean.hastaCobro}" 
+                                                    showOn="button" style="width: 60px;" locale="es" >
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="Estado:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liPagaresBean.estadoPagare}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;">
+                                            <f:selectItem itemLabel="TODOS" itemValue="TODOS"/>
+                                            <f:selectItem itemLabel="ACTIVOS" itemValue="A"/>
+                                            <f:selectItem itemLabel="INACTIVOS" itemValue="I"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel for="checkPagareDetalle" value="Con Detalles"/>
+                                        <p:selectBooleanCheckbox id="checkPagareDetalle" value="#{liPagaresBean.checkPagareDetalle}"/>
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente_pagare" columns="3">
+                                            <p:inputText id="codigo_cliente_id_pagare" value="#{liPagaresBean.codigoCliente}" style="width: 60px;">
+                                                <p:ajax event="blur" update="cliente_descripcion_pagare" listener="#{liPagaresBean.verificarCliente}"/>
+                                            </p:inputText>
+                                            <p:commandButton 
+                                                oncomplete="PF('dlgBusClieConsultaPagare').show()"
+                                                update="formPagare"
+                                                icon="fa fa-search"
+                                                styleClass="blue-btn raised-btn" 
+                                                style="width: 30px;"
+                                                ajax="true"/>
+                                            <p:outputLabel id="cliente_descripcion_pagare" value="#{liPagaresBean.nombreCliente}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        <p:outputLabel for="checkPagareDetalle" value="Todos"/>
+                                        <p:selectBooleanCheckbox id="checkPagarecliente" value="#{liPagaresBean.checkCliente}"/>
+                                    </h:panelGrid>
+                                    <br></br>
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liPagaresBean.generarArchivo('PDF')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                    <p:commandLink title="Planilla Exccell"
+                                                   action="#{liPagaresBean.generarArchivo('EXCELL')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" >
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+
+                                </p:panel>
+
+
+                            </center>
+
+                        </h:form>
+                        
+                        <h:form id="formBusClie_cc"  prependId="false">
+
+                            <p:growl id="msgBusCliente_cc" showDetail="true"/>
+
+                            <p:dialog header="Buscar Cliente"
+                                      widgetVar="dlgBusClieConsultaPagare"
+                                      modal="true"
+                                      closable="true"
+                                      closeOnEscape="true"
+                                      resizable="false"
+                                      width="700">
+
+                                <p:ajax event="open"
+                                        listener="#{liPagaresBean.inicializarBuscadorClientes}"
+                                        update="pnlBusClie_cc tablaBusClie_cc"/>
+
+                                <h:panelGrid id="pnlBusClie_cc" columns="2">
+
+                                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                                    <h:panelGrid columns="2">
+                                        <p:inputText id="filtroBusClie_cc"
+                                                     value="#{liPagaresBean.filtro}"
+                                                     style="width: 200px;">
+                                            <p:tooltip  for="filtroBusClie_cc" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                                        </p:inputText>
+
+                                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                                         style="width: 100px;" actionListener="#{liPagaresBean.listarClientesBuscador()}"
+                                                         update="tablaBusClie_cc msgBusCliente_cc"/>
+
+
+                                    </h:panelGrid>
+
+
+                                </h:panelGrid>
+
+                                <p:dataTable id="tablaBusClie_cc"
+                                             var="detalle1"
+                                             value="#{liPagaresBean.listaClientes}"
+                                             paginator="true"
+                                             rows="5"
+                                             rowsPerPageTemplate="5,10"
+                                             emptyMessage="Sin datos para mostrar."
+                                             style="width: 98%;"
+                                             rowKey="#{detalle1.codCliente}"
+                                             selection="#{liPagaresBean.clientes}"
+                                             selectionMode="single"
+                                             paginatorPosition="bottom">
+
+                                    <p:ajax event="rowSelect"
+                                            listener="#{liPagaresBean.onRowSelect(event)}"/>
+
+
+                                    <p:column headerText="Codigo" width="100">
+                                        <h:outputText value="#{detalle1.codCliente}"/>
+                                    </p:column>
+
+                                    <p:column headerText="RUC" width="100">
+                                        <h:outputText value="#{detalle1.xruc}"/>
+                                    </p:column>
+
+                                    <p:column headerText="CI" width="100">
+                                        <h:outputText value="#{detalle1.xcedula}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nombre" width="200">
+                                        <h:outputText value="#{detalle1.xnombre}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+
+
+                            </p:dialog>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+            <p:dialog id="exceptionDialogPagare" header="Ocurrió un error" widgetVar="exceptionDialogPagare"
+                      height="500px" width="700px">
+                Message: #{liPagaresBean.tituloError} <br/>
+                StackTrace: <h:outputText value="#{liPagaresBean.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

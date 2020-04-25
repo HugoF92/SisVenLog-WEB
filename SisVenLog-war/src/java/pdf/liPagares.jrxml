@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liVentasMes" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="usu_imprime" class="java.lang.String"/>
+	<parameter name="fechaDesdeEmision" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fechaHastaEmision" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="nombreRepo" class="java.lang.String"/>
+	<parameter name="txtCliente" class="java.lang.String"/>
+	<parameter name="sumTotalPagare" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["E:\\Proyectos\\venlog\\repositorio\\SisVenLog-WEB\\SisVenLog-war\\src\\java\\pdf\\liPagaresSub.jasper"]]></defaultValueExpression>
+	</parameter>
+	<field name="detallePagares" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+	<field name="txtTipoDocum" class="java.lang.String"/>
+	<field name="txtNroFactura" class="java.lang.String"/>
+	<field name="txtFechFactura" class="java.lang.String"/>
+	<field name="txtTotal" class="java.lang.String"/>
+	<variable name="totalGeneral" class="java.math.BigDecimal" calculation="Sum"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="129" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="16" width="101" height="14" uuid="c7ba82dc-a8a4-468e-8b54-0c24059c853a"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stock y Cta. Cte.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="0" width="101" height="16" uuid="986423d4-af2a-47f2-951b-c94962ecd4ec"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENLOG S.A.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="725" y="2" width="73" height="14" uuid="6891f4ce-0949-43c7-a921-454b468a2bb8"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="676" y="2" width="49" height="14" uuid="8f32f822-47d9-4e50-b62f-6adc192d9bbe"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="127" width="799" height="1" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="511" y="52" width="115" height="14" uuid="a2881d8d-d353-42c5-8ce0-515381cd973e"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{fechaHastaEmision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="32" width="798" height="20" uuid="d6f1f2ae-b57d-4fa7-a1c7-297bd169e319"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="213" y="52" width="133" height="14" uuid="55bd3dd8-18af-4244-99fb-c1fea3451989"/>
+				<textElement textAlignment="Center">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaDesdeEmision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="676" y="16" width="122" height="14" uuid="fc37aee2-ae6b-4878-8ce7-6e6f41fec8ee"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{nombreRepo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="130" y="52" width="83" height="14" uuid="87e7507f-da97-43db-ad43-1bd06099e5bc"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde Emisión:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="429" y="52" width="82" height="14" uuid="ca177cda-826d-46a1-a86b-bcd53c103976"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta Emisión:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="217" y="82" width="100" height="14" uuid="6df02af0-b290-494a-906d-24059d12c6c3"/>
+				<textFieldExpression><![CDATA[$P{txtCliente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="158" y="82" width="59" height="14" uuid="c35cd2fc-7025-4a54-9b8c-be48a821f1dd"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="38" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="0" width="100" height="17" uuid="18428059-a701-4d8b-8d19-a7ecbb7dc6b8"/>
+				<textFieldExpression><![CDATA[$F{txtTipoDocum}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="103" y="0" width="100" height="17" uuid="87fcc28b-0d23-4eec-baf0-bfd1a91cd0c8"/>
+				<textFieldExpression><![CDATA[$F{txtNroFactura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="204" y="0" width="100" height="17" uuid="eba9d443-9c1d-4212-8763-a37b1c54c5ec"/>
+				<textFieldExpression><![CDATA[$F{txtFechFactura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="304" y="0" width="100" height="17" uuid="10d3d1ba-e88e-42d5-abea-dd37a26affbe"/>
+				<textFieldExpression><![CDATA[$F{txtTotal}]]></textFieldExpression>
+			</textField>
+			<subreport runToBottom="false">
+				<reportElement x="3" y="17" width="799" height="21" uuid="77b7b155-9772-4801-8399-c3b1798a580e"/>
+				<dataSourceExpression><![CDATA[$F{detallePagares}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="8" width="63" height="14" uuid="2f32d0d9-5835-43b0-999d-23a930fcf144"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Impreso el:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="74" y="8" width="111" height="14" uuid="dd04c650-f64e-419a-8c74-c32a8acabd43"/>
+				<textElement>
+					<font size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="3" y="1" width="799" height="1" uuid="642b4c76-c2d8-4f5b-ab24-f0b7fa7db180"/>
+			</line>
+			<textField>
+				<reportElement x="217" y="8" width="100" height="16" uuid="babb5227-57a5-4b63-ae1d-6d0151a40736"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usu_imprime}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="588" y="8" width="80" height="14" uuid="92456382-90d7-4600-9e51-ef0518ffbd3f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="59" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="45" width="98" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[*FIN DEL INFORME*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="489" y="45" width="99" height="14" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL PAGARES:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="588" y="45" width="131" height="14" uuid="e32c3bd0-0c48-402c-93cf-9560660c801b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{sumTotalPagare}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
