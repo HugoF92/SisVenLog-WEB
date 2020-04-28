@@ -6,14 +6,13 @@
 package dao;
 
 import dto.LiVentas;
+import dto.LiVentasCab;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,6 +34,279 @@ public class LiVentasFacade {
 
     public LiVentasFacade() {
         
+    }
+    
+    public List<LiVentas> obtenerListadoExcell(String consultaVenta, String consultaNotas){         
+        String consultaSql = " select facturas.cod_vendedor, facturas.xnombre, facturas.cod_zona, facturas.xdesc_zona, facturas.cod_ruta, facturas.xdesc_ruta, "+
+            " facturas.cod_cliente,   "+
+            " facturas.xrazon_social, "+
+            " facturas.nmes, " +
+            " case when notas.ctipo_docum IS NOT NULL THEN  "+
+            " facturas.iventas - notas.ttotal "+
+            " ELSE "+
+            " facturas.iventas "+
+            " END as total_ventas "+
+            " FROM ";
+        consultaSql = consultaSql.concat("("+consultaVenta+") facturas  LEFT JOIN ");
+        
+        consultaSql = consultaSql.concat("("+ consultaNotas +") notas  ");
+        String sqlJoin = " ON "+
+            "   (notas.nmes= facturas.nmes "+
+            "   and notas.cod_cliente = facturas.cod_cliente "+
+            "   and notas.cod_vendedor = facturas.cod_vendedor and notas.cod_ruta = facturas.cod_ruta and notas.cod_zona = facturas.cod_zona) "+
+            " order by facturas.cod_vendedor, facturas.cod_zona, facturas.cod_ruta, facturas.cod_cliente ";        
+        consultaSql = consultaSql.concat(sqlJoin);
+        System.out.println("CONSULTA SQL FINAL DE VENDEDOR");
+        System.out.println(consultaSql);
+        Query qVenta = em.createNativeQuery(consultaSql);
+        List<Object[]> resultados = qVenta.getResultList();
+        List<LiVentas> ventas = new ArrayList<LiVentas>();
+        for(Object[] o : resultados) {
+            LiVentas venta = new LiVentas();            
+            if(o[0]!=null) {
+                venta.setCodVendedor(new Short(o[0].toString()));
+            }
+            if(o[1]!=null) {
+                venta.setDescripcionVendedor(o[1].toString());
+            }
+            if(o[2]!=null) {
+                venta.setCodZona(o[2].toString());
+            }
+            if(o[3]!=null) {
+                venta.setDescripcionZona(o[3].toString());
+            }
+            if(o[4]!=null) {
+                venta.setCodRuta(new Short(o[4].toString()));
+            }
+            if(o[5]!=null) {
+                venta.setDescripcionRunta(o[5].toString());
+            }
+            if(o[6]!=null) {
+                venta.setCodCliente(Integer.parseInt(o[6].toString()));                
+            }
+            if(o[7]!=null) {
+                venta.setRazonSocialCliente(o[7].toString());                
+            }
+            if(o[8]!=null) {
+                venta.setNmes(Integer.parseInt(o[8].toString()));                
+            }           
+            if(o[9]!=null) {
+                venta.setMonto(new BigDecimal(o[9].toString()));                
+            }             
+            ventas.add(venta);
+        }  
+        return ventas;
+    }
+    
+    public List<LiVentasCab> obtenerListado(String consultaVenta, String consultaNotas){         
+        String consultaSql = " select facturas.cod_vendedor, facturas.xnombre, facturas.cod_zona, facturas.xdesc_zona, facturas.cod_ruta, facturas.xdesc_ruta, "+
+            " facturas.cod_cliente,   "+
+            " facturas.xrazon_social, "+
+            " facturas.nmes, " +
+            " case when notas.ctipo_docum IS NOT NULL THEN  "+
+            " facturas.iventas - notas.ttotal "+
+            " ELSE "+
+            " facturas.iventas "+
+            " END as total_ventas "+
+            " FROM ";
+        consultaSql = consultaSql.concat("("+consultaVenta+") facturas  LEFT JOIN ");
+        
+        consultaSql = consultaSql.concat("("+ consultaNotas +") notas  ");
+        String sqlJoin = " ON "+
+            "   (notas.nmes= facturas.nmes "+
+            "   and notas.cod_cliente = facturas.cod_cliente "+
+            "   and notas.cod_vendedor = facturas.cod_vendedor and notas.cod_ruta = facturas.cod_ruta and notas.cod_zona = facturas.cod_zona) "+
+            " order by facturas.cod_vendedor, facturas.cod_zona, facturas.cod_ruta, facturas.cod_cliente ";        
+        consultaSql = consultaSql.concat(sqlJoin);
+        System.out.println("CONSULTA SQL FINAL DE VENDEDOR");
+        System.out.println(consultaSql);
+        Query qVenta = em.createNativeQuery(consultaSql);
+        List<Object[]> resultados = qVenta.getResultList();
+        List<LiVentas> ventas = new ArrayList<LiVentas>();
+        List<LiVentasCab> ventasMes = new ArrayList<LiVentasCab>();
+        for(Object[] o : resultados) {
+            LiVentas venta = new LiVentas();            
+            if(o[0]!=null) {
+                venta.setCodVendedor(new Short(o[0].toString()));
+            }
+            if(o[1]!=null) {
+                venta.setDescripcionVendedor(o[1].toString());
+            }
+            if(o[2]!=null) {
+                venta.setCodZona(o[2].toString());
+            }
+            if(o[3]!=null) {
+                venta.setDescripcionZona(o[3].toString());
+            }
+            if(o[4]!=null) {
+                venta.setCodRuta(new Short(o[4].toString()));
+            }
+            if(o[5]!=null) {
+                venta.setDescripcionRunta(o[5].toString());
+            }
+            if(o[6]!=null) {
+                venta.setCodCliente(Integer.parseInt(o[6].toString()));                
+            }
+            if(o[7]!=null) {
+                venta.setRazonSocialCliente(o[7].toString());                
+            }
+            if(o[8]!=null) {
+                venta.setNmes(Integer.parseInt(o[8].toString()));                
+            }           
+            if(o[9]!=null) {
+                venta.setMonto(new BigDecimal(o[9].toString()));                
+            }             
+            ventas.add(venta);
+            
+        }          
+        Map<Short, Map<String, Map<Short, List<LiVentas>>>> map = ventas.stream().collect(Collectors.groupingBy(LiVentas::getCodVendedor,
+        Collectors.groupingBy(LiVentas::getCodZona, Collectors.groupingBy(LiVentas::getCodRuta))));
+        
+        for(Map.Entry<Short, Map<String, Map<Short, List<LiVentas>>>> vendedor : map.entrySet()){
+            Short codVendedor = vendedor.getKey();
+            for(Map.Entry<String, Map<Short, List<LiVentas>>> zona : vendedor.getValue().entrySet()){
+                String codZona = zona.getKey();
+                for(Map.Entry<Short, List<LiVentas>> ruta : zona.getValue().entrySet()){
+                    Short codRuta = ruta.getKey();
+                    LiVentasCab venta = new LiVentasCab();
+                    venta.setCodVendedor(codVendedor);
+                    venta.setCodZona(codZona);
+                    venta.setCodRuta(codRuta);
+                    List<LiVentas> detalles = new ArrayList<LiVentas>();
+                    LiVentas cab = ruta.getValue().get(0);
+                    venta.setDescripcionVendedor(cab.getDescripcionVendedor());
+                    venta.setDescripcionZona(cab.getDescripcionZona());
+                    venta.setDescripcionRunta(cab.getDescripcionRunta());
+                    BigDecimal sumEne = new BigDecimal(0);BigDecimal sumFeb = new BigDecimal(0);BigDecimal sumMar = new BigDecimal(0);BigDecimal sumAbr = new BigDecimal(0);
+                    BigDecimal sumMay = new BigDecimal(0);BigDecimal sumJun = new BigDecimal(0);BigDecimal sumJul = new BigDecimal(0);BigDecimal sumAgo = new BigDecimal(0);
+                    BigDecimal sumSep = new BigDecimal(0);BigDecimal sumOct = new BigDecimal(0);BigDecimal sumNov = new BigDecimal(0);BigDecimal sumDic = new BigDecimal(0);
+                    BigDecimal sumTotal = new BigDecimal(0);
+                    for(LiVentas m : ruta.getValue()){
+                        switch (m.getNmes()) {
+                            case 1:                                
+                                sumEne = sumEne.add(m.getMonto());
+                                break;
+                            case 2:
+                                sumFeb = sumFeb.add(m.getMonto());
+                                break;
+                            case 3:
+                                sumMar = sumMar.add(m.getMonto());
+                                break;
+                            case 4:
+                                sumAbr = sumAbr.add(m.getMonto());
+                                break;
+                            case 5:
+                                sumMay = sumMay.add(m.getMonto());
+                                break;
+                            case 6:
+                                sumJun = sumJun.add(m.getMonto());
+                                break;
+                            case 7:
+                                sumJul = sumJul.add(m.getMonto());
+                                break;
+                            case 8:
+                                sumAgo = sumAgo.add(m.getMonto());
+                                break;
+                            case 9:
+                                sumSep = sumSep.add(m.getMonto());
+                                break;
+                            case 10:
+                                sumOct = sumOct.add(m.getMonto());
+                                break;
+                            case 11:
+                                sumNov = sumNov.add(m.getMonto());
+                                break;
+                            default:
+                                sumDic = sumDic.add(m.getMonto());
+                                break;
+                        }
+                    }
+                    //TOTAL POR ZONA QUE REQUIERE LA AGRUPACION
+                    Map<String, BigDecimal> montoPorMes = new HashMap<String, BigDecimal>();
+                    montoPorMes.put("sumEne", sumEne);montoPorMes.put("sumFeb", sumFeb);montoPorMes.put("sumMar", sumMar);montoPorMes.put("sumAbr", sumAbr);montoPorMes.put("sumMay", sumMay);
+                    montoPorMes.put("sumJun", sumJun);montoPorMes.put("sumJul", sumJul);montoPorMes.put("sumAgo", sumAgo);montoPorMes.put("sumSep", sumSep);montoPorMes.put("sumOct", sumOct);
+                    montoPorMes.put("sumNov", sumNov);montoPorMes.put("sumDic", sumDic);
+                    sumTotal = sumTotal.add(sumEne).add(sumFeb).add(sumMar).add(sumAbr).add(sumMay).add(sumJun).add(sumJul).add(sumAgo).add(sumSep).add(sumOct).add(sumNov).add(sumDic);
+                    montoPorMes.put("sumTotal", sumTotal);
+                    //CALCULAR LISTADO CLIENTES CON MES TRASPUESTOS
+                    List<Map<String, Object>> listadoClientes = calcularDetallesClientes(ruta.getValue());
+                    venta.setClientesPorMes(listadoClientes);
+                    venta.setMontoPorMes(montoPorMes);
+                    ventasMes.add(venta);
+                }
+            }        
+        }        
+        return ventasMes;
+    }
+    
+    public List<Map<String, Object>> calcularDetallesClientes(List<LiVentas> vendedor){
+        List<Map<String, Object>> listadoClientes = new ArrayList<Map<String, Object>>();
+        Map<Integer, List<LiVentas>> collect = vendedor.stream().collect(Collectors.groupingBy(LiVentas::getCodCliente));
+        for (Map.Entry<Integer, List<LiVentas>> agrupPorCliente : collect.entrySet()) {
+            BigDecimal sumEne = new BigDecimal(0);BigDecimal sumFeb = new BigDecimal(0);BigDecimal sumMar = new BigDecimal(0);BigDecimal sumAbr = new BigDecimal(0);
+            BigDecimal sumMay = new BigDecimal(0);BigDecimal sumJun = new BigDecimal(0);BigDecimal sumJul = new BigDecimal(0);BigDecimal sumAgo = new BigDecimal(0);
+            BigDecimal sumSep = new BigDecimal(0);BigDecimal sumOct = new BigDecimal(0);BigDecimal sumNov = new BigDecimal(0);BigDecimal sumDic = new BigDecimal(0);
+            BigDecimal sumTotal = new BigDecimal(0);
+            for(LiVentas venta : agrupPorCliente.getValue()){
+                switch (venta.getNmes()) {
+                    case 1:                                
+                        sumEne = sumEne.add(venta.getMonto());
+                        break;
+                    case 2:
+                        sumFeb = sumFeb.add(venta.getMonto());
+                        break;
+                    case 3:
+                        sumMar = sumMar.add(venta.getMonto());
+                        break;
+                    case 4:
+                        sumAbr = sumAbr.add(venta.getMonto());
+                        break;
+                    case 5:
+                        sumMay = sumMay.add(venta.getMonto());
+                        break;
+                    case 6:
+                        sumJun = sumJun.add(venta.getMonto());
+                        break;
+                    case 7:
+                        sumJul = sumJul.add(venta.getMonto());
+                        break;
+                    case 8:
+                        sumAgo = sumAgo.add(venta.getMonto());
+                        break;
+                    case 9:
+                        sumSep = sumSep.add(venta.getMonto());
+                        break;
+                    case 10:
+                        sumOct = sumOct.add(venta.getMonto());
+                        break;
+                    case 11:
+                        sumNov = sumNov.add(venta.getMonto());
+                        break;
+                    default:
+                        sumDic = sumDic.add(venta.getMonto());
+                        break;
+                }
+            }
+            Map<String, Object> datos = new HashMap<String, Object>();
+            datos.put("textCliente", agrupPorCliente.getValue().get(0).getRazonSocialCliente());
+            datos.put("codCliente", agrupPorCliente.getValue().get(0).getCodCliente());
+            datos.put("sumEne", sumEne);
+            datos.put("sumFeb", sumFeb);
+            datos.put("sumMar", sumMar);
+            datos.put("sumAbr", sumAbr);
+            datos.put("sumMay", sumMay);
+            datos.put("sumJun", sumJun);
+            datos.put("sumJul", sumJul);
+            datos.put("sumAgo", sumAgo);
+            datos.put("sumSep", sumSep);
+            datos.put("sumOct", sumOct);
+            datos.put("sumNov", sumNov);
+            datos.put("sumDic", sumDic);
+            sumTotal = sumTotal.add(sumEne).add(sumFeb).add(sumMar).add(sumAbr).add(sumMay).add(sumJun).add(sumJul).add(sumAgo).add(sumSep).add(sumOct).add(sumNov).add(sumDic);
+            datos.put("sumTotal", sumTotal);
+            listadoClientes.add(datos);
+        }
+        return listadoClientes;
     }
     
     public Map<String, Map<String, List<LiVentas>>> obtenerConsultaVendedores(String consultaVenta, String consultaNotas, String ventaZona, String notaZona, String ventaRuta, String notaRuta){   
@@ -111,61 +383,7 @@ public class LiVentasFacade {
         //incluir total de la venta al map que se retorna para generar el reporte
         retorno.put("TOTAL_VENTA", totalesVenta); 
         return retorno;
-    }
-    
-    private List<LiVentas> generarDatosPrueba(String tipo){
-        Random r = new Random();
-        List<LiVentas> listadoVentas = new ArrayList<LiVentas>();
-        for (Integer j = 0; j < 5; j++){
-            String descripcion = tipo.concat("-").concat(randomIdentifier());
-            ///String codigo = r.nextInt((9000 - 1000) + 1) + 1000;
-            for(Integer n = 0; n < 5; n++){
-                String cliente = "CLIENTE - ".concat(randomIdentifier());
-                Integer codigoCliente = r.nextInt((9000 - 1000) + 1) + 1000;
-                for(Integer i = 0; i < 5; i++){
-                    LiVentas e = new LiVentas();
-                    e.setCodCliente(codigoCliente);
-                    e.setRazonSocialCliente(cliente);
-                    //e.setCodigo(codigo);
-                    e.setDescripcion(descripcion);
-                    e.setNmes(r.nextInt((12 - 1) + 1) + 1);
-                    e.setMonto(generateRandomBigDecimalFromRange(new BigDecimal(1000), new BigDecimal(5000)));
-                    listadoVentas.add(e);
-                }
-            }
-            
-        }
-        System.out.println("DATOS TIPO: " + tipo);
-        for(LiVentas v: listadoVentas){
-            System.out.println(String.format("MES [%s], COD CLIENTE [%s], RAZON SOCIAL CLIENTE [%s], MONTO [%s], CODIGO [%s], DESCRIPCION [%s]", 
-                   String.valueOf( v.getNmes()), String.valueOf(v.getCodCliente()), v.getRazonSocialCliente(), v.getMonto().toString(), String.valueOf(v.getCodigo()), v.getDescripcion()));
-        }
-        System.out.println("=============================================================================================================================================================");
-        return listadoVentas;
-    }
-    
-    public static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
-        BigDecimal randomBigDecimal = min.add(new BigDecimal(Math.random()).multiply(max.subtract(min)));
-        return randomBigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
-    }
-    
-    public String randomIdentifier() {
-        final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
-        final java.util.Random rand = new java.util.Random();
-        // consider using a Map<String,Boolean> to say whether the identifier is being used or not 
-        final Set<String> identifiers = new HashSet<String>();
-        StringBuilder builder = new StringBuilder();
-        while(builder.toString().length() == 0) {
-            int length = rand.nextInt(5)+5;
-            for(int i = 0; i < length; i++) {
-                builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
-            }
-            if(identifiers.contains(builder.toString())) {
-                builder = new StringBuilder();
-            }
-        }
-        return builder.toString();
-    }
+    } 
     
     private Map<String, List<LiVentas>> obtenerVendedor(String consultaVenta, String consultaNotas){        
         String consultaSql = " select facturas.nmes,  "+

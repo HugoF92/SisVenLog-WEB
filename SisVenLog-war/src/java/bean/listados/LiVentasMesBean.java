@@ -18,6 +18,7 @@ import dao.TiposClientesFacade;
 import dao.TiposVentasFacade;
 import dao.ZonasFacade;
 import dto.LiVentas;
+import dto.LiVentasCab;
 import entidad.CanalesVenta;
 import entidad.Ciudades;
 import entidad.Divisiones;
@@ -29,18 +30,21 @@ import entidad.Sublineas;
 import entidad.TiposClientes;
 import entidad.TiposVentas;
 import entidad.Zonas;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -53,10 +57,10 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  *
  * @author Clara
@@ -64,24 +68,6 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 @ManagedBean
 @SessionScoped
 public class LiVentasMesBean {
-    private String SQL_BASE_VENTAS = " SELECT   f.cod_ruta, f.cod_zona, MONTH(f.ffactur) AS nmes, f.cod_cliente,  f.xrazon_social, SUM(d.itotal) AS iventas, f.cod_vendedor, e.xnombre, " +
-        " z.xdesc as xdesc_zona , r.xdesc as xdesc_ruta " +
-        " FROM   facturas f INNER JOIN " +
-        " empleados e ON f.cod_vendedor = e.cod_empleado, zonas z , rutas r, facturas_det d, mercaderias m, sublineas s, lineas l, divisiones v, categorias g, clientes c " +
-        " WHERE    f.cod_empr = 2 AND e.cod_empr = 2 AND  (f.ffactur BETWEEN :l_finicial AND :l_ffinal) AND (f.mestado = 'A') " +
-        " AND f.cod_zona = z.cod_zona " +
-        " AND f.cod_ruta = r.cod_ruta " + 
-        " AND f.nrofact = d.nrofact " +
-        " AND f.ffactur = d.ffactur  " +
-        " AND f.cod_empr = d.cod_empr " +
-        " AND d.cod_merca = m.cod_merca " +
-        " AND m.cod_sublinea = s.cod_sublinea " +
-        " AND s.cod_linea = l.cod_linea " +
-        " AND l.cod_categoria = g.cod_categoria " +
-        " AND g.cod_division = v.cod_division " +
-        " AND f.cod_cliente = c.cod_cliente " +
-        " AND d.cod_empr = 2 " +
-        " AND f.mestado = 'A' ";
     /*-----------------vendedor---------------------------------*/    
     private static final String SQL_GROUP_BY_VENDEDOR = " GROUP BY MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre ";    
     private static final String SQL_NOTAS_GROUP_BY_VENDEDOR = " GROUP BY MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre, n.ctipo_docum ";    
@@ -92,28 +78,10 @@ public class LiVentasMesBean {
     private static final String SQL_GROUP_BY_RUTA = " GROUP BY MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, f.cod_ruta, r.xdesc ";
     private static final String SQL_NOTAS_GROUP_BY_RUTA = "  GROUP BY MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, f.cod_ruta, r.xdesc, n.ctipo_docum ";
     /*------------------------------------------------------------------------------------ */
-    private String SQL_BASE_NOTAS_CREDITO = " SELECT     f.cod_ruta, f.cod_zona, MONTH(n.fdocum) AS nmes, f.cod_cliente, " +
-        " f.xrazon_social, SUM(d.igravadas+d.iexentas) AS ttotal, f.cod_vendedor, e.xnombre, z.xdesc as xdesc_zona , r.xdesc as xdesc_ruta, n.ctipo_docum " +
-        " FROM         notas_ventas n , empleados e, zonas z , rutas r, facturas f, notas_ventas_det d, mercaderias m, sublineas s, lineas l, categorias g, divisiones v, clientes c " +
-        " WHERE    f.cod_empr = 2 AND e.cod_empr = 2 AND  (n.fdocum BETWEEN :l_finicial AND :l_ffinal) AND (f.mestado = 'A') " +
-        " AND f.cod_zona = z.cod_zona " +
-        " AND n.nro_nota = d.nro_nota " +
-        " AND d.cod_empr = 2 " +
-        " AND n.cod_empr = 2 " +
-        " AND d.cod_merca = m.cod_merca " +
-        " AND f.cod_ruta = r.cod_ruta " +
-        " AND n.nrofact = f.nrofact " +
-        " AND n.ffactur = f.ffactur " +
-        " AND n.fdocum = d.fdocum " +
-        " AND n.ctipo_docum = 'NCV' " +
-        " AND m.cod_sublinea = s.cod_sublinea " +
-        " AND s.cod_linea = l.cod_linea " +
-        " AND l.cod_categoria = g.cod_categoria " +
-        " AND g.cod_division = v.cod_division " +
-        " AND f.cod_vendedor = e.cod_empleado " +
-        " AND f.cod_cliente = c.cod_cliente " +
-        " AND n.mestado = 'A' " +
-        " AND n.fac_ctipo_docum = f.ctipo_docum ";
+    /*--------------------------------------------*/
+    private static final String SQL_GROUP_BY_TOTAL = " GROUP BY f.cod_vendedor, e.xnombre, f.cod_zona, z.xdesc, f.cod_ruta, r.xdesc, f.cod_cliente, f.xrazon_social, MONTH(f.ffactur)";
+    private static final String SQL_NOTAS_GROUP_BY_TOTAL = " GROUP BY f.cod_vendedor, e.xnombre, f.cod_zona, z.xdesc, f.cod_ruta, r.xdesc, f.cod_cliente, f.xrazon_social, MONTH(n.fdocum), n.ctipo_docum ";
+    /*------------------------------------------------------------------------------------ */
     //valores iniciales para las fechas del reporte
     private Date desde;
     private Date hasta;
@@ -234,245 +202,79 @@ public class LiVentasMesBean {
         this.vendedorSelected = 0;
     }
 
-    public String getZonaSelected() {
-        for(Zonas z : this.zonas){
-            if(z.getCodZona().equalsIgnoreCase(this.zonaSelected)){
-                this.zona = z;
+    
+    
+    public void generarAchivoExcell(){
+        if(this.desde != null && this.hasta != null){
+            String consultaVentaTotal = generarConsultaAgrupacion("TOTAL", "VENTA");       
+            String consultaNotaTotal = generarConsultaAgrupacion("TOTAL", "NOTAS");
+            List<LiVentas> listadoVentasMes = this.ventasFacade.obtenerListadoExcell(consultaVentaTotal, consultaNotaTotal);
+            try {
+                HSSFWorkbook wb = new HSSFWorkbook();
+                HSSFSheet sheet = wb.createSheet();                
+                List<LiVentas> statFilterResults = listadoVentasMes;
+                Iterator<LiVentas> statsIterator = statFilterResults.iterator();
+                int i = 0;
+                HSSFRow row;
+                row = sheet.createRow((short) 0);
+                row.createCell((short) 0).setCellValue("CodVendedor");
+                row.createCell((short) 1).setCellValue("DescripcionVendedor");
+                row.createCell((short) 2).setCellValue("CodZona");
+                row.createCell((short) 3).setCellValue("DescripcionZona");
+                row.createCell((short) 4).setCellValue("CodRuta");
+                row.createCell((short) 5).setCellValue("DescripcionRuta");
+                row.createCell((short) 6).setCellValue("CodCliente");
+                row.createCell((short) 7).setCellValue("DescripcionCliente");
+                row.createCell((short) 8).setCellValue("Mes");
+                row.createCell((short) 9).setCellValue("Total");
+                while (statsIterator.hasNext()) {
+                    i++;
+                    row = sheet.createRow((short) i);
+                    LiVentas perfBean = statsIterator.next();
+                    row.createCell((short) 0).setCellValue(perfBean.getCodVendedor());
+                    row.createCell((short) 1).setCellValue(perfBean.getDescripcionVendedor());
+                    row.createCell((short) 2).setCellValue(perfBean.getCodZona());
+                    row.createCell((short) 3).setCellValue(perfBean.getDescripcionZona());
+                    row.createCell((short) 4).setCellValue(perfBean.getCodRuta());
+                    row.createCell((short) 5).setCellValue(perfBean.getDescripcionRunta());
+                    row.createCell((short) 6).setCellValue(perfBean.getCodCliente());
+                    row.createCell((short) 7).setCellValue(perfBean.getRazonSocialCliente());                    
+                    row.createCell((short) 8).setCellValue(getMesDescripcion(perfBean.getNmes()));
+                    row.createCell((short) 9).setCellValue(perfBean.getMonto().doubleValue());
+                }
+                HttpServletResponse res = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+                res.setContentType("application/vnd.ms-excel");
+                res.setHeader("Content-disposition", "attachment; filename=rventas_mes.xls");
+
+                try {
+                    ServletOutputStream out = res.getOutputStream();
+                    wb.write(out);
+                    out.flush();
+                    out.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                FacesContext faces = FacesContext.getCurrentInstance();
+                faces.responseComplete();
+            } catch (Exception e) {
+                System.out.println(e);
             }
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            
         }
-        return zonaSelected;
-    }
-
-    public void setZonaSelected(String zonaSelected) {
-        this.zonaSelected = zonaSelected;
     }
     
-    public List<Rutas> listarRutas(){ 
-        this.rutas = rutasFacade.findAll();
-        return this.rutas;
-    }
-
-    public void setCanalVentaSelected(String canalVentaSelected) {
-        this.canalVentaSelected = canalVentaSelected;
-    }
-
-    public void setProveedorSelected(Short proveedorSelected) {
-        this.proveedorSelected = proveedorSelected;
-    }
-
-    public void setSubLineaSelected(Short subLineaSelected) {
-        this.subLineaSelected = subLineaSelected;
-    }
-
-    public void setLineaSelected(Short lineaSelected) {
-        this.lineaSelected = lineaSelected;
-    }
-
-    public void setDivisionSelected(Short divisionSelected) {
-        this.divisionSelected = divisionSelected;
-    }
-
-    public void setTipoClienteSelected(String tipoClienteSelected) {
-        this.tipoClienteSelected = tipoClienteSelected;
-    }
-
-    public void setCiudadClienteSelected(Short ciudadClienteSelected) {
-        this.ciudadClienteSelected = ciudadClienteSelected;
-    }
-
-    public void setTipoVentaSelected(String tipoVentaSelected) {
-        this.tipoVentaSelected = tipoVentaSelected;
-    }
-
-    
-    
-    public String getCanalVentaSelected() {
-        for(CanalesVenta cv : this.canalesVenta){
-            if(cv.getCodCanal().equalsIgnoreCase(this.canalVentaSelected)){
-                this.canalVenta = cv;
-            }
-        }
-        return canalVentaSelected;
-    }
-
-    public Short getProveedorSelected() {
-        for(Proveedores cv : this.proveedores){
-            if(cv.getCodProveed().compareTo(this.proveedorSelected)==0){
-                this.proveedor = cv;
-            }
-        }
-        return proveedorSelected;
-    }
-
-    public Short getSubLineaSelected() {
-        for(Sublineas cv : this.sublineas){
-            if(cv.getCodSublinea().compareTo(this.subLineaSelected)==0){
-                this.sublinea = cv;
-            }
-        }
-        return subLineaSelected;
-    }
-
-    public Short getLineaSelected() {
-        for(Lineas cv : this.lineas){
-            if(cv.getCodLinea().compareTo(this.lineaSelected)==0){
-                this.linea = cv;
-            }
-        }
-        return lineaSelected;
-    }
-
-    public Short getDivisionSelected() {
-        for(Divisiones cv : this.divisiones){
-            if(cv.getCodDivision().compareTo(this.divisionSelected)==0){
-                this.division = cv;
-            }
-        }
-        return divisionSelected;
-    }
-
-    public String getTipoClienteSelected() {
-        for(TiposClientes cv : this.tipoClientes){
-            if(cv.getCtipoCliente().equalsIgnoreCase(this.tipoClienteSelected)){
-                this.tipoCliente = cv;
-            }
-        }
-        return tipoClienteSelected;
-    }
-
-    public Short getCiudadClienteSelected() {
-        for(Ciudades cv : this.ciudadClientes){
-            if(cv.getCodCiudad().compareTo(this.ciudadClienteSelected)==0){
-                this.ciudadCliente = cv;
-            }
-        }
-        return ciudadClienteSelected;
-    }
-
-    public String getTipoVentaSelected() {
-        for(TiposVentas cv : this.tiposVentas){
-            if(cv.getCtipoVta().equalsIgnoreCase(this.tipoVentaSelected)){
-                this.tipoVenta = cv;
-            }
-        }
-        return tipoVentaSelected;
-    }
-
-    
-    public Short getRutaSelected() {
-        for(Rutas ruta :  this.rutas){
-            if(this.rutaSelected.compareTo(ruta.getCodRuta())==0){
-                this.ruta = ruta;
-            }
-        }
-        return rutaSelected;
-    }
-
-    public void setRutaSelected(Short rutaSelected) {
-        this.rutaSelected = rutaSelected;
-    }
-    
-    public List<CanalesVenta> listarCanalesVenta(){ 
-        this.canalesVenta =  this.canalesVentaFacade.findAll();
-        return this.canalesVenta;
-    }
-    
-    public List<Zonas> listarZonas(){
-        this.zonas = this.zonaFacade.findAll();
-        this.zonas.stream().sorted();
-        Collections.sort(this.zonas, (Zonas z1, Zonas z2) -> z1.getXdesc().compareTo(z2.getXdesc()) );        
-        return this.zonas;
-    }
-     
-    public List<Proveedores> listarProveedores(){
-        this.proveedores = this.proveedoresFacade.listarPrveedores();
-        Collections.sort(this.proveedores, (Proveedores p1, Proveedores p2) -> p1.getXnombre().compareTo(p2.getXnombre()) );
-        return this.proveedores;
-    }
-    
-    public List<Sublineas> listarSubLineas(){
-        this.sublineas = this.subLineasFacade.listarSublineasActivas();
-        return this.sublineas;
-    }
-    
-    public List<Lineas> listarLineas(){
-        this.lineas = this.lineasFacade.listarLineasActivas();
-        return this.lineas;
-    }
-    
-    public List<Divisiones> listarDivisiones(){
-        this.divisiones = divisionesFacade.listarDivisionesActivas();
-        return this.divisiones;
-    }
-    
-    public List<TiposClientes> listarTipoClientes(){
-        this.tipoClientes = this.tiposClientesFacade.findAll();
-        Collections.sort(this.tipoClientes, (TiposClientes tc1, TiposClientes tc2) -> tc1.getXdesc().compareTo(tc2.getXdesc()) );
-        return this.tipoClientes;
-    }
-    
-    public List<Ciudades> listarCiudadClientes(){
-        this.ciudadClientes = this.ciudadFacade.findAll();
-        return this.ciudadClientes;
-    }
-    
-    public List<TiposVentas> listarTipoVenta(){
-        this.tiposVentas = this.tiposVentasFacade.findAll();
-        return this.tiposVentas;
-    }
-    
-    
-
-    public Short getVendedorSelected() {        
-        for(Empleados e: this.vendedores){
-            if(e.getCodEmpleado().compareTo(this.vendedorSelected) == 0){
-                this.vendedor = e;    
-                System.out.println("getvendedorselected" + e.getCodEmpleado() + e.getXnombre());
-                
-            }
-        }
-        return vendedorSelected;
-    }
-
-    public void setVendedorSelected(Short vendedorSelected) {
-        this.vendedorSelected = vendedorSelected;
-    }
-    
-    
-    public List<Empleados> listarVendedores(){ 
-        this.vendedores =  this.empleadosFacade.getEmpleadosVendedoresActivosPorCodEmp(2);  
-        return this.vendedores;
-    }
-    
-    public void generarArchivo(String tipoArchivo){
-        List<String> prestamo = new ArrayList<String>();
-	List<Map<String, ?>> data;
-        Map<String, Object> datos = new HashMap<String, Object>();;
-        DateFormat formatoFecha =new SimpleDateFormat("dd/MM/yyyy");
-        HashMap parameters = new HashMap();
-	List<Map<String, ?>> cabecera = new ArrayList<Map<String, ?>>();   
-        Map<String, Object> detalleVendedores = new HashMap<String, Object>();
-        if(this.desde != null && this.hasta != null){            
-            //
-            String consultaVentaVendedor = generarConsultaAgrupacion("VENDEDOR", "VENTA");
-            //System.out.println(String.format("CONSULTA VENTA VENDEDOR: [%s]", consultaVentaVendedor));
-            String consultaNotaVendedor = generarConsultaAgrupacion("VENDEDOR", "NOTAS");
-            //System.out.println(String.format("CONSULTA NOTA VENDEDOR: [%s]", consultaNotaVendedor));
-            //
-            String consultaVentaZona = generarConsultaAgrupacion("ZONA", "VENTA");
-            //System.out.println(String.format("CONSULTA VENTA ZONA: [%s]", consultaVentaZona));
-            String consultaNotaZona = generarConsultaAgrupacion("ZONA", "NOTAS");
-            //System.out.println(String.format("CONSULTA NOTA ZONA: [%s]", consultaNotaZona));
-            //
-            String consultaVentaRuta = generarConsultaAgrupacion("RUTA", "VENTA");
-            //System.out.println(String.format("CONSULTA VENTA RUTA: [%s]", consultaVentaRuta));
-            String consultaNotaRuta = generarConsultaAgrupacion("RUTA", "NOTAS");
-            //System.out.println(String.format("CONSULTA NOTA RUTA: [%s]", consultaNotaRuta));
-            //realizar la llamada al Facade para obtener los datos del reporte 
-            Map<String, Map<String, List<LiVentas>>> ventasVendedor = ventasFacade.obtenerConsultaVendedores(consultaVentaVendedor, 
-                    consultaNotaVendedor, consultaVentaZona, consultaNotaZona, consultaVentaRuta, consultaNotaRuta);
-            //System.out.println("bean.listados.LiVentasMesBean.obtenerConsultaVendedores()");
-            //System.out.println(ventasVendedor.toString());
+    public void generarAchivoPDF(){
+        if(this.desde != null && this.hasta != null){
+            String consultaVentaTotal = generarConsultaAgrupacion("TOTAL", "VENTA");       
+            String consultaNotaTotal = generarConsultaAgrupacion("TOTAL", "NOTAS");
+            List<LiVentasCab> listadoVentasMes = this.ventasFacade.obtenerListado(consultaVentaTotal, consultaNotaTotal);
+            List<Map<String, ?>> data;
+            Map<String, Object> datos = new HashMap<String, Object>();;
+            DateFormat formatoFecha =new SimpleDateFormat("dd/MM/yyyy");
+            HashMap parameters = new HashMap();
+            List<Map<String, ?>> cabecera = new ArrayList<Map<String, ?>>();   
+            Map<String, Object> detalleVendedores = new HashMap<String, Object>();
             String TITULO = "VENTAS A CLIENTES POR MES";
             String NOMBRE_REPORTE = "rventas_mes";
             parameters.put("fechaDesde", this.desde);
@@ -480,6 +282,7 @@ public class LiVentasMesBean {
             parameters.put("titulo", TITULO);
             parameters.put("nombreRepo", NOMBRE_REPORTE);
             parameters.put("usu_imprime", "admin");
+            parameters.put("REPORT_LOCALE", new Locale("es", "ES"));
             short comparar=0;
             if(this.canalVentaSelected.equalsIgnoreCase("0")){
                  parameters.put("txtCanalVta", "TODOS");
@@ -518,327 +321,108 @@ public class LiVentasMesBean {
                 parameters.put("txtDivision", this.division.getCodDivision() + " - " + this.division.getXdesc());
             }  
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liVentasMesVendedoresDet.jasper");
-            parameters.put("SUBREPORT_DIR", report);            
-            //-------agregar total del reporte
-            Map<String, List<LiVentas>> totalVenta = ventasVendedor.get("TOTAL_VENTA");
-            for(Map.Entry<String, List<LiVentas>> vendedor : totalVenta.entrySet()){
-                if(vendedor.getKey()=="13"){
-                    LiVentas vt = vendedor.getValue().get(0);
-                    parameters.put("sumTotalEne", vt.getMontoPorMes().get(1).longValue());
-                    parameters.put("sumTotalFeb", vt.getMontoPorMes().get(2).longValue());
-                    parameters.put("sumTotalMar", vt.getMontoPorMes().get(3).longValue());
-                    parameters.put("sumTotalAbr", vt.getMontoPorMes().get(4).longValue());
-                    parameters.put("sumTotalMay", vt.getMontoPorMes().get(5).longValue());
-                    parameters.put("sumTotalJun", vt.getMontoPorMes().get(6).longValue());
-                    parameters.put("sumTotalJul", vt.getMontoPorMes().get(7).longValue());
-                    parameters.put("sumTotalAgo", vt.getMontoPorMes().get(8).longValue());
-                    parameters.put("sumTotalSep", vt.getMontoPorMes().get(9).longValue());
-                    parameters.put("sumTotalOct", vt.getMontoPorMes().get(10).longValue());
-                    parameters.put("sumTotalNov", vt.getMontoPorMes().get(11).longValue());
-                    parameters.put("sumTotalDic", vt.getMontoPorMes().get(12).longValue());
-                    parameters.put("sumTotalVenta", vt.getMontoPorMes().get(1).longValue()
-                                +vt.getMontoPorMes().get(2).longValue()+vt.getMontoPorMes().get(3).longValue()
-                                +vt.getMontoPorMes().get(4).longValue()+vt.getMontoPorMes().get(5).longValue()
-                                +vt.getMontoPorMes().get(6).longValue()+vt.getMontoPorMes().get(7).longValue()
-                                +vt.getMontoPorMes().get(8).longValue()+vt.getMontoPorMes().get(9).longValue()
-                                +vt.getMontoPorMes().get(10).longValue()+vt.getMontoPorMes().get(11).longValue()
-                                +vt.getMontoPorMes().get(12).longValue());
-                }
+            parameters.put("SUBREPORT_DIR", report);
+            //totalizador
+            BigDecimal sumEneT = new BigDecimal(0);BigDecimal sumFebT = new BigDecimal(0);BigDecimal sumMarT = new BigDecimal(0);BigDecimal sumAbrT = new BigDecimal(0);
+            BigDecimal sumMayT = new BigDecimal(0);BigDecimal sumJunT = new BigDecimal(0);BigDecimal sumJulT = new BigDecimal(0);BigDecimal sumAgoT = new BigDecimal(0);
+            BigDecimal sumSepT = new BigDecimal(0);BigDecimal sumOctT = new BigDecimal(0);BigDecimal sumNovT = new BigDecimal(0);BigDecimal sumDicT = new BigDecimal(0);
+            BigDecimal sumTotalT = new BigDecimal(0);
+            for(LiVentasCab liCab : listadoVentasMes){
+                data = new ArrayList<Map<String, ?>>();
+                detalleVendedores = new HashMap<String, Object>();
+                data.addAll(liCab.getClientesPorMes());
+                System.out.println(liCab.getClientesPorMes().size());                
+                System.out.println(liCab.getDescripcionVendedor().concat(liCab.getDescripcionZona()).concat(liCab.getDescripcionRunta()));
+                //encabezado de grupo
+                detalleVendedores.put("txtCodVendedor", liCab.getCodVendedor());
+                detalleVendedores.put("txtNombreVendedor", liCab.getDescripcionVendedor());
+                detalleVendedores.put("txtCodZona", liCab.getCodZona());
+                detalleVendedores.put("txtNombreZona", liCab.getDescripcionZona());
+                detalleVendedores.put("txtCodRuta", liCab.getCodRuta());
+                detalleVendedores.put("txtNombreRuta", liCab.getDescripcionRunta());
+                //--------------                
+                for(Map.Entry<String, BigDecimal> m : liCab.getMontoPorMes().entrySet()){
+                    switch (m.getKey()) {
+                            case "sumEne":                              
+                                sumEneT = sumEneT.add(m.getValue());
+                                break;
+                            case "sumFeb":
+                                sumFebT = sumFebT.add(m.getValue());
+                                break;
+                            case "sumMar":
+                                sumMarT = sumMarT.add(m.getValue());
+                                break;
+                            case "sumAbr":
+                                sumAbrT = sumAbrT.add(m.getValue());
+                                break;
+                            case "sumMay":
+                                sumMayT = sumMayT.add(m.getValue());
+                                break;
+                            case "sumJun":
+                                sumJunT = sumJunT.add(m.getValue());
+                                break;
+                            case "sumJul":
+                                sumJulT = sumJulT.add(m.getValue());
+                                break;
+                            case "sumAgo":
+                                sumAgoT = sumAgoT.add(m.getValue());
+                                break;
+                            case "sumSep":
+                                sumSepT = sumSepT.add(m.getValue());
+                                break;
+                            case "sumOct":
+                                sumOctT = sumOctT.add(m.getValue());
+                                break;
+                            case "sumNov":
+                                sumNovT = sumNovT.add(m.getValue());
+                                break;                                
+                            case "sumDic":
+                                sumDicT = sumDicT.add(m.getValue());
+                                break;
+                            default:                                
+                                break;
+                        }
+                }                
+                detalleVendedores.putAll(liCab.getMontoPorMes());
+                detalleVendedores.put("detalleVendedor", new JRMapCollectionDataSource(data));
+                cabecera.add(detalleVendedores);
             }
+            //TOTALIZADOR PARA EL REPORTE GENERAL
+            DecimalFormat formatea = new DecimalFormat("###,###.##", DecimalFormatSymbols.getInstance( new Locale("es", "ES")));
+            System.out.println(formatea.format(sumEneT.doubleValue()));
+            
+            Map<String, BigDecimal> montoPorReporte = new HashMap<String, BigDecimal>();
+            BigDecimal test = new BigDecimal(999999999);
+           /* montoPorReporte.put("sumTotalEne", sumEneT);
+            montoPorReporte.put("sumTotalFeb", sumFebT);
+            montoPorReporte.put("sumTotalMar", sumMarT);
+            montoPorReporte.put("sumTotalAbr", sumAbrT);
+            montoPorReporte.put("sumTotalMay", sumMayT);
+            montoPorReporte.put("sumTotalJun", sumJunT);
+            montoPorReporte.put("sumTotalJul", sumJulT);
+            montoPorReporte.put("sumTotalAgo", sumAgoT);
+            montoPorReporte.put("sumTotalSep", sumSepT);
+            montoPorReporte.put("sumTotalOct", sumOctT);
+            montoPorReporte.put("sumTotalNov", sumNovT);
+            montoPorReporte.put("sumTotalDic", sumDicT);*/
+            montoPorReporte.put("sumTotalEne", test);
+            montoPorReporte.put("sumTotalFeb", test);
+            montoPorReporte.put("sumTotalMar", test);
+            montoPorReporte.put("sumTotalAbr", test);
+            montoPorReporte.put("sumTotalMay", test);
+            montoPorReporte.put("sumTotalJun", test);
+            montoPorReporte.put("sumTotalJul", test);
+            montoPorReporte.put("sumTotalAgo", test);
+            montoPorReporte.put("sumTotalSep", test);
+            montoPorReporte.put("sumTotalOct", test);
+            montoPorReporte.put("sumTotalNov", test);
+            montoPorReporte.put("sumTotalDic", test);
+            sumTotalT = sumTotalT.add(sumEneT).add(sumFebT).add(sumMarT).add(sumAbrT).add(sumMayT).add(sumJunT).add(sumJulT).add(sumAgoT).add(sumSepT).add(sumOctT).add(sumNovT).add(sumDicT);
+                       // montoPorReporte.put("sumTotalVenta", sumTotalT);
+                        montoPorReporte.put("sumTotalVenta", test);
+            parameters.putAll(montoPorReporte);
+            //--------------
             try{
-                Map<String, List<LiVentas>> vendedores = ventasVendedor.get("VENDEDOR");
-                for(Map.Entry<String, List<LiVentas>> vendedor : vendedores.entrySet()){
-                    data = new ArrayList<Map<String, ?>>();
-                    detalleVendedores = new HashMap<String, Object>();
-                    //datos.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    Map<Integer, List<LiVentas>> collect = vendedor.getValue().stream().collect(Collectors.groupingBy(LiVentas::getCodCliente));
-                    for (Map.Entry<Integer, List<LiVentas>> agrupPorCliente : collect.entrySet()) {
-                        Long sumEne = 0L;
-                        Long sumFeb = 0L;
-                        Long sumMar = 0L;
-                        Long sumAbr = 0L;
-                        Long sumMay = 0L;
-                        Long sumJun = 0L;
-                        Long sumJul = 0L;
-                        Long sumAgo = 0L;
-                        Long sumSep = 0L;
-                        Long sumOct = 0L;
-                        Long sumNov = 0L;
-                        Long sumDic = 0L;
-
-                        for(LiVentas venta : agrupPorCliente.getValue()){
-                            switch (venta.getNmes()) {
-                                case 1:
-                                    sumEne = sumEne + venta.getMonto().longValue();
-                                    break;
-                                case 2:
-                                    sumFeb = sumFeb + venta.getMonto().longValue();
-                                    break;
-                                case 3:
-                                    sumMar = sumMar + venta.getMonto().longValue();
-                                    break;
-                                case 4:
-                                    sumAbr = sumAbr + venta.getMonto().longValue();
-                                    break;
-                                case 5:
-                                    sumMay = sumMay + venta.getMonto().longValue();
-                                    break;
-                                case 6:
-                                    sumJun = sumJun + venta.getMonto().longValue();
-                                    break;
-                                case 7:
-                                    sumJul = sumJul + venta.getMonto().longValue();
-                                    break;
-                                case 8:
-                                    sumAgo = sumAgo + venta.getMonto().longValue();
-                                    break;
-                                case 9:
-                                    sumSep = sumSep + venta.getMonto().longValue();
-                                    break;
-                                case 10:
-                                    sumOct = sumOct + venta.getMonto().longValue();
-                                    break;
-                                case 11:
-                                    sumNov = sumNov + venta.getMonto().longValue();
-                                    break;
-                                default:
-                                    sumDic = sumDic + venta.getMonto().longValue();
-                                    break;
-                            }
-                        }
-                        datos = new HashMap<String, Object>();
-                        datos.put("textCliente", agrupPorCliente.getValue().get(0).getRazonSocialCliente());
-                        datos.put("sumEne", sumEne);
-                        datos.put("sumFeb", sumFeb);
-                        datos.put("sumMar", sumMar);
-                        datos.put("sumAbr", sumAbr);
-                        datos.put("sumMay", sumMay);
-                        datos.put("sumJun", sumJun);
-                        datos.put("sumJul", sumJul);
-                        datos.put("sumAgo", sumAgo);
-                        datos.put("sumSep", sumSep);
-                        datos.put("sumOct", sumOct);
-                        datos.put("sumNov", sumNov);
-                        datos.put("sumDic", sumDic);
-                        datos.put("sumTotal", sumEne+sumFeb+sumMar+sumAbr+sumMay+sumJun+sumJul+sumAgo+sumSep+sumOct+sumNov+sumDic);
-                        data.add(datos);
-                    }
-                    detalleVendedores.put("codAgrup", "VENDEDOR");
-                    detalleVendedores.put("txtCodVendedor", vendedor.getKey());
-                    detalleVendedores.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    detalleVendedores.put("detalleVendedor", new JRMapCollectionDataSource(data));
-                    cabecera.add(detalleVendedores);
-                }
-                
-                Map<String, List<LiVentas>> rutas = ventasVendedor.get("RUTA");
-                for(Map.Entry<String, List<LiVentas>> vendedor : rutas.entrySet()){
-                    data = new ArrayList<Map<String, ?>>();
-                    detalleVendedores = new HashMap<String, Object>();
-                    //datos.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    Map<Integer, List<LiVentas>> collect = vendedor.getValue().stream().collect(Collectors.groupingBy(LiVentas::getCodCliente));
-                    for (Map.Entry<Integer, List<LiVentas>> agrupPorCliente : collect.entrySet()) {
-                        Long sumEne = 0L;
-                        Long sumFeb = 0L;
-                        Long sumMar = 0L;
-                        Long sumAbr = 0L;
-                        Long sumMay = 0L;
-                        Long sumJun = 0L;
-                        Long sumJul = 0L;
-                        Long sumAgo = 0L;
-                        Long sumSep = 0L;
-                        Long sumOct = 0L;
-                        Long sumNov = 0L;
-                        Long sumDic = 0L;
-
-                        for(LiVentas venta : agrupPorCliente.getValue()){
-                            switch (venta.getNmes()) {
-                                case 1:
-                                    sumEne = sumEne + venta.getMonto().longValue();
-                                    break;
-                                case 2:
-                                    sumFeb = sumFeb + venta.getMonto().longValue();
-                                    break;
-                                case 3:
-                                    sumMar = sumMar + venta.getMonto().longValue();
-                                    break;
-                                case 4:
-                                    sumAbr = sumAbr + venta.getMonto().longValue();
-                                    break;
-                                case 5:
-                                    sumMay = sumMay + venta.getMonto().longValue();
-                                    break;
-                                case 6:
-                                    sumJun = sumJun + venta.getMonto().longValue();
-                                    break;
-                                case 7:
-                                    sumJul = sumJul + venta.getMonto().longValue();
-                                    break;
-                                case 8:
-                                    sumAgo = sumAgo + venta.getMonto().longValue();
-                                    break;
-                                case 9:
-                                    sumSep = sumSep + venta.getMonto().longValue();
-                                    break;
-                                case 10:
-                                    sumOct = sumOct + venta.getMonto().longValue();
-                                    break;
-                                case 11:
-                                    sumNov = sumNov + venta.getMonto().longValue();
-                                    break;
-                                default:
-                                    sumDic = sumDic + venta.getMonto().longValue();
-                                    break;
-                            }
-                        }
-                        datos = new HashMap<String, Object>();
-                        datos.put("textCliente", agrupPorCliente.getValue().get(0).getRazonSocialCliente());
-                        datos.put("sumEne", sumEne);
-                        datos.put("sumFeb", sumFeb);
-                        datos.put("sumMar", sumMar);
-                        datos.put("sumAbr", sumAbr);
-                        datos.put("sumMay", sumMay);
-                        datos.put("sumJun", sumJun);
-                        datos.put("sumJul", sumJul);
-                        datos.put("sumAgo", sumAgo);
-                        datos.put("sumSep", sumSep);
-                        datos.put("sumOct", sumOct);
-                        datos.put("sumNov", sumNov);
-                        datos.put("sumDic", sumDic);
-                        datos.put("sumTotal", sumEne+sumFeb+sumMar+sumAbr+sumMay+sumJun+sumJul+sumAgo+sumSep+sumOct+sumNov+sumDic);
-                        data.add(datos);
-                    }
-                    detalleVendedores.put("codAgrup", "RUTA");
-                    detalleVendedores.put("txtCodVendedor", vendedor.getKey());
-                    detalleVendedores.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    detalleVendedores.put("detalleVendedor", new JRMapCollectionDataSource(data));
-                    cabecera.add(detalleVendedores);
-                }
-                //---------------------------ZONA---------------------------------------------------------------
-                Map<String, List<LiVentas>> zonas = ventasVendedor.get("ZONA");
-                for(Map.Entry<String, List<LiVentas>> vendedor : zonas.entrySet()){
-                    data = new ArrayList<Map<String, ?>>();
-                    detalleVendedores = new HashMap<String, Object>();
-                    //datos.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    //obtener datos del total() por vendedor
-                    LiVentas ventaTotalVendedor = new LiVentas();  
-                    List<LiVentas> vend = new ArrayList<LiVentas>();
-                    for(LiVentas lv : vendedor.getValue()){
-                        if(lv.getNmes()==13){                              
-                            ventaTotalVendedor.setNmes(lv.getNmes());
-                            ventaTotalVendedor.setMontoPorMes(lv.getMontoPorMes());
-                        }else{
-                            vend.add(lv);
-                        }
-                    }
-                    Map<Integer, List<LiVentas>> collect = vend.stream().collect(Collectors.groupingBy(LiVentas::getCodCliente));                                                           
-                    for (Map.Entry<Integer, List<LiVentas>> agrupPorCliente : collect.entrySet()) {
-                        Long sumEne = 0L;
-                        Long sumFeb = 0L;
-                        Long sumMar = 0L;
-                        Long sumAbr = 0L;
-                        Long sumMay = 0L;
-                        Long sumJun = 0L;
-                        Long sumJul = 0L;
-                        Long sumAgo = 0L;
-                        Long sumSep = 0L;
-                        Long sumOct = 0L;
-                        Long sumNov = 0L;
-                        Long sumDic = 0L;
-                        for(LiVentas venta : agrupPorCliente.getValue()){                                
-                            switch (venta.getNmes()) {
-                                case 1:
-                                    sumEne = sumEne + venta.getMonto().longValue();                                    
-                                    break;
-                                case 2:
-                                    sumFeb = sumFeb + venta.getMonto().longValue();
-                                    break;
-                                case 3:
-                                    sumMar = sumMar + venta.getMonto().longValue();
-                                    break;
-                                case 4:
-                                    sumAbr = sumAbr + venta.getMonto().longValue();
-                                    break;
-                                case 5:
-                                    sumMay = sumMay + venta.getMonto().longValue();
-                                    break;
-                                case 6:
-                                    sumJun = sumJun + venta.getMonto().longValue();
-                                    break;
-                                case 7:
-                                    sumJul = sumJul + venta.getMonto().longValue();
-                                    break;
-                                case 8:
-                                    sumAgo = sumAgo + venta.getMonto().longValue();
-                                    break;
-                                case 9:
-                                    sumSep = sumSep + venta.getMonto().longValue();
-                                    break;
-                                case 10:
-                                    sumOct = sumOct + venta.getMonto().longValue();
-                                    break;
-                                case 11:
-                                    sumNov = sumNov + venta.getMonto().longValue();
-                                    break;
-                                case 12:
-                                    sumDic = sumDic + venta.getMonto().longValue();
-                                    break;
-                                default:                                     
-                                    break;
-                            }                            
-                        }
-                        if(agrupPorCliente.getKey()!=13){
-                            datos = new HashMap<String, Object>();
-                            datos.put("textCliente", agrupPorCliente.getValue().get(0).getRazonSocialCliente());
-                            datos.put("sumEne", sumEne);
-                            datos.put("sumFeb", sumFeb);
-                            datos.put("sumMar", sumMar);
-                            datos.put("sumAbr", sumAbr);
-                            datos.put("sumMay", sumMay);
-                            datos.put("sumJun", sumJun);
-                            datos.put("sumJul", sumJul);
-                            datos.put("sumAgo", sumAgo);
-                            datos.put("sumSep", sumSep);
-                            datos.put("sumOct", sumOct);
-                            datos.put("sumNov", sumNov);
-                            datos.put("sumDic", sumDic);
-                            datos.put("sumTotal", sumEne+sumFeb+sumMar+sumAbr+sumMay+sumJun+sumJul+sumAgo+sumSep+sumOct+sumNov+sumDic);
-                            data.add(datos); 
-                        }                                                                      
-                    }
-                    if(ventaTotalVendedor.getNmes()==13){
-                        datos = new HashMap<String, Object>();
-                        datos.put("textCliente", "Sub Total");
-                        datos.put("sumEne", ventaTotalVendedor.getMontoPorMes().get(1).longValue());
-                        datos.put("sumFeb", ventaTotalVendedor.getMontoPorMes().get(2).longValue());
-                        datos.put("sumMar", ventaTotalVendedor.getMontoPorMes().get(3).longValue());
-                        datos.put("sumAbr", ventaTotalVendedor.getMontoPorMes().get(4).longValue());
-                        datos.put("sumMay", ventaTotalVendedor.getMontoPorMes().get(5).longValue());
-                        datos.put("sumJun", ventaTotalVendedor.getMontoPorMes().get(6).longValue());
-                        datos.put("sumJul", ventaTotalVendedor.getMontoPorMes().get(7).longValue());
-                        datos.put("sumAgo", ventaTotalVendedor.getMontoPorMes().get(8).longValue());
-                        datos.put("sumSep", ventaTotalVendedor.getMontoPorMes().get(9).longValue());
-                        datos.put("sumOct", ventaTotalVendedor.getMontoPorMes().get(10).longValue());
-                        datos.put("sumNov", ventaTotalVendedor.getMontoPorMes().get(11).longValue());
-                        datos.put("sumDic", ventaTotalVendedor.getMontoPorMes().get(12).longValue());
-                        datos.put("sumTotal", ventaTotalVendedor.getMontoPorMes().get(1).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(2).longValue()+ventaTotalVendedor.getMontoPorMes().get(3).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(4).longValue()+ventaTotalVendedor.getMontoPorMes().get(5).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(6).longValue()+ventaTotalVendedor.getMontoPorMes().get(7).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(8).longValue()+ventaTotalVendedor.getMontoPorMes().get(9).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(10).longValue()+ventaTotalVendedor.getMontoPorMes().get(11).longValue()
-                                +ventaTotalVendedor.getMontoPorMes().get(12).longValue());
-                        data.add(datos);
-                    }
-                    detalleVendedores.put("codAgrup", "ZONA");
-                    detalleVendedores.put("txtCodVendedor", vendedor.getKey());
-                    detalleVendedores.put("txtNombreVendedor", vendedor.getValue().get(0).getDescripcion());
-                    detalleVendedores.put("detalleVendedor", new JRMapCollectionDataSource(data));
-                    cabecera.add(detalleVendedores);
-                }
-                //----------------------------------------------------------------------------------------------
-                
-                //String reportLiVentas = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
-                //InputStream reporte = getClass().getClassLoader().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
                 InputStream reporte = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liVentasMes.jasper");
                 JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, new JRMapCollectionDataSource(cabecera));        
                 //exportar excell
@@ -851,48 +435,23 @@ public class LiVentasMesBean {
                 configuration.setCollapseRowSpan(false);
                 configuration.setCellLocked(true);
                 FacesContext context = FacesContext.getCurrentInstance();  
-                HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();  
-                switch(tipoArchivo)
-                {
-                    case "EXCELL" :
-                        JRXlsExporter xlsExporter = new JRXlsExporter();
-                        xlsExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        //xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput("C:/jasperoutput/sample_report.xls"));
-                        xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-                        //config
-                        xlsExporter.setConfiguration(configuration);
-                        xlsExporter.exportReport();
-                        //
-                        response.setContentType("application/vnd.ms-excel"); //fill in contentType  
-                        response.setHeader("Content-disposition", "attachment; filename=rventas_mes.xls");
-                        OutputStream os = response.getOutputStream();  
-                        os.write(out.toByteArray()); //fill in bytes  
-                        os.flush();  
-                        os.close();                          
-                        break;
-                    case "PDF" :
-                        String disposition = "inline";
-                        response.addHeader("Content-disposition", disposition + "; filename=rventas_mes.pdf");
-                        response.addHeader("Content-type", "application/pdf");
-                        ServletOutputStream servletStream = response.getOutputStream();
-                        JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);                  
-                        break; 
-                    default : 
-                        break; 
-                }
+                HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse(); 
+                String disposition = "inline";
+                response.addHeader("Content-disposition", disposition + "; filename=rventas_mes.pdf");
+                response.addHeader("Content-type", "application/pdf");
+                ServletOutputStream servletStream = response.getOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);   
                 FacesContext faces = FacesContext.getCurrentInstance();                
                 faces.responseComplete(); 
                 limpiarDatos();
             }catch(Exception ex){
                 System.out.println(ex);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reporte.", "Ocurrió un error al generar el reporte"));
-                
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reporte.", "Ocurrió un error al generar el reporte"));                
             }
-        }else {
+        }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            
-        }        
-    }
+        }
+    }    
     
     private void limpiarDatos(){
         //limpiar filtros
@@ -910,6 +469,39 @@ public class LiVentasMesBean {
         this.ciudadClienteSelected = 0;
         this.tipoVentaSelected = "0";
         this.vendedorSelected = 0;
+    }
+    
+    public String getMesDescripcion(Integer mes){
+        switch(mes)
+        {
+            case 1:
+                return "Enero";    
+            case 2:
+                return "Enero";                 
+            case 3:
+                return "Enero"; 
+            case 4:
+                return "Enero"; 
+            case 5:
+                return "Enero"; 
+            case 6:
+                return "Enero"; 
+            case 7:
+                return "Enero"; 
+            case 8:
+                return "Enero"; 
+            case 9:
+                return "Enero"; 
+            case 10:
+                return "Enero"; 
+            case 11:
+                return "Enero"; 
+            case 12:
+                return "Diciembre";
+            default:
+                return "Mes 13";
+                        
+        }
     }
     
     private String generarConsultaAgrupacion(String agrupacion, String tipo) {
@@ -1058,6 +650,54 @@ public class LiVentasMesBean {
                     consultaGenerada = consultaGenerada.concat(SQL_NOTAS_GROUP_BY_RUTA);
                 }
                 break;
+            default:
+                if(tipo.equalsIgnoreCase("VENTA")){
+                    String SQL_BASE_VENTAS_TOTAL = " SELECT  f.cod_vendedor, e.xnombre, f.cod_zona, z.xdesc as xdesc_zona, "+
+                        " f.cod_ruta, r.xdesc as xdesc_ruta,  f.cod_cliente,  f.xrazon_social, MONTH(f.ffactur) AS nmes,  SUM(d.itotal) AS iventas   "+
+                        " FROM   facturas f INNER JOIN  "+
+                        " empleados e ON f.cod_vendedor = e.cod_empleado, zonas z , rutas r, facturas_det d, mercaderias m, sublineas s, lineas l, divisiones v, categorias g, clientes c "+
+                        " WHERE    f.cod_empr = 2 AND e.cod_empr = 2 AND  (f.ffactur BETWEEN '" + formatter.format(this.desde) + "' AND '" + formatter.format(this.hasta) + "') AND (f.mestado = 'A')  "+
+                        " AND f.cod_zona = z.cod_zona  "+
+                        " AND f.cod_ruta = r.cod_ruta  "+
+                        " AND f.cod_cliente = c.cod_cliente "+
+                        "  AND f.nrofact = d.nrofact  "+
+                        "  AND f.ffactur = d.ffactur  "+
+                        "  AND f.cod_empr = d.cod_empr  "+
+                        "  AND d.cod_merca = m.cod_merca  "+
+                        "  AND m.cod_sublinea = s.cod_sublinea  "+
+                        "  AND s.cod_linea = l.cod_linea  "+
+                        "  AND l.cod_categoria = g.cod_categoria  "+
+                        "  AND g.cod_division = v.cod_division  "+
+                        "  AND d.cod_empr = 2  "+
+                        "  AND f.mestado = 'A' ";
+                    consultaGenerada = generarConsulta(SQL_BASE_VENTAS_TOTAL, "VENTA");
+                    consultaGenerada = consultaGenerada.concat(SQL_GROUP_BY_TOTAL);     
+                }else{
+                    String SQL_BASE_NOTAS_CREDITO_TOTAL = " SELECT f.cod_vendedor, e.xnombre, f.cod_zona, z.xdesc as xdesc_zona, f.cod_ruta, r.xdesc as xdesc_ruta, "+
+                        "    f.cod_cliente,  f.xrazon_social, MONTH(n.fdocum) AS nmes,  SUM(d.igravadas+d.iexentas) AS ttotal, n.ctipo_docum  "+
+                        "    FROM  notas_ventas n , empleados e, zonas z , rutas r, facturas f, notas_ventas_det d, mercaderias m, sublineas s, lineas l, categorias g, divisiones v  "+
+                        "    WHERE f.cod_empr = 2 AND e.cod_empr = 2 AND  (n.fdocum BETWEEN '" + formatter.format(this.desde) + "' AND '" + formatter.format(this.hasta) + "') AND (f.mestado = 'A')  "+
+                        "    AND f.cod_zona = z.cod_zona  "+
+                        "    AND n.nro_nota = d.nro_nota  "+
+                        "    AND d.cod_empr = 2  "+
+                        "    AND n.cod_empr = 2  "+
+                        "    AND d.cod_merca = m.cod_merca  "+
+                        "    AND f.cod_ruta = r.cod_ruta  "+
+                        "    AND n.nrofact = f.nrofact  "+
+                        "    AND n.ffactur = f.ffactur  "+
+                        "    AND n.fdocum = d.fdocum  "+
+                        "    AND n.ctipo_docum = 'NCV'  "+
+                        "    AND m.cod_sublinea = s.cod_sublinea  "+
+                        "    AND s.cod_linea = l.cod_linea  "+
+                        "    AND l.cod_categoria = g.cod_categoria  "+
+                        "    AND g.cod_division = v.cod_division  "+
+                        "    and f.cod_vendedor = e.cod_empleado  "+
+                        "    AND n.mestado = 'A'  "+
+                        "    AND n.fac_ctipo_docum = f.ctipo_docum ";
+                    consultaGenerada = generarConsulta(SQL_BASE_NOTAS_CREDITO_TOTAL, "NOTA");
+                    consultaGenerada = consultaGenerada.concat(SQL_NOTAS_GROUP_BY_TOTAL);
+                }
+                break;
         }
         return consultaGenerada;
     }
@@ -1135,111 +775,6 @@ public class LiVentasMesBean {
         //--------------------------------------------------------------------------------------------------------------------------
         //System.out.println(String.format("Consulta Base Final: [%s]", ""));
         return consultaBase;
-    }
-    
-    public void generarArchivoUno(String tipoArchivo){
-        //Rango de Fechas es obligatorio
-        if(this.desde != null && this.hasta != null){
-            //--------------------------------------------------------------------------------------------------------------------------
-            //verificar filtro vendedor
-            if(this.vendedor != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND f.cod_vendedor = " + this.vendedor.getCodEmpleado());
-            }
-            //verificar filtro de sublinea
-            if(this.sublinea != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND m.cod_sublinea = " + this.sublinea.getCodSublinea());
-            }
-            //verificar filtro de linea
-            if(this.linea != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND l.cod_linea = " + this.linea.getCodLinea());
-            }
-            //verificar filtro de divisiones
-            if(this.division != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND v.cod_division = " + this.division.getCodDivision());
-            }
-            //verificar filtro de zona
-            if(this.zona != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND f.cod_zona = '" + this.zona.getCodZona()+"'");
-            }
-            //verificar filtro canales venta 
-            if(this.canalVenta != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND f.cod_canal = '" + this.canalVenta.getCodCanal()+"'");
-            }
-            //verificar filtro rutas
-            if(this.ruta != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND f.cod_ruta = " + this.ruta.getCodRuta());
-            }
-            //verificar filtro proveedor
-            if(this.proveedor != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND m.cod_proveed = " + this.proveedor.getCodProveed());
-            }
-            
-            //verificar filtro por codigo cliente solo este falta agregar
-            //verificar filtro por tipo ventas 
-            if(this.tipoVenta != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND f.ctipo_vta = '" + this.tipoVenta.getCtipoVta()+"'");
-            }
-            //verificar filtro por ciudad cliente
-            if(this.ciudadCliente != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND c.cod_ciudad = " + this.ciudadCliente.getCodCiudad());
-            }
-            //verificar filtro por tipo cliente
-            if(this.tipoCliente != null){
-                this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(" AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente()+"'");
-            }
-            //--------------------------------------------------------------------------------------------------------------------------
-            String groupByVenta = " GROUP BY f.cod_zona, MONTH(f.ffactur), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre, z.xdesc, f.cod_ruta, r.xdesc  ";
-            this.SQL_BASE_VENTAS = this.SQL_BASE_VENTAS.concat(groupByVenta);
-            //OBTENER NOTAS DE CREDITO
-            //verificar filtro vendedor
-            if(this.vendedor != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND f.cod_vendedor = " + this.vendedor.getCodEmpleado());
-            }
-            //verificar filtro de zona
-            if(this.zona != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND f.cod_zona = '" + this.zona.getCodZona()+"'");
-            }
-            //verificar filtro canales venta 
-            if(this.canalVenta != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND f.cod_canal = '" + this.canalVenta.getCodCanal()+"'");
-            }
-            //verificar filtro de sublinea
-            if(this.sublinea != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND m.cod_sublinea = " + this.sublinea.getCodSublinea());
-            }
-            //verificar filtro de linea
-            if(this.linea != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND l.cod_linea = " + this.linea.getCodLinea());
-            }
-            //verificar filtro de divisiones
-            if(this.division != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND v.cod_division = " + this.division.getCodDivision());
-            }
-            //verificar filtro rutas
-            if(this.ruta != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND f.cod_ruta = " + this.ruta.getCodRuta());
-            }            
-            //verificar filtro por codigo cliente (FALTA AGREGAR)
-            //verificar filtro por tipo ventas
-            if(this.tipoVenta != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND f.ctipo_vta = '" + this.tipoVenta.getCtipoVta()+"'");
-            }
-            //verificar filtro por ciudad cliente
-            if(this.ciudadCliente != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND c.cod_ciudad = " + this.ciudadCliente.getCodCiudad());
-            }
-            //verificar filtro por tipo cliente
-            if(this.tipoCliente != null){
-                this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(" AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente()+"'");
-            }
-            String groupByNotaCredito = " GROUP BY f.cod_zona, MONTH(n.fdocum), f.cod_cliente, f.xrazon_social, f.cod_vendedor, e.xnombre, z.xdesc, f.cod_ruta, r.xdesc, n.ctipo_docum  ";
-            this.SQL_BASE_NOTAS_CREDITO = this.SQL_BASE_NOTAS_CREDITO.concat(groupByNotaCredito);
-            System.out.println("SQL PARA LA GENERACION DEL REPORTE");
-            System.out.println(SQL_BASE_VENTAS);
-            System.out.println(SQL_BASE_NOTAS_CREDITO);
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));
-        }
     }
     
     public Date getDesde() {
@@ -1450,6 +985,214 @@ public class LiVentasMesBean {
         this.vendedores = vendedores;
     }
     
+    public String getZonaSelected() {
+        for(Zonas z : this.zonas){
+            if(z.getCodZona().equalsIgnoreCase(this.zonaSelected)){
+                this.zona = z;
+            }
+        }
+        return zonaSelected;
+    }
+
+    public void setZonaSelected(String zonaSelected) {
+        this.zonaSelected = zonaSelected;
+    }
     
+    public List<Rutas> listarRutas(){ 
+        this.rutas = rutasFacade.findAll();
+        return this.rutas;
+    }
+
+    public void setCanalVentaSelected(String canalVentaSelected) {
+        this.canalVentaSelected = canalVentaSelected;
+    }
+
+    public void setProveedorSelected(Short proveedorSelected) {
+        this.proveedorSelected = proveedorSelected;
+    }
+
+    public void setSubLineaSelected(Short subLineaSelected) {
+        this.subLineaSelected = subLineaSelected;
+    }
+
+    public void setLineaSelected(Short lineaSelected) {
+        this.lineaSelected = lineaSelected;
+    }
+
+    public void setDivisionSelected(Short divisionSelected) {
+        this.divisionSelected = divisionSelected;
+    }
+
+    public void setTipoClienteSelected(String tipoClienteSelected) {
+        this.tipoClienteSelected = tipoClienteSelected;
+    }
+
+    public void setCiudadClienteSelected(Short ciudadClienteSelected) {
+        this.ciudadClienteSelected = ciudadClienteSelected;
+    }
+
+    public void setTipoVentaSelected(String tipoVentaSelected) {
+        this.tipoVentaSelected = tipoVentaSelected;
+    }
+
+    
+    
+    public String getCanalVentaSelected() {
+        for(CanalesVenta cv : this.canalesVenta){
+            if(cv.getCodCanal().equalsIgnoreCase(this.canalVentaSelected)){
+                this.canalVenta = cv;
+            }
+        }
+        return canalVentaSelected;
+    }
+
+    public Short getProveedorSelected() {
+        for(Proveedores cv : this.proveedores){
+            if(cv.getCodProveed().compareTo(this.proveedorSelected)==0){
+                this.proveedor = cv;
+            }
+        }
+        return proveedorSelected;
+    }
+
+    public Short getSubLineaSelected() {
+        for(Sublineas cv : this.sublineas){
+            if(cv.getCodSublinea().compareTo(this.subLineaSelected)==0){
+                this.sublinea = cv;
+            }
+        }
+        return subLineaSelected;
+    }
+
+    public Short getLineaSelected() {
+        for(Lineas cv : this.lineas){
+            if(cv.getCodLinea().compareTo(this.lineaSelected)==0){
+                this.linea = cv;
+            }
+        }
+        return lineaSelected;
+    }
+
+    public Short getDivisionSelected() {
+        for(Divisiones cv : this.divisiones){
+            if(cv.getCodDivision().compareTo(this.divisionSelected)==0){
+                this.division = cv;
+            }
+        }
+        return divisionSelected;
+    }
+
+    public String getTipoClienteSelected() {
+        for(TiposClientes cv : this.tipoClientes){
+            if(cv.getCtipoCliente().equalsIgnoreCase(this.tipoClienteSelected)){
+                this.tipoCliente = cv;
+            }
+        }
+        return tipoClienteSelected;
+    }
+
+    public Short getCiudadClienteSelected() {
+        for(Ciudades cv : this.ciudadClientes){
+            if(cv.getCodCiudad().compareTo(this.ciudadClienteSelected)==0){
+                this.ciudadCliente = cv;
+            }
+        }
+        return ciudadClienteSelected;
+    }
+
+    public String getTipoVentaSelected() {
+        for(TiposVentas cv : this.tiposVentas){
+            if(cv.getCtipoVta().equalsIgnoreCase(this.tipoVentaSelected)){
+                this.tipoVenta = cv;
+            }
+        }
+        return tipoVentaSelected;
+    }
+
+    
+    public Short getRutaSelected() {
+        for(Rutas ruta :  this.rutas){
+            if(this.rutaSelected.compareTo(ruta.getCodRuta())==0){
+                this.ruta = ruta;
+            }
+        }
+        return rutaSelected;
+    }
+
+    public void setRutaSelected(Short rutaSelected) {
+        this.rutaSelected = rutaSelected;
+    }
+    
+    public List<CanalesVenta> listarCanalesVenta(){ 
+        this.canalesVenta =  this.canalesVentaFacade.findAll();
+        return this.canalesVenta;
+    }
+    
+    public List<Zonas> listarZonas(){
+        this.zonas = this.zonaFacade.findAll();
+        this.zonas.stream().sorted();
+        Collections.sort(this.zonas, (Zonas z1, Zonas z2) -> z1.getXdesc().compareTo(z2.getXdesc()) );        
+        return this.zonas;
+    }
+     
+    public List<Proveedores> listarProveedores(){
+        this.proveedores = this.proveedoresFacade.listarPrveedores();
+        Collections.sort(this.proveedores, (Proveedores p1, Proveedores p2) -> p1.getXnombre().compareTo(p2.getXnombre()) );
+        return this.proveedores;
+    }
+    
+    public List<Sublineas> listarSubLineas(){
+        this.sublineas = this.subLineasFacade.listarSublineasActivas();
+        return this.sublineas;
+    }
+    
+    public List<Lineas> listarLineas(){
+        this.lineas = this.lineasFacade.listarLineasActivas();
+        return this.lineas;
+    }
+    
+    public List<Divisiones> listarDivisiones(){
+        this.divisiones = divisionesFacade.listarDivisionesActivas();
+        return this.divisiones;
+    }
+    
+    public List<TiposClientes> listarTipoClientes(){
+        this.tipoClientes = this.tiposClientesFacade.findAll();
+        Collections.sort(this.tipoClientes, (TiposClientes tc1, TiposClientes tc2) -> tc1.getXdesc().compareTo(tc2.getXdesc()) );
+        return this.tipoClientes;
+    }
+    
+    public List<Ciudades> listarCiudadClientes(){
+        this.ciudadClientes = this.ciudadFacade.findAll();
+        return this.ciudadClientes;
+    }
+    
+    public List<TiposVentas> listarTipoVenta(){
+        this.tiposVentas = this.tiposVentasFacade.findAll();
+        return this.tiposVentas;
+    }
+    
+    
+
+    public Short getVendedorSelected() {        
+        for(Empleados e: this.vendedores){
+            if(e.getCodEmpleado().compareTo(this.vendedorSelected) == 0){
+                this.vendedor = e;    
+                System.out.println("getvendedorselected" + e.getCodEmpleado() + e.getXnombre());
+                
+            }
+        }
+        return vendedorSelected;
+    }
+
+    public void setVendedorSelected(Short vendedorSelected) {
+        this.vendedorSelected = vendedorSelected;
+    }
+    
+    
+    public List<Empleados> listarVendedores(){ 
+        this.vendedores =  this.empleadosFacade.getEmpleadosVendedoresActivosPorCodEmp(2);  
+        return this.vendedores;
+    }
     
 }

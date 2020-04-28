@@ -23,6 +23,12 @@ public class LiVentas {
     private String codigo;
     private String descripcion;
     private Map<Integer, BigDecimal> montoPorMes;
+    private Short codVendedor;
+    private String descripcionVendedor;
+    private Short codRuta;
+    private String descripcionRunta;
+    private String codZona;
+    private String descripcionZona;
 
     public int getNmes() {
         return nmes;
@@ -78,6 +84,54 @@ public class LiVentas {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public Short getCodVendedor() {
+        return codVendedor;
+    }
+
+    public String getDescripcionVendedor() {
+        return descripcionVendedor;
+    }
+
+    public Short getCodRuta() {
+        return codRuta;
+    }
+
+    public String getDescripcionRunta() {
+        return descripcionRunta;
+    }
+
+    public String getCodZona() {
+        return codZona;
+    }
+
+    public String getDescripcionZona() {
+        return descripcionZona;
+    }
+
+    public void setCodVendedor(Short codVendedor) {
+        this.codVendedor = codVendedor;
+    }
+
+    public void setDescripcionVendedor(String descripcionVendedor) {
+        this.descripcionVendedor = descripcionVendedor;
+    }
+
+    public void setCodRuta(Short codRuta) {
+        this.codRuta = codRuta;
+    }
+
+    public void setDescripcionRunta(String descripcionRunta) {
+        this.descripcionRunta = descripcionRunta;
+    }
+
+    public void setCodZona(String codZona) {
+        this.codZona = codZona;
+    }
+
+    public void setDescripcionZona(String descripcionZona) {
+        this.descripcionZona = descripcionZona;
     }
     
 }

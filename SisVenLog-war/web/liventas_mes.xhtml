@@ -176,7 +176,7 @@
                                     </h:panelGrid>
                                     <br></br>
                                     <p:commandLink title="report" target="_blank"
-                                                   action="#{liVentasMesBean.generarArchivo('PDF')}"
+                                                   action="#{liVentasMesBean.generarAchivoPDF()}"
                                                    ajax="false" immediate="false" update="messageImpreFact">
 
                                         <p:commandButton 
@@ -185,7 +185,7 @@
 
                                     </p:commandLink>
                                     <p:commandLink title="Planilla Exccell"
-                                                   action="#{liVentasMesBean.generarArchivo('EXCELL')}"
+                                                   action="#{liVentasMesBean.generarAchivoExcell()}"
                                                    ajax="false" immediate="false" update="messageImpreFact" >
 
                                         <p:commandButton 

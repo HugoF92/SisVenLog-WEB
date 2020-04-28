@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liVentasMes" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="2.1961500000000016"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
@@ -121,6 +121,7 @@
 	<field name="sumNov" class="java.math.BigDecimal"/>
 	<field name="sumDic" class="java.math.BigDecimal"/>
 	<field name="sumTotal" class="java.math.BigDecimal"/>
+	<field name="codCliente" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -128,405 +129,222 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="31" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="15" width="129" height="16" uuid="81a1f0c4-3a6c-4b93-b561-08d11381ab2a"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[CLIENTE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="129" y="15" width="50" height="16" uuid="91f4453b-c94e-481e-9ce6-8063b81c6836"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[ENERO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="179" y="15" width="50" height="16" uuid="7b52276f-5629-4567-bb65-69cbb5cd7e9b"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[FEBRERO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="229" y="15" width="50" height="16" uuid="5e033763-8fb2-435e-a2a0-7ceca93560b3"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[MARZO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="279" y="15" width="50" height="16" uuid="a890a37f-ad78-4c6e-a949-f65a779acca1"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[ABRIL]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="329" y="15" width="50" height="16" uuid="4208c261-aba9-42a1-85b0-243dfffc2297"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[MAYO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="379" y="15" width="50" height="16" uuid="f6e047a8-3478-4bae-8ce5-c7f8d0c76862"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[JUNIO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="429" y="15" width="50" height="16" uuid="fbd66c1e-f5fe-4707-b232-a838749d3450"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[JULIO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="479" y="15" width="50" height="16" uuid="40d93dbd-1cdd-4b97-9638-d4c96133db87"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[AGOSTO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="529" y="15" width="50" height="16" uuid="830fca2f-a75d-4ed0-be20-21af3faece50"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[SEPTBRE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="579" y="15" width="50" height="16" uuid="931f3d3c-6e19-42c6-b18e-d757f0615be0"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[OCTUBRE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="629" y="15" width="50" height="16" uuid="8634cd77-ae78-41d9-ab8a-33a48352bbd1"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[NOVBRE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="679" y="15" width="50" height="16" uuid="8c724d6e-cd60-401e-b36a-820970603f95"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[DICBRE]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="729" y="15" width="50" height="16" uuid="ab13609a-edaa-40ee-abf4-83ee572f9a1d"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9"/>
-				</textElement>
-				<text><![CDATA[TOTAL]]></text>
-			</staticText>
-		</band>
+		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="19" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="129" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+				<reportElement positionType="FixRelativeToBottom" x="9" y="2" width="122" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{textCliente}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="129" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="130" y="2" width="59" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumEne}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="179" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="188" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumFeb}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="229" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="237" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumMar}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="279" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="286" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumAbr}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="329" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="335" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumMay}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="379" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="384" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumJun}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="429" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="433" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumJul}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="479" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="482" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumAgo}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="529" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="531" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumSep}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="579" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="580" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumOct}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="629" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="629" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumNov}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="679" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="678" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumDic}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" x="729" y="0" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="727" y="2" width="50" height="15" uuid="88ae0555-7585-424f-bfdc-8efbd3e9b56a"/>
 				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="10"/>
+					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sumTotal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="-20" y="2" width="30" height="15" uuid="5e6ec395-cb70-464f-a90e-410d267d91e1"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codCliente}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
