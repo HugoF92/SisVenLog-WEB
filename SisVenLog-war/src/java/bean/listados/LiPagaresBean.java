@@ -12,15 +12,21 @@ import dto.LiPagaresCab;
 import dto.LiVentas;
 import entidad.Clientes;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -37,6 +43,9 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import util.ExceptionHandlerView;
@@ -78,7 +87,7 @@ public class LiPagaresBean {
         this.desdeEmision = new Date();
         this.hastaEmision = new Date();
         this.checkPagareDetalle = false;     
-        this.checkCliente = false;
+        this.checkCliente = true;
     }
 
     
@@ -95,14 +104,14 @@ public class LiPagaresBean {
         this.estadoPagare = null;
         this.codigoCliente = null;
         this.nombreCliente = null;
-        this.checkCliente = false;
+        this.checkCliente = true;
         this.clientes = null;
         RequestContext.getCurrentInstance().update("pnlLiPagares");
     }
     
     public void generarArchivo(String tipoArchivo){        
         List<LiPagares> cabeceraPagare = new ArrayList<LiPagares>();
-        Map<Integer, LiPagaresCab> cabDetalle = new HashMap<Integer, LiPagaresCab>();
+        Map<Integer, LiPagaresCab> cabDetalle = new TreeMap<Integer, LiPagaresCab>();
         if(this.desdeEmision != null && this.hastaEmision != null){
             if(this.checkCliente){
                 this.codigoCliente = null;
@@ -110,18 +119,31 @@ public class LiPagaresBean {
                 this.clientes = null;
             }
             if(this.checkPagareDetalle==true){
-                cabDetalle = this.pagareFacade.getPagaresCabDetalle(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);
-                if(cabDetalle.isEmpty()){
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
+                if(tipoArchivo.equalsIgnoreCase("PDF")){
+                    cabDetalle = this.pagareFacade.getPagaresCabDetalle(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);
+                    if(cabDetalle.isEmpty()){
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
+                    }else{
+                        generarArchivoDetalle(tipoArchivo, cabDetalle);                        
+                    }
                 }else{
-                    generarArchivoDetalle(tipoArchivo, cabDetalle);
+                    cabeceraPagare = this.pagareFacade.getPagaresCabDetalleExcell(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);
+                    if(cabeceraPagare.isEmpty()){
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
+                    }else{
+                        this.generarAchivoExcell(cabeceraPagare, this.checkPagareDetalle);                      
+                    }
                 }
             }else{
                 cabeceraPagare = this.pagareFacade.getPageresCabecera(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);                                
                 if(cabeceraPagare.isEmpty()){
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
                 }else{
-                    generarArchivoCabecera(tipoArchivo, cabeceraPagare);
+                    if(tipoArchivo.equalsIgnoreCase("PDF")){
+                        generarArchivoCabecera(tipoArchivo, cabeceraPagare);
+                    }else{
+                        this.generarAchivoExcell(cabeceraPagare, this.checkPagareDetalle);
+                    }
                 }
             }
         }else{          
@@ -138,16 +160,15 @@ public class LiPagaresBean {
         InputStream reporte = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liPagaresCabecera.jasper");        
         FacesContext context = FacesContext.getCurrentInstance();  
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse(); 
-        SimpleDateFormat formatear = new SimpleDateFormat("yyyy-MM-dd");       
         BigDecimal totalPagare = new BigDecimal(0);
         for(LiPagares p: cabeceraPagare){                
             datos = new HashMap<String, Object>();
             datos.put("nroPagare", p.getNroPagare());
-            datos.put("fEmision", formatear.format(p.getFechEmision()));
-            datos.put("fVencimiento", formatear.format(p.getFechVencimiento()));
-            datos.put("cliente", p.getCodCliente() + " - " + p.getNombreCliente());
-            datos.put("entregador", p.getCodEntregador() + " - " + p.getNombreEntregador());
-            datos.put("importe", p.getiPagare().longValue());
+            datos.put("fEmision", p.getFechEmision());
+            datos.put("fVencimiento", p.getFechVencimiento());
+            datos.put("cliente", p.getCodCliente() + " " + p.getNombreCliente());
+            datos.put("entregador", p.getCodEntregador() + " " + p.getNombreEntregador());
+            datos.put("importe", p.getiPagare());
             if (p.getEstado().equalsIgnoreCase("A")){
                 datos.put("estado", "Activo");
             }else{
@@ -159,8 +180,27 @@ public class LiPagaresBean {
         try {
             parameters.put("fechaDesdeEmision", this.desdeEmision);
             parameters.put("fechaHastaEmision", this.hastaEmision);
+            parameters.put("fechaDesdeVencimiento", this.desdeVencimiento);
+            parameters.put("fechaHastaVencimiento", this.hastaVencimiento);
+            parameters.put("fechaDesdeCobro", this.desdeCobro);
+            parameters.put("fechaHastaCobro", this.hastaCobro);
+            if(this.estadoPagare!=null){
+                if (this.estadoPagare.equalsIgnoreCase("A")){
+                    parameters.put("txtEstado", "Activo");
+                }else if(this.estadoPagare.equalsIgnoreCase("I")){
+                    parameters.put("txtEstado", "Inactivo");
+                }else{
+                    parameters.put("txtEstado", "TODOS");
+                }
+            }else{
+                parameters.put("txtEstado", "TODOS");
+            }         
+            if(!cabeceraPagare.isEmpty()){
+                parameters.put("nroInicial", cabeceraPagare.get(0).getNroPagare());
+                parameters.put("nroFinal", cabeceraPagare.get(cabeceraPagare.size() - 1).getNroPagare());
+            }            
             if(this.codigoCliente!=null){
-                parameters.put("txtCliente", this.codigoCliente + " - " + this.nombreCliente);
+                parameters.put("txtCliente", this.codigoCliente + " " + this.nombreCliente);
             }else{
                 parameters.put("txtCliente", "TODOS");
             }                
@@ -168,6 +208,7 @@ public class LiPagaresBean {
             parameters.put("nombreRepo", NOMBRE_REPORTE);
             parameters.put("usu_imprime", "admin");
             parameters.put("sumTotalPagare", totalPagare.longValue());
+            parameters.put("REPORT_LOCALE", new Locale("es", "ES"));
             JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, new JRMapCollectionDataSource(data));        
             //exportar excell
             SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();                
@@ -179,23 +220,7 @@ public class LiPagaresBean {
             configuration.setCollapseRowSpan(false);
             configuration.setCellLocked(true);
             switch(tipoArchivo)
-            {
-                case "EXCELL" :
-                    JRXlsExporter xlsExporter = new JRXlsExporter();
-                    xlsExporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-                    //config
-                    xlsExporter.setConfiguration(configuration);
-                    xlsExporter.exportReport();
-                    //
-                    response.setContentType("application/vnd.ms-excel"); //fill in contentType  
-                    response.setHeader("Content-disposition", "attachment; filename=rpagares.xls");
-                    OutputStream os = response.getOutputStream();  
-                    os.write(out.toByteArray()); //fill in bytes  
-                    os.flush();  
-                    os.close();                          
-                    break;
+            {                
                 case "PDF" :
                     String disposition = "inline";
                     response.addHeader("Content-disposition", disposition + "; filename=rpagares.pdf");
@@ -214,7 +239,77 @@ public class LiPagaresBean {
             System.out.println(ex);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reporte.", "Ocurrió un error al generar el reporte"));
         }
+    }
+    
+    public void generarAchivoExcell(List<LiPagares> cabeceraPagare, Boolean checkPagareDetalle){       
         
+        try {
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet();                
+            List<LiPagares> statFilterResults = cabeceraPagare;
+            Iterator<LiPagares> statsIterator = statFilterResults.iterator();
+            int i = 0;
+            HSSFRow row;
+            row = sheet.createRow((short) 0);
+            row.createCell((short) 0).setCellValue("NroPagare");
+            row.createCell((short) 1).setCellValue("FechEmision");
+            row.createCell((short) 2).setCellValue("FechVencimiento");
+            row.createCell((short) 3).setCellValue("CodCliente");
+            row.createCell((short) 4).setCellValue("DescripcionCliente");
+            row.createCell((short) 5).setCellValue("CodEntregador");
+            row.createCell((short) 6).setCellValue("DescripcionEntregador");
+            row.createCell((short) 7).setCellValue("ImportePagare");
+            row.createCell((short) 8).setCellValue("Estado");
+            if(checkPagareDetalle){
+                row.createCell((short) 9).setCellValue("TipoDocumento");
+                row.createCell((short) 10).setCellValue("NroFactura");
+                row.createCell((short) 11).setCellValue("FechFactura");
+                row.createCell((short) 12).setCellValue("ImporteTotal");
+            }
+            while (statsIterator.hasNext()) {
+                i++;
+                row = sheet.createRow((short) i);
+                LiPagares perfBean = statsIterator.next();
+                row.createCell((short) 0).setCellValue(perfBean.getNroPagare());
+                row.createCell((short) 1).setCellValue(perfBean.getFechEmision());
+                row.createCell((short) 2).setCellValue(perfBean.getFechVencimiento());
+                row.createCell((short) 3).setCellValue(perfBean.getCodCliente());
+                row.createCell((short) 4).setCellValue(perfBean.getNombreCliente());                
+                row.createCell((short) 5).setCellValue(perfBean.getCodEntregador());
+                row.createCell((short) 6).setCellValue(perfBean.getNombreEntregador());                    
+                row.createCell((short) 7).setCellValue(perfBean.getiPagare().doubleValue());
+                if(perfBean.getEstado().equalsIgnoreCase("A")){
+                    row.createCell((short) 8).setCellValue("Activo");
+                }else{
+                    row.createCell((short) 8).setCellValue("Inactivo");
+                }
+                if(checkPagareDetalle){
+                    row.createCell((short) 9).setCellValue(perfBean.getTipoDocum());
+                    row.createCell((short) 10).setCellValue(perfBean.getNrofact());
+                    row.createCell((short) 11).setCellValue(perfBean.getFechaFactur());
+                    row.createCell((short) 12).setCellValue(perfBean.getiTotal().doubleValue());
+                }
+            }
+            HttpServletResponse res = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            res.setContentType("application/vnd.ms-excel");
+            if(checkPagareDetalle){
+                res.setHeader("Content-disposition", "attachment; filename=RpagareDET.xls");
+            }else{
+                res.setHeader("Content-disposition", "attachment; filename=rpagare.xls");
+            }
+            try {
+                ServletOutputStream out = res.getOutputStream();
+                wb.write(out);
+                out.flush();
+                out.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            FacesContext faces = FacesContext.getCurrentInstance();
+            faces.responseComplete();
+        } catch (Exception e) {
+            System.out.println(e);
+        }        
     }
     
     public void generarArchivoDetalle(String tipoArchivo, Map<Integer, LiPagaresCab> cabDetalle ){        
@@ -229,25 +324,26 @@ public class LiPagaresBean {
         parameters.put("SUBREPORT_DIR", report); 
         InputStream reporte = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/WEB-INF/classes/pdf/liPagares.jasper");        
         FacesContext context = FacesContext.getCurrentInstance();  
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse(); 
-        SimpleDateFormat formatear = new SimpleDateFormat("yyyy-MM-dd");       
-        BigDecimal totalPagare = new BigDecimal(0);
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();             
+        BigDecimal totalPagare = new BigDecimal(0);        
         for(Map.Entry<Integer, LiPagaresCab> pagares : cabDetalle.entrySet()){
             LiPagaresCab pagaresCab = pagares.getValue();
             detallePagares = new HashMap<String, Object>();
             data = new ArrayList<Map<String, ?>>();
             detallePagares.put("txtTipoDocum", pagaresCab.getTipoDocum());
             detallePagares.put("txtNroFactura", pagaresCab.getNrofact());
-            detallePagares.put("txtFechFactura", formatear.format(pagaresCab.getFechaFactur()));
-            detallePagares.put("txtTotal", pagaresCab.getiTotal().longValue());
+            detallePagares.put("txtFechFactura", pagaresCab.getFechaFactur());
+            detallePagares.put("txtTotal", pagaresCab.getiTotal());           
+            parameters.put("nroInicial", pagaresCab.getNroInicial());
+            parameters.put("nroFinal", pagaresCab.getNroFinal());
             for(LiPagares p: pagaresCab.getDetalles()){                
                 datos = new HashMap<String, Object>();                
                 datos.put("nroPagare", p.getNroPagare());
-                datos.put("fEmision", formatear.format(p.getFechEmision()));
-                datos.put("fVencimiento", formatear.format(p.getFechVencimiento()));
-                datos.put("cliente", p.getCodCliente() + " - " + p.getNombreCliente());
-                datos.put("entregador", p.getCodEntregador() + " - " + p.getNombreEntregador());
-                datos.put("importe", p.getiPagare().longValue());
+                datos.put("fEmision", p.getFechEmision());
+                datos.put("fVencimiento", p.getFechVencimiento());
+                datos.put("cliente", p.getCodCliente() + " " + p.getNombreCliente());
+                datos.put("entregador", p.getCodEntregador() + " " + p.getNombreEntregador());
+                datos.put("importe", p.getiPagare());
                 if (p.getEstado().equalsIgnoreCase("A")){
                     datos.put("estado", "Activo");
                 }else{
@@ -262,8 +358,24 @@ public class LiPagaresBean {
         try {
             parameters.put("fechaDesdeEmision", this.desdeEmision);
             parameters.put("fechaHastaEmision", this.hastaEmision);
+            parameters.put("fechaDesdeVencimiento", this.desdeVencimiento);
+            parameters.put("fechaHastaVencimiento", this.hastaVencimiento);
+            parameters.put("fechaDesdeCobro", this.desdeCobro);
+            parameters.put("fechaHastaCobro", this.hastaCobro);
+            if(this.estadoPagare!=null){
+                if (this.estadoPagare.equalsIgnoreCase("A")){
+                    parameters.put("txtEstado", "Activo");
+                }else if(this.estadoPagare.equalsIgnoreCase("I")){
+                    parameters.put("txtEstado", "Inactivo");
+                }else{
+                    parameters.put("txtEstado", "TODOS");
+                }
+            }else{
+                parameters.put("txtEstado", "TODOS");
+            }  
+            
             if(this.codigoCliente!=null){
-                parameters.put("txtCliente", this.codigoCliente + " - " + this.nombreCliente);
+                parameters.put("txtCliente", this.codigoCliente + " " + this.nombreCliente);
             }else{
                 parameters.put("txtCliente", "TODOS");
             }                
@@ -271,7 +383,7 @@ public class LiPagaresBean {
             parameters.put("nombreRepo", NOMBRE_REPORTE);
             parameters.put("usu_imprime", "admin");
             parameters.put("sumTotalPagare", totalPagare.longValue());
-            
+            parameters.put("REPORT_LOCALE", new Locale("es", "ES"));
             JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parameters, new JRMapCollectionDataSource(cabeceraPagares));        
             //exportar excell
             SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();                
@@ -320,6 +432,13 @@ public class LiPagaresBean {
         }        
     }
     
+    public void verificarCheckCliente(){
+      System.out.println("se ha realizado verificar check: "+ this.checkCliente.toString());
+      if(this.checkCliente){
+          this.codigoCliente = null;
+          this.nombreCliente = "";
+      }
+    }
     public void verificarCliente(){
         if(codigoCliente != null){
             if(codigoCliente == 0){

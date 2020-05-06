@@ -20,6 +20,26 @@ public class LiPagaresCab {
     private Date fechaFactur;
     private BigDecimal iTotal;    
     List<LiPagares> detalles;
+    private Integer nroInicial;
+    private Integer nroFinal;
+
+    public void setNroInicial(Integer nroInicial) {
+        this.nroInicial = nroInicial;
+    }
+
+    public void setNroFinal(Integer nroFinal) {
+        this.nroFinal = nroFinal;
+    }
+
+    public Integer getNroInicial() {
+        return nroInicial;
+    }
+
+    public Integer getNroFinal() {
+        return nroFinal;
+    }
+    
+    
 
     public String getTipoDocum() {
         return tipoDocum;

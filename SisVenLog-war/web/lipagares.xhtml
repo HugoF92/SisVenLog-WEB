@@ -98,7 +98,7 @@
                                         <p:selectBooleanCheckbox id="checkPagareDetalle" value="#{liPagaresBean.checkPagareDetalle}"/>
                                         
                                         <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
-                                        <h:panelGrid id="panel_buscador_cliente_pagare" columns="3">
+                                        <h:panelGrid id="panel_buscador_cliente_pagare" columns="5">
                                             <p:inputText id="codigo_cliente_id_pagare" value="#{liPagaresBean.codigoCliente}" style="width: 60px;">
                                                 <p:ajax event="blur" update="cliente_descripcion_pagare" listener="#{liPagaresBean.verificarCliente}"/>
                                             </p:inputText>
@@ -108,12 +108,17 @@
                                                 icon="fa fa-search"
                                                 styleClass="blue-btn raised-btn" 
                                                 style="width: 30px;"
-                                                ajax="true"/>
+                                                ajax="true"
+                                                id="button_buscador_cliente_pagare"
+                                                disabled="#{liPagaresBean.checkCliente}"/>
                                             <p:outputLabel id="cliente_descripcion_pagare" value="#{liPagaresBean.nombreCliente}" 
                                                            style="width: 350px;"/>
+                                            <p:outputLabel for="checkPagareDetalle" value="Todos"/>
+                                            <p:selectBooleanCheckbox id="checkPagarecliente" value="#{liPagaresBean.checkCliente}">
+                                                <p:ajax update="button_buscador_cliente_pagare,cliente_descripcion_pagare,codigo_cliente_id_pagare" listener="#{liPagaresBean.verificarCheckCliente}"/>
+                                            </p:selectBooleanCheckbox>
                                         </h:panelGrid>
-                                        <p:outputLabel for="checkPagareDetalle" value="Todos"/>
-                                        <p:selectBooleanCheckbox id="checkPagarecliente" value="#{liPagaresBean.checkCliente}"/>
+                                        
                                     </h:panelGrid>
                                     <br></br>
                                     <p:commandLink title="report" target="_blank"
