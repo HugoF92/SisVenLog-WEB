@@ -387,13 +387,9 @@ public class LiVentasMesBean {
                 detalleVendedores.put("detalleVendedor", new JRMapCollectionDataSource(data));
                 cabecera.add(detalleVendedores);
             }
-            //TOTALIZADOR PARA EL REPORTE GENERAL
-            DecimalFormat formatea = new DecimalFormat("###,###.##", DecimalFormatSymbols.getInstance( new Locale("es", "ES")));
-            System.out.println(formatea.format(sumEneT.doubleValue()));
-            
-            Map<String, BigDecimal> montoPorReporte = new HashMap<String, BigDecimal>();
-            BigDecimal test = new BigDecimal(999999999);
-           /* montoPorReporte.put("sumTotalEne", sumEneT);
+            //TOTALIZADOR PARA EL REPORTE GENERAL                        
+            Map<String, BigDecimal> montoPorReporte = new HashMap<String, BigDecimal>();            
+            montoPorReporte.put("sumTotalEne", sumEneT);
             montoPorReporte.put("sumTotalFeb", sumFebT);
             montoPorReporte.put("sumTotalMar", sumMarT);
             montoPorReporte.put("sumTotalAbr", sumAbrT);
@@ -404,22 +400,9 @@ public class LiVentasMesBean {
             montoPorReporte.put("sumTotalSep", sumSepT);
             montoPorReporte.put("sumTotalOct", sumOctT);
             montoPorReporte.put("sumTotalNov", sumNovT);
-            montoPorReporte.put("sumTotalDic", sumDicT);*/
-            montoPorReporte.put("sumTotalEne", test);
-            montoPorReporte.put("sumTotalFeb", test);
-            montoPorReporte.put("sumTotalMar", test);
-            montoPorReporte.put("sumTotalAbr", test);
-            montoPorReporte.put("sumTotalMay", test);
-            montoPorReporte.put("sumTotalJun", test);
-            montoPorReporte.put("sumTotalJul", test);
-            montoPorReporte.put("sumTotalAgo", test);
-            montoPorReporte.put("sumTotalSep", test);
-            montoPorReporte.put("sumTotalOct", test);
-            montoPorReporte.put("sumTotalNov", test);
-            montoPorReporte.put("sumTotalDic", test);
+            montoPorReporte.put("sumTotalDic", sumDicT);            
             sumTotalT = sumTotalT.add(sumEneT).add(sumFebT).add(sumMarT).add(sumAbrT).add(sumMayT).add(sumJunT).add(sumJulT).add(sumAgoT).add(sumSepT).add(sumOctT).add(sumNovT).add(sumDicT);
-                       // montoPorReporte.put("sumTotalVenta", sumTotalT);
-                        montoPorReporte.put("sumTotalVenta", test);
+            montoPorReporte.put("sumTotalVenta", sumTotalT);                       
             parameters.putAll(montoPorReporte);
             //--------------
             try{
