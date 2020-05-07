@@ -221,6 +221,13 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
                 + "where ctipo_docum in ('FCR','FCO','CPV','NCV','NDV','EN','REC')", TiposDocumentos.class);
         return q.getResultList();
     }
+
+    public List<TiposDocumentos> listarTiposDocumentosLiFacPromo() {
+        Query q = getEntityManager().createNativeQuery("select * "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ('FCR','FCO','CPV','NCV')", TiposDocumentos.class);
+        return q.getResultList();
+    }
       
     public TiposDocumentos getTipoDocumentosByCtipo(String ctipoDocum){
         try{
