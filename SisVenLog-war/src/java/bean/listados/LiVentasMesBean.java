@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -229,9 +227,9 @@ public class LiVentasMesBean {
                 row.createCell((short) 9).setCellValue("Total");
                 while (statsIterator.hasNext()) {
                     i++;
-                    row = sheet.createRow((short) i);
+                    row = sheet.createRow(i);
                     LiVentas perfBean = statsIterator.next();
-                    row.createCell((short) 0).setCellValue(perfBean.getCodVendedor());
+                    row.createCell((short)0).setCellValue(perfBean.getCodVendedor());
                     row.createCell((short) 1).setCellValue(perfBean.getDescripcionVendedor());
                     row.createCell((short) 2).setCellValue(perfBean.getCodZona());
                     row.createCell((short) 3).setCellValue(perfBean.getDescripcionZona());
@@ -331,8 +329,8 @@ public class LiVentasMesBean {
                 data = new ArrayList<Map<String, ?>>();
                 detalleVendedores = new HashMap<String, Object>();
                 data.addAll(liCab.getClientesPorMes());
-                System.out.println(liCab.getClientesPorMes().size());                
-                System.out.println(liCab.getDescripcionVendedor().concat(liCab.getDescripcionZona()).concat(liCab.getDescripcionRunta()));
+                //System.out.println(liCab.getClientesPorMes().size());                
+                //System.out.println(liCab.getDescripcionVendedor().concat(liCab.getDescripcionZona()).concat(liCab.getDescripcionRunta()));
                 //encabezado de grupo
                 detalleVendedores.put("txtCodVendedor", liCab.getCodVendedor());
                 detalleVendedores.put("txtNombreVendedor", liCab.getDescripcionVendedor());
@@ -460,25 +458,25 @@ public class LiVentasMesBean {
             case 1:
                 return "Enero";    
             case 2:
-                return "Enero";                 
+                return "Febrero";                 
             case 3:
-                return "Enero"; 
+                return "Marzo"; 
             case 4:
-                return "Enero"; 
+                return "Abril"; 
             case 5:
-                return "Enero"; 
+                return "Mayo"; 
             case 6:
-                return "Enero"; 
+                return "Junio"; 
             case 7:
-                return "Enero"; 
+                return "Julio"; 
             case 8:
-                return "Enero"; 
+                return "Agosto"; 
             case 9:
-                return "Enero"; 
+                return "Septiembre"; 
             case 10:
-                return "Enero"; 
+                return "Octubre"; 
             case 11:
-                return "Enero"; 
+                return "Noviembre"; 
             case 12:
                 return "Diciembre";
             default:

@@ -95,7 +95,126 @@ public class LiVentasFacade {
             }             
             ventas.add(venta);
         }  
-        return ventas;
+        //Agrupacion por cliente para hacer un totalizador de meses
+        Map<Short, Map<String, Map<Short, Map<Integer,List<LiVentas>>>>> map = ventas.stream().collect(Collectors.groupingBy(LiVentas::getCodVendedor,
+        Collectors.groupingBy(LiVentas::getCodZona, Collectors.groupingBy(LiVentas::getCodRuta, Collectors.groupingBy(LiVentas::getCodCliente)))));
+        //Map<Integer, List<LiVentas>> map = ventas.stream().collect(Collectors.groupingBy(LiVentas::getCodCliente));
+        List<LiVentas> ventasClientes = new ArrayList<LiVentas>();
+        /*for (Map.Entry<Short, Map<String, Map<Short, Map<Integer,List<LiVentas>>>>> agrupPorCiente : map.entrySet()) {
+            BigDecimal sumEne = new BigDecimal(0);BigDecimal sumFeb = new BigDecimal(0);BigDecimal sumMar = new BigDecimal(0);BigDecimal sumAbr = new BigDecimal(0);
+            BigDecimal sumMay = new BigDecimal(0);BigDecimal sumJun = new BigDecimal(0);BigDecimal sumJul = new BigDecimal(0);BigDecimal sumAgo = new BigDecimal(0);
+            BigDecimal sumSep = new BigDecimal(0);BigDecimal sumOct = new BigDecimal(0);BigDecimal sumNov = new BigDecimal(0);BigDecimal sumDic = new BigDecimal(0);
+            BigDecimal sumTotal = new BigDecimal(0);*/
+            //representa un solo cliente con todos los meses que puede tener
+        for(Map.Entry<Short, Map<String, Map<Short, Map<Integer,List<LiVentas>>>>> vendedor : map.entrySet()){
+            Short codVendedor = vendedor.getKey();
+            for(Map.Entry<String, Map<Short, Map<Integer,List<LiVentas>>>> zona : vendedor.getValue().entrySet()){
+                String codZona = zona.getKey();
+                for(Map.Entry<Short, Map<Integer,List<LiVentas>>> ruta : zona.getValue().entrySet()){
+                    Short codRuta = ruta.getKey();
+                    for(Map.Entry<Integer,List<LiVentas>> agrupPorCliente : ruta.getValue().entrySet()){ 
+                        BigDecimal sumEne = new BigDecimal(0);BigDecimal sumFeb = new BigDecimal(0);BigDecimal sumMar = new BigDecimal(0);BigDecimal sumAbr = new BigDecimal(0);
+                        BigDecimal sumMay = new BigDecimal(0);BigDecimal sumJun = new BigDecimal(0);BigDecimal sumJul = new BigDecimal(0);BigDecimal sumAgo = new BigDecimal(0);
+                        BigDecimal sumSep = new BigDecimal(0);BigDecimal sumOct = new BigDecimal(0);BigDecimal sumNov = new BigDecimal(0);BigDecimal sumDic = new BigDecimal(0);
+                        for(LiVentas venta : agrupPorCliente.getValue()){
+                            switch (venta.getNmes()) {
+                                case 1:                                
+                                    sumEne = sumEne.add(venta.getMonto());
+                                    break;
+                                case 2:
+                                    sumFeb = sumFeb.add(venta.getMonto());
+                                    break;
+                                case 3:
+                                    sumMar = sumMar.add(venta.getMonto());
+                                    break;
+                                case 4:
+                                    sumAbr = sumAbr.add(venta.getMonto());
+                                    break;
+                                case 5:
+                                    sumMay = sumMay.add(venta.getMonto());
+                                    break;
+                                case 6:
+                                    sumJun = sumJun.add(venta.getMonto());
+                                    break;
+                                case 7:
+                                    sumJul = sumJul.add(venta.getMonto());
+                                    break;
+                                case 8:
+                                    sumAgo = sumAgo.add(venta.getMonto());
+                                    break;
+                                case 9:
+                                    sumSep = sumSep.add(venta.getMonto());
+                                    break;
+                                case 10:
+                                    sumOct = sumOct.add(venta.getMonto());
+                                    break;
+                                case 11:
+                                    sumNov = sumNov.add(venta.getMonto());
+                                    break;
+                                default:
+                                    sumDic = sumDic.add(venta.getMonto());
+                                    break;
+                            }
+                        }
+                        //se debe generar los 12 meses para cada cliente
+                        //group by mes
+                        Map<Integer,List<LiVentas>> porMes = agrupPorCliente.getValue().stream().collect(Collectors.groupingBy(LiVentas::getNmes));
+                        for(Map.Entry<Integer,List<LiVentas>> nmes : porMes.entrySet()){
+                            LiVentas vCliente = new LiVentas();
+                            vCliente.setCodCliente(agrupPorCliente.getValue().get(0).getCodCliente()); agrupPorCliente.getValue().get(0);
+                            vCliente.setCodRuta(agrupPorCliente.getValue().get(0).getCodRuta());
+                            vCliente.setCodVendedor(agrupPorCliente.getValue().get(0).getCodVendedor());
+                            vCliente.setCodZona(agrupPorCliente.getValue().get(0).getCodZona());
+                            vCliente.setDescripcionRunta(agrupPorCliente.getValue().get(0).getDescripcionRunta());
+                            vCliente.setDescripcionVendedor(agrupPorCliente.getValue().get(0).getDescripcionVendedor());
+                            vCliente.setDescripcionZona(agrupPorCliente.getValue().get(0).getDescripcionZona());
+                            vCliente.setRazonSocialCliente(agrupPorCliente.getValue().get(0).getRazonSocialCliente());
+                            vCliente.setNmes(nmes.getKey());
+                            switch (nmes.getKey()) {
+                                case 1:                                                        
+                                    vCliente.setMonto(sumEne);
+                                    break;
+                                case 2:
+                                    vCliente.setMonto(sumFeb);
+                                    break;
+                                case 3:
+                                    vCliente.setMonto(sumMar);
+                                    break;
+                                case 4:
+                                    vCliente.setMonto(sumAbr);
+                                    break;
+                                case 5:
+                                    vCliente.setMonto(sumMay);
+                                    break;
+                                case 6:
+                                    vCliente.setMonto(sumJun);
+                                    break;
+                                case 7:
+                                    vCliente.setMonto(sumJul);
+                                    break;
+                                case 8:
+                                    vCliente.setMonto(sumAgo);
+                                    break;
+                                case 9:
+                                    vCliente.setMonto(sumSep);
+                                    break;
+                                case 10:
+                                    vCliente.setMonto(sumOct);
+                                    break;
+                                case 11:
+                                    vCliente.setMonto(sumNov);
+                                    break;
+                                default:
+                                    vCliente.setMonto(sumDic);
+                                    break;
+                            }
+                            ventasClientes.add(vCliente);
+                        }                         
+                    }
+                }
+            }
+        }
+        return ventasClientes;
     }
     
     public List<LiVentasCab> obtenerListado(String consultaVenta, String consultaNotas){         
