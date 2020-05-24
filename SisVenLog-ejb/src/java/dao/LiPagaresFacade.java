@@ -7,13 +7,11 @@ package dao;
 
 import dto.LiPagares;
 import dto.LiPagaresCab;
-import dto.LiVentas;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -251,9 +249,9 @@ public class LiPagaresFacade {
                 
         }  
         //agrupación por nroFactura
-        Map<Integer, LiPagaresCab> facturasGroup = new TreeMap<Integer, LiPagaresCab>();
+        Map<Integer, LiPagaresCab> facturasGroup = new TreeMap<Integer, LiPagaresCab>();       
         for (LiPagares r : pagaresCabDetalle) {
-            Integer key = r.getNrofact();
+            Integer key = r.getNroPagare();
             
             if(facturasGroup.containsKey(key)){
                 LiPagaresCab pagaresCab = facturasGroup.get(key);
@@ -263,10 +261,15 @@ public class LiPagaresFacade {
             }else{
                 List<LiPagares> list = new ArrayList<LiPagares>();
                 LiPagaresCab cabecera = new LiPagaresCab();
-                cabecera.setFechaFactur(r.getFechaFactur());
-                cabecera.setNrofact(r.getNrofact());
-                cabecera.setTipoDocum(r.getTipoDocum());
-                cabecera.setiTotal(r.getiTotal());
+                cabecera.setCodCliente(r.getCodCliente());
+                cabecera.setCodEntregador(r.getCodEntregador());
+                cabecera.setNombreCliente(r.getNombreCliente());
+                cabecera.setNombreEntregador(r.getNombreEntregador());
+                cabecera.setEstado(r.getEstado());
+                cabecera.setiPagare(r.getiPagare());
+                cabecera.setFechEmision(r.getFechEmision());
+                cabecera.setFechVencimiento(r.getFechVencimiento());
+                cabecera.setNroPagare(r.getNroPagare());
                 if(!pagaresCabDetalle.isEmpty()){
                     cabecera.setNroInicial(pagaresCabDetalle.get(0).getNroPagare());
                     cabecera.setNroFinal( pagaresCabDetalle.get(pagaresCabDetalle.size() - 1).getNroPagare());
@@ -310,4 +313,45 @@ public class LiPagaresFacade {
         //--------------------------------------------------------------------------------------------------------------------------        
         return consultaBase;
     }
+    
+    /*public List<TmpDatos> getDatosSelctor(String query) {
+
+        List<TmpDatos> respuesta = new ArrayList<TmpDatos>();
+
+        if (query != null && query != "") {
+            Query q = getEntityManager().createNativeQuery(query);
+
+            System.out.println(q.toString());
+
+            List<Object[]> resultList = q.getResultList();
+
+            if (resultList.size() <= 0) {
+                return null;
+            } else {
+                for (Object[] obj : resultList) {
+
+                    TmpDatos aux = new TmpDatos();
+
+                    aux.setCodigo(obj[0].toString());
+                    aux.setDescripcion(obj[1].toString());
+
+                    respuesta.add(aux);
+
+                }
+            }
+        }
+
+        return respuesta;
+    }*/
+    
+    /*public Integer ejecutarSentenciaSQL(String sql) {
+
+        int respuesta = 0;
+        System.out.println(sql);
+        Query q = getEntityManager().createNativeQuery(sql);
+
+        respuesta = q.executeUpdate();
+
+        return respuesta;
+    }*/
 }

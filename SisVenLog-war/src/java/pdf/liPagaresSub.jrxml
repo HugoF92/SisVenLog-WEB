@@ -105,13 +105,10 @@
 	</style>
 	<subDataset name="Table Dataset 1" uuid="80cf2559-456d-4156-b232-b5140cbe7e9e"/>
 	<subDataset name="Table Dataset 2" uuid="4d01d1e6-4b18-46c1-9c9c-a67994446c9c"/>
-	<field name="nroPagare" class="java.lang.String"/>
-	<field name="fEmision" class="java.util.Date"/>
-	<field name="fVencimiento" class="java.util.Date"/>
-	<field name="cliente" class="java.lang.String"/>
-	<field name="entregador" class="java.lang.String"/>
-	<field name="importe" class="java.math.BigDecimal"/>
-	<field name="estado" class="java.lang.String"/>
+	<field name="txtTipoDocum" class="java.lang.String"/>
+	<field name="txtNroFactura" class="java.lang.String"/>
+	<field name="txtFechFactura" class="java.util.Date"/>
+	<field name="txtTotal" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -125,35 +122,22 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="17" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="183" y="0" width="99" height="17" uuid="dc531683-5526-42d4-a2fe-f94931ebab33"/>
+				<textFieldExpression><![CDATA[$F{txtTipoDocum}]]></textFieldExpression>
+			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="65" y="0" width="83" height="13" uuid="76c46454-4c9d-40de-9fec-e39222b664fc"/>
-				<textFieldExpression><![CDATA[$F{fEmision}]]></textFieldExpression>
+				<reportElement positionType="FixRelativeToBottom" x="383" y="0" width="100" height="17" uuid="2fd0b994-a1bd-4403-8f51-f2d623cd60dc"/>
+				<textFieldExpression><![CDATA[$F{txtFechFactura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="282" y="0" width="100" height="17" uuid="cc6b51ff-8ac7-44e1-8ee1-9ebb78b7497f"/>
+				<textFieldExpression><![CDATA[$F{txtNroFactura}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="616" y="0" width="83" height="13" uuid="1e8de34a-ed42-4d84-bcaf-a7c9ea5bed2d"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="232" y="0" width="217" height="13" uuid="175c8b80-b3cd-4f22-beae-4e946aeae579"/>
-				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="449" y="0" width="167" height="13" uuid="b4bfd7ca-c98d-40b2-8a52-c57842028f2e"/>
-				<textFieldExpression><![CDATA[$F{entregador}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="148" y="0" width="83" height="13" uuid="ecd7b489-d8b0-41d5-b1f2-2470a8603036"/>
-				<textFieldExpression><![CDATA[$F{fVencimiento}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="704" y="0" width="78" height="13" uuid="25e4b5ef-ec88-4a9a-9224-9c5b217fd7d9"/>
-				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="-17" y="0" width="82" height="13" uuid="54c2ac19-be50-4430-a25d-57b98f5dbfe7"/>
-				<textFieldExpression><![CDATA[$F{nroPagare}]]></textFieldExpression>
+				<reportElement positionType="FixRelativeToBottom" x="483" y="0" width="100" height="17" uuid="04202140-4c8e-46b7-ab1f-363089eaacd0"/>
+				<textFieldExpression><![CDATA[$F{txtTotal}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -95,29 +95,8 @@
                                         </p:selectOneMenu>
                                         
                                         <p:outputLabel for="checkPagareDetalle" value="Con Detalles"/>
-                                        <p:selectBooleanCheckbox id="checkPagareDetalle" value="#{liPagaresBean.checkPagareDetalle}"/>
-                                        
-                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
-                                        <h:panelGrid id="panel_buscador_cliente_pagare" columns="5">
-                                            <p:inputText id="codigo_cliente_id_pagare" value="#{liPagaresBean.codigoCliente}" style="width: 60px;">
-                                                <p:ajax event="blur" update="cliente_descripcion_pagare" listener="#{liPagaresBean.verificarCliente}"/>
-                                            </p:inputText>
-                                            <p:commandButton 
-                                                oncomplete="PF('dlgBusClieConsultaPagare').show()"
-                                                update="formPagare"
-                                                icon="fa fa-search"
-                                                styleClass="blue-btn raised-btn" 
-                                                style="width: 30px;"
-                                                ajax="true"
-                                                id="button_buscador_cliente_pagare"
-                                                disabled="#{liPagaresBean.checkCliente}"/>
-                                            <p:outputLabel id="cliente_descripcion_pagare" value="#{liPagaresBean.nombreCliente}" 
-                                                           style="width: 350px;"/>
-                                            <p:outputLabel for="checkPagareDetalle" value="Todos"/>
-                                            <p:selectBooleanCheckbox id="checkPagarecliente" value="#{liPagaresBean.checkCliente}">
-                                                <p:ajax update="button_buscador_cliente_pagare,cliente_descripcion_pagare,codigo_cliente_id_pagare" listener="#{liPagaresBean.verificarCheckCliente}"/>
-                                            </p:selectBooleanCheckbox>
-                                        </h:panelGrid>
+                                        <p:selectBooleanCheckbox id="checkPagareDetalle" value="#{liPagaresBean.checkPagareDetalle}"/>                                                                               
+                                                                                
                                         
                                     </h:panelGrid>
                                     <br></br>
@@ -148,87 +127,11 @@
 
                         </h:form>
                         
-                        <h:form id="formBusClie_cc"  prependId="false">
-
-                            <p:growl id="msgBusCliente_cc" showDetail="true"/>
-
-                            <p:dialog header="Buscar Cliente"
-                                      widgetVar="dlgBusClieConsultaPagare"
-                                      modal="true"
-                                      closable="true"
-                                      closeOnEscape="true"
-                                      resizable="false"
-                                      width="700">
-
-                                <p:ajax event="open"
-                                        listener="#{liPagaresBean.inicializarBuscadorClientes}"
-                                        update="pnlBusClie_cc tablaBusClie_cc"/>
-
-                                <h:panelGrid id="pnlBusClie_cc" columns="2">
-
-                                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
-
-                                    <h:panelGrid columns="2">
-                                        <p:inputText id="filtroBusClie_cc"
-                                                     value="#{liPagaresBean.filtro}"
-                                                     style="width: 200px;">
-                                            <p:tooltip  for="filtroBusClie_cc" value="Ingrese codigo, o nombre." position="bottom"/>
-
-                                        </p:inputText>
-
-                                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
-                                                         style="width: 100px;" actionListener="#{liPagaresBean.listarClientesBuscador()}"
-                                                         update="tablaBusClie_cc msgBusCliente_cc"/>
-
-
-                                    </h:panelGrid>
-
-
-                                </h:panelGrid>
-
-                                <p:dataTable id="tablaBusClie_cc"
-                                             var="detalle1"
-                                             value="#{liPagaresBean.listaClientes}"
-                                             paginator="true"
-                                             rows="5"
-                                             rowsPerPageTemplate="5,10"
-                                             emptyMessage="Sin datos para mostrar."
-                                             style="width: 98%;"
-                                             rowKey="#{detalle1.codCliente}"
-                                             selection="#{liPagaresBean.clientes}"
-                                             selectionMode="single"
-                                             paginatorPosition="bottom">
-
-                                    <p:ajax event="rowSelect"
-                                            listener="#{liPagaresBean.onRowSelect(event)}"/>
-
-
-                                    <p:column headerText="Codigo" width="100">
-                                        <h:outputText value="#{detalle1.codCliente}"/>
-                                    </p:column>
-
-                                    <p:column headerText="RUC" width="100">
-                                        <h:outputText value="#{detalle1.xruc}"/>
-                                    </p:column>
-
-                                    <p:column headerText="CI" width="100">
-                                        <h:outputText value="#{detalle1.xcedula}"/>
-                                    </p:column>
-
-                                    <p:column headerText="Nombre" width="200">
-                                        <h:outputText value="#{detalle1.xnombre}"/>
-                                    </p:column>
-
-                                </p:dataTable>
-
-
-                            </p:dialog>
-
-                        </h:form>
+                        
 
                     </div>
                 </div>
-            </div>
+            </div>            
             <p:dialog id="exceptionDialogPagare" header="Ocurrió un error" widgetVar="exceptionDialogPagare"
                       height="500px" width="700px">
                 Message: #{liPagaresBean.tituloError} <br/>

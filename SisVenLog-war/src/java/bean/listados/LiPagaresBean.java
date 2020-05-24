@@ -5,21 +5,18 @@
  */
 package bean.listados;
 
+
 import dao.ClientesFacade;
 import dao.LiPagaresFacade;
 import dto.LiPagares;
 import dto.LiPagaresCab;
-import dto.LiVentas;
 import entidad.Clientes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +71,7 @@ public class LiPagaresBean {
     private Clientes clientes;
     private List<Clientes> listaClientes;
     private String filtro;
+    private Boolean seleccionarClientes;
     
     @EJB
     private ClientesFacade clientesFacade;
@@ -88,6 +86,7 @@ public class LiPagaresBean {
         this.hastaEmision = new Date();
         this.checkPagareDetalle = false;     
         this.checkCliente = true;
+        this.seleccionarClientes = false;
     }
 
     
@@ -106,7 +105,7 @@ public class LiPagaresBean {
         this.nombreCliente = null;
         this.checkCliente = true;
         this.clientes = null;
-        RequestContext.getCurrentInstance().update("pnlLiPagares");
+        //RequestContext.getCurrentInstance().update("pnlLiPagares");
     }
     
     public void generarArchivo(String tipoArchivo){        
@@ -329,27 +328,28 @@ public class LiPagaresBean {
         for(Map.Entry<Integer, LiPagaresCab> pagares : cabDetalle.entrySet()){
             LiPagaresCab pagaresCab = pagares.getValue();
             detallePagares = new HashMap<String, Object>();
-            data = new ArrayList<Map<String, ?>>();
-            detallePagares.put("txtTipoDocum", pagaresCab.getTipoDocum());
-            detallePagares.put("txtNroFactura", pagaresCab.getNrofact());
-            detallePagares.put("txtFechFactura", pagaresCab.getFechaFactur());
-            detallePagares.put("txtTotal", pagaresCab.getiTotal());           
+            data = new ArrayList<Map<String, ?>>();            
+            detallePagares.put("nroPagare", pagaresCab.getNroPagare());
+            detallePagares.put("fEmision", pagaresCab.getFechEmision());
+            detallePagares.put("fVencimiento", pagaresCab.getFechVencimiento());
+            detallePagares.put("cliente", pagaresCab.getCodCliente() + " " + pagaresCab.getNombreCliente());
+            detallePagares.put("entregador", pagaresCab.getCodEntregador() + " " + pagaresCab.getNombreEntregador());
+            detallePagares.put("importe", pagaresCab.getiPagare());
+            if (pagaresCab.getEstado().equalsIgnoreCase("A")){
+                    detallePagares.put("estado", "Activo");
+            }else{
+                detallePagares.put("estado", "Inactivo");
+            }
+            totalPagare = totalPagare.add(pagaresCab.getiPagare());
+            //Rango Pagare
             parameters.put("nroInicial", pagaresCab.getNroInicial());
             parameters.put("nroFinal", pagaresCab.getNroFinal());
             for(LiPagares p: pagaresCab.getDetalles()){                
-                datos = new HashMap<String, Object>();                
-                datos.put("nroPagare", p.getNroPagare());
-                datos.put("fEmision", p.getFechEmision());
-                datos.put("fVencimiento", p.getFechVencimiento());
-                datos.put("cliente", p.getCodCliente() + " " + p.getNombreCliente());
-                datos.put("entregador", p.getCodEntregador() + " " + p.getNombreEntregador());
-                datos.put("importe", p.getiPagare());
-                if (p.getEstado().equalsIgnoreCase("A")){
-                    datos.put("estado", "Activo");
-                }else{
-                    datos.put("estado", "Inactivo");
-                }
-                totalPagare = totalPagare.add(p.getiPagare());
+                datos = new HashMap<String, Object>();                                
+                datos.put("txtTipoDocum", p.getTipoDocum());
+                datos.put("txtNroFactura", p.getNrofact());
+                datos.put("txtFechFactura", p.getFechaFactur());
+                datos.put("txtTotal", p.getiTotal());                
                 data.add(datos);                
             }
             detallePagares.put("detallePagares", new JRMapCollectionDataSource(data));
@@ -463,6 +463,20 @@ public class LiPagaresBean {
             }
         }
     }
+    
+    /*public void llamarSelectorDatos() {
+        
+        System.out.println("llamarSelectorDatos");
+        SelectorDatosBean.sql = "select cod_cliente, xnombre \n"
+                + "from clientes\n"
+                + "where cod_estado in ('A', 'S') ";
+        
+        SelectorDatosBean.tabla_temporal = "tmp_datos";
+        
+        SelectorDatosBean.campos_tabla_temporal = "codigo, descripcion";
+        //RequestContext.getCurrentInstance().update("pnlGridPagare");
+        RequestContext.getCurrentInstance().execute("PF('dlgSelDatos').show();");
+    }*/
     
     public void inicializarBuscadorClientes(){
         this.listaClientes = new ArrayList<>();
@@ -620,6 +634,14 @@ public class LiPagaresBean {
 
     public void setCheckCliente(Boolean checkCliente) {
         this.checkCliente = checkCliente;
+    }
+
+    public Boolean getSeleccionarClientes() {
+        return seleccionarClientes;
+    }
+
+    public void setSeleccionarClientes(Boolean seleccionarClientes) {
+        this.seleccionarClientes = seleccionarClientes;
     }
     
 }
