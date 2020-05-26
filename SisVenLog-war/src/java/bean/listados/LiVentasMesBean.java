@@ -5,10 +5,12 @@
  */
 package bean.listados;
 
+import bean.selectorVentas.SelectorDatosBean;
 import dao.CanalesVentaFacade;
 import dao.CiudadesFacade;
 import dao.DivisionesFacade;
 import dao.EmpleadosFacade;
+import dao.LiPagaresFacade;
 import dao.LiVentasFacade;
 import dao.LineasFacade;
 import dao.ProveedoresFacade;
@@ -21,6 +23,7 @@ import dto.LiVentas;
 import dto.LiVentasCab;
 import entidad.CanalesVenta;
 import entidad.Ciudades;
+import entidad.Clientes;
 import entidad.Divisiones;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -29,6 +32,7 @@ import entidad.Rutas;
 import entidad.Sublineas;
 import entidad.TiposClientes;
 import entidad.TiposVentas;
+import entidad.TmpDatos;
 import entidad.Zonas;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +63,8 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.primefaces.context.RequestContext;
+import util.StringUtil;
 /**
  *
  * @author Clara
@@ -119,6 +125,8 @@ public class LiVentasMesBean {
     //Vendedores
     private Empleados vendedor;
     private List<Empleados> vendedores; 
+    //
+    private Boolean seleccionarClientes;
     
     @EJB
     private RutasFacade rutasFacade;
@@ -144,6 +152,8 @@ public class LiVentasMesBean {
     private EmpleadosFacade empleadosFacade;
     @EJB
     private LiVentasFacade ventasFacade;
+    @EJB
+    private LiPagaresFacade pagareFacade;
     
     
     //valores
@@ -158,6 +168,8 @@ public class LiVentasMesBean {
     private Short ciudadClienteSelected = 0;
     private String tipoVentaSelected = "0";
     private Short vendedorSelected = 0;
+    private Boolean checkCliente;
+    private List<Clientes> listadoClientesSeleccionados;
     
     @PostConstruct
     public void instanciar() {
@@ -198,11 +210,24 @@ public class LiVentasMesBean {
         this.ciudadClienteSelected = 0;
         this.tipoVentaSelected = "0";
         this.vendedorSelected = 0;
+        this.seleccionarClientes = false;
+        this.checkCliente = true;
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();
     }
 
     
     
     public void generarAchivoExcell(){
+        if(checkCliente){
+            this.listadoClientesSeleccionados = new ArrayList<Clientes>();
+        }else{
+            for(TmpDatos t: pagareFacade.getDatosSelctor("select * from tmp_datos order by codigo")){
+                Clientes c = new Clientes();
+                c.setCodCliente(Integer.valueOf(t.getCodigo()));
+                c.setXnombre(t.getDescripcion());
+                this.listadoClientesSeleccionados.add(c);
+            }
+        }
         if(this.desde != null && this.hasta != null){
             String consultaVentaTotal = generarConsultaAgrupacion("TOTAL", "VENTA");       
             String consultaNotaTotal = generarConsultaAgrupacion("TOTAL", "NOTAS");
@@ -260,9 +285,20 @@ public class LiVentasMesBean {
         }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            
         }
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();
     }
     
     public void generarAchivoPDF(){
+        if(checkCliente){
+            this.listadoClientesSeleccionados = new ArrayList<Clientes>();
+        }else{
+            for(TmpDatos t: pagareFacade.getDatosSelctor("select * from tmp_datos order by codigo")){
+                Clientes c = new Clientes();
+                c.setCodCliente(Integer.valueOf(t.getCodigo()));
+                c.setXnombre(t.getDescripcion());
+                this.listadoClientesSeleccionados.add(c);
+            }
+        }
         if(this.desde != null && this.hasta != null){
             String consultaVentaTotal = generarConsultaAgrupacion("TOTAL", "VENTA");       
             String consultaNotaTotal = generarConsultaAgrupacion("TOTAL", "NOTAS");
@@ -281,6 +317,11 @@ public class LiVentasMesBean {
             parameters.put("nombreRepo", NOMBRE_REPORTE);
             parameters.put("usu_imprime", "admin");
             parameters.put("REPORT_LOCALE", new Locale("es", "ES"));
+            if(!this.listadoClientesSeleccionados.isEmpty()){
+                parameters.put("txtCliente", StringUtil.convertirListaAString(this.listadoClientesSeleccionados));
+            }else{
+                parameters.put("txtCliente", "TODOS");
+            } 
             short comparar=0;
             if(this.canalVentaSelected.equalsIgnoreCase("0")){
                  parameters.put("txtCanalVta", "TODOS");
@@ -432,6 +473,7 @@ public class LiVentasMesBean {
         }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            
         }
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();
     }    
     
     private void limpiarDatos(){
@@ -451,6 +493,24 @@ public class LiVentasMesBean {
         this.tipoVentaSelected = "0";
         this.vendedorSelected = 0;
     }
+
+    public Boolean getSeleccionarClientes() {
+        return seleccionarClientes;
+    }
+
+    public Boolean getCheckCliente() {
+        return checkCliente;
+    }
+
+    public void setSeleccionarClientes(Boolean seleccionarClientes) {
+        this.seleccionarClientes = seleccionarClientes;
+    }
+
+    public void setCheckCliente(Boolean checkCliente) {
+        this.checkCliente = checkCliente;
+    }
+    
+    
     
     public String getMesDescripcion(Integer mes){
         switch(mes)
@@ -753,9 +813,34 @@ public class LiVentasMesBean {
                 consultaBase = consultaBase.concat(" AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente()+"'");
             }
         }
+        if(!this.listadoClientesSeleccionados.isEmpty() && this.seleccionarClientes){
+            consultaBase = consultaBase.concat(" AND f.cod_cliente in (" + StringUtil.convertirListaAString(this.listadoClientesSeleccionados) + ")");
+        }
         //--------------------------------------------------------------------------------------------------------------------------
         //System.out.println(String.format("Consulta Base Final: [%s]", ""));
         return consultaBase;
+    }
+    
+    public void llamarSelectorDatos()  {
+        //cambiar el selector de todos               
+        if(this.seleccionarClientes){
+            this.checkCliente = false;
+            //RequestContext.getCurrentInstance().update("ocultarBtnPag");
+            System.out.println("Mostrar selector de cliente");
+            SelectorDatosBean.sql = "select cod_cliente, xnombre \n"
+                + "from clientes\n"
+                + "where cod_estado in ('A', 'S') ";        
+            SelectorDatosBean.tabla_temporal = "tmp_datos";
+
+            SelectorDatosBean.campos_tabla_temporal = "codigo, descripcion";
+            
+            RequestContext.getCurrentInstance().execute("PF('dlgSelDatosVta').show();");
+        }else{
+            this.checkCliente = true;
+            //RequestContext.getCurrentInstance().update("ocultarBtnPag");
+            System.out.println("Ocultar selector de cliente");
+        }
+        RequestContext.getCurrentInstance().update("mostrarBtnVta");
     }
     
     public Date getDesde() {

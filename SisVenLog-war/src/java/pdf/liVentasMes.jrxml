@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liVentasMes" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
-	<property name="ireport.zoom" value="1.610510000000001"/>
-	<property name="ireport.x" value="109"/>
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
@@ -95,6 +95,7 @@
 	<parameter name="sumTotalNov" class="java.math.BigDecimal"/>
 	<parameter name="sumTotalDic" class="java.math.BigDecimal"/>
 	<parameter name="sumTotalVenta" class="java.math.BigDecimal"/>
+	<parameter name="txtCliente" class="java.lang.String"/>
 	<field name="detalleVendedor" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 	<field name="txtCodVendedor" class="java.lang.String"/>
 	<field name="txtNombreVendedor" class="java.lang.String"/>
@@ -378,7 +379,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="119" splitType="Stretch">
+		<band height="133" splitType="Stretch">
 			<staticText>
 				<reportElement x="3" y="16" width="101" height="14" uuid="c7ba82dc-a8a4-468e-8b54-0c24059c853a"/>
 				<textElement textAlignment="Center">
@@ -489,40 +490,40 @@
 				<text><![CDATA[SubLinea:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="213" y="89" width="133" height="14" uuid="498e9d77-5dfe-417e-a0df-e59ed6678367"/>
+				<reportElement x="213" y="85" width="133" height="14" uuid="498e9d77-5dfe-417e-a0df-e59ed6678367"/>
 				<textFieldExpression><![CDATA[$P{txtLinea}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="511" y="89" width="100" height="14" uuid="6df02af0-b290-494a-906d-24059d12c6c3"/>
+				<reportElement x="511" y="85" width="100" height="14" uuid="6df02af0-b290-494a-906d-24059d12c6c3"/>
 				<textFieldExpression><![CDATA[$P{txtDivision}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="154" y="89" width="59" height="14" uuid="e333c11f-503c-4681-8641-38af52399996"/>
+				<reportElement x="154" y="85" width="59" height="14" uuid="e333c11f-503c-4681-8641-38af52399996"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Linea:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="89" width="57" height="14" uuid="eaa2a31b-89b6-428d-9fb4-74d49740cfd6"/>
+				<reportElement x="3" y="85" width="57" height="14" uuid="eaa2a31b-89b6-428d-9fb4-74d49740cfd6"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Proveedor:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="60" y="89" width="87" height="14" uuid="51e750d1-1c53-4f83-b3a8-3a4124e08e9c"/>
+				<reportElement x="60" y="85" width="87" height="14" uuid="51e750d1-1c53-4f83-b3a8-3a4124e08e9c"/>
 				<textFieldExpression><![CDATA[$P{txtProveedor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="452" y="89" width="59" height="14" uuid="c35cd2fc-7025-4a54-9b8c-be48a821f1dd"/>
+				<reportElement x="452" y="85" width="59" height="14" uuid="c35cd2fc-7025-4a54-9b8c-be48a821f1dd"/>
 				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Division:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="352" y="103" width="50" height="16" uuid="efe7d45c-a284-4cb6-88f7-59e9cf135a03"/>
+				<reportElement x="352" y="116" width="50" height="16" uuid="efe7d45c-a284-4cb6-88f7-59e9cf135a03"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -536,7 +537,7 @@
 				<text><![CDATA[MAYO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="252" y="103" width="50" height="16" uuid="7d6dfa13-098a-4cd3-9784-2aa42a98037f"/>
+				<reportElement x="252" y="116" width="50" height="16" uuid="7d6dfa13-098a-4cd3-9784-2aa42a98037f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -550,7 +551,7 @@
 				<text><![CDATA[MARZO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="752" y="103" width="50" height="16" uuid="328c08ad-435b-4709-a4da-035e955b959a"/>
+				<reportElement x="752" y="116" width="50" height="16" uuid="328c08ad-435b-4709-a4da-035e955b959a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -564,7 +565,7 @@
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="202" y="103" width="50" height="16" uuid="6392c2a5-cb76-4acf-9594-74fbcede4724"/>
+				<reportElement x="202" y="116" width="50" height="16" uuid="6392c2a5-cb76-4acf-9594-74fbcede4724"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -578,7 +579,7 @@
 				<text><![CDATA[FEBRERO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="602" y="103" width="50" height="16" uuid="401ac12c-ac40-41ee-849b-655508ad3a98"/>
+				<reportElement x="602" y="116" width="50" height="16" uuid="401ac12c-ac40-41ee-849b-655508ad3a98"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -592,7 +593,7 @@
 				<text><![CDATA[OCTUBRE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="702" y="103" width="50" height="16" uuid="c4d47d49-8c71-46f4-84cf-57d706788223"/>
+				<reportElement x="702" y="116" width="50" height="16" uuid="c4d47d49-8c71-46f4-84cf-57d706788223"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -606,7 +607,7 @@
 				<text><![CDATA[DICBRE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="302" y="103" width="50" height="16" uuid="b4efb19a-9822-42ed-8659-f95d044be2fc"/>
+				<reportElement x="302" y="116" width="50" height="16" uuid="b4efb19a-9822-42ed-8659-f95d044be2fc"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -620,7 +621,7 @@
 				<text><![CDATA[ABRIL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="502" y="103" width="50" height="16" uuid="c893ba68-29a4-4e54-8c41-efc84be8bc88"/>
+				<reportElement x="502" y="116" width="50" height="16" uuid="c893ba68-29a4-4e54-8c41-efc84be8bc88"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -634,7 +635,7 @@
 				<text><![CDATA[AGOSTO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="152" y="103" width="50" height="16" uuid="6c7fe083-d5a7-4e22-bf1c-316c33bc26c7"/>
+				<reportElement x="152" y="116" width="50" height="16" uuid="6c7fe083-d5a7-4e22-bf1c-316c33bc26c7"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -648,7 +649,7 @@
 				<text><![CDATA[ENERO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="103" width="152" height="16" uuid="d2c7d30c-42cd-4a80-8edb-c85ce3d563b1"/>
+				<reportElement x="0" y="116" width="152" height="16" uuid="d2c7d30c-42cd-4a80-8edb-c85ce3d563b1"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -662,7 +663,7 @@
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="652" y="103" width="50" height="16" uuid="91fd63a0-c738-4e62-8107-6eaedb3cdfcf"/>
+				<reportElement x="652" y="116" width="50" height="16" uuid="91fd63a0-c738-4e62-8107-6eaedb3cdfcf"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -676,7 +677,7 @@
 				<text><![CDATA[NOVBRE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="552" y="103" width="50" height="16" uuid="1be1c0dd-ef04-4ac5-a0ac-4dc207e91a52"/>
+				<reportElement x="552" y="116" width="50" height="16" uuid="1be1c0dd-ef04-4ac5-a0ac-4dc207e91a52"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -690,7 +691,7 @@
 				<text><![CDATA[SEPTBRE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="452" y="103" width="50" height="16" uuid="fc678c97-1374-418f-bce6-ccdf5fae0eb8"/>
+				<reportElement x="452" y="116" width="50" height="16" uuid="fc678c97-1374-418f-bce6-ccdf5fae0eb8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -704,7 +705,7 @@
 				<text><![CDATA[JULIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="402" y="103" width="50" height="16" uuid="95ebf57a-34a2-483c-bce5-c93fba34b1d3"/>
+				<reportElement x="402" y="116" width="50" height="16" uuid="95ebf57a-34a2-483c-bce5-c93fba34b1d3"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -717,6 +718,17 @@
 				</textElement>
 				<text><![CDATA[JUNIO]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="2" y="99" width="57" height="14" uuid="83efb3c4-bd07-4a23-ae58-dc9b42b3ff61"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clientes:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="99" width="87" height="14" uuid="f5a8cb11-f0e9-40d0-b881-ab834eead8f5"/>
+				<textFieldExpression><![CDATA[$P{txtCliente}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>

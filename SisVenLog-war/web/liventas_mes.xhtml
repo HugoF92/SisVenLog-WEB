@@ -173,6 +173,15 @@
                                                            itemLabel="#{vendedor.xnombre}"/>                                                                                      
                                         </p:selectOneMenu>
                                         
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
+                                        <h:panelGrid columns="4" > 
+                                            <p>Todos</p>
+                                            <h:selectBooleanCheckbox id="ocultarBtnVta" value="#{liVentasMesBean.checkCliente}" />
+                                            <p>Seleccionar Clientes</p>
+                                            <h:selectBooleanCheckbox id="mostrarBtnVta" value="#{liVentasMesBean.seleccionarClientes}">
+                                                <p:ajax event="change" listener="#{liVentasMesBean.llamarSelectorDatos()}" update="mostrarBtnVta,ocultarBtnVta"/>
+                                            </h:selectBooleanCheckbox>
+                                        </h:panelGrid>
                                     </h:panelGrid>
                                     <br></br>
                                     <p:commandLink title="report" target="_blank"
@@ -205,7 +214,39 @@
                     </div>
                 </div>
             </div>
-
+            <h:form id="formSelDatosVta"  prependId="false">
+                <p:growl id="msgSelDatosVta" showDetail="true"/>
+                <p:dialog header="Seleccionar Datos"
+                          widgetVar="dlgSelDatosVta"
+                          modal="true"
+                          closable="true"
+                          closeOnEscape="true"
+                          resizable="false"
+                          width="1000">
+                    <p:ajax event="open" listener="#{selectorDatosBean.cargarLista()}" update="pickListdatosVta"/>
+                    <p:panel id="pnlSelectorDatos" 
+                             header="SELECCIONE LOS DATOS QUE DESEA PASANDOLOS A LA DERECHA"
+                             style="width: 98%;">
+                        <center>
+                        <p:blockUI block="pickListdatosVta" trigger="pickListdatosVta">
+                            <p:graphicImage name="images/loader.gif"/>
+                        </p:blockUI>
+                    </center>
+                        <p:pickList id="pickListdatosVta" value="#{selectorDatosBean.datos}" 
+                                    var="dato" itemLabel="#{dato.codigo}- #{dato.descripcion}" itemValue="#{dato}" 
+                                    filterMatchMode="contains" responsive="true"
+                                    showSourceFilter="true" showTargetFilter="true"
+                                    converter="#{TmpDatosConverter}"
+                                    style="float: left;"/>
+                        <br></br>
+                        <br></br>
+                        <p:commandButton value="Aceptar"
+                                         actionListener="#{selectorDatosBean.ejecutar()}"
+                                         oncomplete="PF('dlgSelDatosVta').hide()"
+                                         styleClass="green-btn raised-btn" />
+                    </p:panel>
+                </p:dialog>
+            </h:form>
         </h:body>
 
     </ui:define>

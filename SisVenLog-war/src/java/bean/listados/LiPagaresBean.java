@@ -6,11 +6,13 @@
 package bean.listados;
 
 
+import bean.selectorVentas.SelectorDatosBean;
 import dao.ClientesFacade;
 import dao.LiPagaresFacade;
 import dto.LiPagares;
 import dto.LiPagaresCab;
 import entidad.Clientes;
+import entidad.TmpDatos;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +48,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import util.ExceptionHandlerView;
+import util.StringUtil;
 /**
  *
  * @author Clara
@@ -72,7 +75,7 @@ public class LiPagaresBean {
     private List<Clientes> listaClientes;
     private String filtro;
     private Boolean seleccionarClientes;
-    
+    private List<Clientes> listadoClientesSeleccionados;
     @EJB
     private ClientesFacade clientesFacade;
     @EJB
@@ -87,6 +90,7 @@ public class LiPagaresBean {
         this.checkPagareDetalle = false;     
         this.checkCliente = true;
         this.seleccionarClientes = false;
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();
     }
 
     
@@ -111,6 +115,16 @@ public class LiPagaresBean {
     public void generarArchivo(String tipoArchivo){        
         List<LiPagares> cabeceraPagare = new ArrayList<LiPagares>();
         Map<Integer, LiPagaresCab> cabDetalle = new TreeMap<Integer, LiPagaresCab>();
+        if(checkCliente){
+            this.listadoClientesSeleccionados = new ArrayList<Clientes>();
+        }else{
+            for(TmpDatos t: pagareFacade.getDatosSelctor("select * from tmp_datos order by codigo")){
+                Clientes c = new Clientes();
+                c.setCodCliente(Integer.valueOf(t.getCodigo()));
+                c.setXnombre(t.getDescripcion());
+                this.listadoClientesSeleccionados.add(c);
+            }
+        }
         if(this.desdeEmision != null && this.hastaEmision != null){
             if(this.checkCliente){
                 this.codigoCliente = null;
@@ -119,14 +133,14 @@ public class LiPagaresBean {
             }
             if(this.checkPagareDetalle==true){
                 if(tipoArchivo.equalsIgnoreCase("PDF")){
-                    cabDetalle = this.pagareFacade.getPagaresCabDetalle(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);
+                    cabDetalle = this.pagareFacade.getPagaresCabDetalle(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.listadoClientesSeleccionados, this.estadoPagare);
                     if(cabDetalle.isEmpty()){
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
                     }else{
                         generarArchivoDetalle(tipoArchivo, cabDetalle);                        
                     }
                 }else{
-                    cabeceraPagare = this.pagareFacade.getPagaresCabDetalleExcell(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);
+                    cabeceraPagare = this.pagareFacade.getPagaresCabDetalleExcell(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.listadoClientesSeleccionados, this.estadoPagare);
                     if(cabeceraPagare.isEmpty()){
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
                     }else{
@@ -134,7 +148,7 @@ public class LiPagaresBean {
                     }
                 }
             }else{
-                cabeceraPagare = this.pagareFacade.getPageresCabecera(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.codigoCliente, this.estadoPagare);                                
+                cabeceraPagare = this.pagareFacade.getPageresCabecera(this.desdeEmision, this.hastaEmision, this.desdeVencimiento, this.hastaVencimiento, this.desdeCobro, this.hastaCobro, this.listadoClientesSeleccionados, this.estadoPagare);                                
                 if(cabeceraPagare.isEmpty()){
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Datos no encontrados", "No se pudo obtener datos con los filtros establecidos"));
                 }else{
@@ -148,6 +162,7 @@ public class LiPagaresBean {
         }else{          
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar archivo.", "Rango de fechas es un campo obligatorio"));            
         }
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();
     }
     
     public void generarArchivoCabecera(String tipoArchivo, List<LiPagares> cabeceraPagare ){        
@@ -198,8 +213,8 @@ public class LiPagaresBean {
                 parameters.put("nroInicial", cabeceraPagare.get(0).getNroPagare());
                 parameters.put("nroFinal", cabeceraPagare.get(cabeceraPagare.size() - 1).getNroPagare());
             }            
-            if(this.codigoCliente!=null){
-                parameters.put("txtCliente", this.codigoCliente + " " + this.nombreCliente);
+            if(!this.listadoClientesSeleccionados.isEmpty()){
+                parameters.put("txtCliente", StringUtil.convertirListaAString(this.listadoClientesSeleccionados));
             }else{
                 parameters.put("txtCliente", "TODOS");
             }                
@@ -374,8 +389,8 @@ public class LiPagaresBean {
                 parameters.put("txtEstado", "TODOS");
             }  
             
-            if(this.codigoCliente!=null){
-                parameters.put("txtCliente", this.codigoCliente + " " + this.nombreCliente);
+            if(!this.listadoClientesSeleccionados.isEmpty()){
+                parameters.put("txtCliente", StringUtil.convertirListaAString(this.listadoClientesSeleccionados));
             }else{
                 parameters.put("txtCliente", "TODOS");
             }                
@@ -433,10 +448,11 @@ public class LiPagaresBean {
     }
     
     public void verificarCheckCliente(){
-      System.out.println("se ha realizado verificar check: "+ this.checkCliente.toString());
-      if(this.checkCliente){
-          this.codigoCliente = null;
-          this.nombreCliente = "";
+      System.out.println("se ha realizado verificar check: ");
+      if(!this.checkCliente){          
+        this.seleccionarClientes = false;
+        RequestContext.getCurrentInstance().update("mostrarBtnPag");
+        this.listadoClientesSeleccionados = new ArrayList<Clientes>();  
       }
     }
     public void verificarCliente(){
@@ -464,19 +480,27 @@ public class LiPagaresBean {
         }
     }
     
-    /*public void llamarSelectorDatos() {
-        
-        System.out.println("llamarSelectorDatos");
-        SelectorDatosBean.sql = "select cod_cliente, xnombre \n"
+    public void llamarSelectorDatos()  {
+        //cambiar el selector de todos               
+        if(this.seleccionarClientes){
+            this.checkCliente = false;
+            //RequestContext.getCurrentInstance().update("ocultarBtnPag");
+            System.out.println("Mostrar selector de cliente");
+            SelectorDatosBean.sql = "select cod_cliente, xnombre \n"
                 + "from clientes\n"
-                + "where cod_estado in ('A', 'S') ";
-        
-        SelectorDatosBean.tabla_temporal = "tmp_datos";
-        
-        SelectorDatosBean.campos_tabla_temporal = "codigo, descripcion";
-        //RequestContext.getCurrentInstance().update("pnlGridPagare");
-        RequestContext.getCurrentInstance().execute("PF('dlgSelDatos').show();");
-    }*/
+                + "where cod_estado in ('A', 'S') ";        
+            SelectorDatosBean.tabla_temporal = "tmp_datos";
+
+            SelectorDatosBean.campos_tabla_temporal = "codigo, descripcion";
+            
+            RequestContext.getCurrentInstance().execute("PF('dlgSelDatosPag').show();");
+        }else{
+            this.checkCliente = true;
+            //RequestContext.getCurrentInstance().update("ocultarBtnPag");
+            System.out.println("Ocultar selector de cliente");
+        }
+        RequestContext.getCurrentInstance().update("mostrarBtnPag");
+    }
     
     public void inicializarBuscadorClientes(){
         this.listaClientes = new ArrayList<>();
@@ -637,11 +661,19 @@ public class LiPagaresBean {
     }
 
     public Boolean getSeleccionarClientes() {
-        return seleccionarClientes;
+        return this.seleccionarClientes;
     }
 
     public void setSeleccionarClientes(Boolean seleccionarClientes) {
         this.seleccionarClientes = seleccionarClientes;
+    }
+
+    public List<Clientes> getListadoClientesSeleccionados() {
+        return listadoClientesSeleccionados;
+    }
+
+    public void setListadoClientesSeleccionados(List<Clientes> listadoClientesSeleccionados) {
+        this.listadoClientesSeleccionados = listadoClientesSeleccionados;
     }
     
 }

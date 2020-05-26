@@ -7,6 +7,8 @@ package dao;
 
 import dto.LiPagares;
 import dto.LiPagaresCab;
+import entidad.Clientes;
+import entidad.TmpDatos;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.StringUtil;
 
 /**
  *
@@ -38,7 +41,7 @@ public class LiPagaresFacade {
         
     }
     
-    public List<LiPagares> getPageresCabecera(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, Integer codigoCliente, String estadoPagare){
+    public List<LiPagares> getPageresCabecera(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, List<Clientes> codigosCliente, String estadoPagare){
         List<LiPagares> pagaresCabecera = new ArrayList<LiPagares>();
         String sqlPageresCabecera = " SELECT DISTINCT p.npagare, p.femision, p.fvenc, p.cod_cliente, c.xnombre, " +
                 " p.cod_entregador, e.xnombre as xentregador, p.ipagare, p.mestado,  " +
@@ -48,7 +51,7 @@ public class LiPagaresFacade {
                 " AND p.cod_entregador = e.cod_empleado " +
                 " AND p.cod_cliente = c.cod_cliente " +
                 " AND c.cod_empr= 2 ";
-        sqlPageresCabecera = generarConsulta(sqlPageresCabecera, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigoCliente, estadoPagare);
+        sqlPageresCabecera = generarConsulta(sqlPageresCabecera, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigosCliente, estadoPagare);
         sqlPageresCabecera = sqlPageresCabecera.concat(" ORDER BY p.npagare ");
         System.out.println(String.format("Consulta Base Final: [%s]", sqlPageresCabecera));
         Query qVenta = em.createNativeQuery(sqlPageresCabecera);
@@ -96,7 +99,7 @@ public class LiPagaresFacade {
         return pagaresCabecera;
     }
     
-    public List<LiPagares> getPagaresCabDetalleExcell(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, Integer codigoCliente, String estadoPagare){
+    public List<LiPagares> getPagaresCabDetalleExcell(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, List<Clientes> codigosCliente, String estadoPagare){
         List<LiPagares> pagaresCabDetalle = new ArrayList<>();
         String sqlPageresCabDetalle =" SELECT DISTINCT p.npagare, p.femision, p.fvenc, p.cod_cliente, c.xnombre, p.cod_entregador, e.xnombre as xentregador, "+
             " p.ipagare, p.mestado, d.ctipo_docum, d.nrofact, d.ffactur, d.itotal,  "+
@@ -108,7 +111,7 @@ public class LiPagaresFacade {
             " AND p.npagare = d.npagare "+
             " AND p.cod_cliente = c.cod_cliente  "+
             " AND c.cod_empr= 2  "; 
-        sqlPageresCabDetalle = generarConsulta(sqlPageresCabDetalle, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigoCliente, estadoPagare);
+        sqlPageresCabDetalle = generarConsulta(sqlPageresCabDetalle, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigosCliente, estadoPagare);
         sqlPageresCabDetalle = sqlPageresCabDetalle.concat(" ORDER BY p.npagare ");
         System.out.println(String.format("Consulta Base Final: [%s]", sqlPageresCabDetalle));
         Query qVenta = em.createNativeQuery(sqlPageresCabDetalle);
@@ -172,7 +175,7 @@ public class LiPagaresFacade {
         return pagaresCabDetalle;
     }
     
-    public Map<Integer, LiPagaresCab> getPagaresCabDetalle(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, Integer codigoCliente, String estadoPagare){
+    public Map<Integer, LiPagaresCab> getPagaresCabDetalle(Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, Date desdeCobro, Date hastaCobro, List<Clientes> codigosCliente, String estadoPagare){
         List<LiPagares> pagaresCabDetalle = new ArrayList<>();
         String sqlPageresCabDetalle =" SELECT DISTINCT p.npagare, p.femision, p.fvenc, p.cod_cliente, c.xnombre, p.cod_entregador, e.xnombre as xentregador, "+
             " p.ipagare, p.mestado, d.ctipo_docum, d.nrofact, d.ffactur, d.itotal,  "+
@@ -184,7 +187,7 @@ public class LiPagaresFacade {
             " AND p.npagare = d.npagare "+
             " AND p.cod_cliente = c.cod_cliente  "+
             " AND c.cod_empr= 2  "; 
-        sqlPageresCabDetalle = generarConsulta(sqlPageresCabDetalle, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigoCliente, estadoPagare);
+        sqlPageresCabDetalle = generarConsulta(sqlPageresCabDetalle, desdeEmision, hastaEmision, desdeVencimiento, hastaVencimiento, desdeCobro, hastaCobro, codigosCliente, estadoPagare);
         sqlPageresCabDetalle = sqlPageresCabDetalle.concat(" ORDER BY p.npagare ");
         System.out.println(String.format("Consulta Base Final: [%s]", sqlPageresCabDetalle));
         Query qVenta = em.createNativeQuery(sqlPageresCabDetalle);
@@ -283,7 +286,7 @@ public class LiPagaresFacade {
     }
     
     private String generarConsulta(String consultaBase, Date desdeEmision, Date hastaEmision, Date desdeVencimiento, Date hastaVencimiento, 
-            Date desdeCobro, Date hastaCobro, Integer codigoCliente, String estadoPagare){
+            Date desdeCobro, Date hastaCobro, List<Clientes> codigosCliente, String estadoPagare){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         //--------------------------------------------------------------------------------------------------------------------------
         if(desdeEmision != null){
@@ -304,8 +307,8 @@ public class LiPagaresFacade {
         if(hastaCobro != null){
             consultaBase = consultaBase.concat(" AND p.fcobro <= '" + formatter.format(hastaCobro) +"'");
         }
-        if(codigoCliente != null){
-            consultaBase = consultaBase.concat(" AND p.cod_cliente = " + codigoCliente);
+        if(!codigosCliente.isEmpty()){
+            consultaBase = consultaBase.concat(" AND p.cod_cliente in (" + StringUtil.convertirListaAString(codigosCliente) + ")");
         }
         if(!estadoPagare.equalsIgnoreCase("TODOS")){
             consultaBase = consultaBase.concat(" AND p.mestado = '" + estadoPagare +"'");
@@ -314,7 +317,7 @@ public class LiPagaresFacade {
         return consultaBase;
     }
     
-    /*public List<TmpDatos> getDatosSelctor(String query) {
+    public List<TmpDatos> getDatosSelctor(String query) {
 
         List<TmpDatos> respuesta = new ArrayList<TmpDatos>();
 
@@ -326,7 +329,7 @@ public class LiPagaresFacade {
             List<Object[]> resultList = q.getResultList();
 
             if (resultList.size() <= 0) {
-                return null;
+                return respuesta;
             } else {
                 for (Object[] obj : resultList) {
 
@@ -342,9 +345,9 @@ public class LiPagaresFacade {
         }
 
         return respuesta;
-    }*/
+    }
     
-    /*public Integer ejecutarSentenciaSQL(String sql) {
+    public Integer ejecutarSentenciaSQL(String sql) {
 
         int respuesta = 0;
         System.out.println(sql);
@@ -353,5 +356,5 @@ public class LiPagaresFacade {
         respuesta = q.executeUpdate();
 
         return respuesta;
-    }*/
+    }
 }
