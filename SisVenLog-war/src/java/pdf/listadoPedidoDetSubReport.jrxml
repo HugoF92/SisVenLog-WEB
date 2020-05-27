@@ -106,7 +106,7 @@ $F{morigen}.toString().equals("P") ? "Automatico" : "Migrado Sis. Anterior"]]></
 	<variable name="totalVendedor" class="java.math.BigDecimal" incrementType="Column"/>
 	<detail>
 		<band height="75" splitType="Stretch">
-			<textField>
+			<textField pattern="dd/MM/yyyy">
 				<reportElement x="5" y="4" width="70" height="14" uuid="01e88855-d934-4b15-afb3-900e642f1c8e"/>
 				<textFieldExpression><![CDATA[$F{fpedido}]]></textFieldExpression>
 			</textField>

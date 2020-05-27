@@ -121,7 +121,7 @@ public class ListadoLeyDeParetoBean implements Serializable{
                                              zonas, 
                                              canalesVenta, 
                                              discriminar,
-                                             filtrar,
+                                             factorSeleccionado,
                                              factor,
                                              usuImprime, 
                                              tipo, 
