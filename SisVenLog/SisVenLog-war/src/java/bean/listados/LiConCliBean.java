@@ -56,6 +56,7 @@ public class LiConCliBean implements Serializable{
         this.desde = new Date();
         this.hasta = new Date();
     }
+    
     public void ejecutar(String tipo) {
         LlamarReportes rep = new LlamarReportes();
         String fdesde = dateToString(desde);
