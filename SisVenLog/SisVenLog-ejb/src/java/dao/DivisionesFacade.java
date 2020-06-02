@@ -67,4 +67,10 @@ public class DivisionesFacade extends AbstractFacade<Divisiones> {
         q.execute();
 
     }
+
+    public List<Divisiones> listarDivisionesActivas() {
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM divisiones d "
+                + "WHERE d.mestado = 'A' ORDER BY d.xdesc", Divisiones.class);
+        return q.getResultList();
+    }
 }

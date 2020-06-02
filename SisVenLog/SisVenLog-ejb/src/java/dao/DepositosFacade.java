@@ -176,4 +176,9 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
         System.out.println(q.toString());
         return q.getResultList();
     }
+
+    public List<Depositos> obtenerDepositosByTipo(String tipo) {
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM depositos where mtipo = '" + tipo + "'", Depositos.class);
+        return q.getResultList();
+    }
 }

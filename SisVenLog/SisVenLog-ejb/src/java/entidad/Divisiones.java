@@ -56,6 +56,8 @@ public class Divisiones implements Serializable {
     @Column(name = "falta")
     @Temporal(TemporalType.TIMESTAMP)
     private Date falta;
+    @Column(name = "mestado")
+    private Character mestado;
 
     public Divisiones() {
     }
@@ -79,6 +81,14 @@ public class Divisiones implements Serializable {
 
     public void setFalta(Date falta) {
         this.falta = falta;
+    }
+
+    public Character getMestado() {
+        return mestado;
+    }
+
+    public void setMestado(Character mestado) {
+        this.mestado = mestado;
     }
 
     @Override

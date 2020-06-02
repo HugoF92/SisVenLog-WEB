@@ -114,5 +114,7 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
         }
     }
 
-
+    public List<Sublineas> listarSublineasActivas() {
+        return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A'", Sublineas.class).getResultList();
+    }
 }
