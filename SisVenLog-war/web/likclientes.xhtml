@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiClientes" header="VENTAS A CREDITO" style="width: 70%;">                                       
+                                    <h:panelGrid columns="2" >
+                                    
+                                        <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liRetornoMercaDesde" value="#{liConCliBean.desde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liEnviosHasta" value="#{liConCliBean.hasta}" showOn="button" 
+                                                    style="width: 60px;" locale="es" mindate="#{liConCliBean.desde}"/>
+                                        
+                                        <p:outputLabel style="font-weight: bold;" value="Vendedor"/>
+                                        <p:selectOneMenu value="#{liConCliBean.vendedor}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:190px"
+                                                    style=" width:180px" converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liConCliBean.listaVendedor}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel style="font-weight: bold;" value="Zona"/>
+                                        <p:selectOneMenu value="#{liConCliBean.zonas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         panelStyle="width:190px"
+                                                         style=" width: 180px;" converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liConCliBean.listaZonas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Linea:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="seleccionLinea" value="#{liConCliBean.linea}" 
+                                                         filterMatchMode="contains" filter="true" converter="#{LineasConverter}"
+                                                         style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems id="lineaItem" value="#{liConCliBean.listaLineas}" var="linea" 
+                                                           itemValue="#{linea}" 
+                                                           itemLabel="#{linea.xdesc}"/>
+
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel for="discriminar" value="Discriminar:" />
+                                        <p:selectOneRadio id="discriminar" value="#{liConCliBean.seleccion}" 
+                                                    layout="grid" columns="1" style="border: solid;border-width: thin">
+                                             <f:selectItem itemLabel="Por Mercaderia" itemValue="1"/>
+                                             <f:selectItem itemLabel="Por Vend/SubLinea" itemValue="2"/>
+                                             <f:selectItem itemLabel="Por Vendedor" itemValue="3"/>
+                                             <f:selectItem itemLabel="Por Vendedor/Linea" itemValue="4"/>
+                                             <f:selectItem itemLabel="Por Zona/Sublinea" itemValue="5"/>
+                                             <f:selectItem itemLabel="Por Proveedor" itemValue="6"/>
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{liConCliBean.ejecutarLiRe('VIST')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Vista Previa" icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{liConCliBean.ejecutarLiRe('ARCH')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Archivo" icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
+                                    
+                                </p:panel>                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>

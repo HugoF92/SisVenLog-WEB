@@ -2,16 +2,21 @@ package bean.listados;
 
 import dao.EmpleadosFacade;
 import dao.ExcelFacade;
+import dao.LineasFacade;
 import dao.ZonasFacade;
 import entidad.Empleados;
 import entidad.EmpleadosPK;
+import entidad.Lineas;
+import entidad.Mercaderias;
 import entidad.Zonas;
 import entidad.ZonasPK;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -28,19 +33,25 @@ import util.LlamarReportes;
 @SessionScoped
 public class LiConCliBean {
     
-    private Date desde;
-    
-    private Date hasta;
-    
+    private Date desde;    
+    private Date hasta;    
     private Zonas zonas;
     private Empleados vendedor;
+    private Lineas linea;
+    private Mercaderias mercaderia;
     
+    private List<Zonas> listaZonas;
+    private List<Empleados> listaVendedor;
+    private List<Lineas> listaLineas;
+        
     @EJB
     private ZonasFacade zonasFacade;
     @EJB
-    private EmpleadosFacade vendedoresFacade;
+    private EmpleadosFacade empleadoFacade;
     @EJB
     private ExcelFacade excelFacade;
+    @EJB
+    private LineasFacade lineasFacade;
         
     private String seleccion,nuevos;
     private Boolean nuevo;
@@ -54,7 +65,11 @@ public class LiConCliBean {
         this.nuevo =  false;
         this.desde = new Date();
         this.hasta = new Date();
+        this.listaVendedor = empleadoFacade.getEmpleadosVendedoresActivosPorCodEmp(2);
+        this.listaZonas = zonasFacade.listarZonas();
+        this.listaLineas = lineasFacade.listarLineasOrdenadoXCategoria();
     }
+    
     public void ejecutar(String tipo) {
         LlamarReportes rep = new LlamarReportes();
         String fdesde = dateToString(desde);
@@ -282,6 +297,239 @@ public class LiConCliBean {
         rep.exportarExcel(columnas, lista, "KCLIDOS");
     }
     
+    public void ejecutarLiRe(String tipo) {
+        LlamarReportes rep = new LlamarReportes();
+        String fdesde = dateToString(desde);
+        String fhasta = dateToString(hasta);
+        String extras = "";
+        String sql = null;
+        String[] columnas = null;
+        String titulo = null;
+        String reporte = null;
+        
+        if (this.zonas != null){
+            extras += " AND f.cod_zona = '"+this.zonas.getZonasPK().getCodZona()+"' ";
+        }
+        if (this.vendedor != null){
+            extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
+        }
+        if (this.linea != null){
+            extras += " AND l.cod_linea = "+this.linea.getCodLinea()+" ";
+        }
+        if (this.mercaderia != null){
+            extras += " AND m.cod_merca = "+this.mercaderia.getMercaderiasPK().getCodMerca()+" ";
+        }
+        
+        switch ( this.seleccion ) {
+            case "1":
+                titulo = "POR MERCADERIA";
+                reporte = "rkclientes1";
+                columnas = new String[5];
+                columnas[0] = "cod_vendedor";
+                columnas[1] = "xnombre";
+                columnas[2] = "cod_merca";
+                columnas[3] = "xdesc";
+                columnas[4] = "cant_clientes";                
+                sql = "select f.cod_vendedor, e.xnombre, m.cod_merca, m.xdesc, " +
+                        " count(distinct cod_cliente) as cant_clientes " +
+                        " from facturas f, facturas_det d, empleados e, mercaderias m, " +
+                        "   sublineas s, lineas l " +
+                        " where f.ffactur between '"+fdesde+"' AND '"+fhasta+"'" +
+                        " AND f.mestado ='A'  " +
+                        " AND f.nrofact = d.nrofact " +
+                        " AND f.ctipo_docum = d.ctipo_docum " +
+                        " AND f.cod_empr = d.cod_empr " +
+                        " AND d.cod_empr = m.cod_empr " +
+                        " AND f.ffactur = d.ffactur " +
+                        " AND f.cod_vendedor = e.cod_empleado " +
+                        " AND f.cod_empr = e.cod_empr " +
+                        " AND d.cod_merca = m.cod_merca " +
+                        " AND f.cod_empr = 2 " +
+                        " AND d.cod_merca = m.cod_merca " +
+                        " AND m.cod_sublinea = s.cod_sublinea " +
+                        " AND s.cod_linea = l.cod_linea "
+                        + extras +
+                        " group by f.cod_vendedor, e.xnombre, m.cod_merca, m.xdesc " +
+                        " order by f.cod_vendedor, m.cod_merca ";
+                break;
+            case "2":
+                titulo = "POR VENDEDOR Y SUBLINEA";
+                reporte = "rkclientes2";
+                columnas = new String[5];
+                columnas[0] = "cod_vendedor";
+                columnas[1] = "xnombre";
+                columnas[2] = "cod_sublinea";
+                columnas[3] = "xdesc";
+                columnas[4] = "cant_clientes";
+                sql = " select f.cod_vendedor, e.xnombre, m.cod_sublinea, s.xdesc, count(distinct cod_cliente) as cant_clientes " +
+                    " from facturas f, facturas_det d, empleados e, sublineas s, mercaderias m, lineas l "+
+                    " where f.ffactur between '"+fdesde+"' AND '" +fhasta+ "'" +
+                    " and f.mestado ='A' " + 
+                    " and m.cod_sublinea = s.cod_sublinea " +
+                    " AND f.nrofact = d.nrofact " + 
+                    " and f.ctipo_docum = d.ctipo_docum " + 
+                    " AND f.cod_empr = d.cod_empr " + 
+                    " and d.cod_empr = m.cod_empr " + 
+                    " and f.ffactur  = d.ffactur " + 
+                    " and f.cod_vendedor = e.cod_empleado " + 
+                    " AND f.cod_empr = e.cod_empr " + 
+                    " and d.cod_merca = m.cod_merca " +
+                    " AND f.cod_empr = 2 and d.cod_empr = 2 " +
+                    " AND s.cod_linea = l.cod_linea " 
+                    + extras +
+                    " group by f.cod_vendedor, e.xnombre, m.cod_sublinea, s.xdesc " +
+                    " ORDER BY f.cod_vendedor, m.cod_sublinea "; 
+                break;
+            case "3":
+                titulo = "POR VENDEDOR";
+                reporte = "rkclientes3";
+                columnas = new String[6];
+                columnas[0] = "finicial";
+                columnas[1] = "ffinal";
+                columnas[2] = "cod_vendedor";
+                columnas[3] = "xnombre";
+                columnas[4] = "cant_clientes";
+                columnas[5] = "ttotal";
+                sql = " SELECT cast('"+fdesde+"' as char) as finicial, " +
+                " cast('"+fhasta+"' as char) as ffinal, f.cod_vendedor, v.xnombre, "+
+                " COUNT(DISTINCT f.cod_cliente) AS cant_clientes, SUM(f.ttotal - f.tnotas) AS ttotal " + 
+                " FROM facturas f INNER JOIN facturas_det d " +
+                "   ON f.nrofact = d.nrofact AND f.ctipo_docum = d.ctipo_docum AND f.ffactur = d.ffactur INNER JOIN empleados v " +
+                "   ON f.cod_vendedor = v.cod_empleado INNER JOIN mercaderias m " +
+                "   ON d.cod_merca = m.cod_merca INNER JOIN sublineas s " +
+                "   ON m.cod_sublinea = s.cod_sublinea INNER JOIN clientes c " +
+                "   ON f.cod_cliente = c.cod_cliente INNER JOIN lineas l" +
+                "   ON s.cod_linea = l.cod_linea " +
+                " WHERE  F.MESTADO ='A' AND (f.cod_empr = 2) AND d.cod_empr =2  " +
+                "   AND (f.ffactur BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
+                + extras +
+                " GROUP BY  f.cod_vendedor, v.xnombre " +
+                " ORDER BY f.cod_vendedor";
+                break;
+            case "4":
+                titulo = "POR VENDEDOR Y LINEA";
+                reporte = "rkclientes4";
+                columnas = new String[5];
+                columnas[0] = "cod_vendedor";
+                columnas[1] = "xnombre";
+                columnas[2] = "cod_linea";
+                columnas[3] = "xdesc";
+                columnas[4] = "cant_clientes";
+                sql  = " select f.cod_vendedor, e.xnombre, l.cod_linea, l.xdesc, count(distinct cod_cliente) as cant_clientes " +
+                " from facturas f, facturas_det d, empleados e, sublineas s, mercaderias m, lineas l  " +
+                " where f.ffactur between '"+fdesde+"' AND '"+fhasta+"' " +
+                " and f.mestado ='A' " +
+                " AND s.cod_linea = l.cod_linea " +
+                " and m.cod_sublinea = s.cod_sublinea " +
+                " AND f.nrofact = d.nrofact " +
+                " and f.ctipo_docum = d.ctipo_docum " +
+                " AND f.ffactur = d.ffactur " +
+                " AND f.cod_empr = d.cod_empr " +
+                " and d.cod_empr = m.cod_empr " +
+                " and f.cod_vendedor = e.cod_empleado " +
+                " AND f.cod_empr = e.cod_empr " +
+                " and d.cod_merca = m.cod_merca " +
+                " AND f.cod_empr = 2 and d.cod_empr=2 "
+                + extras +
+                " group by f.cod_vendedor, e.xnombre, l.cod_linea, l.xdesc  " +
+                " ORDER BY f.cod_vendedor, l.cod_linea";
+                break;
+            case "5":
+                titulo = "POR ZONA Y SUBLINEA";
+                reporte = "rkclientes5";
+                columnas = new String[5];
+                columnas[0] = "cod_zona";
+                columnas[1] = "xdesc_zona";
+                columnas[2] = "cod_sublinea";
+                columnas[3] = "xdesc";
+                columnas[4] = "cant_clientes";
+                sql = " select f.cod_zona, z.xdesc as xdesc_zona, m.cod_sublinea, s.xdesc, count(distinct cod_cliente) as cant_clientes " +
+                " from facturas f, facturas_det d, sublineas s, mercaderias m, zonas z, lineas l " +
+                " where f.ffactur between '"+fdesde+"' AND '"+fhasta+ "' " +
+                " AND f.cod_zona = z.cod_zona " +
+                " and f.mestado ='A' " +
+                " and m.cod_sublinea = s.cod_sublinea " +
+                " AND f.nrofact = d.nrofact " +
+                " and f.ctipo_docum = d.ctipo_docum " +
+                " AND f.ffactur = d.ffactur " +
+                " AND f.cod_empr = d.cod_empr " +
+                " and d.cod_empr = m.cod_empr " +
+                " and d.cod_merca = m.cod_merca " +
+                " and f.mestado ='A' " +
+                " AND f.cod_empr = 2 " +
+                " AND d.cod_empr = 2 "	+
+                " and l.cod_linea = s.cod_linea "
+                + extras +
+                " group by f.cod_zona, z.xdesc, m.cod_sublinea, s.xdesc " +
+                " ORDER BY f.cod_zona, m.cod_sublinea ";
+                break;
+            case "6":
+                titulo = "POR PROVEEDOR";
+                reporte = "rkclientes6";
+                columnas = new String[5];
+                columnas[0] = "cod_proveed";
+                columnas[1] = "xnombre";
+                columnas[2] = "cant_clientes";
+                sql = " select m.cod_proveed, p.xnombre,  count(distinct cod_cliente) as cant_clientes " +
+                " from facturas f, facturas_det d, sublineas s, mercaderias m, proveedores p, lineas l " +
+                " where f.ffactur between '"+fdesde+"' AND '"+fhasta+"' " +
+                " and f.mestado ='A' " +
+                " AND m.cod_proveed = p.cod_proveed " +
+                " and m.cod_sublinea = s.cod_sublinea " +
+                " AND f.nrofact = d.nrofact " +
+                " and f.ctipo_docum = d.ctipo_docum " +
+                " AND f.ffactur  = d.ffactur " +
+                " AND f.cod_empr = d.cod_empr " +
+                " and d.cod_empr = m.cod_empr " +
+                " and d.cod_merca = m.cod_merca " +
+                " and f.mestado = 'A' " +
+                " AND f.cod_empr = 2 " +
+                " AND d.cod_empr = 2 "+
+                " and s.cod_linea = l.cod_linea "
+                + extras +
+                " group by m.cod_proveed, p.xnombre " + 
+                " ORDER BY m.cod_proveed ";
+                break;
+        }
+        System.out.println(sql);
+        //sql = "select * from mercaderias ";
+        if (tipo.equals("VIST")){
+            String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("fdesde", fdesde);
+            param.put("fhasta", fhasta);
+            param.put("titulo", titulo);
+            param.put("usuImprime", usuImprime);
+            param.put("nombreRepo", reporte);            
+            if (this.vendedor != null){                
+                param.put("vendedor", getEmpelado(this.vendedor).getXnombre());
+            } 
+            if (this.zonas != null) {
+                param.put("zona", getZona(this.zonas).getXdesc());
+            }             
+            rep.reporteLiContClientes(param, tipo, reporte);
+        } else {
+            List<Object[]> lista = new ArrayList<Object[]>();
+            lista = excelFacade.listarParaExcel(sql);
+            rep.exportarExcel(columnas, lista, reporte);
+        }
+    }
+    
+    private Zonas getZona(Zonas pk){
+        return this.listaZonas.stream()
+                .filter(zona -> zona.getZonasPK().getCodEmpr() == pk.getZonasPK().getCodEmpr() && 
+                        zona.getZonasPK().getCodZona().equals(pk.getZonasPK().getCodZona()))
+                .findAny().orElse(null);
+    }
+    
+    private Empleados getEmpelado(Empleados pk){
+        return this.listaVendedor.stream()
+                .filter(empleado -> empleado.getEmpleadosPK().getCodEmpr() == pk.getEmpleadosPK().getCodEmpr() && 
+                        empleado.getEmpleadosPK().getCodEmpleado() == pk.getEmpleadosPK().getCodEmpleado())
+                .findAny().orElse(null);
+    }
+    
     private String dateToString(Date fecha) {
         String resultado = "";
         try {
@@ -298,7 +546,7 @@ public class LiConCliBean {
     }
     
     public List<Empleados> getListVendedores(){
-        return vendedoresFacade.getEmpleadosVendedoresActivosPorCodEmp(2);
+        return empleadoFacade.getEmpleadosVendedoresActivosPorCodEmp(2);
     }
     
     public Date getDesde() {
@@ -357,4 +605,45 @@ public class LiConCliBean {
         this.nuevo = nuevo;
     }
 
+    public List<Empleados> getListaVendedor() {
+        return listaVendedor;
+    }
+
+    public void setListaVendedor(List<Empleados> listaVendedor) {
+        this.listaVendedor = listaVendedor;
+    }
+
+    public List<Zonas> getListaZonas() {
+        return listaZonas;
+    }
+
+    public void setListaZonas(List<Zonas> listaZonas) {
+        this.listaZonas = listaZonas;
+    }
+
+    public List<Lineas> getListaLineas() {
+        return listaLineas;
+    }
+
+    public void setListaLineas(List<Lineas> listaLineas) {
+        this.listaLineas = listaLineas;
+    }
+
+    public Lineas getLinea() {
+        return linea;
+    }
+
+    public void setLinea(Lineas linea) {
+        this.linea = linea;
+    }
+
+    public Mercaderias getMercaderia() {
+        return mercaderia;
+    }
+
+    public void setMercaderia(Mercaderias mercaderia) {
+        this.mercaderia = mercaderia;
+    }
+    
+    
 }
