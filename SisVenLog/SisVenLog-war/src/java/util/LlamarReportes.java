@@ -55,8 +55,8 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost:50042;databaseName=VenlogDB", "sa", "venlog2018CC");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+//            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost:50042;databaseName=VenlogDB", "sa", "venlog2018CC");
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -2680,6 +2680,42 @@ public class LlamarReportes {
             ServletOutputStream servletStream = httpServletResponse.getOutputStream();
             JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
             FacesContext.getCurrentInstance().responseComplete();
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void reporteTotalCompras(Date fechaDesde, Date fechaHasta,
+            Proveedores proveedor, TiposDocumentos td, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
+            param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
+            param.put("proveedor", proveedor == null ? null : proveedor.getXnombre());
+            param.put("tipoDocumento", td == null ? null : td.getXdesc());
+            param.put("codigoTipoDocumento", td == null ? null : td.getCtipoDocum());
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+
+            String report;
+            String filename = "rtotalcom.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/rtotalcom.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
         } catch (IOException | NumberFormatException | JRException e) {
             System.out.println(e);
         }
