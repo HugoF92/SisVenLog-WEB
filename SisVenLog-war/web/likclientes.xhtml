@@ -28,22 +28,23 @@
                                         <p:calendar id="liEnviosHasta" value="#{liConCliBean.hasta}" showOn="button" 
                                                     style="width: 60px;" locale="es" mindate="#{liConCliBean.desde}"/>
                                         
-                                        <p:outputLabel style="font-weight: bold;" value="Vendedor"/>
+                                        <p:outputLabel style="float: right; font-weight: bold;" value="Vendedor"/>
                                         <p:selectOneMenu value="#{liConCliBean.vendedor}" 
                                                     filterMatchMode="contains" filter="true"
-                                                    panelStyle="width:190px"
-                                                    style=" width:180px" converter="#{empleadosConverter}">
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{empleadosConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
                                             <f:selectItems value="#{liConCliBean.listaVendedor}" var="item"
                                                     itemValue="#{item}"
                                                     itemLabel="#{item.xnombre}"/>
                                         </p:selectOneMenu>
                                         
-                                        <p:outputLabel style="font-weight: bold;" value="Zona"/>
+                                        <p:outputLabel style="float: right; font-weight: bold;" value="Zona"/>
                                         <p:selectOneMenu value="#{liConCliBean.zonas}" 
                                                          filterMatchMode="contains" filter="true"
-                                                         panelStyle="width:190px"
-                                                         style=" width: 180px;" converter="#{ZonasConverter}">
+                                                         converter="#{ZonasConverter}"
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
                                             <f:selectItems value="#{liConCliBean.listaZonas}" var="item"
                                                            itemValue="#{item}"
@@ -52,8 +53,10 @@
                                         
                                         <p:outputLabel value="Linea:" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu id="seleccionLinea" value="#{liConCliBean.linea}" 
-                                                         filterMatchMode="contains" filter="true" converter="#{LineasConverter}"
-                                                         style="width: 148px;" >
+                                                         filterMatchMode="contains" filter="true" 
+                                                         converter="#{LineasConverter}" 
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px">
                                             <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
                                             <f:selectItems id="lineaItem" value="#{liConCliBean.listaLineas}" var="linea" 
                                                            itemValue="#{linea}" 
