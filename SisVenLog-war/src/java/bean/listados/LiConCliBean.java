@@ -518,7 +518,7 @@ public class LiConCliBean {
                 break;
         }
         System.out.println(sql);
-        sql = "select * from mercaderias ";
+        //sql = "select * from mercaderias ";
         if (tipo.equals("VIST")){
             String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
             Map param = new HashMap();
