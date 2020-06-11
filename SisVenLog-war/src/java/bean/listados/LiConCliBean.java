@@ -3,11 +3,13 @@ package bean.listados;
 import dao.EmpleadosFacade;
 import dao.ExcelFacade;
 import dao.LineasFacade;
+import dao.MercaderiasFacade;
 import dao.ZonasFacade;
 import entidad.Empleados;
 import entidad.EmpleadosPK;
 import entidad.Lineas;
 import entidad.Mercaderias;
+import entidad.MercaderiasPK;
 import entidad.Zonas;
 import entidad.ZonasPK;
 import java.text.DateFormat;
@@ -17,12 +19,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DualListModel;
 import util.LlamarReportes;
 
 /**
@@ -43,6 +48,12 @@ public class LiConCliBean {
     private List<Zonas> listaZonas;
     private List<Empleados> listaVendedor;
     private List<Lineas> listaLineas;
+    
+    private List<Mercaderias> listaMercaderias;
+    private List<Mercaderias> listaMercaderiasSeleccionadas;
+    private DualListModel<Mercaderias> mercaderias;
+    
+    private DefaultStreamedContent download;
         
     @EJB
     private ZonasFacade zonasFacade;
@@ -52,6 +63,8 @@ public class LiConCliBean {
     private ExcelFacade excelFacade;
     @EJB
     private LineasFacade lineasFacade;
+    @EJB
+    private MercaderiasFacade mercaderiasFacade;
         
     private String seleccion,nuevos;
     private Boolean nuevo;
@@ -59,7 +72,7 @@ public class LiConCliBean {
     //Instanciar objetos
     @PostConstruct
     public void instanciar() {
-        this.seleccion = new String();
+        this.seleccion = new String("1");
         this.vendedor = new Empleados(new EmpleadosPK());
         this.zonas = new Zonas(new ZonasPK());
         this.nuevo =  false;
@@ -68,6 +81,13 @@ public class LiConCliBean {
         this.listaVendedor = empleadoFacade.getEmpleadosVendedoresActivosPorCodEmp(2);
         this.listaZonas = zonasFacade.listarZonas();
         this.listaLineas = lineasFacade.listarLineasOrdenadoXCategoria();
+        
+        List<Mercaderias> mercaSource = new ArrayList<Mercaderias>();
+        List<Mercaderias> mercaTarget = new ArrayList<Mercaderias>();
+
+        mercaSource = mercaderiasFacade.listarMercaderiasActivasDepo1();
+
+        mercaderias = new DualListModel<Mercaderias>(mercaSource, mercaTarget);
     }
     
     public void ejecutar(String tipo) {
@@ -316,8 +336,14 @@ public class LiConCliBean {
         if (this.linea != null){
             extras += " AND l.cod_linea = "+this.linea.getCodLinea()+" ";
         }
-        if (this.mercaderia != null){
-            extras += " AND m.cod_merca = "+this.mercaderia.getMercaderiasPK().getCodMerca()+" ";
+        if (mercaderias.getTarget().size() > 0) {
+                listaMercaderiasSeleccionadas = mercaderias.getTarget();
+                extras += " AND m.cod_merca IN (";
+                for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
+                    MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
+                    extras += " " + pk.getCodMerca() + ",";
+                }
+                extras += extras.substring(0, extras.length()-1) + " ) ";
         }
         
         switch ( this.seleccion ) {
@@ -466,7 +492,7 @@ public class LiConCliBean {
             case "6":
                 titulo = "POR PROVEEDOR";
                 reporte = "rkclientes6";
-                columnas = new String[5];
+                columnas = new String[3];
                 columnas[0] = "cod_proveed";
                 columnas[1] = "xnombre";
                 columnas[2] = "cant_clientes";
@@ -492,22 +518,24 @@ public class LiConCliBean {
                 break;
         }
         System.out.println(sql);
-        //sql = "select * from mercaderias ";
+        sql = "select * from mercaderias ";
         if (tipo.equals("VIST")){
             String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
             Map param = new HashMap();
             param.put("sql", sql);
-            param.put("fdesde", fdesde);
-            param.put("fhasta", fhasta);
+            param.put("fdesde", this.desde);
+            param.put("fhasta", this.hasta);
             param.put("titulo", titulo);
             param.put("usuImprime", usuImprime);
-            param.put("nombreRepo", reporte);            
-            if (this.vendedor != null){                
-                param.put("vendedor", getEmpelado(this.vendedor).getXnombre());
-            } 
-            if (this.zonas != null) {
-                param.put("zona", getZona(this.zonas).getXdesc());
-            }             
+            param.put("nombreRepo", reporte); 
+            
+            if (this.vendedor != null) param.put("vendedor", getEmpelado(this.vendedor).getXnombre());
+            else param.put("vendedor", "TODAS");
+            if (this.zonas != null) param.put("zona", getZona(this.zonas).getXdesc());
+            else param.put("zona", "TODAS");
+            if (this.linea != null) param.put("linea", getLinea(this.linea).getXdesc()); 
+            else param.put("linea", "TODAS");
+            
             rep.reporteLiContClientes(param, tipo, reporte);
         } else {
             List<Object[]> lista = new ArrayList<Object[]>();
@@ -527,6 +555,12 @@ public class LiConCliBean {
         return this.listaVendedor.stream()
                 .filter(empleado -> empleado.getEmpleadosPK().getCodEmpr() == pk.getEmpleadosPK().getCodEmpr() && 
                         empleado.getEmpleadosPK().getCodEmpleado() == pk.getEmpleadosPK().getCodEmpleado())
+                .findAny().orElse(null);
+    }
+    
+    private Lineas getLinea(Lineas pk){
+        return this.listaLineas.stream()
+                .filter(lin -> lin.getCodLinea().shortValue() == pk.getCodLinea().shortValue())
                 .findAny().orElse(null);
     }
     
@@ -645,5 +679,41 @@ public class LiConCliBean {
         this.mercaderia = mercaderia;
     }
     
+    public DualListModel<Mercaderias> getMercaderias() {
+        return mercaderias;
+    }
+
+    public void setMercaderias(DualListModel<Mercaderias> mercaderias) {
+        this.mercaderias = mercaderias;
+    }
+    
+    public List<Mercaderias> getListaMercaderias() {
+        return listaMercaderias;
+    }
+
+    public void setListaMercaderias(List<Mercaderias> listaMercaderias) {
+        this.listaMercaderias = listaMercaderias;
+    }
+
+    public List<Mercaderias> getListaMercaderiasSeleccionadas() {
+        return listaMercaderiasSeleccionadas;
+    }
+
+    public void setListaMercaderiasSeleccionadas(List<Mercaderias> listaMercaderiasSeleccionadas) {
+        this.listaMercaderiasSeleccionadas = listaMercaderiasSeleccionadas;
+    }
+    
+    public void setDownload(DefaultStreamedContent download) {
+        this.download = download;
+    }
+
+    public DefaultStreamedContent getDownload() throws Exception {
+        System.out.println("GET = " + download.getName());
+        return download;
+    }
+
+    public void prepDownload() throws Exception {
+        System.out.println("PREP = " + download.getName());
+    }
     
 }

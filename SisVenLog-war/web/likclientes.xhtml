@@ -16,7 +16,7 @@
                         <h:form id="form" prependId="false">
                             <p:growl id="messageLiRetorno" showDetail="true"/>
                             <center>
-                                <p:panel id="pnlParamLiClientes" header="LISTADO DE CONTEO DE CLIENTES" style="width: 70%;">                                       
+                                <p:panel id="pnlParamLiClientes" header="CONTEO DE CLIENTES" style="width: 70%;">                                       
                                     <h:panelGrid columns="2" >
                                     
                                         <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
@@ -61,13 +61,17 @@
                                             <f:selectItems id="lineaItem" value="#{liConCliBean.listaLineas}" var="linea" 
                                                            itemValue="#{linea}" 
                                                            itemLabel="#{linea.xdesc}"/>
-
                                         </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
+                                        <p:commandButton icon="fa fa-filter"
+                                                    oncomplete="PF('dlgSelectMerca').show()"
+                                                    style="margin-top:10px" />
                                         
                                         <p:outputLabel for="discriminar" value="Discriminar:" />
                                         <p:selectOneRadio id="discriminar" value="#{liConCliBean.seleccion}" 
                                                     layout="grid" columns="1" style="border: solid;border-width: thin">
-                                             <f:selectItem itemLabel="Por Mercaderia" itemValue="1"/>
+                                             <f:selectItem itemLabel="Por Mercaderia"  itemValue="1"/>
                                              <f:selectItem itemLabel="Por Vend/SubLinea" itemValue="2"/>
                                              <f:selectItem itemLabel="Por Vendedor" itemValue="3"/>
                                              <f:selectItem itemLabel="Por Vendedor/Linea" itemValue="4"/>
@@ -95,9 +99,34 @@
                                             style="width: 120px;"/>
                                     </p:commandLink>
                                     
+                                    <p:commandButton id="downloadLink" value="Download" ajax="false" actionListener="#{filemanagement.prepDownload}"> 
+                                        <p:fileDownload value="#{filemanagement.download}" />
+                                    </p:commandButton>
+                                    
+
+                                    <INPUT type="file" name="name_of_files"></INPUT>
+                                        
                                     <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
                                     
-                                </p:panel>                                
+                                </p:panel>
+                                
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+
+                                    <p:pickList id="pickListMerca" value="#{liConCliBean.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                </p:dialog>
+                                
                             </center>
                         </h:form>
                     </div>
