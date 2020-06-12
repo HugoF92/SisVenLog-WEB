@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotascomdetNotas" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="aca3f338-e972-43e2-99d4-72bfe26a6e24">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sqlDetalle" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+	</parameter>
+	<parameter name="xdescConcParam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sqlDetalle}]]>
+	</queryString>
+	<field name="nro_nota" class="java.math.BigDecimal"/>
+	<field name="cconc" class="java.lang.String"/>
+	<field name="fdocum" class="java.sql.Timestamp"/>
+	<field name="nrofact" class="java.math.BigDecimal"/>
+	<field name="nctipo_docum" class="java.lang.String"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="ncod_proveed" class="java.lang.Short"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="xdesc_conc" class="java.lang.String"/>
+	<field name="com_ctipo_docum" class="java.lang.String"/>
+	<field name="fac_ttotal" class="java.math.BigDecimal"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="xdesc_docum" class="java.lang.String"/>
+	<field name="ntimbrado" class="java.math.BigDecimal"/>
+	<field name="tgravadas_10" class="java.math.BigDecimal"/>
+	<field name="tgravadas_5" class="java.math.BigDecimal"/>
+	<field name="timpuestos_10" class="java.math.BigDecimal"/>
+	<field name="timpuestos_5" class="java.math.BigDecimal"/>
+	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="cod_merca" class="java.lang.String"/>
+	<field name="xdesc" class="java.lang.String"/>
+	<field name="igravadas" class="java.math.BigDecimal"/>
+	<field name="iexentas" class="java.math.BigDecimal"/>
+	<field name="impuestos" class="java.math.BigDecimal"/>
+	<field name="cant_cajas" class="java.math.BigDecimal"/>
+	<field name="cant_unid" class="java.math.BigDecimal"/>
+	<variable name="importeMerca" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[( $F{impuestos} < 0 ? $F{iexentas} + $F{igravadas}: $F{iexentas} + $F{igravadas} + $F{impuestos}.abs())]]></variableExpression>
+	</variable>
+	<variable name="CTOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="4" y="3" width="53" height="14" uuid="06939cc7-a81d-4d1f-b6da-8993e1052f74"/>
+				<textFieldExpression><![CDATA[$F{nro_nota}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="61" y="3" width="26" height="14" uuid="0655478b-99d4-471e-9e83-0eeba3486e7a"/>
+				<textFieldExpression><![CDATA[$F{com_ctipo_docum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="3" width="69" height="14" uuid="1cefbeca-0a21-4c88-b85b-44df50eec7e0"/>
+				<textFieldExpression><![CDATA[$F{nrofact}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="163" y="3" width="183" height="14" uuid="a7de36ea-dea5-4b46-9530-8232322d1c91"/>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="3" width="67" height="14" uuid="1af969db-4ac6-4209-a41b-759b6ac169dc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{fac_ttotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="459" y="3" width="72" height="14" uuid="7b3a53ea-d09f-42d5-a6ee-f6559e1cba36"/>
+				<textFieldExpression><![CDATA[$F{ntimbrado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="535" y="3" width="169" height="14" uuid="ec207a7f-76d4-44c9-a928-195979f31727"/>
+				<textFieldExpression><![CDATA[$F{xobs}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="708" y="3" width="74" height="14" uuid="113727d2-0fd8-4111-84b3-76d1db17453c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="18" width="78" height="14" uuid="4efaa0d5-92a1-4590-946a-33466129d396"/>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="104" y="18" width="216" height="14" uuid="dedfddbb-424f-44c4-82d1-d1bb11e8b7f1"/>
+				<textFieldExpression><![CDATA[$F{xdesc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="324" y="18" width="30" height="14" uuid="58b70adc-288d-4d7b-82fb-44655e3f78c6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="384" y="18" width="33" height="14" uuid="0487baa6-4bed-4c1e-b779-1ab30e2d39f5"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="564" y="18" width="100" height="14" uuid="cdab1a9c-772b-430e-9bd6-ad2ea6b83182"/>
+				<textFieldExpression><![CDATA[$V{importeMerca}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="25">
+			<staticText>
+				<reportElement x="412" y="6" width="100" height="14" uuid="62b33a2e-6715-4d8e-8c02-a5c7c5f41967"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL CONCEPTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="683" y="3" width="100" height="1" uuid="e167aa89-be22-41a8-8166-13d74c1ccbe6"/>
+			</line>
+			<textField>
+				<reportElement x="517" y="6" width="168" height="14" uuid="9fad4317-5c96-4216-b445-5b25cbff71ca"/>
+				<textFieldExpression><![CDATA[$P{xdescConcParam}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="693" y="6" width="89" height="14" uuid="f258bf67-88cc-4fa2-8152-de13050ef181"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
