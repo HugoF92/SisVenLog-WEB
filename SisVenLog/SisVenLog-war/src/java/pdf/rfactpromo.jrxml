@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2020-05-06T20:03:12 -->
+<!-- 2020-06-07T23:17:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rfactpromo" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="da15e1b6-bdf8-4b65-bda1-060a297efc59">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SQL Server 2008"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -222,6 +222,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -238,6 +241,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -254,6 +260,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -270,6 +279,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -286,6 +298,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -316,6 +331,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -332,6 +350,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -348,6 +369,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -364,6 +388,9 @@ ORDER BY nro_promo, ctipo_docum, ndocum]]>
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -894,7 +921,7 @@ DESC.DESC./DIF.PREC.]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="30" y="0" width="61" height="20" uuid="16af7b64-4078-41cc-a022-229d996e7fb7"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9"/>
@@ -1095,7 +1122,7 @@ DESC.DESC./DIF.PREC.]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fac_ctipo_docum}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="170" y="0" width="79" height="20" uuid="54410974-d2a2-4afa-a8f6-94bcc136cc93"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9"/>
@@ -1192,11 +1219,11 @@ DESC.DESC./DIF.PREC.]]></text>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="60" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="20" y="20" width="115" height="20" uuid="057e36e1-ff3e-4636-8f45-3d6e48b442cc">
+				<reportElement x="20" y="60" width="115" height="20" uuid="057e36e1-ff3e-4636-8f45-3d6e48b442cc">
 					<property name="local_mesure_unity" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -1233,23 +1260,16 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{gcant_cajas}]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="428" y="0" width="373" height="1" uuid="36e31493-1b2c-4b84-a7b3-815d294fc943">
-					<property name="local_mesure_unity" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="local_mesure_unitx" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="local_mesure_unitwidth" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
-				</reportElement>
-			</line>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="382" y="20" width="80" height="20" uuid="d29f02aa-8610-4e68-bf14-5e1237a38ce1">
 					<property name="local_mesure_unitx" value="pixel"/>
@@ -1276,7 +1296,11 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -1292,7 +1316,11 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -1324,7 +1352,11 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -1340,7 +1372,11 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -1370,7 +1406,11 @@ DESC.DESC./DIF.PREC.]]></text>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="local_mesure_unitwidth" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT}>0]]></printWhenExpression>
 				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>

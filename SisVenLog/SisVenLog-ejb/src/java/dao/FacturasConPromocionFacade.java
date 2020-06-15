@@ -311,7 +311,7 @@ public class FacturasConPromocionFacade {
             sql = "INSERT INTO #mostrar3 ";
         }
         sql += "SELECT "
-            + "    f.ctipo_docum, f.nrofact as ndocum, convert(char(3),'') as cconc, d.nro_promo, f.ffactur as fdocum, "
+            + "    f.ctipo_docum, f.nrofact as ndocum, convert(char(3),'') as cconc, n1.nro_promo, f.ffactur as fdocum, "
             + "    f.cod_cliente,f.xrazon_social as xnombre, d.cod_merca, m.xdesc, d.cant_cajas, "
             + "    d.cant_unid, 0 AS unid_bonif, m.npeso_caja, m.npeso_unidad, d.idescuentos as ttotal, "
             + "    d.itotal, 0 as pdesc,  p.iprecio_caja as icosto_caja, p.iprecio_unidad as icosto_unidad, "

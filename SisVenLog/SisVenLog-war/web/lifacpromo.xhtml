@@ -62,7 +62,7 @@
                                                          style=" width: 300px;" converter="#{promocionesConverter}">
                                             <f:selectItems value="#{liFacPromoBean.promociones}" var="promo"
                                                            itemValue="#{promo}"
-                                                           itemLabel="#{promo.xdescGral}"/>
+                                                           itemLabel="#{promo.promocionesPK.nroPromo} - #{promo.xdescGral}"/>
                                         </p:selectOneMenu>
 
                                         <p:outputLabel value="Tipo Documento:" style="float: right; font-weight: bold;"/>
