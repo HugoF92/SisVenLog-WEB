@@ -52,9 +52,7 @@ public class LiConCliBean {
     private List<Mercaderias> listaMercaderias;
     private List<Mercaderias> listaMercaderiasSeleccionadas;
     private DualListModel<Mercaderias> mercaderias;
-    
-    private DefaultStreamedContent download;
-        
+            
     @EJB
     private ZonasFacade zonasFacade;
     @EJB
@@ -341,9 +339,9 @@ public class LiConCliBean {
                 extras += " AND m.cod_merca IN (";
                 for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
                     MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                    extras += " " + pk.getCodMerca() + ",";
+                    extras += " '" + pk.getCodMerca() + "',";
                 }
-                extras += extras.substring(0, extras.length()-1) + " ) ";
+                extras = extras.substring(0, extras.length()-1) + " ) ";
         }
         
         switch ( this.seleccion ) {
@@ -530,11 +528,11 @@ public class LiConCliBean {
             param.put("nombreRepo", reporte); 
             
             if (this.vendedor != null) param.put("vendedor", getEmpelado(this.vendedor).getXnombre());
-            else param.put("vendedor", "TODAS");
+            else param.put("vendedor", "TODOS");
             if (this.zonas != null) param.put("zona", getZona(this.zonas).getXdesc());
-            else param.put("zona", "TODAS");
+            else param.put("zona", "TODOS");
             if (this.linea != null) param.put("linea", getLinea(this.linea).getXdesc()); 
-            else param.put("linea", "TODAS");
+            else param.put("linea", "TODOS");
             
             rep.reporteLiContClientes(param, tipo, reporte);
         } else {
@@ -701,19 +699,6 @@ public class LiConCliBean {
 
     public void setListaMercaderiasSeleccionadas(List<Mercaderias> listaMercaderiasSeleccionadas) {
         this.listaMercaderiasSeleccionadas = listaMercaderiasSeleccionadas;
-    }
-    
-    public void setDownload(DefaultStreamedContent download) {
-        this.download = download;
-    }
-
-    public DefaultStreamedContent getDownload() throws Exception {
-        System.out.println("GET = " + download.getName());
-        return download;
-    }
-
-    public void prepDownload() throws Exception {
-        System.out.println("PREP = " + download.getName());
     }
     
 }

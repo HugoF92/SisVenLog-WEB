@@ -6,11 +6,14 @@
 package dao;
 
 import entidad.Rutas;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -48,5 +51,19 @@ public class RutasFacade extends AbstractFacade<Rutas> {
         q.execute();
 
     
+    }
+    
+    public List<Rutas> listarRutasOrdenadoXDesc() {
+        Query q = getEntityManager().createNativeQuery("select r.* "
+                + " from rutas r "
+                + " order by r.xdesc asc", Rutas.class);
+
+        System.out.println(q.toString());
+
+        List<Rutas> respuesta = new ArrayList<Rutas>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
     }
 }

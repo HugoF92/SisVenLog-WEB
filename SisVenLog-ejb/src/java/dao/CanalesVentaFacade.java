@@ -6,7 +6,9 @@
 package dao;
 
 import entidad.CanalesVenta;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -61,4 +63,14 @@ public class CanalesVentaFacade extends AbstractFacade<CanalesVenta> {
 
         return respuesta;
     }
+    
+    public List<CanalesVenta> listarCanalesOrdenadoXDesc(){
+        Query q = getEntityManager().createNativeQuery("SELECT c.* FROM canales_venta c " +
+                " order by c.xdesc ", CanalesVenta.class);
+        System.out.println(q.toString());
+        List<CanalesVenta> resp = new ArrayList<>();
+        resp = q.getResultList();
+        return resp;
+    }
+    
 }
