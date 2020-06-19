@@ -114,5 +114,10 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
         }
     }
 
+    public Sublineas getSubLineaFromList(Sublineas pk, List<Sublineas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCodSublinea().equals(pk.getCodSublinea()))
+                .findAny().orElse(null);
+    }
 
 }

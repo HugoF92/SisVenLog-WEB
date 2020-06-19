@@ -25,11 +25,15 @@ import entidad.Sublineas;
 import entidad.Zonas;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.model.DualListModel;
 import util.DateUtil;
 import util.LlamarReportes;
@@ -85,13 +89,13 @@ public class LiDetZonaBean {
     private ExcelFacade excelFacade;
     
         
-    private String seleccion,nuevos;
-    private Boolean nuevo;
+    private String seleccion;
+    private Boolean resumido = false;
+    private Boolean sinIVA = false;
     
     @PostConstruct
     public void instanciar() {
         this.seleccion = new String("1");        
-        this.nuevo =  false;
         this.desde = new Date();
         this.hasta = new Date();
         
@@ -126,25 +130,25 @@ public class LiDetZonaBean {
             String reporte = null;
             
             if (this.zona != null){
-                extras += " AND f.cod_zona = '"+this.zona.getZonasPK().getCodZona()+"' ";
+                extras += " AND d.cod_zona = '"+this.zona.getZonasPK().getCodZona()+"' ";
             }
             if (this.vendedor != null){
-                extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
+                extras += " AND d.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
             }
             if (this.linea != null){
-                extras += " AND l.cod_linea = " + this.linea.getCodLinea() + " ";
+                extras += " AND s.cod_linea = " + this.linea.getCodLinea() + " ";
             }
             if (this.subLinea != null){
-                extras += " AND l.cod_sublinea = " + this.subLinea.getCodSublinea() +" ";
+                extras += " AND m.cod_sublinea = " + this.subLinea.getCodSublinea() +" ";
             }
             if (this.ruta != null){
-                extras += " AND l.cod_ruta = " + this.ruta.getRutasPK().getCodRuta()  +" ";
+                extras += " AND d.cod_ruta = " + this.ruta.getRutasPK().getCodRuta()  +" ";
             }
             if (this.canal != null){
-                extras += " AND l.cod_canal = " + this.canal.getCodCanal()  +" ";
+                extras += " AND mc.cod_canal = " + this.canal.getCodCanal()  +" ";
             }
             if (this.proveedor != null){
-                extras += " AND l.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
+                extras += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
             }
             if (mercaderias.getTarget().size() > 0) {
                 listaMercaderiasSeleccionadas = mercaderias.getTarget();
@@ -156,25 +160,161 @@ public class LiDetZonaBean {
                 extras = extras.substring(0, extras.length()-1) + " ) ";
             }
             
+            columnas = new String[16];
+            columnas[0] = "cod_vendedor";
+            columnas[1] = "xnombre";
+            columnas[2] = "cod_zona";            
+            columnas[3] = "xdesc_zona";
+            columnas[4] = "cod_merca";
+            columnas[5] = "xdesc_merca";
+            columnas[6] = "cod_sublinea";
+            columnas[7] = "xdesc_sublinea";
+            columnas[8] = "nrelacion";
+            columnas[9] = "cant_cajas";
+            columnas[10] = "cant_unid";
+            columnas[11] = "ttotal";
+            columnas[12] = "cod_linea";
+            columnas[13] = "xdesc_linea";
+            columnas[14] = "npeso_caja";
+            columnas[15] = "npeso_unidad";
+            
+            sql = " SELECT d.cod_vendedor, e.xnombre, d.cod_zona, z.xdesc as xdesc_zona,  "
+                + " d.cod_merca, m.xdesc as xdesc_merca, s.cod_sublinea, "
+                + " s.xdesc as xdesc_sublinea, m.nrelacion, SUM(d.cant_cajas) * -1 as cant_cajas, "
+                + " SUM(d.cant_unid) * -1 as cant_unid, ";
+            
+            if (this.sinIVA) {
+                sql += " SUM(d.igravadas+d.iexentas)  as ttotal, ";
+            } else {
+                sql += " SUM(d.igravadas+d.iexentas+d.impuestos)  as ttotal,  ";
+            }
+            titulo = "DETALLE DE VENTAS POR ";
+            sql += " l.cod_linea, l.xdesc as xdesc_linea, m.npeso_caja, m.npeso_unidad  "
+                + " FROM movimientos_merca  d, empleados e, zonas z, sublineas s, mercaderias m, " 
+                + " merca_canales mc, rutas r, lineas l, tmp_mercaderias tm "
+                + " WHERE d.cod_empr = 2  AND d.cod_zona = z.cod_zona " 
+                + " AND d.cod_vendedor = e.cod_empleado "
+                + " AND d.cod_empr = e.cod_empr "
+                + " AND s.cod_linea = l.cod_linea " 
+                + " AND d.cod_empr = m.cod_empr " 
+                + " AND d.cod_merca = m.cod_merca " 
+                + " AND d.cod_ruta = r.cod_ruta " 
+                + " AND m.cod_sublinea = s.cod_sublinea " 
+                + " AND d.ctipo_docum IN ('FCO','FCR','CPV','NCV','NDV') " 
+                + " AND d.fmovim between '"+fdesde+"' AND '"+fhasta+"'"  
+                + " AND m.cod_merca = mc.cod_merca " 
+                + " AND d.cod_merca = tm.cod_merca "
+                + extras +
+                " GROUP BY d.cod_zona, z.xdesc, d.cod_vendedor, e.xnombre, " 
+                + " s.cod_sublinea, s.xdesc, d.cod_merca, m.xdesc, M.NRELACION, "
+                + " l.cod_linea, l.xdesc, m.npeso_caja, m.npeso_unidad "
+                    ;
+            
+            if (this.resumido) {
+                switch ( this.seleccion ) {
+                    case "1":
+                        sql += " ORDER BY d.cod_merca ";
+                        break;
+                    case "2":
+                        sql += " ORDER BY  s.xdesc ";
+                        break;
+                    case "3":
+                        sql += " ORDER BY  l.cod_linea ";
+                        break;
+                    case "4":
+                        sql += " ORDER BY  d.cod_vendedor, d.cod_merca ";
+                        break;
+                }                
+            } else {
+                if (this.seleccion.equals("1") || this.seleccion.equals("2")){
+                    sql +=  " ORDER BY d.cod_zona, d.cod_vendedor, s.cod_sublinea, d.cod_merca ";
+                } else {
+                    sql += " ORDER BY d.cod_zona, d.cod_vendedor, l.cod_linea, d.cod_merca ";
+                }
+            }
+            
             switch ( this.seleccion ) {
                 case "1":
-                    titulo = "POR PROVEEDOR";
-                    reporte = "rkclientes6";
-                    columnas = new String[3];
-                    columnas[0] = "cod_proveed";
-                    columnas[1] = "xnombre";
-                    columnas[2] = "cant_clientes";
-                    sql = " "
-                    + extras +
-                        "";
+                    if (this.resumido) {
+                        titulo += " ZONA Y MERCADERIA";
+                        reporte = "rresmerca";
+                    } else {
+                        titulo = " ZONA Y SUBLINEA";
+                        reporte = "rdetzona";
+                    }
                     break;
                 case "2":
+                    if (this.resumido) {
+                        titulo = "";
+                        reporte = "rressubli";
+                    } else {
+                        titulo = "";
+                        reporte = "rdetzona2";
+                    }
                     break;
-                    
+                case "3":
+                    if (this.resumido) {
+                        titulo = "";
+                        reporte = "rreslinea";
+                    } else {
+                        titulo = "";
+                        reporte = "rdetzona3";
+                    }
+                    break;
+                case "4":
+                    if (this.resumido) {
+                        titulo = "";
+                        reporte = "rresvenmerca";
+                    } else {
+                        titulo = "";
+                        reporte = "rdetzona";
+                    }
+                    break;
+            }
+            
+            System.out.println(sql);
+            //sql = "select * from mercaderias ";
+            if (tipo.equals("VIST")){
+                String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                Map param = new HashMap();
+                param.put("sql", sql);
+                param.put("fdesde", this.desde);
+                param.put("fhasta", this.hasta);
+                param.put("titulo", titulo);
+                param.put("usuImprime", usuImprime);
+                param.put("nombreRepo", reporte); 
+
+                if (this.vendedor != null) param.put("vendedor", empleadoFacade.getEmpeladoFromList(this.vendedor, this.listaVendedor).getXnombre());
+                else param.put("vendedor", "TODOS");
+                
+                if (this.zona != null) param.put("zona", zonasFacade.getZonaFromLis(this.zona, this.listaZonas).getXdesc());
+                else param.put("zona", "TODOS");
+                
+                if (this.linea != null) param.put("linea", lineasFacade.getLineaFromList(this.linea, this.listaLineas).getXdesc()); 
+                else param.put("linea", "TODOS");
+                
+                if (this.subLinea != null) param.put("subLinea", sublineasFacade.getSubLineaFromList(this.subLinea, this.listaSubLineas).getXdesc()); 
+                else param.put("subLinea", "TODOS");
+                
+                if (this.ruta != null) param.put("ruta", rutasFacade.getRutaFromList(this.ruta, this.listaRutas).getXdesc()); 
+                else param.put("ruta", "TODOS");
+                
+                if (this.canal != null) param.put("canal", canalFacade.getCanalVentaFromList(this.canal, this.listaCanales).getXdesc()); 
+                else param.put("canal", "TODOS");
+                
+                if (this.proveedor != null) param.put("proveedor", proveedoresFacade.getProveedorFromList(this.proveedor, this.listaProveedores).getXnombre()); 
+                else param.put("proveedor", "TODOS");
+            
+                rep.reporteLiContClientes(param, tipo, reporte);
+            } else {
+                List<Object[]> lista = new ArrayList<Object[]>();
+                lista = excelFacade.listarParaExcel(sql);
+                rep.exportarExcel(columnas, lista, reporte);
             }
             
         } catch (Exception e) {
-            
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al ejecutar listado"));
         }        
     }
     
@@ -346,20 +486,16 @@ public class LiDetZonaBean {
         this.seleccion = seleccion;
     }
 
-    public String getNuevos() {
-        return nuevos;
+    public Boolean getResumido() {
+        return resumido;
     }
 
-    public void setNuevos(String nuevos) {
-        this.nuevos = nuevos;
+    public Boolean getSinIVA() {
+        return sinIVA;
     }
 
-    public Boolean getNuevo() {
-        return nuevo;
-    }
-
-    public void setNuevo(Boolean nuevo) {
-        this.nuevo = nuevo;
+    public void setSinIVA(Boolean sinIVA) {
+        this.sinIVA = sinIVA;
     }
     
     

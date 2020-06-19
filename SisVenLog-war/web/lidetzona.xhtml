@@ -46,7 +46,7 @@
                                                          converter="#{SublineasConverter}" 
                                                          panelStyle="width:170px"
                                                          style=" width:170px">
-                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
                                             <f:selectItems value="#{liDetZonaBean.listaSubLineas}" var="item" 
                                                            itemValue="#{item}" 
                                                            itemLabel="#{item.xdesc}"/>
@@ -58,7 +58,7 @@
                                                          converter="#{LineasConverter}" 
                                                          panelStyle="width:170px"
                                                          style=" width:170px">
-                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
                                             <f:selectItems value="#{liDetZonaBean.listaLineas}" var="item" 
                                                            itemValue="#{item}" 
                                                            itemLabel="#{item.xdesc}"/>
@@ -70,7 +70,7 @@
                                                          converter="#{RutasConverter}" 
                                                          panelStyle="width:170px"
                                                          style=" width:170px">
-                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
                                             <f:selectItems value="#{liDetZonaBean.listaRutas}" var="item" 
                                                            itemValue="#{item}" 
                                                            itemLabel="#{item.xdesc}"/>
@@ -113,6 +113,14 @@
                                         <p:commandButton icon="fa fa-filter"
                                                     oncomplete="PF('dlgSelectMerca').show()"
                                                     style="margin-top:10px" />
+                                        
+                                        <p:outputLabel value="Sin IVA" style="float: right; font-weight: bold;"/>
+                                        <p:selectBooleanCheckbox value="#{liDetZonaBean.sinIVA}">
+                                        </p:selectBooleanCheckbox>
+                                        
+                                        <p:outputLabel value="Resumido" style="float: right; font-weight: bold;"/>
+                                        <p:selectBooleanCheckbox value="#{liDetZonaBean.resumido}">
+                                        </p:selectBooleanCheckbox>
                                         
                                         <p:outputLabel for="discriminar" value="Discriminar:" />
                                         <p:selectOneRadio id="discriminar" value="#{liDetZonaBean.seleccion}" 

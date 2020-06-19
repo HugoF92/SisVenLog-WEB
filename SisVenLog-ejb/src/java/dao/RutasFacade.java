@@ -66,4 +66,11 @@ public class RutasFacade extends AbstractFacade<Rutas> {
 
         return respuesta;
     }
+    
+    public Rutas getRutaFromList(Rutas pk, List<Rutas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getRutasPK().getCodRuta() == pk.getRutasPK().getCodRuta())
+                .findAny().orElse(null);
+    }
+    
 }

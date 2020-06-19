@@ -156,5 +156,11 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         return respuesta;
     }
     
+    public Empleados getEmpeladoFromList(Empleados pk, List<Empleados> lista){
+        return lista.stream()
+                .filter(obj -> obj.getEmpleadosPK().getCodEmpr() == pk.getEmpleadosPK().getCodEmpr() && 
+                        obj.getEmpleadosPK().getCodEmpleado() == pk.getEmpleadosPK().getCodEmpleado())
+                .findAny().orElse(null);
+    }
     
 }

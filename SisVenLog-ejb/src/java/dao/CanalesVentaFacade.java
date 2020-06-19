@@ -7,13 +7,10 @@ package dao;
 
 import entidad.CanalesVenta;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
 import javax.persistence.Query;
 
 /**
@@ -71,6 +68,12 @@ public class CanalesVentaFacade extends AbstractFacade<CanalesVenta> {
         List<CanalesVenta> resp = new ArrayList<>();
         resp = q.getResultList();
         return resp;
+    }
+    
+    public CanalesVenta getCanalVentaFromList(CanalesVenta pk, List<CanalesVenta> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCodCanal().equals(pk.getCodCanal()))
+                .findAny().orElse(null);
     }
     
 }

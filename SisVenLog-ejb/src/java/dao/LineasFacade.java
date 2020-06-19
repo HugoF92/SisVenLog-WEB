@@ -6,7 +6,6 @@
 package dao;
 
 import entidad.Lineas;
-import entidad.Lineas;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,4 +82,11 @@ public class LineasFacade extends AbstractFacade<Lineas> {
 
         return respuesta;
     }
+    
+    public Lineas getLineaFromList(Lineas pk, List<Lineas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCodLinea().shortValue() == pk.getCodLinea().shortValue())
+                .findAny().orElse(null);
+    }
+    
 }
