@@ -145,7 +145,7 @@ public class LiDetZonaBean {
                 extras += " AND d.cod_ruta = " + this.ruta.getRutasPK().getCodRuta()  +" ";
             }
             if (this.canal != null){
-                extras += " AND mc.cod_canal = " + this.canal.getCodCanal()  +" ";
+                extras += " AND mc.cod_canal = '" + this.canal.getCodCanal()  +"' ";
             }
             if (this.proveedor != null){
                 extras += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
@@ -294,7 +294,7 @@ public class LiDetZonaBean {
                 else param.put("linea", "TODOS");
                 
                 if (this.subLinea != null) param.put("subLinea", sublineasFacade.getSubLineaFromList(this.subLinea, this.listaSubLineas).getXdesc()); 
-                else param.put("subLinea", "TODOS");
+                else param.put("sublinea", "TODOS");
                 
                 if (this.ruta != null) param.put("ruta", rutasFacade.getRutaFromList(this.ruta, this.listaRutas).getXdesc()); 
                 else param.put("ruta", "TODOS");
@@ -486,6 +486,10 @@ public class LiDetZonaBean {
         this.seleccion = seleccion;
     }
 
+    public void setResumido(Boolean resumido) {
+        this.resumido = resumido;
+    }
+    
     public Boolean getResumido() {
         return resumido;
     }
