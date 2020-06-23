@@ -178,17 +178,23 @@ public class LiDetZonaBean {
             columnas[14] = "npeso_caja";
             columnas[15] = "npeso_unidad";
             
-            sql = " SELECT d.cod_vendedor, e.xnombre, d.cod_zona, z.xdesc as xdesc_zona,  "
+            sql = " SELECT cod_vendedor, xnombre, cod_zona, xdesc_zona, cod_merca, " 
+                + "     xdesc_merca, cod_sublinea, xdesc_sublinea, cod_linea, xdesc_linea, " 
+                + " cast(((cant_cajas * nrelacion) + cant_unid)/nrelacion as int) as cant_cajas, " 
+                + " ((cant_cajas * nrelacion) + cant_unid) - cast(((cant_cajas * nrelacion) " 
+                + " + cant_unid)/nrelacion as int) * nrelacion  as cant_unid,  " 
+                + " ((cant_cajas * nrelacion) + cant_unid) * npeso_unidad as tpeso_vta, ttotal "
+                + " FROM ( select d.cod_vendedor, e.xnombre, d.cod_zona, z.xdesc as xdesc_zona,  "
                 + " d.cod_merca, m.xdesc as xdesc_merca, s.cod_sublinea, "
                 + " s.xdesc as xdesc_sublinea, m.nrelacion, SUM(d.cant_cajas) * -1 as cant_cajas, "
                 + " SUM(d.cant_unid) * -1 as cant_unid, ";
-            
+           
             if (this.sinIVA) {
                 sql += " SUM(d.igravadas+d.iexentas)  as ttotal, ";
             } else {
                 sql += " SUM(d.igravadas+d.iexentas+d.impuestos)  as ttotal,  ";
             }
-            titulo = "DETALLE DE VENTAS POR ";
+            
             sql += " l.cod_linea, l.xdesc as xdesc_linea, m.npeso_caja, m.npeso_unidad  "
                 + " FROM movimientos_merca  d, empleados e, zonas z, sublineas s, mercaderias m, " 
                 + " merca_canales mc, rutas r, lineas l, tmp_mercaderias tm "
@@ -209,73 +215,73 @@ public class LiDetZonaBean {
                 + " s.cod_sublinea, s.xdesc, d.cod_merca, m.xdesc, M.NRELACION, "
                 + " l.cod_linea, l.xdesc, m.npeso_caja, m.npeso_unidad "
                     ;
-            
+            sql += " ) as mostrar  ";
             if (this.resumido) {
                 switch ( this.seleccion ) {
                     case "1":
-                        sql += " ORDER BY d.cod_merca ";
+                        sql += " ORDER BY cod_merca ";
                         break;
                     case "2":
-                        sql += " ORDER BY  s.xdesc ";
+                        sql += " ORDER BY  xdesc_merca ";
                         break;
                     case "3":
-                        sql += " ORDER BY  l.cod_linea ";
+                        sql += " ORDER BY  cod_linea ";
                         break;
                     case "4":
-                        sql += " ORDER BY  d.cod_vendedor, d.cod_merca ";
+                        sql += " ORDER BY  cod_vendedor, cod_merca ";
                         break;
                 }                
             } else {
                 if (this.seleccion.equals("1") || this.seleccion.equals("2")){
-                    sql +=  " ORDER BY d.cod_zona, d.cod_vendedor, s.cod_sublinea, d.cod_merca ";
+                    sql +=  " ORDER BY cod_zona, cod_vendedor, cod_sublinea, cod_merca ";
                 } else {
-                    sql += " ORDER BY d.cod_zona, d.cod_vendedor, l.cod_linea, d.cod_merca ";
+                    sql += " ORDER BY cod_zona, cod_vendedor, l.cod_linea, cod_merca ";
                 }
             }
-            
+            titulo = "DETALLE DE VENTAS POR ";
             switch ( this.seleccion ) {
                 case "1":
                     if (this.resumido) {
-                        titulo += " ZONA Y MERCADERIA";
+                        titulo = " RESUMEN DE VENTAS POR MERCADERIA";
                         reporte = "rresmerca";
                     } else {
-                        titulo = " ZONA Y SUBLINEA";
+                        titulo = " ZONA Y MERCADERIA";
                         reporte = "rdetzona";
                     }
                     break;
                 case "2":
                     if (this.resumido) {
-                        titulo = "";
+                        titulo = " RESUMEN DE VENTAS POR SUBLINEA";
                         reporte = "rressubli";
                     } else {
-                        titulo = "";
+                        titulo = " ZONA Y SUBLINEA";
                         reporte = "rdetzona2";
                     }
                     break;
                 case "3":
                     if (this.resumido) {
-                        titulo = "";
+                        titulo = " RESUMEN DE VENTAS POR LINEA ";
                         reporte = "rreslinea";
                     } else {
-                        titulo = "";
+                        titulo = " ZONA Y LINEA";
                         reporte = "rdetzona3";
                     }
                     break;
                 case "4":
                     if (this.resumido) {
-                        titulo = "";
+                        titulo = " RESUMEN DE VENTAS POR MERCADERIA ";
                         reporte = "rresvenmerca";
                     } else {
-                        titulo = "";
+                        titulo = " ZONA Y MERCADERIA ";
                         reporte = "rdetzona";
                     }
                     break;
             }
             
             System.out.println(sql);
-            //sql = "select * from mercaderias ";
+
             if (tipo.equals("VIST")){
-                String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                String usuImprime = "";//FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                 Map param = new HashMap();
                 param.put("sql", sql);
                 param.put("fdesde", this.desde);
@@ -313,6 +319,7 @@ public class LiDetZonaBean {
             }
             
         } catch (Exception e) {
+            e.printStackTrace();
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al ejecutar listado"));
         }        
