@@ -197,7 +197,7 @@ public class LiDetZonaBean {
             
             sql += " l.cod_linea, l.xdesc as xdesc_linea, m.npeso_caja, m.npeso_unidad  "
                 + " FROM movimientos_merca  d, empleados e, zonas z, sublineas s, mercaderias m, " 
-                + " merca_canales mc, rutas r, lineas l, tmp_mercaderias tm "
+                + " merca_canales mc, rutas r, lineas l "
                 + " WHERE d.cod_empr = 2  AND d.cod_zona = z.cod_zona " 
                 + " AND d.cod_vendedor = e.cod_empleado "
                 + " AND d.cod_empr = e.cod_empr "
@@ -209,7 +209,6 @@ public class LiDetZonaBean {
                 + " AND d.ctipo_docum IN ('FCO','FCR','CPV','NCV','NDV') " 
                 + " AND d.fmovim between '"+fdesde+"' AND '"+fhasta+"'"  
                 + " AND m.cod_merca = mc.cod_merca " 
-                + " AND d.cod_merca = tm.cod_merca "
                 + extras +
                 " GROUP BY d.cod_zona, z.xdesc, d.cod_vendedor, e.xnombre, " 
                 + " s.cod_sublinea, s.xdesc, d.cod_merca, m.xdesc, M.NRELACION, "
@@ -235,7 +234,7 @@ public class LiDetZonaBean {
                 if (this.seleccion.equals("1") || this.seleccion.equals("2")){
                     sql +=  " ORDER BY cod_zona, cod_vendedor, cod_sublinea, cod_merca ";
                 } else {
-                    sql += " ORDER BY cod_zona, cod_vendedor, l.cod_linea, cod_merca ";
+                    sql += " ORDER BY cod_zona, cod_vendedor, cod_linea, cod_merca ";
                 }
             }
             titulo = "DETALLE DE VENTAS POR ";
@@ -245,7 +244,7 @@ public class LiDetZonaBean {
                         titulo = " RESUMEN DE VENTAS POR MERCADERIA";
                         reporte = "rresmerca";
                     } else {
-                        titulo = " ZONA Y MERCADERIA";
+                        titulo += " ZONA Y MERCADERIA";
                         reporte = "rdetzona";
                     }
                     break;
@@ -254,7 +253,7 @@ public class LiDetZonaBean {
                         titulo = " RESUMEN DE VENTAS POR SUBLINEA";
                         reporte = "rressubli";
                     } else {
-                        titulo = " ZONA Y SUBLINEA";
+                        titulo += " ZONA Y SUBLINEA";
                         reporte = "rdetzona2";
                     }
                     break;
@@ -263,7 +262,7 @@ public class LiDetZonaBean {
                         titulo = " RESUMEN DE VENTAS POR LINEA ";
                         reporte = "rreslinea";
                     } else {
-                        titulo = " ZONA Y LINEA";
+                        titulo += " ZONA Y LINEA";
                         reporte = "rdetzona3";
                     }
                     break;
@@ -272,7 +271,7 @@ public class LiDetZonaBean {
                         titulo = " RESUMEN DE VENTAS POR MERCADERIA ";
                         reporte = "rresvenmerca";
                     } else {
-                        titulo = " ZONA Y MERCADERIA ";
+                        titulo += " ZONA Y MERCADERIA ";
                         reporte = "rdetzona";
                     }
                     break;
@@ -299,7 +298,7 @@ public class LiDetZonaBean {
                 if (this.linea != null) param.put("linea", lineasFacade.getLineaFromList(this.linea, this.listaLineas).getXdesc()); 
                 else param.put("linea", "TODOS");
                 
-                if (this.subLinea != null) param.put("subLinea", sublineasFacade.getSubLineaFromList(this.subLinea, this.listaSubLineas).getXdesc()); 
+                if (this.subLinea != null) param.put("sublinea", sublineasFacade.getSubLineaFromList(this.subLinea, this.listaSubLineas).getXdesc()); 
                 else param.put("sublinea", "TODOS");
                 
                 if (this.ruta != null) param.put("ruta", rutasFacade.getRutaFromList(this.ruta, this.listaRutas).getXdesc()); 
