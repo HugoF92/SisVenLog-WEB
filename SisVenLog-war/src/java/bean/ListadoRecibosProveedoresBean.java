@@ -5,6 +5,7 @@
  */
 package bean;
 
+import dao.ProveedoresFacade;
 import dao.RecibosProvFacade;
 import entidad.Proveedores;
 import java.io.Serializable;
@@ -37,6 +38,8 @@ public class ListadoRecibosProveedoresBean implements Serializable{
     private Boolean conDetalle;
     private Proveedores proveedorSeleccionado;
    
+    @EJB
+    private ProveedoresFacade proveedoresFacade;
     
     @EJB
     private RecibosProvFacade recibosProvFacade; 
@@ -45,6 +48,8 @@ public class ListadoRecibosProveedoresBean implements Serializable{
     public void instanciar(){
         limpiarFormulario();
         proveedorSeleccionado = new Proveedores();
+        setDiscriminar("ND");
+        setConDetalle(false);
     }
     
     public void limpiarFormulario(){
@@ -62,6 +67,9 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                     if (conDetalle) {
                         String nombreRepo = "ND".equals(discriminar) ? "reciboProvDetND" : "reciboProvDetPP";
                         String sqlConDet = armarSqlConDetalle(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
+                        String sqlReciboProDet = armarSqlReciboProvDet(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
+                        String sqlReciboProDetRec = armarSqlReciboProvDetRec(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
+                        
                         rep.reporteLiRecibosCom(sqlConDet,
                                 fechaReciboDesde,
                                 fechaReciboHasta,
@@ -69,8 +77,8 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                                 nroReciboHasta,
                                 proveedorSeleccionado,
                                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), tipo, nombreRepo, "Rreciboscomdet",
-                                armarSqlReciboProvDet(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado), 
-                                armarSqlReciboProvDetRec(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado));
+                                sqlReciboProDet, 
+                                sqlReciboProDetRec);
                     }else { //sin detalle
                         String nombreRepo = "ND".equals(discriminar) ? "reciboProvND" : "reciboProvPP";
                         String sqlSinDet = armarSqlSinDetalle(fechaReciboDesde, fechaReciboHasta, nroReciboDesde, nroReciboHasta, discriminar, proveedorSeleccionado);
@@ -159,11 +167,11 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha hasta."));            
                 return false;
             }else{
-                if (nroReciboDesde == 0) {
+                if (nroReciboDesde < 0) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo desde.", "Debe ingresar un número de recibo desde."));            
                     return false;
                 }else{
-                    if (nroReciboHasta == 0) {
+                    if (nroReciboHasta <= 0) {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de recibo hasta.", "Debe ingresar un número de recibo hasta."));            
                         return false;
                     }
@@ -235,8 +243,11 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                 " AND r.cod_empr = d.cod_empr" +
                 " AND r.cod_empr = 2" +
                 " AND r.fanul IS NULL" +
-                " AND r.cod_proveed = c.cod_proveed" +
-                " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
+                " AND r.cod_proveed = c.cod_proveed";
+                if (provSeleccionado != null) {
+                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
+                }
+                sql += " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
                 " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta +
                 " UNION ALL" +
                 " SELECT r.nrecibo, r.cod_proveed, r.frecibo, r.irecibo, r.iefectivo," +
@@ -248,15 +259,16 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                 " AND r.frecibo = d.frecibo" +
                 " AND r.cod_empr = d.cod_empr" +
                 " AND r.cod_empr = 2" +
-                " AND d.cod_banco = b.cod_banco" +
-                " AND r.cod_proveed = c.cod_proveed" +
-                " AND r.fanul IS NULL" +
+                " AND d.cod_banco = b.cod_banco" + 
+                " AND r.cod_proveed = c.cod_proveed";
+                if (provSeleccionado != null) {
+                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
+                }
+                sql += " AND r.fanul IS NULL" +
                 " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
                 " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta +
                 " AND r.icheques > 0";
-                if (provSeleccionado != null){
-                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
-                }
+                
                 sql += " )" +
                 " SELECT DISTINCT nrecibo, frecibo, mestado, iefectivo, icheques, iretencion, irecibo, xnombre2, cod_proveed2, xobs from principalCTE ORDER BY nrecibo;";
             }else{ //discriminar por Proveedor
@@ -271,8 +283,11 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                 " AND r.cod_empr = d.cod_empr" +
                 " AND r.cod_empr = 2" +
                 " AND r.fanul IS NULL" +
-                " AND r.cod_proveed = c.cod_proveed" +
-                " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
+                " AND r.cod_proveed = c.cod_proveed";
+                if (provSeleccionado != null) {
+                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
+                }
+                sql += " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
                 " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta +
                 " UNION ALL" +
                 " SELECT r.nrecibo, r.cod_proveed, r.frecibo, r.irecibo, r.iefectivo," +
@@ -285,14 +300,15 @@ public class ListadoRecibosProveedoresBean implements Serializable{
                 " AND r.cod_empr = d.cod_empr" +
                 " AND r.cod_empr = 2" +
                 " AND d.cod_banco = b.cod_banco" +
-                " AND r.cod_proveed = c.cod_proveed" +
-                " AND r.fanul IS NULL" +
+                " AND r.cod_proveed = c.cod_proveed";
+                if (provSeleccionado != null) {
+                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
+                }
+                sql += " AND r.fanul IS NULL" +
                 " AND r.frecibo BETWEEN '" + DateUtil.dateToString(fechaReciboDesde) + "' AND '" + DateUtil.dateToString(fechaReciboHasta) + "'" +
                 " AND r.nrecibo BETWEEN " + nroReciboDesde + " AND " + nroReciboHasta +
                 " AND r.icheques > 0";
-                if (provSeleccionado != null){
-                    sql += " AND r.cod_proveed = " + provSeleccionado.getCodProveed();
-                }
+                
                 sql += " )" +
                 " SELECT DISTINCT cod_proveed from principalCTE ORDER BY cod_proveed;";
             }
@@ -497,6 +513,10 @@ public class ListadoRecibosProveedoresBean implements Serializable{
     }
 
     public void setProveedorSeleccionado(Proveedores proveedorSeleccionado) {
-        this.proveedorSeleccionado = proveedorSeleccionado;
+        if (proveedorSeleccionado != null) {
+            this.proveedorSeleccionado = proveedoresFacade.proveedorById(proveedorSeleccionado.getCodProveed());
+        }else{            
+            this.proveedorSeleccionado = proveedorSeleccionado;
+        }
     }
 }

@@ -12,7 +12,6 @@ import dao.TransportistasFacade;
 import entidad.Conductores;
 import entidad.Depositos;
 import entidad.Empleados;
-import entidad.EmpleadosPK;
 import entidad.Existencias;
 import entidad.Remisiones;
 import entidad.RemisionesDet;
@@ -21,8 +20,8 @@ import entidad.RemisionesFacturas;
 import entidad.RemisionesFacturasPK;
 import entidad.RemisionesPK;
 import entidad.Transportistas;
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,7 +33,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import util.LlamarReportes;
 
 /**
  *
@@ -42,7 +40,7 @@ import util.LlamarReportes;
  */
 @ManagedBean
 @SessionScoped
-public class genRemisiones {
+public class genRemisiones implements Serializable{
     
     private Date fecha;
     @EJB

@@ -150,6 +150,12 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         resp = q.getResultList();
         return resp;
     }
+
+    public List<Empleados> getEmpleadosVendedores(){
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM empleados WHERE cod_empr = 2" +
+            " AND mestado ='A' AND xnro_hand <> '' AND xnro_hand is not null AND ctipo_emp LIKE 'V%'",Empleados.class);
+        return q.getResultList();
+    }
     
     public List<Empleados> listarEntregadorPorDeposito(Short cod_depo) {
         Query q = getEntityManager().createNativeQuery("SELECT e.* FROM empleados e\n"
@@ -187,4 +193,10 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         return q.getResultList();
     }
     
+    public Empleados findEntregador(Short codEntregador){
+        Query q = getEntityManager().createNativeQuery("select e.* from  empleados e "
+                + "where ctipo_emp like 'E%' and e.cod_empleado = "+codEntregador,Empleados.class);
+        System.out.println(q.toString());
+        return (Empleados) q.getSingleResult();
+    }
 }

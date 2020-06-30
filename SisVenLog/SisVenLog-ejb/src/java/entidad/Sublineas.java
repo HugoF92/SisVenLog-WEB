@@ -90,7 +90,6 @@ public class Sublineas implements Serializable {
         this.codSublinea = codSublinea;
     }
 
-
     public Date getFalta() {
         return falta;
     }

@@ -69,6 +69,8 @@ public class Lineas implements Serializable {
     @JoinColumn(name = "cod_CATEGORIA", referencedColumnName = "COD_CATEGORIA")
     @ManyToOne
     private Categorias codCATEGORIA;
+    @Column(name = "mestado")
+    private Character mestado;
 
     @Column(name = "mestado")
     private Character mestado;

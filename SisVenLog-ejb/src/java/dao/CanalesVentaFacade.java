@@ -44,4 +44,21 @@ public class CanalesVentaFacade extends AbstractFacade<CanalesVenta> {
 
         return canalVenta;
     }
+    
+    //JLVC 15-04-2020
+    public CanalesVenta buscarPorCodigo(String filtro) {
+
+        Query q = getEntityManager().createNativeQuery("select * from canales_venta where cod_canal =  upper('" + filtro + "') ", CanalesVenta.class);
+
+        //System.out.println(q.toString());
+        CanalesVenta respuesta = new CanalesVenta();
+
+        if (q.getResultList().size() <= 0) {
+            respuesta = null;
+        } else {
+            respuesta = (CanalesVenta) q.getSingleResult();
+        }
+
+        return respuesta;
+    }
 }

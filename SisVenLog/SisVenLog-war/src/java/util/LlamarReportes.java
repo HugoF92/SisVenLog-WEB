@@ -6,20 +6,20 @@
 package util;
 
 import dto.LiMercaSinDto;
+import entidad.Bancos;
+import entidad.CanalesCompra;
 import entidad.CanalesVenta;
 import entidad.Depositos;
 import entidad.Lineas;
 import entidad.Sublineas;
 import entidad.Empleados;
+import entidad.Lineas;
 import entidad.Proveedores;
+import entidad.Rutas;
+import entidad.TiposClientes;
+import entidad.TiposDocumentos;
 import entidad.Zonas;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -43,16 +42,10 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.primefaces.model.DefaultStreamedContent;
+
 
 /**
  *
@@ -67,7 +60,9 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+//            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost:50042;databaseName=VenlogDB", "sa", "venlog2018CC");
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -1498,6 +1493,91 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    
+    public void reporteLiCheques(String sql, String desde, String hasta, Bancos banco, String nombre_cliente, String tipo) {
+        try {
+
+            String nombre_banco = banco != null ? banco.getXdesc() : "Sin Banco";
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("nombre_banco", nombre_banco);
+            param.put("nombre_cliente", nombre_cliente);
+            
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=licheques.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    /*
+    public void reporteLiCheques2(String sql, String desde, String hasta, String nombre_banco, String nombre_cliente, String tipo) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("nombre_banco", nombre_banco);
+            param.put("nombre_cliente", nombre_cliente);
+            
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques2.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=licheques2.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    */
 
     public void reporteLiExtractoCliente(String sql, String desde, String hasta,
             String usuImprime, String tipo) {
@@ -1845,16 +1925,13 @@ public class LlamarReportes {
         }
     }
 
-    public void reporteLiCamiones(String sql, String desde, String hasta,
-            String usuImprime, String tipo) {
+    public void reporteLiCamiones(String sql, String desde, String hasta,String usuImprime, String tipo) {
         try {
-
             Map param = new HashMap();
             param.put("sql", sql);
             param.put("desde", desde);
             param.put("hasta", hasta);
             param.put("usuImprime", usuImprime);
-
             String report = "";
 
             report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/camiones.jasper");
@@ -2011,7 +2088,7 @@ public class LlamarReportes {
 
             //datos de la lista proporcionada
             for (int h = 0; h < lista.size(); h++) {
-                row = sheet.createRow((short) h + 1);
+                row = sheet.createRow((int) h + 1);
                 Object[] objeto = lista.get(h);
 
                 for (int k = 0; k < columnas.length; k++) {
@@ -2171,6 +2248,44 @@ public class LlamarReportes {
         }
     }
 
+    public void reporteClientesCreditos(String fechaFacDesde, String fechaFacHasta,
+            Zonas zona, Integer nroPromedio, Empleados vendedor, String discriminar,
+            String listaCodClientes, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaFacDesde);
+            param.put("fechaHasta", fechaFacHasta);
+            param.put("zona", zona != null? zona.getXdesc():null);
+            param.put("npromedio", nroPromedio);
+            param.put("vendedor", vendedor != null? vendedor.getXnombre():null);
+            param.put("discriminar", discriminar);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = "liconcred.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liconcred.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibos(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, String clientesRepo, String zonaDes,
             String usuImprime, String tipo, String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
@@ -2234,6 +2349,56 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+
+    public void reporteClientesRutasZonas(Boolean conRuteo, TiposClientes tipoCliente,
+            Zonas zona, Rutas ruta, String estado, String fechaAltaDesde,
+            String fechaAltaHasta, Boolean todosClientes, String listaCodClientes,
+            String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("codTipoCliente", tipoCliente == null ? null: tipoCliente.getCtipoCliente());
+            param.put("tipoCliente", tipoCliente == null ? null: tipoCliente.getXdesc());
+            param.put("codZona", zona == null? null:zona.getZonasPK().getCodZona());
+            param.put("zona", zona == null? null: zona.getXdesc());
+            param.put("codRuta", ruta ==null? null : ruta.getRutasPK().getCodRuta());
+            param.put("ruta", ruta ==null? null : ruta.getXdesc());
+            param.put("estado", Integer.parseInt(estado));
+            param.put("fechaAltaDesde", fechaAltaDesde);
+            param.put("fechaAltaHasta", fechaAltaHasta);
+            param.put("todosClientes", todosClientes);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+
+            String report;
+            String filename = "liclientes";
+            
+            if(conRuteo) {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesConRuteo.jasper");
+                filename += "conruteo.pdf";
+            } else {
+                report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liClientesSinRuteo.jasper");
+                filename += "sinruteo.pdf";
+            }
+
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteLiRecibosCom(String sql, Date fechaDesde, Date fechaHasta,
             Long nroRecDesde, Long nroRecHasta, Proveedores provSeleccionado, String usuImprime, String tipo, 
             String nombreReporte, String filename, String sqlDetalle, String sqlDetalleRecibo) {
@@ -2291,6 +2456,7 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    
     public void reporteLiPedidos(String sql, 
                                  String sqlDetalle,
                                  Date fechaDesde,
@@ -2479,5 +2645,131 @@ public class LlamarReportes {
             escapedData = "\"" + data + "\"";
         }
         return escapedData;
+    }
+
+    public void reporteClienteNoCompran(Date fechaDesde, Date fechaHasta,
+            Zonas zona, Rutas ruta, String estado, Lineas linea,
+            Empleados vendedor, String usuarioImpresion) {
+
+        try {
+            Map param = new HashMap();
+            param.put("desde", fechaInicial);
+            param.put("hasta", fechaFinal);
+            param.put("vendedor", vendedor);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("canal", canalDescripcion);
+            param.put("estado", Integer.parseInt(estado));
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/informeMigracionPedidos.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=limigrapedidos.pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void reporteDocumentosFaltantes(Long nroDesde, Long nroHasta,
+                TiposDocumentos tipoDocumento, Date fechaInicial, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("nroDesde", nroDesde);
+            param.put("nroHasta", nroHasta);
+            param.put("tipoDocumento", tipoDocumento == null ? null : tipoDocumento.getXdesc());
+            param.put("fechaInicial", fechaInicial == null ? "" : DateUtil.dateToString(fechaInicial, "dd/MM/yyyy"));
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+
+            String report;
+            String filename = "rfacfalta.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/docFaltantes.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+}
+
+public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
+            Proveedores proveedor, CanalesCompra canalCompra, TiposDocumentos td,
+            String discriminado, String usuarioImpresion) {
+
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
+            param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
+
+            param.put("proveedor", proveedor == null ? null : proveedor.getXnombre());
+            param.put("canalCompra", canalCompra == null ? null : canalCompra.getXdesc());
+            param.put("tipoDocumento", td == null ? null : td.getXdesc());
+            param.put("discriminar", discriminado);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+
+            String report;
+            String filename = "rvencidascom.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/livencproveedores.jasper");
+
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    public void llamarReporte(Map parameters,String fileName,String reportName) {
+        try {
+            String path = "/WEB-INF/classes/pdf/"+reportName;
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath(path);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, conexion);
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + fileName);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
     }
 }

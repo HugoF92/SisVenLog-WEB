@@ -63,7 +63,7 @@ public class DateUtil {
 
         return resultado;
     }
-
+     
     public static String dateToString(Date fecha, String format) {
         String resultado = "";
         try {

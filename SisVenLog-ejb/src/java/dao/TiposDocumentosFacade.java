@@ -199,4 +199,36 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
 
         return respuesta;
     }
+     
+     public List<TiposDocumentos> listarTipoDocumentoListadoNotaCompras() {
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from tipos_documentos\n"
+                + "where ctipo_docum in ('NDC','NCC','NDP')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
+     
+     public TiposDocumentos getTipoDocumentoById(String ctipoDocum){
+          Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from tipos_documentos\n"
+                + "where ctipo_docum = upper('" + ctipoDocum + "')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        TiposDocumentos respuesta = new TiposDocumentos();
+
+        if (q.getResultList().size() <= 0) {
+            respuesta = null;
+        } else {
+            respuesta = (TiposDocumentos)q.getSingleResult();
+        }
+
+        return respuesta;
+     }
 }

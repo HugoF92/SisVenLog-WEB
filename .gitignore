@@ -1,4 +1,7 @@
 /SisVenLog/nbproject/private/
 /SisVenLog/build/
 /SisVenLog/dist/
-/SisVenLog-war/nbproject/private/
+/SisVenLog-war/nbproject/
+/SisVenLog-ejb/nbproject/
+/nbproject/
+/SisVenLog-ejb/

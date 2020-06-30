@@ -23,7 +23,6 @@ import java.util.List;
  */
 @Named(value = "MercaderiasConverter")
 @ApplicationScoped
-
 public class MercaderiasConverter  implements Converter, Serializable{
 
     @EJB
@@ -36,15 +35,13 @@ public class MercaderiasConverter  implements Converter, Serializable{
         mercaderias = facade.listarMercaderiasActivas();
     }
     
-   @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-    {
-        if (value.trim().equals(""))
-        {
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value.trim().equals("")) {
             return null;
-        }
-        else
-        {
+
+        } else {
+
             return mercaderias.stream()
                     .filter(m -> m.getMercaderiasPK().getCodMerca().equals(value))
                     .findAny()

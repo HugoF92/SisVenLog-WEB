@@ -33,15 +33,17 @@
                                                     showOn="button" style="width: 60px;"/>
                                         
                                         <p:outputLabel value="Número Recibo Desde:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboDesde" decimalPlaces="0" value="#{listadoRecibosProveedoresBean.nroReciboDesde}"/>
+                                        <p:inputNumber id="numeroReciboDesde" decimalPlaces="0" 
+                                                       value="#{listadoRecibosProveedoresBean.nroReciboDesde}"/>
                                         
                                         <p:outputLabel value="Número Recibo Hasta:" style="float: right; font-weight: bold;"/>
-                                        <p:inputNumber id="numeroReciboHasta" decimalPlaces="0" value="#{listadoRecibosProveedoresBean.nroReciboHasta}"/>
+                                        <p:inputNumber id="numeroReciboHasta" decimalPlaces="0" 
+                                                       value="#{listadoRecibosProveedoresBean.nroReciboHasta}"/>
                                         
                                         <p:outputLabel value="Proveedor:" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu id="seleccionProveedor" value="#{listadoRecibosProveedoresBean.proveedorSeleccionado}" 
                                                          filterMatchMode="contains" filter="true" converter="#{ProveedoresConverter}"
-                                                         style="width: 100px;" >
+                                                         style="width: 145px;" >
                                             <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
                                                 <f:selectItems id="nombre" value="#{proveedoresBean.listar()}" var="nombreProv" 
                                                     itemValue="#{nombreProv}" 
@@ -50,15 +52,18 @@
                                         </p:selectOneMenu>
 
                                         <p:outputLabel value="Discriminar: " style="float: right; font-weight: bold;"/>
+                                        <h:panelGrid columns="1" style="margin: 0px" cellpadding="0">
+                                            <p:selectOneRadio id="discriminarId" value="#{listadoRecibosProveedoresBean.discriminar}"  
+                                                              layout="grid" columns="1" 
+                                                              style="border: #cccccc 1px solid; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; margin: 0px;">
+                                                <f:selectItem itemLabel="No Discriminar" itemValue="ND"/>
+                                                <f:selectItem itemLabel="Por Proveedor" itemValue="PP" />
+                                            </p:selectOneRadio>
+                                        </h:panelGrid>
                                         
-                                        <p:selectOneButton id="discriminarId" value="#{listadoRecibosProveedoresBean.discriminar}">
-                                            <f:selectItem itemLabel="No Discriminar" itemValue="ND"/>
-                                            <f:selectItem itemLabel="Por Proveedor" itemValue="PP" />
-                                        </p:selectOneButton>
+                                        <p:outputLabel value="Con detalles: " style="float: right; font-weight: bold;"/>   
+                                        <p:selectBooleanCheckbox id="detallesId" value="#{listadoRecibosProveedoresBean.conDetalle}" itemLabel="" style="padding-left: 3px"/>
                                         
-                                        <h:outputText value="Con detalles: " style="float: right; font-weight: bold;"/>
-                                        <p:selectBooleanButton id="detallesId" value="#{listadoRecibosProveedoresBean.conDetalle}" onLabel="Si" offLabel="No" style="width:60px" />
-
                                     </h:panelGrid>
 
                                     <br></br>
