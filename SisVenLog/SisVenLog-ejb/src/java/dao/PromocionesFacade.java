@@ -86,7 +86,7 @@ public class PromocionesFacade extends AbstractFacade<Promociones> {
     }
     
     public List<Promociones> findAllOrderXDesc() {
-        return getEntityManager().createNativeQuery("SELECT * FROM promociones", Promociones.class).getResultList();
+        return getEntityManager().createNativeQuery("SELECT * FROM promociones p ORDER BY p.xdesc", Promociones.class).getResultList();
     }
     public List<Promociones> buscarPorFiltro(String filtro) {
 
@@ -215,6 +215,16 @@ public class PromocionesFacade extends AbstractFacade<Promociones> {
         }catch(NoResultException ex){
             return null;
         }
+    }
+
+    public List<Promociones> listarPromocionesLiFacPromo(String desde, String hasta) {
+        Query q = getEntityManager().createNativeQuery("SELECT * "
+                + "FROM promociones  "
+                + "WHERE cod_empr = 2 "
+                + "AND (frige_desde >= '" + desde + "'"
+                + "	or frige_hasta >= '" + hasta + "'  "
+                + "	or '" + desde + "' BETWEEN frige_desde AND frige_hasta)", Promociones.class);
+        return q.getResultList();
     }
 
 }

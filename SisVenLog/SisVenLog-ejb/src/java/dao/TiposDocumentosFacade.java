@@ -223,6 +223,15 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return q.getResultList();
     }
 
+
+    public List<TiposDocumentos> listarTiposDocumentosLiFacPromo() {
+        Query q = getEntityManager().createNativeQuery("select * "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ('FCR','FCO','CPV','NCV')", TiposDocumentos.class);
+
+        return q.getResultList();
+    }
+      
     public List<TiposDocumentos> getTipoDocumentosByCtipo(List<String> tiposDocumentos) {
         String tipos = tiposDocumentos.stream().map(tipo -> "'" +  tipo + "'").collect(Collectors.joining(", "));
         Query q = getEntityManager().createNativeQuery("select * "

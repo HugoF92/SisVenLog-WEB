@@ -69,6 +69,11 @@ public class Lineas implements Serializable {
     @JoinColumn(name = "cod_CATEGORIA", referencedColumnName = "COD_CATEGORIA")
     @ManyToOne
     private Categorias codCATEGORIA;
+    @Column(name = "mestado")
+    private Character mestado;
+
+    @Column(name = "mestado")
+    private Character mestado;
 
     public Lineas() {
     }
@@ -168,5 +173,13 @@ public class Lineas implements Serializable {
     public void setCusuario(String cusuario) {
         this.cusuario = cusuario;
     }
-    
+
+    public Character getMestado() {
+        return mestado;
+    }
+
+    public void setMestado(Character mestado) {
+        this.mestado = mestado;
+    }
+
 }
