@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salida" language="groovy" pageWidth="668" pageHeight="357" columnWidth="668" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="181ea983-3395-4de8-8976-770e2c9cd781">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="desde" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hasta" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT v.cusuario_autoriz as xnomb_auto, d.cod_merca, d.xdesc, d.cant_cajas, d.cant_unid,  v.Fdocum, v.ndocum,   v.ctipo_docum, v.xnombre, m.cod_barra,
+d2.xdesc as xdepo, c.xdirec, c.xtelef, v.cod_cliente, e.xnombre as xnomb_vend, '' as xnomb_autoriza,
+ e1.xnombre as xnomb_entr, d.nro_promo, pr.xdesc as xdesc_promo, r.cod_zona, v.cusuario, m.nrelacion, v.xobs, v.nro_pedido
+ FROM         docum_varios v INNER JOIN
+docum_varios_det d ON v.ndocum = d.ndocum AND v.cod_empr = d.cod_empr AND v.ctipo_docum = d.ctipo_docum INNER JOIN depositos d2 ON v.cod_depo = d2.cod_depo AND v.cod_empr = d2.cod_empr INNER JOIN
+clientes c ON v.cod_cliente = c.cod_cliente INNER JOIN  rutas r ON c.cod_ruta = r.cod_ruta INNER JOIN mercaderias m ON d.cod_merca = m.cod_merca LEFT OUTER JOIN
+ pedidos p ON v.nro_pedido = p.nro_pedido AND P.cod_empr = 2 AND p.mestado = 'F' LEFT OUTER JOIN
+ empleados e ON p.cod_vendedor = e.cod_empleado LEFT OUTER JOIN
+  empleados e1 ON p.cod_entregador = e1.cod_empleado left OUTER JOIN promociones PR ON pR.nro_promo = d.nro_promo
+  WHERE v.cod_empr = 2
+  and d.cod_empr = 2
+  and m.cod_empr = 2
+  AND v.ctipo_docum = 'SG'
+  AND v.ndocum >=  $P{desde}
+  AND v.ndocum <= $P{hasta}
+  and v.mestado IN ('A','I') ORDER BY v.ndocum]]>
+	</queryString>
+	<field name="xnomb_auto" class="java.lang.String"/>
+	<field name="cod_merca" class="java.lang.String"/>
+	<field name="xdesc" class="java.lang.String"/>
+	<field name="cant_cajas" class="java.math.BigDecimal"/>
+	<field name="cant_unid" class="java.math.BigDecimal"/>
+	<field name="Fdocum" class="java.sql.Timestamp"/>
+	<field name="ndocum" class="java.lang.Integer"/>
+	<field name="ctipo_docum" class="java.lang.String"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="cod_barra" class="java.lang.String"/>
+	<field name="xdepo" class="java.lang.String"/>
+	<field name="xdirec" class="java.lang.String"/>
+	<field name="xtelef" class="java.lang.String"/>
+	<field name="cod_cliente" class="java.lang.Integer"/>
+	<field name="xnomb_vend" class="java.lang.String"/>
+	<field name="xnomb_autoriza" class="java.lang.String"/>
+	<field name="xnomb_entr" class="java.lang.String"/>
+	<field name="nro_promo" class="java.math.BigDecimal"/>
+	<field name="xdesc_promo" class="java.lang.String"/>
+	<field name="cod_zona" class="java.lang.String"/>
+	<field name="cusuario" class="java.lang.String"/>
+	<field name="nrelacion" class="java.math.BigDecimal"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="nro_pedido" class="java.math.BigDecimal"/>
+	<group name="nro_pedido">
+		<groupExpression><![CDATA[$F{nro_pedido}]]></groupExpression>
+		<groupHeader>
+			<band height="161">
+				<textField>
+					<reportElement x="62" y="72" width="242" height="13" uuid="d708eb66-af84-48c6-807d-590a34b9ab6a"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="75" y="91" width="229" height="14" uuid="ebef7928-b9ec-4828-b13b-8013ee17fafe"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{xdirec}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="455" y="91" width="100" height="14" uuid="e442abe3-d7d1-4ae4-8096-228b454bfd85"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{xtelef}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MM/dd/yyyy">
+					<reportElement x="455" y="72" width="100" height="13" uuid="ddede40f-31f5-47c8-a369-6699f4cce4b0"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Fdocum}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="42" y="0" width="48" height="15" uuid="2085b680-d527-4c53-a1c5-f35d555e3b6b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="0" width="227" height="15" uuid="4d5d374e-306c-47db-9341-ebfe72edf454"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="347" y="0" width="33" height="15" uuid="cea5d3f2-b2d3-4516-87f3-be68a5c8dfa0"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="24" height="15" uuid="3350e737-2e56-4829-8d17-5d70b9f920ac"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="61" y="11" width="513" height="15" uuid="63b90cdb-2724-476f-96e4-a36945dcb990"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xobs}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="40" width="100" height="15" uuid="3031c093-2b87-40d7-b6ea-504f9f7fa358"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnomb_vend}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="40" width="100" height="15" uuid="c4da8c22-bf4f-45a9-b074-13ef14e90382"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnomb_autoriza}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="40" width="100" height="15" uuid="0564a26e-8449-4321-ab27-cd43d96f718b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdepo}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="67" width="555" height="1" uuid="1ffea959-f648-49ab-9375-481ef4c5a93a"/>
+			</break>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

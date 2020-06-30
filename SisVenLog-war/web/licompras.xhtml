@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiClientes" header="LISTADO DE FACTURAS DE COMPRAS" style="width: 70%;">                                       
+                                    <h:panelGrid columns="2" >
+                                    
+                                        <p:outputLabel value="Facturación: Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionDesde" value="#{liComprasBean.facturacionDesde}" showOn="button" style="width: 60px;" locale="es"/>
+                                        
+                                        <p:outputLabel value="Facturación: Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionHasta" value="#{liComprasBean.facturacionHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{liComprasBean.facturacionDesde}"/>
+                                        
+                                        <p:outputLabel value="Vencimiento: Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liVencimientoDesde" value="#{liComprasBean.vencimientoDesde}" showOn="button" style="width: 60px;" locale="es"/>
+                                        
+                                        <p:outputLabel value="Vencimiento: Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liVencimientoHasta" value="#{liComprasBean.vencimientoHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{liComprasBean.vencimientoDesde}"/>
+                                        
+                                        <p:outputLabel value="Proveedor" style="float: right; font-weight: bold;" />                                        
+                                        <p:selectOneMenu 
+                                            value="#{liComprasBean.proveedor}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liComprasBean.listaProveedores}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu 
+                                            value="#{liComprasBean.canal}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{CanalesVentaConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liComprasBean.listaCanales}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Factura" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu 
+                                            value="#{liComprasBean.tipoFactura}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{TiposDocumentosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liComprasBean.listaTiposFactura}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel for="discriminar" value="Discriminar:" />
+                                        <p:selectOneRadio 
+                                            id="discriminar" 
+                                            value="#{liComprasBean.seleccion}" 
+                                            layout="grid" 
+                                            columns="1" 
+                                            style="border: 
+                                            solid;border-width: 
+                                            thin">
+                                                <f:selectItem itemLabel="No discriminar" itemValue="1"/>
+                                                <f:selectItem itemLabel="Por Canal" itemValue="2"/>
+                                                <f:selectItem itemLabel="Con detalles" itemValue="3"/>
+                                                <f:selectItem itemLabel="Dif. en Precio" itemValue="4"/>
+                                                <f:selectItem itemLabel="Resumen" itemValue="5"/>
+                                                <f:selectItem itemLabel="Resumen por Día" itemValue="6"/>
+                                                <f:selectItem itemLabel="Con Notas Crédito" itemValue="7"/>
+                                                <f:selectItem itemLabel="Libro de Compras" itemValue="8"/>
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liComprasBean.ejecutarListado('VIST')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Vista Previa" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" 
+                                            id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liComprasBean.ejecutarListado('ARCH')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Archivo" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
+                                    
+                                </p:panel>
+                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>

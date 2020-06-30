@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoPedidoSubReport" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c3ffa2d0-9a72-4680-bf17-9513d4aa6896">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sqlDetalle" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sqlDetalle}]]>
+	</queryString>
+	<field name="cod_empr" class="java.lang.Short"/>
+	<field name="nro_pedido" class="java.math.BigDecimal"/>
+	<field name="ctipo_docum" class="java.lang.String"/>
+	<field name="ctipo_vta" class="java.lang.String"/>
+	<field name="cod_vendedor" class="java.lang.Short"/>
+	<field name="cod_depo_envio" class="java.lang.Short"/>
+	<field name="cod_entregador" class="java.lang.Short"/>
+	<field name="cod_canal" class="java.lang.String"/>
+	<field name="cod_ruta" class="java.lang.Short"/>
+	<field name="cod_cliente" class="java.lang.Integer"/>
+	<field name="cod_depo" class="java.lang.Short"/>
+	<field name="fpedido" class="java.sql.Timestamp"/>
+	<field name="npeso_acum" class="java.math.BigDecimal"/>
+	<field name="fanul" class="java.sql.Timestamp"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="fenvio" class="java.sql.Timestamp"/>
+	<field name="tgravadas" class="java.math.BigDecimal"/>
+	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="timpuestos" class="java.math.BigDecimal"/>
+	<field name="tdescuentos" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="mestado" class="java.lang.String"/>
+	<field name="cusuario" class="java.lang.String"/>
+	<field name="falta" class="java.sql.Timestamp"/>
+	<field name="cusuario_modif" class="java.lang.String"/>
+	<field name="fultim_modif" class="java.sql.Timestamp"/>
+	<field name="finicio_alta" class="java.sql.Timestamp"/>
+	<field name="morigen" class="java.lang.String"/>
+	<field name="nplazo_cheque" class="java.lang.Short"/>
+	<field name="ffinal_alta" class="java.sql.Timestamp"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="cod_zona" class="java.lang.String"/>
+	<field name="xdesc_zona" class="java.lang.String"/>
+	<field name="xnomb_vendedor" class="java.lang.String"/>
+	<field name="xdesc_canal" class="java.lang.String"/>
+	<field name="xdesc_ruta" class="java.lang.String"/>
+	<variable name="estado" class="java.lang.String">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("N") ? "NUEVO" :
+$F{mestado}.toString().equals("E") ? "ENVIADO" :
+$F{mestado}.toString().equals("F") ? "FACTURADO" :
+$F{mestado}.toString().equals("X") ? "ANULADO" : "RECHAZADO"]]></variableExpression>
+	</variable>
+	<variable name="fechaAlta" class="java.sql.Timestamp">
+		<variableExpression><![CDATA[$F{falta}]]></variableExpression>
+	</variable>
+	<variable name="fechaInicio" class="java.sql.Timestamp">
+		<variableExpression><![CDATA[$F{finicio_alta}]]></variableExpression>
+	</variable>
+	<variable name="fechaFinal" class="java.sql.Timestamp">
+		<variableExpression><![CDATA[$F{ffinal_alta}]]></variableExpression>
+	</variable>
+	<variable name="tipoOrigen" class="java.lang.String">
+		<variableExpression><![CDATA[$F{morigen}.toString().equals("C") ? "Manual" :
+$F{morigen}.toString().equals("P") ? "Automatico" : "Migrado Sis. Anterior"]]></variableExpression>
+	</variable>
+	<variable name="Ftotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("F") ? $F{ttotal} : 0]]></variableExpression>
+	</variable>
+	<variable name="Fpeso" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("F") ? $F{npeso_acum} : 0]]></variableExpression>
+	</variable>
+	<variable name="Ptotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("N") ? $F{ttotal} : 0]]></variableExpression>
+	</variable>
+	<variable name="Ppeso" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("N") ? $F{npeso_acum} : 0]]></variableExpression>
+	</variable>
+	<variable name="Rtotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("R") ? $F{ttotal} : 0]]></variableExpression>
+	</variable>
+	<variable name="Rpeso" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("R") ? $F{npeso_acum} : 0]]></variableExpression>
+	</variable>
+	<variable name="Etotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("E") ? $F{ttotal} : 0]]></variableExpression>
+	</variable>
+	<variable name="Epeso" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("E") ? $F{npeso_acum} : 0]]></variableExpression>
+	</variable>
+	<variable name="Atotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? $F{ttotal} : 0]]></variableExpression>
+	</variable>
+	<variable name="Apeso" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mestado}.toString().equals("X") ? $F{npeso_acum} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalVendido" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{Ftotal}+$V{Ptotal}+$V{Rtotal}+$V{Etotal}+$V{Atotal}]]></variableExpression>
+	</variable>
+	<variable name="TotalPeso" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{Fpeso} + $V{Ppeso} + $V{Rpeso} + $V{Epeso} + $V{Apeso}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="5" y="4" width="70" height="14" uuid="01e88855-d934-4b15-afb3-900e642f1c8e"/>
+				<textFieldExpression><![CDATA[$F{fpedido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="79" y="4" width="48" height="14" uuid="69790f56-eefc-49e5-8c5b-2e67c379ca11"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{nro_pedido}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="4" width="90" height="14" uuid="2e263313-eddf-4def-84f5-5c3b1262cadb"/>
+				<textFieldExpression><![CDATA[$F{xdesc_ruta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="236" y="4" width="65" height="14" uuid="ddcee8a1-7c26-4e1f-88f5-c3d7627687b5"/>
+				<textFieldExpression><![CDATA[$F{xdesc_zona}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="312" y="4" width="69" height="14" uuid="c4c1ad63-6d89-4d6d-94d3-9a64c1231a4d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="18" width="311" height="14" uuid="c695725d-b393-4aa1-b89f-760d337f2755"/>
+				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="4" width="80" height="14" uuid="3100a26b-6b9f-430a-ac49-797e1d02bbd8"/>
+				<textFieldExpression><![CDATA[$V{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="478" y="4" width="70" height="14" uuid="e228500a-702f-4b44-bbfd-11a5032ab61b">
+					<printWhenExpression><![CDATA[$F{falta} != null]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{fechaAlta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="554" y="4" width="70" height="14" uuid="9422a5c5-41c7-4c78-ae67-cc609a9125bc">
+					<printWhenExpression><![CDATA[$F{finicio_alta} != null]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{fechaInicio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="626" y="4" width="70" height="14" uuid="6223d03e-f9d0-4743-be86-d8a70bf0aaa7">
+					<printWhenExpression><![CDATA[$F{ffinal_alta} != null]]></printWhenExpression>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{fechaFinal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="701" y="4" width="40" height="14" uuid="9073ee2b-7701-431b-8f62-21022f8949be"/>
+				<textFieldExpression><![CDATA[$F{npeso_acum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="741" y="4" width="59" height="14" uuid="0374c2cb-fb0b-4d76-ae84-8b57dbc0eb2d"/>
+				<textFieldExpression><![CDATA[$V{tipoOrigen}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="162">
+			<staticText>
+				<reportElement x="46" y="6" width="170" height="14" uuid="3d1b4687-f80b-43aa-b748-d164f0577ac6"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL IMPORTE PEDIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="43" width="73" height="14" uuid="9eadd237-e7a2-43c9-8890-3c90f67a6377"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FACTURADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="62" width="73" height="14" uuid="40da0d68-dd3c-4d64-be45-23cbb3a514f9"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PENDIENTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="81" width="73" height="14" uuid="0809ba31-9749-4ef1-827d-f0050a66374d"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECHAZADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="100" width="73" height="14" uuid="3e0262f4-a486-4be1-95e7-932132b612d1"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENVIADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="119" width="73" height="14" uuid="a225dce0-b563-4e54-b8ae-4e1c4ee70b8b"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANULADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="23" width="90" height="14" uuid="f0e36aca-efa9-45d7-8213-f3504b5927ad"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="23" width="82" height="14" uuid="9e627798-1f59-455f-9db5-9b26d1cf2ddb"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PESO APROX.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="143" width="115" height="14" uuid="e9a13b54-3e52-40b1-bffe-08a8f163056f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL PROCESADO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="301" y="138" width="230" height="1" uuid="aab88146-a2c7-4221-9496-e61d9092b3ff"/>
+			</line>
+			<textField>
+				<reportElement x="225" y="6" width="250" height="14" uuid="9149445c-1bb5-4e2f-a456-6b7fd7fc7f2b"/>
+				<textFieldExpression><![CDATA[$F{xnomb_vendedor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="43" width="90" height="14" uuid="13df200c-2489-460a-8957-5aa839435582"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Ftotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="43" width="70" height="14" uuid="bc34fceb-b46d-455b-aefc-c892c35a0200"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Fpeso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="62" width="90" height="14" uuid="c9291009-1650-44cb-b063-569644b89624"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Ptotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="62" width="70" height="14" uuid="54c82aeb-1d7f-4c02-bdaa-713be649481e"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Ppeso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="81" width="90" height="14" uuid="baf6815a-ce9b-4133-8bba-4980f09a19d1"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Rtotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="81" width="70" height="14" uuid="1b457a15-c825-4d34-80ad-2b0c36f7082e"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Rpeso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="100" width="90" height="14" uuid="ce0db5f0-1b28-40ad-9dec-9599b4dcaf4b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Etotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="100" width="70" height="14" uuid="dfb2fbb3-d1da-48b0-9913-95e22497e1fa"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Epeso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="119" width="90" height="14" uuid="18c77fbe-e8f7-40b8-8134-92d9eda7fd41"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Atotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="119" width="70" height="14" uuid="66decb19-dbe9-44d7-a160-819e39d79d0f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{Apeso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="316" y="143" width="90" height="14" uuid="01b837eb-98df-408d-b385-c462274c64c3"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{TotalVendido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="444" y="143" width="70" height="14" uuid="bc2622ef-199b-44f5-b782-e3a6a91bb01d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{TotalPeso}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
