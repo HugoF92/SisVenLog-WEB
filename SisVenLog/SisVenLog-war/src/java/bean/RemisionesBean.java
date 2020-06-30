@@ -13,6 +13,7 @@ import dao.TransportistasFacade;
 import dao.ZonasFacade;
 import entidad.Conductores;
 import entidad.Depositos;
+import entidad.DepositosPK;
 import entidad.Empleados;
 import entidad.Existencias;
 import entidad.ExistenciasSaldos;
@@ -32,8 +33,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import org.primefaces.PrimeFaces;
-//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
@@ -61,7 +62,9 @@ public class RemisionesBean implements Serializable {
     private ExistenciasSaldos existenciasSaldos = new ExistenciasSaldos();
     private List<ExistenciasSaldos> listaExistenciasSaldos = new ArrayList<ExistenciasSaldos>();
     
+    @EJB
     private DepositosFacade depositosFacade;
+    
     private Depositos depositos = new Depositos();
     private List<Depositos> listaDepositos = new ArrayList<Depositos>();    
     
@@ -69,7 +72,9 @@ public class RemisionesBean implements Serializable {
     private TiposDocumentos tipoDocumento = new TiposDocumentos();
     private List<TiposDocumentos> listaTipoDocumento = new ArrayList<TiposDocumentos>();
     
+    @EJB
     private EmpleadosFacade empleadosFacade;
+    
     private Empleados empleados = new Empleados();
     private List<Empleados> listaEmpleados = new ArrayList<Empleados>();
     
@@ -382,35 +387,24 @@ public class RemisionesBean implements Serializable {
         this.listaExistenciasSaldos = listaExistenciasSaldos;
     }
 
-    
-    
-        //Operaciones
-    //Instanciar objetos
     @PostConstruct
     public void instanciar() {
-
         listaRemisiones = new ArrayList<Remisiones>();
         this.remisiones = new Remisiones();
-
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);
         this.setHabBtnInac(true);
-
-        
         listar();
-
-        //RequestContext.getCurrentInstance().update("formPersonas");
     }
 
     
     public void nuevo() {
-        this.remisiones = new Remisiones();
+        this.remisiones = new Remisiones(new Date());
         listaRemisiones = new ArrayList<Remisiones>();
- 
     }
 
     public List<Remisiones> listar() {
-        listaRemisiones = remisionesFacade.findAll();
+        this.listaRemisiones = remisionesFacade.findAll();
         return listaRemisiones;
     }
 
@@ -502,13 +496,11 @@ public class RemisionesBean implements Serializable {
     }
 
     public void onRowSelect(SelectEvent event) {
-
         if ("" != this.remisiones.getXnroRemision()) {
             this.setHabBtnEdit(false);
         } else {
             this.setHabBtnEdit(true);
         }
-
     }
 
     public void verificarCargaDatos() {
@@ -533,7 +525,30 @@ public class RemisionesBean implements Serializable {
     public void cerrarDialogosAgregar() {
             PrimeFaces.current().executeScript("PF('dlgSinGuardarRem').hide();");
             PrimeFaces.current().executeScript("PF('dlgNuevRem').hide();");
-
     }
 
+    public Empleados findEntregador(Short codEntregador){
+        return empleadosFacade.findEntregador(codEntregador);
+    }
+    
+    public void updateDepo(SelectEvent event){
+        Depositos depo = depositosFacade.getDepositoPorCodigo(this.remisiones.getCodDepo());
+        this.remisiones.setCodConductor(depo.getCodConductor()==null?null:depo.getCodConductor().getCodConductor());
+        this.remisiones.setCodTransp(depo.getCodTransp()==null?null:depo.getCodTransp().getCodTransp());
+        List<Empleados> lentre = empleadosFacade.listarEntregadorPorDeposito(this.remisiones.getCodDepo());
+        if(lentre.isEmpty()){
+            this.remisiones.setCodEntregador(null);
+        }else{
+            Empleados e = lentre.get(0);
+            if(e == null){
+                this.remisiones.setCodEntregador(null);
+            }else{
+                this.remisiones.setCodEntregador(e.getCodDepo());
+            }
+        }
+        this.conductores = depo.getCodConductor();
+        this.transportistas = depo.getCodTransp();
+    }
+    
+    
 }
