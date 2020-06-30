@@ -10,6 +10,7 @@ import entidad.Bancos;
 import entidad.CanalesCompra;
 import entidad.CanalesVenta;
 import entidad.Depositos;
+import entidad.Divisiones;
 import entidad.Lineas;
 import entidad.Sublineas;
 import entidad.Empleados;
@@ -17,6 +18,7 @@ import entidad.Promociones;
 import entidad.Lineas;
 import entidad.Proveedores;
 import entidad.Rutas;
+import entidad.Sublineas;
 import entidad.TiposClientes;
 import entidad.TiposDocumentos;
 import entidad.Zonas;
@@ -2756,6 +2758,44 @@ public void reporteFacPromo(String fechaDesde, String fechaHasta,
     }
 }
 
+public void reporteRotacionInventario(Date fechaDesde, Date fechaHasta,
+            Depositos deposito, Sublineas sublinea, Divisiones division,
+            String discriminar, Boolean conPrecioCosto, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", DateUtil.formaterDateToString(fechaDesde));
+            param.put("fechaHasta", DateUtil.formaterDateToString(fechaHasta));
+            param.put("deposito", deposito == null ? null : deposito.getXdesc());
+            param.put("sublinea", sublinea == null ? null : sublinea.getXdesc());
+            param.put("division", division == null ? null: division.getXdesc());
+            param.put("discriminar", discriminar);
+            param.put("conPrecioCosto", conPrecioCosto);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = "rrotainv.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/rrotainv.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
 public void reporteClientesPagosAtrasados(String fechaFacDesde, String fechaFacHasta,
             Zonas zona, String discriminar, String listaCodClientes, String usuarioImpresion) {
         try {
@@ -2765,10 +2805,12 @@ public void reporteClientesPagosAtrasados(String fechaFacDesde, String fechaFacH
             param.put("zona", zona != null? zona.getXdesc():null);
             param.put("discriminar", discriminar);
             param.put("listaCodClientes", listaCodClientes);
+
             param.put("usuarioImpresion", usuarioImpresion);
             param.put("REPORT_LOCALE", new Locale("es", "PY"));
 
             String report;
+
             String filename = "PC".equals(discriminar)? "ratrasocli.pdf": "ratrasozon.pdf";
             String jasperFile = "/WEB-INF/classes/pdf/" + ("PC".equals(discriminar)? "ratrasocli.jasper": "ratrasozon.jasper");
             report = FacesContext.getCurrentInstance().getExternalContext().getRealPath(jasperFile);
@@ -2812,8 +2854,6 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             String filename = "rvencidascom.pdf";
 
             report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/livencproveedores.jasper");
-
-
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 
