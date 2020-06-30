@@ -13,6 +13,7 @@ import entidad.Depositos;
 import entidad.Lineas;
 import entidad.Sublineas;
 import entidad.Empleados;
+import entidad.Promociones;
 import entidad.Lineas;
 import entidad.Proveedores;
 import entidad.Rutas;
@@ -2713,6 +2714,45 @@ public class LlamarReportes {
         } catch (IOException | NumberFormatException | JRException e) {
             System.out.println(e);
         }
+    }
+}
+
+
+public void reporteFacPromo(String fechaDesde, String fechaHasta,
+            TiposDocumentos tipoDocumento, Promociones promocion,
+            CanalesVenta canalVenta, Boolean sinIVA, String usuarioImpresion) {
+    try {
+        Map param = new HashMap();
+        param.put("fechaDesde", fechaDesde);
+        param.put("fechaHasta", fechaHasta);
+        param.put("tipoDocumento", tipoDocumento == null ? null : tipoDocumento.getXdesc());
+        param.put("canalVenta", canalVenta == null ? null : canalVenta.getXdesc());
+        param.put("promoDescripcion", promocion == null ? null: promocion.getXdescGral());
+        param.put("nroPromo", promocion == null ? null: promocion.getPromocionesPK().getNroPromo());
+        param.put("sinIVA", sinIVA);
+        param.put("usuarioImpresion", usuarioImpresion);
+        param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+        String report;
+        String filename = "rfactpromo.pdf";
+
+        report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/rfactpromo.jasper");
+
+        JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+        HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+        httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+        httpServletResponse.addHeader("Content-type", "application/pdf");
+
+        ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+        JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+        FacesContext.getCurrentInstance().responseComplete();
+
+    } catch (IOException | NumberFormatException | JRException e) {
+        System.out.println(e);
     }
 }
 
