@@ -2716,6 +2716,41 @@ public class LlamarReportes {
     }
 }
 
+public void reporteClientesPagosAtrasados(String fechaFacDesde, String fechaFacHasta,
+            Zonas zona, String discriminar, String listaCodClientes, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaFacDesde);
+            param.put("fechaHasta", fechaFacHasta);
+            param.put("zona", zona != null? zona.getXdesc():null);
+            param.put("discriminar", discriminar);
+            param.put("listaCodClientes", listaCodClientes);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = "PC".equals(discriminar)? "ratrasocli.pdf": "ratrasozon.pdf";
+            String jasperFile = "/WEB-INF/classes/pdf/" + ("PC".equals(discriminar)? "ratrasocli.jasper": "ratrasozon.jasper");
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath(jasperFile);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
 public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             Proveedores proveedor, CanalesCompra canalCompra, TiposDocumentos td,
             String discriminado, String usuarioImpresion) {
@@ -2737,6 +2772,7 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             String filename = "rvencidascom.pdf";
 
             report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/livencproveedores.jasper");
+
 
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
