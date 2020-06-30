@@ -58,6 +58,11 @@ public class ListadoPedidosBean implements Serializable{
     @PostConstruct
     public void instanciar(){
         limpiarFormulario();
+        setSeleccionFecha("FP");
+        setSeleccionTipo("TD");
+        setConDetalle(false);
+        setNroPedidoDesde(1);
+        setNroPedidoHasta(999999999);
     }
     
     public void limpiarFormulario(){
@@ -219,11 +224,11 @@ public class ListadoPedidosBean implements Serializable{
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar fecha hasta.", "Debe ingresar fecha hasta."));            
                 return false;
             }else{
-                if (nroPedidoDesde == 0) {
+                if (nroPedidoDesde < 0) {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de pedido desde.", "Debe ingresar un número de pedido desde."));            
                     return false;
                 }else{
-                    if (nroPedidoHasta == 0) {
+                    if (nroPedidoHasta <= 0) {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe ingresar un número de pedido hasta.", "Debe ingresar un número de pedido hasta."));            
                         return false;
                     }

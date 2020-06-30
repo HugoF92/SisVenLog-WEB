@@ -8,8 +8,14 @@ package util;
 import dto.LiMercaSinDto;
 import entidad.CanalesVenta;
 import entidad.Empleados;
+import entidad.Lineas;
 import entidad.Proveedores;
+import entidad.TiposClientes;
 import entidad.Zonas;
+import entidad.Clientes;
+import entidad.ConceptosDocumentos;
+import entidad.Sublineas;
+import entidad.TiposDocumentos;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -2287,7 +2293,6 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
-    
     public void reporteLiPedidos(String sql, 
                                  String sqlDetalle,
                                  String sqlDetalleDet,
@@ -2394,6 +2399,312 @@ public class LlamarReportes {
                     FacesContext.getCurrentInstance().responseComplete();
                 }
 
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    public void reporteLiPedidosCliente(String sql, 
+                                 String sqlDetalle,
+                                 String sqlDetalleDet,
+                                 Date fechaDesde,
+                                 Date fechaHasta,
+                                 String seleccionTipo,
+                                 String seleccionFecha,
+                                 Empleados vendedor,
+                                 CanalesVenta canal,
+                                 Zonas zona,
+                                 String usuImprime, 
+                                 String tipo,
+                                 String nombreReporte, 
+                                 String filename,
+                                 List<Clientes> clientesSeleccionados) {
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("sqlDetalle", sqlDetalle);
+            param.put("fechaDesde", fechaDesde);
+            param.put("fechaHasta", fechaHasta);
+            
+            //titulo para el reporte
+            switch(seleccionTipo){
+                case "TD":
+                    param.put("titulo", "LISTADO DE PEDIDOS POR CLIENTES");
+                    break;
+                case "AU":
+                    param.put("titulo", "LISTADO DE PEDIDOS AUTOMATICOS POR CLIENTES");
+                    break;
+                case "MA":
+                    param.put("titulo", "LISTADO DE PEDIDOS MANUALES POR CLIENTES");
+                    break;
+                default:
+                    param.put("titulo", "LISTADO DE PEDIDOS POR CLIENTES");
+                    break;
+            }
+            
+            //tipo de fecha
+            switch(seleccionFecha){
+                case "FP":
+                    param.put("txtFchDesde", "Fecha de Pedido Desde:");
+                    param.put("txtFchHasta", "Fecha de Pedido Hasta:");
+                    break;
+                case "FC":
+                    param.put("txtFchDesde", "Fecha de Carga Desde:");
+                    param.put("txtFchHasta", "Fecha de Carga Hasta:");
+                    break;
+            }
+
+            //vendedor
+            if (vendedor != null) {
+                String vend = vendedor.getXnombre();
+                System.out.println("vendedor: " + vend);
+                param.put("txtVendedor", vend);
+            }else{
+                param.put("txtVendedor", "Todos");
+            }
+            
+            //canal
+            if (canal != null) {
+                param.put("txtCanalVta", canal.getXdesc());
+            }else{
+                param.put("txtCanalVta", "Todos");
+            }
+            
+            //zona
+            if (zona != null) {
+                param.put("txtZona", zona.getXdesc());
+            } else {
+                param.put("txtZona", "Todos");
+            }
+            param.put("nombreRepo", filename);
+            param.put("usu_imprime", usuImprime);
+            param.put("sqlDet", sqlDetalle);
+            if ("rdetpedidoscli".equals(filename)) {
+                param.put("sqlDetalleDetSub", sqlDetalleDet);
+            }
+            
+            //JLVC 07/05/2020 clientes
+            if (!clientesSeleccionados.isEmpty()) {
+                param.put("txtClientes", StringUtil.convertirListaAString(clientesSeleccionados));
+            }else{
+                param.put("txtClientes", "Todos");
+            }
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+            String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+            param.put("SUBREPORT_DIR", subReportDir);
+
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    //JLVC 06-04-2020 listado ley pareto
+    public void listadoLeyPareto(String sql,
+                                 Date fechaFacturacionDesde,
+                                 Date fechaFacturacionHasta,
+                                 Lineas linea,
+                                 TiposClientes tipoCliente,
+                                 Zonas zonas,
+                                 CanalesVenta canalesVenta,
+                                 String discriminar,
+                                 String factorSeleccionado,
+                                 Integer factor,
+                                 String usuImprime, 
+                                 String tipo,
+                                 String nombreReporte, 
+                                 String filename){
+        try {
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("fechaDesde", fechaFacturacionDesde);
+            param.put("fechaHasta", fechaFacturacionHasta);
+            
+            if ("PC".equals(discriminar)) {
+                param.put("titulo", "TOTAL VENTAS ACUMULADAS POR CLIENTES");
+            }else{        
+                param.put("titulo", "TOTAL VENTAS ACUMULADAS POR LINEA");
+            }
+            
+            //linea
+            if (linea != null) {
+                param.put("linea", linea.getXdesc());
+            }else{
+                param.put("linea", "Todas");
+            }
+            //tipo cliente
+            if (tipoCliente != null) {
+                param.put("tipoCliente", tipoCliente.getXdesc());
+            }else{
+                param.put("tipoCliente", "Todos");
+            }
+            //zona
+            if (zonas != null) {
+                param.put("zona", zonas.getXdesc());
+            } else {
+                param.put("zona", "Todas");
+            }
+            //canal
+            if (canalesVenta != null) {
+                param.put("canal", canalesVenta.getXdesc());
+            } else {
+                param.put("canal", "Todos");
+            }
+            //coefiente o monto de pareto
+            if ("COE".equals(factorSeleccionado)) {
+                param.put("txtFactorSel", "COEFICIENTE DE PARETO: ");
+            } else {
+                param.put("txtFactorSel", "MONTO DE PARETO: ");
+            }
+            //factor
+            if (factor != null) {
+                param.put("factor", factor);
+            }
+            
+            if ("rpareto2".equals(filename)){
+                //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+                String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+                param.put("SUBREPORT_DIR", subReportDir);
+            }
+            
+            
+            param.put("nombreRepo", filename);
+            param.put("usu_imprime", usuImprime);
+
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    //JLVC 29-05-2020
+    public void listadoNotasCompras(String sql,
+                                 Date fechaDesde,
+                                 Date fechaHasta,
+                                 Proveedores proveedor,
+                                 TiposDocumentos tipoDocumento,
+                                 ConceptosDocumentos conceptoDocumento,
+                                 Sublineas sublinea,
+                                 String tipoListado,
+                                 String usuImprime, 
+                                 String tipo,
+                                 String nombreReporte, 
+                                 String filename){
+        try{
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            
+            if(tipoDocumento == null){
+                param.put("titulo", "NOTAS A FACTURAS DE COMPRA");
+            }else if(tipoDocumento.getCtipoDocum().equals("NDV")){
+                param.put("titulo", "NOTAS DE DEBITO A FACTURAS DE COMPRA");
+            }else{
+                param.put("titulo", "NOTAS DE CREDITO A FACTURAS DE COMPRA");
+            }
+          
+            //fecha desde y hasta
+            param.put("fechaDesde", fechaDesde);
+            param.put("fechaHasta", fechaHasta);
+            
+            //tipo de documento
+            if (tipoDocumento != null) {
+                param.put("tipoDoc", tipoDocumento.getXdesc());
+            }else{
+                param.put("tipoDoc", "Todos");
+            }
+            //concepto
+            if (conceptoDocumento != null) {
+                param.put("concepto", conceptoDocumento.getXdesc());
+            }else{
+                param.put("concepto", "Todos");
+            }
+                    
+            //proveedor
+            if (proveedor != null) {
+                param.put("proveedor", proveedor.getXnombre());
+            }else{
+                param.put("proveedor", "Todos");
+            }
+            
+            //JLVC 30-12-2019; se obtiene el SUBREPORT_DIR para pasar por parametro al reporte principal y este al subReport            
+            String subReportDir = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/") + "\\";
+            param.put("SUBREPORT_DIR", subReportDir);
+            
+            param.put("nombreRepo", filename);
+            param.put("usu_imprime", usuImprime);
+            
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/" + nombreReporte + ".jasper");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=" + filename + ".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
             }
         } catch (IOException | JRException e) {
             System.out.println(e);

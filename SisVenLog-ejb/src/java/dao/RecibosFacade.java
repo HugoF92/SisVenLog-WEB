@@ -112,7 +112,7 @@ public class RecibosFacade extends AbstractFacade<Recibos> {
         
         sql += " UNION ALL" +
             " SELECT r.nrecibo, r.cod_cliente, r.frecibo, r.irecibo, r.iefectivo, r.iretencion, r.icheques, r.xobs, r.mestado," +
-            " c.xnombre, '' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco, r.fanul," +
+            " c.xnombre, 'CHQ' as ctipo_docum, nro_cheque as ndocum, b.xdesc as xdesc_banco, r.fanul," +
             " 'C' as tipodet, c.cod_cliente as cod_cliente2, c.xnombre as xnombre2, d.ipagado as itotal" +
             " FROM recibos r , recibos_cheques d, bancos b, clientes c, rutas a" +
             " WHERE r.nrecibo = d.nrecibo" +
