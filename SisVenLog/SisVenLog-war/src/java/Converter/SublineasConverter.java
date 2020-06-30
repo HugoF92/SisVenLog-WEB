@@ -5,8 +5,12 @@
  */
 package Converter;
 
+import dao.SublineasFacade;
 import entidad.Sublineas;
 import java.io.Serializable;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -19,19 +23,28 @@ import javax.inject.Named;
  */
 @Named(value = "SublineasConverter")
 @ApplicationScoped
-
 public class SublineasConverter  implements Converter, Serializable{
+
+    @EJB
+    private SublineasFacade facade;
     
-   @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-    {
-        if (value.trim().equals(""))
-        {
+    private List<Sublineas> sublineas;
+
+    @PostConstruct
+    public void instanciar() {
+        sublineas = facade.listarSublineasActivas();
+    }
+    
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value.trim().equals("")) {
             return null;
-        }
-        else
-        {
-            return new Sublineas(Short.parseShort(value));
+        } else {
+            return sublineas.stream()
+                    .filter(s -> s.getCodSublinea().equals(Short.parseShort(value)))
+                    .findAny()
+                    .orElse(null);
+            //return new Sublineas(Short.parseShort(value));
             //return new Sublineas(new SublineasPK(Integer.parseInt(value), 0));
         }
     }

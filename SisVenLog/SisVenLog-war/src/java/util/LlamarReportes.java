@@ -10,6 +10,7 @@ import entidad.Bancos;
 import entidad.CanalesCompra;
 import entidad.CanalesVenta;
 import entidad.Empleados;
+import entidad.Lineas;
 import entidad.Proveedores;
 import entidad.Rutas;
 import entidad.TiposClientes;
@@ -2603,9 +2604,10 @@ public class LlamarReportes {
         return escapedData;
     }
 
-    public void reporteLiMigraPedidos(String fechaInicial, String fechaFinal,
-            String vendedor, String canalDescripcion,
-            String estado, String usuarioImpresion) {
+    public void reporteClienteNoCompran(Date fechaDesde, Date fechaHasta,
+            Zonas zona, Rutas ruta, String estado, Lineas linea,
+            Empleados vendedor, String usuarioImpresion) {
+
         try {
             Map param = new HashMap();
             param.put("desde", fechaInicial);
@@ -2674,10 +2676,12 @@ public class LlamarReportes {
 public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             Proveedores proveedor, CanalesCompra canalCompra, TiposDocumentos td,
             String discriminado, String usuarioImpresion) {
+
         try {
             Map param = new HashMap();
             param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
             param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
+
             param.put("proveedor", proveedor == null ? null : proveedor.getXnombre());
             param.put("canalCompra", canalCompra == null ? null : canalCompra.getXdesc());
             param.put("tipoDocumento", td == null ? null : td.getXdesc());
@@ -2690,6 +2694,7 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             String filename = "rvencidascom.pdf";
 
             report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/livencproveedores.jasper");
+
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
 
