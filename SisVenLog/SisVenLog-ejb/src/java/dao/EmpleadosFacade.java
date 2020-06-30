@@ -193,4 +193,10 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
         return q.getResultList();
     }
     
+    public Empleados findEntregador(Short codEntregador){
+        Query q = getEntityManager().createNativeQuery("select e.* from  empleados e "
+                + "where ctipo_emp like 'E%' and e.cod_empleado = "+codEntregador,Empleados.class);
+        System.out.println(q.toString());
+        return (Empleados) q.getSingleResult();
+    }
 }

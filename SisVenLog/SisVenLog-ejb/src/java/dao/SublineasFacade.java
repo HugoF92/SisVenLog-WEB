@@ -38,7 +38,8 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
 
     public List<Sublineas> listarSublineasConMercaderias() {
 
-        Query q = getEntityManager().createNativeQuery("SELECT DISTINCT s.cod_sublinea, s.xdesc \n"
+        Query q = getEntityManager().createNativeQuery("SELECT DISTINCT s.cod_sublinea, "
+                + " s.xdesc, s.cod_linea, s.cod_gcarga \n"
                 + " FROM sublineas s, mercaderias m  WHERE s.cod_sublinea = m.cod_sublinea \n"
                 + "AND m.mestado = 'A'  ORDER BY s.xdesc ", Sublineas.class);
 
@@ -103,6 +104,10 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
     public List<Sublineas> listarSublineas() {
         return getEntityManager().createNativeQuery("SELECT * FROM sublineas ", Sublineas.class).getResultList();
     }
+
+    public List<Sublineas> listarSublineasActivas() {
+        return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A'", Sublineas.class).getResultList();
+    }
     
     public Sublineas subLineaById(Integer id) {
         List<Sublineas> lista = getEntityManager().createNativeQuery("SELECT * FROM sublineas WHERE cod_sublinea=" + id, Sublineas.class).getResultList();
@@ -115,6 +120,8 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
     }
 
     public List<Sublineas> listarSublineasActivas() {
-        return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A'", Sublineas.class).getResultList();
+
+        return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A' ORDER BY xdesc", Sublineas.class).getResultList();
     }
+
 }

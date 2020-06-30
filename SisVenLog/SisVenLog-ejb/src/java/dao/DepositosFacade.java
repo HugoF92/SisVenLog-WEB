@@ -100,15 +100,9 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
     }
     
     public List<Depositos> listarDepositosActivos() {
-        Query q = getEntityManager().createNativeQuery("SELECT * FROM depositos  ", Depositos.class);
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM depositos ORDER BY xdesc ", Depositos.class);
 
-        System.out.println(q.toString());
-
-        List<Depositos> respuesta = new ArrayList<Depositos>();
-
-        respuesta = q.getResultList();
-
-        return respuesta;
+        return q.getResultList();
     }
     
     public List<Depositos> listarDepositosMercaSin() {

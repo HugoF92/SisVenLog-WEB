@@ -116,6 +116,10 @@ public class TipoDocumentoBean implements Serializable {
         return listaTipoDocumento;
     }
 
+    public List<TiposDocumentos> listarTiposDocumentosLiNotasComp2() {
+        listaTipoDocumento = tipoDocumentoFacade.listarTipoDocumentoListadoNotaCompras();
+        return listaTipoDocumento;
+    }
 
     public void insertar() {
         try {
