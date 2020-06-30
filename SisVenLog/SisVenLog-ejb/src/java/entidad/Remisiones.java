@@ -103,6 +103,10 @@ public class Remisiones implements Serializable {
         this.remisionesPK = new RemisionesPK(codEmpr, nroRemision);
     }
 
+    public Remisiones(Date fechaRemision) {
+        this.fremision = fechaRemision;
+    }
+    
     public RemisionesPK getRemisionesPK() {
         return remisionesPK;
     }

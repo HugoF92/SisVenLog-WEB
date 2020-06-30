@@ -60,4 +60,21 @@ public class TiposClientesFacade extends AbstractFacade<TiposClientes> {
 
         return respuesta;
     }
+    
+    //JLVC 15-04-2020
+    public TiposClientes buscarPorCodigo(String filtro) {
+
+        Query q = getEntityManager().createNativeQuery("select * from tipos_clientes where ctipo_cliente = upper('" + filtro + "') ", TiposClientes.class);
+
+        //System.out.println(q.toString());
+        TiposClientes respuesta = new TiposClientes();
+
+        if (q.getResultList().size() <= 0) {
+            respuesta = null;
+        } else {
+            respuesta = (TiposClientes) q.getSingleResult();
+        }
+
+        return respuesta;
+    }
 }

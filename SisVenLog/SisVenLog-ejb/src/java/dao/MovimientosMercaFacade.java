@@ -8,6 +8,7 @@ package dao;
 import dto.MovimientoMercaDto;
 import entidad.MovimientosMerca;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -69,6 +70,11 @@ public class MovimientosMercaFacade extends AbstractFacade<MovimientosMerca> {
         return listado;
     }
     
-    
+    public Date maxFechaMovimientosMerca(){
+        String sql = "select max(fmovim) from movimientos_merca";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        return (Date) q.getSingleResult();
+    }
    
 }

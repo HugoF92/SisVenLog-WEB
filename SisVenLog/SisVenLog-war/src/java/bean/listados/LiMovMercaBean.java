@@ -24,7 +24,7 @@ import util.LlamarReportes;
 
 @ManagedBean
 @SessionScoped
-public class LiMovMercaBean {
+public class LiMovMercaBean implements Serializable{
 
 
     @EJB

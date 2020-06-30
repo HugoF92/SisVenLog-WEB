@@ -1,8 +1,5 @@
 package dao;
 
-import dto.AuxiliarImpresionMasivaDto;
-import dto.AuxiliarImpresionRemisionDto;
-import dto.AuxiliarImpresionServiciosDto;
 import dto.LiMercaSinDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,21 +62,14 @@ public class ExcelFacade {
     
     public List<Object[]> listarParaExcel(String sql) {
         List<Object[]> respuesta = new ArrayList<Object[]>();
-
         try {
-            
             System.out.println(sql);
-
             Query q = getEntityManager().createNativeQuery(sql);
-            
             respuesta = q.getResultList();
-
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al listar secuencias."));
         }
-
         return respuesta;
-
     }
     
     public Integer executeInsert(String sql){

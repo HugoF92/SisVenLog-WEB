@@ -6,6 +6,7 @@
 package dao;
 
 import entidad.CanalesVenta;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,5 +41,12 @@ public class CanalesVentaFacade extends AbstractFacade<CanalesVenta> {
         canalVenta = (CanalesVenta)q.getSingleResult();
 
         return canalVenta;
+    }
+
+    public List<CanalesVenta> listarCanalesVenta() {
+        Query q = getEntityManager().createNativeQuery("SELECT * "
+                + "FROM canales_venta "
+                + "ORDER BY xdesc", CanalesVenta.class);
+        return q.getResultList();
     }
 }

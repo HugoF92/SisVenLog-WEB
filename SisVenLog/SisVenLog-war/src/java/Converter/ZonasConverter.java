@@ -50,7 +50,7 @@ public class ZonasConverter  implements Converter, Serializable{
             return "";
         }
         else{
-//            return (String) value;
+
             return String.valueOf(((Zonas) value).getZonasPK().getCodZona());
         }
     }

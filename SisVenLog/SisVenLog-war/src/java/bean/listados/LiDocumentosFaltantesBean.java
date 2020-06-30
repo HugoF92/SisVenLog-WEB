@@ -83,8 +83,7 @@ public class LiDocumentosFaltantesBean {
                         .findAny()
                         .orElse(null);
 
-                rep.reporteDocumentosFaltantes(nroDesde, nroHasta,
-                        t, fechaInicial, usuarioImpresion);
+//                rep.reporteDocumentosFaltantes(nroDesde, nroHasta,t, fechaInicial, usuarioImpresion);
                 
             } else {
                 String sql = documentosFaltantesFacade.generateSelectMostrar();

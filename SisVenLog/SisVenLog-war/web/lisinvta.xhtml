@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <style type="text/css">
+                .ui-datalist .ui-datalist-content {
+                        border:0 none
+                }
+
+                .ui-datalist ul {
+                        padding:0px 0px 10px;
+                        margin: 5px 0;
+                }
+
+                .label, .value {
+                        float: right; 
+                        font-weight: bold;
+                }
+
+                .output {
+                        font-weight: bold;
+                }
+
+                .ui-selectmanymenu {
+                        width: 350px;
+                }
+            </style>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageCliNoCompran" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlDocFaltantes" header="Clientes que no Compran"
+                                         style="width: 60%;">
+                                    <h:panelGrid columns="2" >
+                                        <p:outputLabel value="Fecha Facturación desde:" for="fechaDesde"
+                                                       style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaDesde" value="#{liClientesNoCompranBean.fechaDesde}" 
+                                                    showOn="button" style="width: 60px;" locale="es"/>
+
+                                        <p:outputLabel value="Fecha Facturación hasta:" for="fechaHasta"
+                                                       style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaHasta" value="#{liClientesNoCompranBean.fechaHasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es"/>
+
+                                        <p:outputLabel value="Zona:" for="zonas"
+                                                       style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="zonas" value="#{liClientesNoCompranBean.zona}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;" converter="#{ZonasConverter}">
+
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems value="#{liClientesNoCompranBean.zonas}"
+                                                           var="zona" 
+                                                           itemValue="#{zona}" 
+                                                           itemLabel="#{zona.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Ruta:" for="rutas"
+                                                       style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="rutas" value="#{liClientesNoCompranBean.ruta}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;" converter="#{RutasConverter}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems value="#{liClientesNoCompranBean.rutas}"
+                                                           var="ruta" 
+                                                           itemValue="#{ruta}" 
+                                                           itemLabel="#{ruta.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel for="estado" value="Estado Cliente: " style="float: right; font-weight: bold;"/>
+                                        <p:fieldset>
+                                            <p:selectOneRadio id="estado" layout="grid" columns="1" value="#{liClientesNoCompranBean.estado}">
+                                                <f:selectItem itemLabel="Activos" itemValue="A"/>
+                                                <f:selectItem itemLabel="Inactivos" itemValue="I"/>
+                                                <f:selectItem itemLabel="TODOS" itemValue="T"/>
+                                            </p:selectOneRadio>
+                                        </p:fieldset>
+
+                                        <p:outputLabel value="Linea:" for="lineas"
+                                                       style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu id="lineas" value="#{liClientesNoCompranBean.linea}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{LineasConverter}" style="width: 148px;" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems id="lineaItem" value="#{liClientesNoCompranBean.lineas}" var="linea" 
+                                                           itemValue="#{linea}" 
+                                                           itemLabel="#{linea.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Vendedor:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liClientesNoCompranBean.vendedor}" style="width: 300px;" 
+                                                         converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liClientesNoCompranBean.vendedores}"
+                                                           var="vendedor"
+                                                           itemValue="#{vendedor}"
+                                                           itemLabel="#{vendedor.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Seleccionar Mercaderías" style="float: right; font-weight: bold;"/>
+                                        <p:commandButton icon="fa fa-archive"
+                                                     oncomplete="PF('dlgSelectMerca').show()"
+                                                     style="margin-top:10px" />
+
+                                        <p:outputLabel value="Seleccionar Sublíneas" style="float: right; font-weight: bold;"/>
+                                        <p:commandButton icon="fa fa-stack-exchange"
+                                                     oncomplete="PF('dlgSelectSubl').show()"
+                                                     style="margin-top:10px" />
+
+                                        <p:commandLink title="report" style="float: right;" target="_blank"
+                                                       action="#{liClientesNoCompranBean.ejecutar('VIST')}"
+                                                       ajax="false" immediate="false" update="messageCliNoCompran">
+                                            <p:commandButton 
+                                                value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                                style="width: 120px;"/>
+                                        </p:commandLink>
+                                        <p:commandLink title="report" target="_blank"
+                                                       action="#{liClientesNoCompranBean.ejecutar('ARCH')}"
+                                                       ajax="false" immediate="false" update="messageCliNoCompran">
+                                            <p:commandButton 
+                                                value="Archivo" icon="fa fa-file-excel-o" styleClass="green-btn raised-btn"
+                                                style="width: 120px;"/>
+                                        </p:commandLink>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+                                    <p:pickList id="pickListMercaCliNoCompran" value="#{liClientesNoCompranBean.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}"  
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                </p:dialog>
+                                <p:dialog header="Seleccionar Sublíneas"
+                                          widgetVar="dlgSelectSubl"
+                                          modal="true" closable="false" closeOnEscape="false">
+                                    <p:pickList id="pickListSublCliNoCompran" value="#{liClientesNoCompranBean.sublineas}" 
+                                                var="item" itemLabel="#{item.codSublinea}- #{item.xdesc}" itemValue="#{item}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{SublineasConverter}"
+                                                style="float: left;"/>
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectSubl').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                </p:dialog>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>

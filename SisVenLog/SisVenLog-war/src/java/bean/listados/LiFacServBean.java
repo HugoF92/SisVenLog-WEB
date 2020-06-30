@@ -20,7 +20,7 @@ import util.LlamarReportes;
 
 @ManagedBean
 @SessionScoped
-public class LiFacServBean {
+public class LiFacServBean implements Serializable{
 
     @EJB
     private ClientesFacade clientesFacade;
