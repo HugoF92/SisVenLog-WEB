@@ -8,3 +8,4 @@
 /build/
 /SisVenLog-war/build/
 /SisVenLog-war/dist/
+**/dist/**
