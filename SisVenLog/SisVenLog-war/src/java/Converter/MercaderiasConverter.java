@@ -7,7 +7,6 @@ package Converter;
 
 import dao.MercaderiasFacade;
 import entidad.Mercaderias;
-import entidad.MercaderiasPK;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -40,7 +39,9 @@ public class MercaderiasConverter  implements Converter, Serializable{
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value.trim().equals("")) {
             return null;
+
         } else {
+
             return mercaderias.stream()
                     .filter(m -> m.getMercaderiasPK().getCodMerca().equals(value))
                     .findAny()

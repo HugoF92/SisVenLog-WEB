@@ -72,6 +72,9 @@ public class Lineas implements Serializable {
     @Column(name = "mestado")
     private Character mestado;
 
+    @Column(name = "mestado")
+    private Character mestado;
+
     public Lineas() {
     }
 
@@ -178,5 +181,5 @@ public class Lineas implements Serializable {
     public void setMestado(Character mestado) {
         this.mestado = mestado;
     }
-    
+
 }
