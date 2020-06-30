@@ -2886,6 +2886,42 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
         }
     }
 
+    public void reporteTotalDocumentos(Date fechaDesde, Date fechaHasta,
+            TiposDocumentos td, String opcion, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
+            param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
+            param.put("tipoDocumento", td == null ? null : td.getXdesc());
+            param.put("codigoTipoDocumento", td == null ? null : td.getCtipoDocum());
+            param.put("opcion", opcion);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+
+            String report;
+            String filename = "rtotaldoc.pdf";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/rtotaldoc.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
     public void reporteTotalCompras(Date fechaDesde, Date fechaHasta,
             Proveedores proveedor, TiposDocumentos td, String usuarioImpresion) {
         try {
