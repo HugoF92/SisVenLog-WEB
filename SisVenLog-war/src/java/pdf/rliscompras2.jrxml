@@ -376,7 +376,7 @@
 			<staticText>
 				<reportElement uuid="d860e5b5-a21b-47e2-8c2a-feab34e472e7" x="506" y="0" width="58" height="28"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 5%]]></text>
@@ -415,7 +415,7 @@
 			<staticText>
 				<reportElement uuid="8b4e0af6-0d8d-458a-aedb-b09c60920a67" x="448" y="0" width="58" height="28"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 10%]]></text>

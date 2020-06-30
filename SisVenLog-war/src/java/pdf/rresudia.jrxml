@@ -203,7 +203,7 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 10%]]></text>
@@ -273,7 +273,7 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 5%]]></text>
