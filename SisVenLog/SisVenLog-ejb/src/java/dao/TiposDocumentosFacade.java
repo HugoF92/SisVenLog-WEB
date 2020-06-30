@@ -8,6 +8,7 @@ package dao;
 import entidad.TiposDocumentos;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -222,10 +223,20 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return q.getResultList();
     }
 
+
     public List<TiposDocumentos> listarTiposDocumentosLiFacPromo() {
         Query q = getEntityManager().createNativeQuery("select * "
                 + "from tipos_documentos "
                 + "where ctipo_docum in ('FCR','FCO','CPV','NCV')", TiposDocumentos.class);
+
+        return q.getResultList();
+    }
+      
+    public List<TiposDocumentos> getTipoDocumentosByCtipo(List<String> tiposDocumentos) {
+        String tipos = tiposDocumentos.stream().map(tipo -> "'" +  tipo + "'").collect(Collectors.joining(", "));
+        Query q = getEntityManager().createNativeQuery("select * "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ("+ tipos +") order by xdesc", TiposDocumentos.class);
         return q.getResultList();
     }
       
