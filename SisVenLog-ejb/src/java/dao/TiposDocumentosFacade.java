@@ -199,4 +199,20 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
 
         return respuesta;
     }
+     
+    public List<TiposDocumentos> listarTiposDocumentosOrdenadoXDesc(){
+        Query q = getEntityManager().createNativeQuery("SELECT c.* FROM tipos_documentos c " +
+                " order by c.xdesc ", TiposDocumentos.class);
+        System.out.println(q.toString());
+        List<TiposDocumentos> resp = new ArrayList<>();
+        resp = q.getResultList();
+        return resp;
+    }
+    
+    public TiposDocumentos getTipoDocumentoFromList(TiposDocumentos pk, List<TiposDocumentos> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCtipoDocum().equals(pk.getCtipoDocum()))
+                .findAny().orElse(null);
+    }
+     
 }
