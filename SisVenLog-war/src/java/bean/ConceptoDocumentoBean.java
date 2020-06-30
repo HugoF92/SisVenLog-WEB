@@ -127,6 +127,11 @@ public class ConceptoDocumentoBean implements Serializable {
         listaConceptoDocumento = conceptoDocumentoFacade.findAll();
         return listaConceptoDocumento;
     }
+    
+    public List<ConceptosDocumentos> listarTiposDocumentosLiNotasComp2() {
+        listaConceptoDocumento = conceptoDocumentoFacade.listarConceptoDocumentoListadoNotaCompras();
+        return listaConceptoDocumento;
+    }
 
 
     public void insertar() {

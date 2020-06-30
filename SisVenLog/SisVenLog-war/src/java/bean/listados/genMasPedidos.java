@@ -24,6 +24,7 @@ import entidad.Promociones;
 import entidad.Rutas;
 import entidad.TiposDocumentos;
 import entidad.TmpPedidos;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,7 @@ import util.LlamarReportes;
  */
 @ManagedBean
 @SessionScoped
-public class genMasPedidos {
+public class genMasPedidos implements Serializable{
     
     private Empleados vendedor;
     

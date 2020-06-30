@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    <ui:define name="content">
+        <h:body style="font-size: medium;">
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+                                <p:panel id="pnlParamLiApli" header="Informe de Recaudaciones" style="width: 70%;">
+                                    <h:panelGrid columns="2" >
+
+                                        <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
+
+                                        <p:calendar id="liErroresProcDesde" value="#{liRecaudacionBean.desde}" 
+                                                    showOn="button" style="width: 60px;" locale="es" required="true">
+                                            <p:ajax event="dateSelect" update="liAnuDocHasta" />
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha hasta:" style="float: right; font-weight: bold;"/>
+
+                                        <p:calendar id="liAnuDocHasta" value="#{liRecaudacionBean.hasta}" 
+                                            showOn="button" style="width: 60px;" locale="es"  required="true"/>
+
+                                        <p:outputLabel value="Entregador:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{liRecaudacionBean.entregador}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;" converter="#{empleadosConverter}" required="false">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liRecaudacionBean.listVendedores}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xnombre}" />
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Zona del Camion:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{liRecaudacionBean.zonasCamion}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;" converter="#{ZonasConverter}" required="false">
+                                            <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liConCliBean.listZonas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Zona de Venta:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{liRecaudacionBean.zonas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 300px;" converter="#{ZonasConverter}" required="false">
+                                            <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liConCliBean.listZonas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel for="discriminar" value="" />
+                                        <p:selectOneRadio id="discriminar" layout="grid" columns="1" value="#{liRecaudacionBean.seleccion}" 
+                                                          style="border: solid;border-width: thin">
+                                             <f:selectItem itemLabel="Datos de Planilla" itemValue="1"/>
+                                             <f:selectItem itemLabel="Detalle de Creditos" itemValue="2"/>
+                                             <f:selectItem itemLabel="Detalle de Ch.Diferidos" itemValue="3"/>
+                                             <f:selectItem itemLabel="Resumen por fecha" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resumen Mensual por Zona" itemValue="5"/>
+                                             <f:selectItem itemLabel="Resumen General" itemValue="6"/>
+                                             <f:selectItem itemLabel="Detalles Diferencias Entregadores" itemValue="7"/>
+                                             <f:selectItem itemLabel="Resumen Diferencias Entregadores" itemValue="8"/>
+                                             <f:selectItem itemLabel="Datos de Planilla por Zona de Venta" itemValue="9"/>
+                                             <f:selectItem itemLabel="Resumen por Entregador" itemValue="10"/>
+                                        </p:selectOneRadio>
+                                        
+                                        <p:outputLabel for="salidas" value="Salida:"  rendered="false"/>
+                                        <p:selectOneRadio id="salidas" layout="grid" columns="1" value="#{liRecaudacionBean.salidas}" 
+                                                          style="border: solid;border-width: thin" rendered="false">
+                                             <f:selectItem itemLabel="Vista Previa" itemValue="1"/>
+                                             <f:selectItem itemLabel="Archivo" itemValue="2"/>
+                                             <f:selectItem itemLabel="Impresora" itemValue="3"/>
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+                                    <br></br>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liRecaudacionBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact" rendered="true">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liRecaudacionBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+                                </p:panel>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>

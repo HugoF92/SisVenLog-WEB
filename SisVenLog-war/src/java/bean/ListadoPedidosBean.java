@@ -61,6 +61,8 @@ public class ListadoPedidosBean implements Serializable{
         setSeleccionFecha("FP");
         setSeleccionTipo("TD");
         setConDetalle(false);
+        setNroPedidoDesde(1);
+        setNroPedidoHasta(999999999);
     }
     
     public void limpiarFormulario(){

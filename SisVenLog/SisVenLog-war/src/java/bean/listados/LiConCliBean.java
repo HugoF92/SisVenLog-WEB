@@ -7,6 +7,7 @@ import entidad.Empleados;
 import entidad.EmpleadosPK;
 import entidad.Zonas;
 import entidad.ZonasPK;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import util.LlamarReportes;
  */
 @ManagedBean
 @SessionScoped
-public class LiConCliBean {
+public class LiConCliBean implements Serializable{
     
     private Date desde;
     
@@ -55,6 +56,7 @@ public class LiConCliBean {
         this.desde = new Date();
         this.hasta = new Date();
     }
+    
     public void ejecutar(String tipo) {
         LlamarReportes rep = new LlamarReportes();
         String fdesde = dateToString(desde);
