@@ -65,11 +65,11 @@ public class LiComprasBean {
     public void ejecutarListado(String tipo){
         try{
             LlamarReportes rep = new LlamarReportes();
-            String fFacturacionDesde = DateUtil.formaterDateToString(facturacionDesde, "dd/MM/yyyy");
-            String fFacturacionHasta = DateUtil.formaterDateToString(facturacionHasta, "dd/MM/yyyy");
+            String fFacturacionDesde = DateUtil.formaterDateToString(facturacionDesde, "yyyy/MM/dd");
+            String fFacturacionHasta = DateUtil.formaterDateToString(facturacionHasta, "yyyy/MM/dd");
             
-            String fVencimientoDesde = DateUtil.formaterDateToString(vencimientoDesde, "dd/MM/yyyy");
-            String fVencimientoHasta = DateUtil.formaterDateToString(vencimientoHasta, "dd/MM/yyyy");
+            String fVencimientoDesde = DateUtil.formaterDateToString(vencimientoDesde, "yyyy/MM/dd");
+            String fVencimientoHasta = DateUtil.formaterDateToString(vencimientoHasta, "yyyy/MM/dd");
             
             String titulo = "";
             String reporte = "";
@@ -121,10 +121,12 @@ public class LiComprasBean {
             
             if (seleccion.equals("1")) {
                 reporte = "RLISCOMPRAS3";
+                titulo = "FACTURAS DE COMPRA CON DETALLES";
+                
                 columnas = new String[13];
                 columnas[0] = "ctipo_docum";
                 columnas[1] = "ccanal_compra";
-                columnas[2] = "xdesc_canal";            
+                columnas[2] = "xdesc_canal";
                 columnas[3] = "nrofact";
                 columnas[4] = "ffactur";
                 columnas[5] = "xnombre";
@@ -135,6 +137,7 @@ public class LiComprasBean {
                 columnas[10] = "timp_5";
                 columnas[11] = "texentas";
                 columnas[12] = "ttotal";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, t.xdesc AS xdesc_docum, " +
@@ -1024,6 +1027,10 @@ public class LiComprasBean {
                     "ORDER BY 4" ;
             }
             
+            System.out.println(" - - - - - - - - - - - -");
+            System.out.println("QUERY: " + queryReport);
+            System.out.println(" - - - - - - - - - - - -");
+            
             if (tipo.equals("VIST")) {
                 String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                 Map param = new HashMap();
@@ -1043,7 +1050,7 @@ public class LiComprasBean {
                 if (this.proveedor != null) param.put("proveedor", proveedoresFacade.getProveedorFromList(this.proveedor, this.listaProveedores).getXnombre()); 
                 else param.put("proveedor", "TODOS");
             
-                rep.reporteLiContClientes(param, tipo, reporte);
+                //rep.reporteLiContClientes(param, tipo, reporte);
             } else {
                 List<Object[]> lista = new ArrayList<Object[]>();
                 lista = excelFacade.listarParaExcel(query);
