@@ -9,43 +9,75 @@
 	<parameter name="fdesde" class="java.util.Date"/>
 	<parameter name="fhasta" class="java.util.Date"/>
 	<parameter name="usuImprime" class="java.lang.String"/>
-	<field name="ccanal_compra" class="java.lang.String"/>
-	<field name="xdesc_canal" class="java.lang.String"/>
+	<parameter name="fvtodesde" class="java.util.Date"/>
+	<parameter name="fvtohasta" class="java.util.Date"/>
 	<field name="ffactur" class="java.lang.String"/>
-	<field name="fvenc" class="java.lang.String"/>
-	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="cod_proveed" class="java.lang.String"/>
 	<field name="xnombre" class="java.lang.String"/>
 	<field name="xruc" class="java.lang.String"/>
-	<field name="ndocum" class="java.lang.String"/>
-	<field name="tgravadas" class="java.lang.String"/>
-	<field name="ttotal" class="java.lang.String"/>
-	<field name="timpuestos" class="java.lang.String"/>
-	<field name="ntimbrado" class="java.lang.String"/>
-	<field name="cod_merca" class="java.lang.String"/>
-	<field name="xdesc_merca" class="java.lang.String"/>
-	<field name="cant_cajas" class="java.lang.String"/>
-	<field name="cant_unid" class="java.lang.String"/>
-	<field name="igravadas" class="java.lang.String"/>
-	<field name="iexentas" class="java.lang.String"/>
-	<field name="itotal" class="java.lang.String"/>
-	<field name="impuestos" class="java.lang.String"/>
-	<field name="pimpues" class="java.lang.String"/>
-	<field name="xdesc_docum" class="java.lang.String"/>
-	<field name="xdesc_depo" class="java.lang.String"/>
-	<field name="fmovim" class="java.lang.String"/>
+	<field name="nrofact" class="java.lang.String"/>
+	<field name="ttotal" class="java.lang.Long"/>
 	<field name="texentas" class="java.lang.Long"/>
 	<field name="tgravadas_5" class="java.lang.Long"/>
 	<field name="tgravadas_10" class="java.lang.Long"/>
 	<field name="timpuestos_5" class="java.lang.Long"/>
 	<field name="timpuestos_10" class="java.lang.Long"/>
-	<field name="nrelacion" class="java.lang.String"/>
-	<field name="iprecio_cx" class="java.lang.String"/>
-	<field name="iprecio_ux" class="java.lang.String"/>
-	<field name="iprecio_caja" class="java.lang.String"/>
-	<field name="iprecio_unid" class="java.lang.String"/>
+	<variable name="texentas_1" class="java.lang.Long" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_10_1" class="java.lang.Long" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_5_1" class="java.lang.Long" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_10_1" class="java.lang.Long" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_5_1" class="java.lang.Long" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+	</variable>
+	<variable name="ttotal_1" class="java.lang.Integer" resetType="Group" resetGroup="group_ffact" calculation="Sum">
+		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+	</variable>
+	<variable name="texentas_2" class="java.lang.Long" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_10_2" class="java.lang.Long" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_5_2" class="java.lang.Long" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_10_2" class="java.lang.Long" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_5_2" class="java.lang.Long" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+	</variable>
+	<variable name="ttotal_2" class="java.lang.Integer" resetType="Group" resetGroup="group_proveed" calculation="Sum">
+		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+	</variable>
+	<variable name="texentas_3" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_10_3" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+	</variable>
+	<variable name="tgravadas_5_3" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_10_3" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+	</variable>
+	<variable name="timpuestos_5_3" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+	</variable>
+	<variable name="ttotal_4" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+	</variable>
 	<group name="group_proveed">
-		<groupExpression><![CDATA[$F{ccanal_compra}]]></groupExpression>
+		<groupExpression><![CDATA[$F{cod_proveed}]]></groupExpression>
 		<groupHeader>
 			<band height="30">
 				<textField>
@@ -73,6 +105,48 @@
 					</textElement>
 					<text><![CDATA[TOTAL PROVEEDOR]]></text>
 				</staticText>
+				<textField pattern="#,##0">
+					<reportElement uuid="9f366ce3-a786-41c8-ab7d-e2828df8433c" x="348" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{texentas_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="3144ee76-9da1-45fb-85ed-830b2206ab63" x="408" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tgravadas_10_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="e000395d-13e6-45a5-8653-c74094778c28" x="468" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tgravadas_5_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="54205f16-36b2-4b12-958a-24ef4e22b2eb" x="528" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{timpuestos_10_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="14d96fa3-0fa7-4311-bd57-fef86e18f102" x="588" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{timpuestos_5_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="d1485fe4-2507-44c9-9fd7-89a53834d362" x="708" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ttotal_2}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -81,11 +155,53 @@
 		<groupFooter>
 			<band height="20">
 				<textField>
-					<reportElement uuid="8b60689e-8c3d-4e9b-b8e2-de076db0f0d1" x="22" y="0" width="80" height="20"/>
+					<reportElement uuid="8b60689e-8c3d-4e9b-b8e2-de076db0f0d1" x="22" y="0" width="160" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<paragraph leftIndent="1"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ffactur}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="f544a228-4400-4d6c-ac0b-5e7e2ab2003b" x="348" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{texentas_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="6dca1a45-5e7a-401e-86da-9c9f5bc59a42" x="408" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tgravadas_10_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="397096c2-10a9-461b-81f0-4b50a78dc3bb" x="468" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tgravadas_5_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="a26b2b86-d800-4a1e-b818-22f4097f00ec" x="528" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{timpuestos_10_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="490926cb-467a-4418-8f07-0ddbe5d3fbb0" x="588" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{timpuestos_5_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement uuid="84c1daed-8178-4ee1-9983-8b0ac541acd4" x="708" y="0" width="60" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ttotal_1}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -204,7 +320,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 10%]]></text>
 			</staticText>
@@ -216,7 +332,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA  10 %]]></text>
 			</staticText>
@@ -228,7 +344,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA 5%]]></text>
 			</staticText>
@@ -240,7 +356,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
@@ -261,8 +377,9 @@
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[EXENTAS]]></text>
 			</staticText>
@@ -274,7 +391,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS 5%]]></text>
 			</staticText>
@@ -286,7 +403,7 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
-					<paragraph rightIndent="5"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[TOTAL EN FACTURA]]></text>
 			</staticText>
@@ -338,7 +455,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="34" splitType="Stretch">
+		<band height="35" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="7470fc77-7f0c-4a7f-92e2-e7bc71d23d68" x="134" y="0" width="214" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -353,6 +470,48 @@
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
+			<textField pattern="#,##0">
+				<reportElement uuid="0eeac08a-d90c-4d3c-8aa4-ceb1115911eb" x="348" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{texentas_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="4a8a4a29-1b01-4284-8084-acbbd0ec4c75" x="408" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tgravadas_10_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="416f1a4a-46d8-4dad-bbad-942dceb159b9" x="468" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tgravadas_5_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="2be01146-7c98-4d92-ac82-18dfb769011c" x="528" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{timpuestos_10_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="a6407340-deda-4e1a-90f5-08cc0e5ad799" x="588" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{timpuestos_5_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement uuid="6effad6c-97e2-4c71-b18e-4233665d83a2" x="708" y="0" width="60" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ttotal_4}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

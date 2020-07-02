@@ -9,31 +9,23 @@
 	<parameter name="fdesde" class="java.util.Date"/>
 	<parameter name="fhasta" class="java.util.Date"/>
 	<parameter name="usuImprime" class="java.lang.String"/>
+	<parameter name="fvtodesde" class="java.util.Date"/>
+	<parameter name="fvtohasta" class="java.util.Date"/>
 	<field name="ccanal_compra" class="java.lang.String"/>
 	<field name="xdesc_canal" class="java.lang.String"/>
-	<field name="ffactur" class="java.lang.String"/>
-	<field name="fvenc" class="java.lang.String"/>
+	<field name="fvenc" class="java.util.Date"/>
 	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="cod_proveed" class="java.lang.String"/>
 	<field name="xnombre" class="java.lang.String"/>
-	<field name="xruc" class="java.lang.String"/>
 	<field name="ndocum" class="java.lang.String"/>
-	<field name="tgravadas" class="java.lang.String"/>
-	<field name="ttotal" class="java.lang.String"/>
-	<field name="timpuestos" class="java.lang.String"/>
 	<field name="ntimbrado" class="java.lang.String"/>
 	<field name="cod_merca" class="java.lang.String"/>
 	<field name="xdesc_merca" class="java.lang.String"/>
 	<field name="cant_cajas" class="java.lang.String"/>
 	<field name="cant_unid" class="java.lang.String"/>
-	<field name="igravadas" class="java.lang.String"/>
 	<field name="iexentas" class="java.lang.String"/>
-	<field name="itotal" class="java.lang.String"/>
-	<field name="impuestos" class="java.lang.String"/>
-	<field name="pimpues" class="java.lang.String"/>
-	<field name="xdesc_docum" class="java.lang.String"/>
 	<field name="xdesc_depo" class="java.lang.String"/>
-	<field name="fmovim" class="java.lang.String"/>
+	<field name="fmovim" class="java.util.Date"/>
 	<field name="texentas" class="java.lang.Long"/>
 	<field name="tgravadas_5" class="java.lang.Long"/>
 	<field name="tgravadas_10" class="java.lang.Long"/>
@@ -44,6 +36,8 @@
 	<field name="iprecio_ux" class="java.lang.String"/>
 	<field name="iprecio_caja" class="java.lang.String"/>
 	<field name="iprecio_unid" class="java.lang.String"/>
+	<field name="idif_unidad" class="java.lang.String"/>
+	<field name="idif_caja" class="java.lang.String"/>
 	<variable name="texentas_1" class="java.lang.Long" resetType="Group" resetGroup="group_docu" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
