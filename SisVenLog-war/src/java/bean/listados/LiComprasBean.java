@@ -279,7 +279,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -389,7 +389,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -419,7 +419,7 @@ public class LiComprasBean {
                         "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
                         "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
                         "ABS(timpuestos_10) AS timp_10, ABS(timpuestos_5) AS timp_5, texentas, " +
-                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal " +
+                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal, norden " +
                     "FROM " +
                         "( " + query4 + " ) c " +
                     "WHERE " +
@@ -428,7 +428,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
                         "tgravadas_10 AS tgrav_10, tgravadas_5 AS tgrav_5, timpuestos_10 AS timp_10, Timpuestos_5 AS timp_5, " +
-                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal " +
+                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal, norden " +
                     "FROM " +
                         "( " + query4 + " ) c " +
                     "WHERE " +
@@ -507,7 +507,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -626,7 +626,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -673,7 +673,7 @@ public class LiComprasBean {
                         "timpuestos_10 > 0 OR timpuestos_5 > 0 ";
                 queryReport = 
                     "SELECT " +
-                        " * " +
+                        "* " +
                     "FROM " +
                         "( " + query5 + " ) r " +
                     orderBy;
@@ -704,7 +704,7 @@ public class LiComprasBean {
                     "WHERE " +
                         "c.mestado = 'A' AND c.cod_empr = 2 AND c.ffactur BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND c.cod_depo = e.cod_depo AND C.cod_empr = e.cod_empr  " +
-                        "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum" + 
+                        "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " + 
                         extraWhere + " ";
                 query2 = 
                     "SELECT " +
@@ -732,7 +732,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -778,9 +778,9 @@ public class LiComprasBean {
                         "timpuestos_10 > 0 OR timpuestos_5 > 0 ";
                 queryReport = 
                     "SELECT " +
-                        " * " +
+                        "* " +
                     "FROM " +
-                        "( " + query5 + " ) r" +
+                        "( " + query5 + " ) r " +
                     orderBy;
             } else if (seleccion.equals("7")) {
                 reporte = "RlisCOMPRAS2n";
@@ -845,7 +845,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -878,7 +878,34 @@ public class LiComprasBean {
                     "WHERE " +
                         "n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed " +
                         "AND n.ffactur = t.ffactur AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP') ";
-                
+                query6 = 
+                    "IF EXISTS " +
+                        "(SELECT COUNT(*) " +
+                            "FROM notas_compras n, tmp_numeros t " +
+                            "WHERE n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed AND n.ffactur = t.ffactur " +
+                            "AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP')) " +
+                        "SELECT DISTINCT " +
+                            "c.*, " +
+                            "n.nro_nota, " +
+                            "n.fdocum, " +
+                            "n.cconc, " +
+                            "n.ctipo_docum AS ctipo_nota, " +
+                            "n.ttotal AS tnota, " +
+                            "0 AS cor " +
+                        "FROM " +
+                            "( " + query4 + " ) c " +
+                            "LEFT OUTER JOIN ( " + query5 + " ) n ON c.ndocum = n.nrofact AND c.cod_proveed = n.cod_proveed AND c.ctipo_docum = n.com_ctipo_docum " +
+                    "ELSE " +
+                        "SELECT " +
+                            "c.*, " +
+                            "0 AS nro_nota, " +
+                            "'' AS fdocum, " +
+                            "'' AS cconc, " +
+                            "'' AS ctipo_nota, " +
+                            "0 AS tnota, " +
+                            "1 AS cor " +
+                        "FROM " +
+                            "( " + query4 + " ) c ";
             } else if (seleccion.equals("8")) {// no reporte
                 query = 
                     "SELECT " +
@@ -919,7 +946,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM  " +
+                    "FROM " +
                         "compras_det d " +
                         "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
                     "WHERE " +
@@ -947,7 +974,7 @@ public class LiComprasBean {
                 query5 = 
                     "SELECT " +
                         "n.ctipo_docum, n.nro_nota AS nrofact, n.fdocum AS ffactur, n.cconc, p.xnombre, p.xruc, " +
-                        "SUM(d.igravadas) * -1 AS tgrav_10, 0 AS tgrav_5, SUM(ABS(d.impuestos)) * -1" +
+                        "SUM(d.igravadas) * -1 AS tgrav_10, 0 AS tgrav_5, SUM(ABS(d.impuestos)) * -1 " +
                         "AS timp_10, 0 AS timp_5, 0 AS texentas, n.ttotal * -1 AS ttotal " +
                     "FROM " +
                         "notas_compras n INNER JOIN notas_compras_det d ON N.nro_nota = d.nro_nota AND n.cod_proveed = d.cod_proveed, " +
@@ -982,7 +1009,7 @@ public class LiComprasBean {
                         "n.fdocum BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND n.mestado = 'A' AND n.cod_proveed = p.cod_proveed AND d.impuestos > 0 AND d.pimpues = 5 " +
                     "GROUP BY " +
-                        "n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, p.xnombre, p.xruc  " +
+                        "n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, p.xnombre, p.xruc " +
                     "UNION ALL " +
                     "SELECT " +
                         "n.ctipo_docum, n.nro_nota AS nrofact, n.fdocum AS ffactur, n.cconc, p.xnombre, p.xruc, " +
@@ -995,7 +1022,7 @@ public class LiComprasBean {
                         "n.fdocum BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND n.mestado = 'A' AND n.cod_proveed = p.cod_proveed AND d.impuestos < 0 AND d.pimpues = 5 " +
                     "GROUP BY " +
-                        "n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, p.xnombre, p.xruc  " +
+                        "n.fdocum, n.ctipo_docum, n.cconc, n.nro_nota, n.ttotal, p.xnombre, p.xruc " +
                     "UNION ALL " +
                     "SELECT " +
                         "n.ctipo_docum, n.nro_nota AS nrofact, n.fdocum AS ffactur, n.cconc, p.xnombre, p.xruc, " +
@@ -1016,12 +1043,12 @@ public class LiComprasBean {
                         "( " + query4 + " ) r ";
                 queryReport = 
                     "SELECT " +
-                        "ctipo_docum, nrofact, cconc, DTOC(ffactur) AS ffactur, xnombre, xruc, tgrav_10, tgrav_5, timp_10, timp_5, texentas, ttotal " +
+                        "ctipo_docum, nrofact, cconc, CONVERT(VARCHAR(10), ffactur, 103) AS ffactur, xnombre, xruc, tgrav_10, tgrav_5, timp_10, timp_5, texentas, ttotal " +
                     "FROM " +
                         "( " + query5 + " ) r " +
                     "UNION ALL " +
                     "SELECT " +
-                        "ctipo_docum, nrofact, '' AS cconc, DTOC(ffactur) AS ffactur, xnombre, xruc, tgrav_10, tgrav_5, timp_10, timp_5, texentas, ttotal " +
+                        "ctipo_docum, nrofact, '' AS cconc, CONVERT(VARCHAR(10), ffactur, 103) AS ffactur, xnombre, xruc, tgrav_10, tgrav_5, timp_10, timp_5, texentas, ttotal " +
                     "FROM " + 
                         "( " + query6 + " ) r " +
                     "ORDER BY 4" ;
