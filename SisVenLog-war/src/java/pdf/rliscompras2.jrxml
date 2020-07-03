@@ -11,7 +11,7 @@
 	<parameter name="usuImprime" class="java.lang.String"/>
 	<field name="ccanal_compra" class="java.lang.String"/>
 	<field name="xdesc_canal" class="java.lang.String"/>
-	<field name="ffactur" class="java.lang.String"/>
+	<field name="fmovim" class="java.lang.String"/>
 	<field name="fvenc" class="java.lang.String"/>
 	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="cod_proveed" class="java.lang.String"/>
@@ -22,28 +22,13 @@
 	<field name="ttotal" class="java.lang.Long"/>
 	<field name="timpuestos" class="java.lang.String"/>
 	<field name="ntimbrado" class="java.lang.String"/>
-	<field name="cod_merca" class="java.lang.String"/>
-	<field name="xdesc_merca" class="java.lang.String"/>
-	<field name="cant_cajas" class="java.lang.String"/>
-	<field name="cant_unid" class="java.lang.String"/>
-	<field name="igravadas" class="java.lang.String"/>
-	<field name="iexentas" class="java.lang.String"/>
-	<field name="itotal" class="java.lang.String"/>
-	<field name="impuestos" class="java.lang.String"/>
-	<field name="pimpues" class="java.lang.String"/>
 	<field name="xdesc_docum" class="java.lang.String"/>
 	<field name="xdesc_depo" class="java.lang.String"/>
-	<field name="fmovim" class="java.lang.String"/>
 	<field name="texentas" class="java.lang.Long"/>
 	<field name="tgravadas_5" class="java.lang.Long"/>
 	<field name="tgravadas_10" class="java.lang.Long"/>
 	<field name="timpuestos_5" class="java.lang.Long"/>
 	<field name="timpuestos_10" class="java.lang.Long"/>
-	<field name="nrelacion" class="java.lang.String"/>
-	<field name="iprecio_cx" class="java.lang.String"/>
-	<field name="iprecio_ux" class="java.lang.String"/>
-	<field name="iprecio_caja" class="java.lang.String"/>
-	<field name="iprecio_unid" class="java.lang.String"/>
 	<variable name="texentas_1" class="java.lang.Long" resetType="Group" resetGroup="group_ndocum" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>

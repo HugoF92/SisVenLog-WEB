@@ -120,7 +120,7 @@ public class LiComprasBean {
             }
             
             if (seleccion.equals("1")) {
-                reporte = "RLISCOMPRAS3";
+                reporte = "RLISCOMPRAS2";
                 titulo = "FACTURAS DE COMPRA CON DETALLES";
                 
                 columnas = new String[13];
@@ -202,7 +202,8 @@ public class LiComprasBean {
                         "( " + query3 + " ) i " +
                     "WHERE " +
                         "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
-                queryReport = 
+                queryReport = query4;
+                /*queryReport = 
                     "SELECT " +
                         "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
                         "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
@@ -221,9 +222,9 @@ public class LiComprasBean {
                         "( " + query4 + " ) c " +
                     "WHERE " +
                         "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;
+                        orderBy;*/
             } else if (seleccion.equals("2")) {
-                reporte = "RLISCOMPRAS3";
+                reporte = "RLISCOMPRAS2";
                 columnas = new String[13];
                 columnas[0] = "ctipo_docum";
                 columnas[1] = "ccanal_compra";
@@ -303,8 +304,10 @@ public class LiComprasBean {
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
                     "WHERE " +
-                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
-                queryReport = 
+                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed "+
+                    " ORDER BY m.ccanal_compra, m.fmovim, m.ndocum ";
+                queryReport = query4;
+                /*queryReport = 
                     "SELECT " +
                         "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
                         "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
@@ -323,7 +326,7 @@ public class LiComprasBean {
                         "( " + query4 + " ) c " +
                     "WHERE " +
                         "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;
+                        orderBy;*/
             } else if (seleccion.equals("3")) {
                 reporte = "RCOMPRASDET2";
                 columnas = new String[13];
