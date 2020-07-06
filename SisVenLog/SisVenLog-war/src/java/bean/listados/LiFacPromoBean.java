@@ -126,7 +126,7 @@ public class LiFacPromoBean {
 
                 rep.reporteFacPromo(DateUtil.formaterDateToString(fechaDesde),
                         DateUtil.formaterDateToString(fechaHasta),
-                        t, promo, cv,  sinIVA, usuarioImpresion);
+                        t, promo, cv, sinIVA, usuarioImpresion);
             } else {
                 String sql = facConPromocionFacade.generateSelectImpDatos();
                 String[] columnas = new String[]{
