@@ -104,10 +104,6 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
     public List<Sublineas> listarSublineas() {
         return getEntityManager().createNativeQuery("SELECT * FROM sublineas ", Sublineas.class).getResultList();
     }
-
-    public List<Sublineas> listarSublineasActivas() {
-        return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A'", Sublineas.class).getResultList();
-    }
     
     public Sublineas subLineaById(Integer id) {
         List<Sublineas> lista = getEntityManager().createNativeQuery("SELECT * FROM sublineas WHERE cod_sublinea=" + id, Sublineas.class).getResultList();
@@ -120,7 +116,6 @@ public class SublineasFacade extends AbstractFacade<Sublineas> {
     }
 
     public List<Sublineas> listarSublineasActivas() {
-
         return getEntityManager().createNativeQuery("SELECT * FROM sublineas where mestado='A' ORDER BY xdesc", Sublineas.class).getResultList();
     }
 
