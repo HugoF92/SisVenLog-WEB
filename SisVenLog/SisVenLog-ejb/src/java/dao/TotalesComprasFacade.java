@@ -24,7 +24,7 @@ public class TotalesComprasFacade {
     
     //TODO: cambiar fecha para entorno local yyyy/dd/MM y para el server
     // de prueba yyyy/MM/dd
-    private static final String DATE_FORMAT = "yyyy/dd/MM";
+    private static final String DATE_FORMAT = "yyyy/MM/dd";
     
     @PersistenceContext(unitName = "SisVenLog-ejbPU")
     private EntityManager em;
@@ -38,10 +38,12 @@ public class TotalesComprasFacade {
         String sql;
         if ("FCC".equals(tipoDocumento) || "COC".equals(tipoDocumento) ||
                 "CVC".equals(tipoDocumento)) {
-            sql = "SELECT "
+            sql = "SELECT t.* " 
+                + "INTO #mostrar "
+                + "FROM "
+                + "(SELECT "
                 + "  d.ctipo_docum, d.pimpues, SUM(d.iexentas) AS texentas, "
                 + "  SUM(d.igravadas + d.impuestos) AS tgravadas, SUM(ABS(d.impuestos)) AS timpuestos  "
-                + "INTO #mostrar "
                 + "FROM compras_det d INNER JOIN compras c "
                 + "        ON d.nrofact = c.nrofact AND d.ctipo_docum = c.ctipo_docum AND d.cod_proveed = c.cod_proveed  and d.ffactur = c.ffactur "
                 + "WHERE c.cod_empr = 2 "
@@ -54,10 +56,8 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
-            stmt.execute(sql);
-
-            sql = "INSERT INTO #mostrar "
+            sql += " GROUP BY d.ctipo_docum, d.pimpues "
+                + "UNION ALL "
                 + "SELECT "
                 + "    d.ctipo_docum, d.pimpues, SUM(d.iexentas) AS texentas, "
                 + "    SUM(d.igravadas) AS tgravadas, SUM(ABS(d.impuestos)) AS timpuestos "
@@ -70,15 +70,18 @@ public class TotalesComprasFacade {
                 + "AND c.mestado = 'A' "
                 + "AND c.ctipo_docum = '" + tipoDocumento + "' "
                 + "AND c.timpuestos >= 0 ";
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
+            sql += " GROUP BY d.ctipo_docum, d.pimpues) t ";
+            System.out.println(sql);
             stmt.execute(sql);
         }
         if ("NCC".equals(tipoDocumento) || "NDC".equals(tipoDocumento)) {
-            sql = "SELECT "
+            sql = "SELECT t.* " 
+                + "INTO #mostrar "
+                + "FROM "
+                + "(SELECT "
                 + "  d.ctipo_docum, d.pimpues, SUM(d.iexentas) * -1 AS texentas, "
                 + "  SUM(d.igravadas + d.impuestos) * -1 AS tgravadas, "
                 + "  SUM(ABS(d.impuestos)) * -1 AS timpuestos "
-                + "INTO #mostrar "
                 + "FROM notas_compras_det d INNER JOIN notas_compras c "
                 + "        ON d.nro_nota = c.nro_nota AND d.ctipo_docum = c.ctipo_docum AND d.cod_proveed = c.cod_proveed AND d.fdocum = c.fdocum "
                 + "WHERE c.cod_empr = 2 "
@@ -91,9 +94,8 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
-            stmt.execute(sql);
-            sql = "INSERT INTO #mostrar "
+            sql += " GROUP BY d.ctipo_docum, d.pimpues "
+                + "UNION ALL "
                 + "SELECT "
                 + "  d.ctipo_docum, d.pimpues, SUM(d.iexentas) * -1 AS texentas, "
                 + "  SUM(d.igravadas) * -1 AS tgravadas, "
@@ -110,15 +112,18 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
+            sql += " GROUP BY d.ctipo_docum, d.pimpues) t ";
+            System.out.println(sql);
             stmt.execute(sql);
         }
         if ("".equals(tipoDocumento)) {
-            sql = "SELECT "
+            sql = "SELECT t.* " 
+                + "INTO #mostrar "
+                + "FROM "
+                + "(SELECT "
                 + "    d.ctipo_docum, d.pimpues, SUM(d.iexentas) AS texentas, "
                 + "    SUM(d.igravadas + d.impuestos) AS tgravadas, "
                 + "    SUM(ABS(d.impuestos)) AS timpuestos "
-                + "INTO #mostrar "
                 + "FROM compras_det d INNER JOIN compras c "
                 + "        ON d.nrofact = c.nrofact AND d.ctipo_docum = c.ctipo_docum AND d.cod_proveed = c.cod_proveed AND d.ffactur = c.ffactur "
                 + "WHERE d.cod_empr = 2 "
@@ -130,9 +135,8 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
-            stmt.execute(sql);
-            sql = "INSERT INTO #mostrar "
+            sql += " GROUP BY d.ctipo_docum, d.pimpues "
+                + "UNION ALL "
                 + "SELECT "
                 + "    d.ctipo_docum, d.pimpues, SUM(d.iexentas) AS texentas, "
                 + "    SUM(d.igravadas) AS tgravadas, "
@@ -148,9 +152,8 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
-            stmt.execute(sql);
-            sql = "INSERT INTO #mostrar "
+            sql += " GROUP BY d.ctipo_docum, d.pimpues "
+                + "UNION ALL "
                 + "SELECT "
                 + "    d.ctipo_docum, d.pimpues, SUM(d.iexentas) * -1  AS texentas, "
                 + "    SUM(d.igravadas + d.impuestos) * -1 AS tgravadas, "
@@ -166,9 +169,8 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
-            stmt.execute(sql);
-            sql = "INSERT INTO #mostrar "
+            sql += " GROUP BY d.ctipo_docum, d.pimpues "
+                + "UNION ALL "
                 + "SELECT "
                 + "    d.ctipo_docum, d.pimpues, SUM(d.iexentas) * -1 AS texentas, "
                 + "    SUM(d.igravadas) * -1 AS tgravadas, "
@@ -184,29 +186,32 @@ public class TotalesComprasFacade {
             if (Objects.nonNull(proveedor)) {
                 sql += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
-            sql += " GROUP BY d.ctipo_docum, d.pimpues ";
+            sql += " GROUP BY d.ctipo_docum, d.pimpues) t ";
+            System.out.println(sql);
             stmt.execute(sql);
         }
         sql = "SELECT "
-        + "    ctipo_docum, texentas, "
-        + "    CASE "
+        + "    ctipo_docum, SUM(texentas) as texentas, "
+        + "    SUM(CASE "
         + "        WHEN pimpues = 10 THEN tgravadas "
         + "        ELSE 0 "
-        + "    END as tgravadas_10, "
-        + "    CASE "
+        + "    END) as tgravadas_10, "
+        + "    SUM(CASE "
         + "        WHEN pimpues = 10 THEN timpuestos "
         + "        ELSE 0 "
-        + "    END as timpuestos_10, "
-        + "    CASE "
+        + "    END) as timpuestos_10, "
+        + "    SUM(CASE "
         + "        WHEN pimpues = 5 THEN tgravadas "
         + "        ELSE 0 "
-        + "    END as tgravadas_5, "
-        + "    CASE "
+        + "    END) as tgravadas_5, "
+        + "    SUM(CASE "
         + "        WHEN pimpues = 5 THEN timpuestos "
         + "        ELSE 0 "
-        + "    END as timpuestos_5 "
+        + "    END) as timpuestos_5 "
         + "INTO #infototdoc "
-        + "FROM #mostrar ";
+        + "FROM #mostrar "
+        + "GROUP BY ctipo_docum";
+        System.out.println(sql);
         stmt.execute(sql);
         sql = "SELECT "
             + "    i.ctipo_docum, t.xdesc as xnombre, i.texentas, "
@@ -216,6 +221,7 @@ public class TotalesComprasFacade {
             + "FROM #infototdoc i, tipos_documentos t "
             + "WHERE i.ctipo_docum = t.ctipo_docum "
             + "ORDER BY i.ctipo_docum ";
+        System.out.println(sql);
         stmt.execute(sql);
     }
 
