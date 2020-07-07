@@ -80,6 +80,7 @@ public class LiComprasBean {
             String[] columnas;
             
             String query = ""; //cursor mostrar
+            String queryTmpNum = "";
             String query2; //cursor curdet
             String query3; //cursor totdet
             String query4; //cursor infototdoc
@@ -127,20 +128,28 @@ public class LiComprasBean {
                 reporte = "RLISCOMPRAS2";
                 titulo = "FACTURAS DE COMPRA CON DETALLES";
                 
-                columnas = new String[13];
-                columnas[0] = "ctipo_docum";
-                columnas[1] = "ccanal_compra";
-                columnas[2] = "xdesc_canal";
-                columnas[3] = "nrofact";
-                columnas[4] = "ffactur";
-                columnas[5] = "xnombre";
-                columnas[6] = "xruc";
-                columnas[7] = "tgrav_10";
-                columnas[8] = "tgrav_5";
-                columnas[9] = "timp_10";
-                columnas[10] = "timp_5";
-                columnas[11] = "texentas";
-                columnas[12] = "ttotal";
+                columnas = new String[21];
+                columnas[0] = "fvenc";
+                columnas[1] = "ctipo_docum";
+                columnas[2] = "cod_proveed";
+                columnas[3] = "tgravadas";
+                columnas[4] = "ttotal";
+                columnas[5] = "timpuestos";
+                columnas[6] = "ntimbrado";
+                columnas[7] = "xdesc_docum";
+                columnas[8] = "xdesc_depo";
+                columnas[9] = "fmovim";
+                columnas[10] = "xnombre";
+                columnas[11] = "xruc";
+                columnas[12] = "ndocum";
+                columnas[13] = "xdesc_canal2";
+                columnas[14] = "ccanal_compra";
+                columnas[15] = "xdesc_canal";
+                columnas[16] = "tgravadas_10";
+                columnas[17] = "tgravadas_5";
+                columnas[18] = "timpuestos_10";
+                columnas[19] = "timpuestos_5";
+                columnas[20] = "texentas";
                 
                 query = 
                     "SELECT " +
@@ -155,13 +164,15 @@ public class LiComprasBean {
                         "AND c.cod_depo = e.cod_depo AND c.cod_empr = e.cod_empr " +
                         "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -172,7 +183,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -183,7 +194,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM  " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -197,7 +208,7 @@ public class LiComprasBean {
                         "( " + query2 + ") r " +
                     "GROUP BY " +
                         "ctipo_docum, ndocum, cod_proveed ";
-                query4 = 
+                queryReport = 
                     "SELECT " +
                         "m.*, " +
                         "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas " +
@@ -206,43 +217,33 @@ public class LiComprasBean {
                         "( " + query3 + " ) i " +
                     "WHERE " +
                         "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
-                queryReport = query4;
-                /*queryReport = 
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
-                        "ABS(timpuestos_10) AS timp_10, ABS(timpuestos_5) AS timp_5, texentas, " +
-                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 < 0 OR timpuestos_5 < 0 OR TEXENTAS > 0 " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 AS tgrav_10, tgravadas_5 AS tgrav_5, timpuestos_10 AS timp_10, Timpuestos_5 AS timp_5, " +
-                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;*/
             } else if (seleccion.equals("2")) {
                 reporte = "RLISCOMPRAS2";
-                columnas = new String[13];
-                columnas[0] = "ctipo_docum";
-                columnas[1] = "ccanal_compra";
-                columnas[2] = "xdesc_canal";            
-                columnas[3] = "nrofact";
-                columnas[4] = "ffactur";
-                columnas[5] = "xnombre";
-                columnas[6] = "xruc";
-                columnas[7] = "tgrav_10";
-                columnas[8] = "tgrav_5";
-                columnas[9] = "timp_10";
-                columnas[10] = "timp_5";
-                columnas[11] = "texentas";
-                columnas[12] = "ttotal";
+                titulo = "";
+                
+                columnas = new String[21];
+                columnas[0] = "fvenc";
+                columnas[1] = "ctipo_docum";
+                columnas[2] = "cod_proveed";
+                columnas[3] = "tgravadas";
+                columnas[4] = "ttotal";
+                columnas[5] = "timpuestos";
+                columnas[6] = "ntimbrado";
+                columnas[7] = "xdesc_docum";
+                columnas[8] = "xdesc_depo";
+                columnas[9] = "fmovim";
+                columnas[10] = "xnombre";
+                columnas[11] = "xruc";
+                columnas[12] = "ndocum";
+                columnas[13] = "xdesc_canal2";
+                columnas[14] = "ccanal_compra";
+                columnas[15] = "xdesc_canal";
+                columnas[16] = "tgravadas_10";
+                columnas[17] = "tgravadas_5";
+                columnas[18] = "timpuestos_10";
+                columnas[19] = "timpuestos_5";
+                columnas[20] = "texentas";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, " +
@@ -258,13 +259,15 @@ public class LiComprasBean {
                         "AND c.cod_depo = e.cod_depo AND c.cod_empr = e.cod_empr " +
                         "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -275,7 +278,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -286,7 +289,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -300,7 +303,7 @@ public class LiComprasBean {
                         "( " + query2 + ") r " +
                     "GROUP BY " +
                         "ctipo_docum, ndocum, cod_proveed ";
-                query4 = 
+                queryReport = 
                     "SELECT " +
                         "m.*, " +
                         "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas " +
@@ -310,30 +313,11 @@ public class LiComprasBean {
                     "WHERE " +
                         "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed "+
                     " ORDER BY m.ccanal_compra, m.fmovim, m.ndocum ";
-                queryReport = query4;
-                /*queryReport = 
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
-                        "ABS(timpuestos_10) AS timp_10, ABS(timpuestos_5) AS timp_5, texentas, " +
-                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 < 0 OR timpuestos_5 < 0 OR TEXENTAS > 0 " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 AS tgrav_10, tgravadas_5 AS tgrav_5, timpuestos_10 AS timp_10, Timpuestos_5 AS timp_5, " +
-                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;*/
             } else if (seleccion.equals("3")) {
                 reporte = "RCOMPRASDET2";
-                columnas = new String[13];
+                titulo = "";
+                
+                columnas = new String[14];
                 columnas[0] = "ctipo_docum";
                 columnas[1] = "ccanal_compra";
                 columnas[2] = "xdesc_canal";            
@@ -346,7 +330,9 @@ public class LiComprasBean {
                 columnas[9] = "timp_10";
                 columnas[10] = "timp_5";
                 columnas[11] = "texentas";
-                columnas[12] = "ttotal";               
+                columnas[12] = "ttotal";
+                columnas[13] = "norden";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, " +
@@ -370,13 +356,15 @@ public class LiComprasBean {
                         "AND pr.ctipo_vta = 'X' AND c.ffactur BETWEEN pr.frige_desde AND pr.frige_hasta " +
                         "AND d.cod_merca = m.cod_merca AND c.ffactur = d.ffactur " + 
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -387,7 +375,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -398,7 +386,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -443,28 +431,38 @@ public class LiComprasBean {
                         orderBy;
             } else if (seleccion.equals("4")) {
                 reporte = "RCOMPRASDET2B";
-                columnas = new String[21];
-                columnas[0] = "";
-                columnas[1] = "";
-                columnas[2] = "";            
-                columnas[3] = "";
-                columnas[4] = "";
-                columnas[5] = "";
-                columnas[6] = "";
-                columnas[7] = "";
-                columnas[8] = "";
-                columnas[9] = "";
-                columnas[10] = "";
-                columnas[11] = "";
-                columnas[12] = "";
-                columnas[13] = "";
-                columnas[14] = "";
-                columnas[15] = "";
-                columnas[16] = "";
-                columnas[17] = "";
-                columnas[18] = "";
-                columnas[19] = "";
-                columnas[20] = "";
+                titulo = "";
+                
+                columnas = new String[28];
+                columnas[0] = "ndocum";
+                columnas[1] = "cod_proveed";
+                columnas[2] = "xnombre";            
+                columnas[3] = "nrelacion";
+                columnas[4] = "ntimbrado";
+                columnas[5] = "ccanal_compra";
+                columnas[6] = "xdesc_canal";
+                columnas[7] = "ctipo_docum";
+                columnas[8] = "fmovim";
+                columnas[9] = "fvenc";
+                columnas[10] = "xdesc_depo";
+                columnas[11] = "cod_merca";
+                columnas[12] = "xdesc_merca";
+                columnas[13] = "cant_cajas";
+                columnas[14] = "cant_unid";
+                columnas[15] = "tgravadas_10";
+                columnas[16] = "tgravadas_5";
+                columnas[17] = "timpuestos_10";
+                columnas[18] = "texentas";
+                columnas[19] = "iprecio_ux";
+                columnas[20] = "iprecio_caja";
+                columnas[21] = "iprecio_unid";
+                columnas[22] = "xdesc_canal2";
+                columnas[23] = "timpuestos_5";
+                columnas[24] = "iexentas";
+                columnas[25] = "idif_unidad";
+                columnas[26] = "idif_caja";
+                columnas[27] = "iprecio_cx";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, d.cod_merca, " +
@@ -488,13 +486,15 @@ public class LiComprasBean {
                         "AND pr.ctipo_vta = 'X' AND c.ffactur BETWEEN pr.frige_desde AND pr.frige_hasta " +
                         "AND d.cod_merca = m.cod_merca AND c.ffactur = d.ffactur " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -505,7 +505,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -516,7 +516,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -537,7 +537,7 @@ public class LiComprasBean {
                         "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, " +
                         "i.tgravadas_10 / ((m.cant_cajas * m.nrelacion) + m.cant_unid) AS iprecio_unid, " +
                         "(i.tgravadas_10 / ((m.cant_cajas * m.nrelacion) + m.cant_unid)) * m.nrelacion AS iprecio_caja, " +
-                        "i.timpuestos_5, i.texentas " + //, i.idescuentos, i.idesc_unid " +
+                        "i.timpuestos_5, i.texentas " + 
                     "FROM " +
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
@@ -550,7 +550,7 @@ public class LiComprasBean {
                         "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, " +
                         "i.tgravadas_5 / ((m.cant_cajas * m.nrelacion) + m.cant_unid) AS iprecio_unid, " +
                         "(i.tgravadas_5 / ((m.cant_cajas * m.nrelacion) + m.cant_unid)) * m.nrelacion AS iprecio_caja, " +
-                        "i.timpuestos_5, i.texentas " +// , i.idescuentos, i.idesc_unid " +
+                        "i.timpuestos_5, i.texentas " +
                     "FROM " +
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
@@ -578,6 +578,8 @@ public class LiComprasBean {
                         + orderBy;
             } else if (seleccion.equals("5")) {
                 reporte = "RCOMPRASRES";
+                titulo = "";
+                
                 columnas = new String[14];
                 columnas[0] = "ccanal_compra";
                 columnas[1] = "xdesc_canal";
@@ -593,6 +595,7 @@ public class LiComprasBean {
                 columnas[11] = "texentas";
                 columnas[12] = "ttotal";
                 columnas[13] = "new_f";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, " +
@@ -607,13 +610,15 @@ public class LiComprasBean {
                         "AND c.cod_depo = e.cod_depo AND c.cod_empr = e.cod_empr " +
                         "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -624,7 +629,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -635,113 +640,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
-                    "WHERE " +
-                        "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
-                    "GROUP BY " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca ";
-                query3 = 
-                    "SELECT " +
-                        "ctipo_docum, ndocum, cod_proveed, ccanal_compra, nsemana, " +
-                        "SUM(texentas) AS texentas, SUM(tgravadas_5) AS tgravadas_5, SUM(tgravadas_10) AS tgravadas_10, " +
-                        "ROUND(SUM(timpuestos_5),0) AS timpuestos_5, ROUND(SUM(timpuestos_10),2) AS timpuestos_10 " +
-                    "FROM " +
-                        "( " + query2 + ") r " +
-                    "GROUP BY " +
-                        "ctipo_docum, ndocum, cod_proveed, ccanal_compra, nsemana ";
-                query4 = 
-                    "SELECT " +
-                        "m.*, " +
-                        "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas, i.mestado " +
-                    "FROM " +
-                        "( " + query + " ) m, " +
-                        "( " + query3 + " ) i " +
-                    "WHERE " +
-                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
-                query5 = 
-                    "SELECT " +
-                        "ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, " +
-                        "tgravadas_10 + timpuestos_10 AS tgravadas_10, tgravadas_5 + timpuestos_5 AS tgravadas_5, " +
-                        "ABS(timpuestos_10) AS timpuestos_10, ABS(timpuestos_5) AS timpuestos_5, texentas, " +
-                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal, " +
-                        "mestado AS new_f " +
-                    "FROM " +
-                        "( " + query4 + ") r " +
-                    "WHERE " +
-                        "timpuestos_10 < 0 OR timpuestos_5 < 0 OR texentas > 0 " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, " +
-                        "tgravadas_10 AS tgravadas_10, tgravadas_5 AS tgravadas_5, timpuestos_10 AS timpuestos_10, Timpuestos_5 AS timpuestos_5, " +
-                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal, mestado AS new_f " +
-                    "FROM " +
-                        "( " + query4 + " ) r " +
-                    "WHERE " +
-                        "timpuestos_10 > 0 OR timpuestos_5 > 0 ";
-                queryReport = 
-                    "SELECT " +
-                        "* " +
-                    "FROM " +
-                        "( " + query5 + " ) r " +
-                    orderBy;
-            } else if (seleccion.equals("6")) {
-                reporte = "RRESUDIA";
-                columnas = new String[12];
-                columnas[0] = "nrofact";
-                columnas[1] = "ffactur";
-                columnas[2] = "cod_proveed";            
-                columnas[3] = "xnombre";
-                columnas[4] = "xruc";
-                columnas[5] = "tgravadas_10";
-                columnas[6] = "tgravadas_5";
-                columnas[7] = "timpuestos_10";
-                columnas[8] = "timpuestos_5";
-                columnas[9] = "texentas";
-                columnas[10] = "ttotal";
-                //columnas[11] = "new_f";
-                query = 
-                    "SELECT " +
-                        "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, " +
-                        "t.xdesc AS xdesc_docum, e.xdesc AS xdesc_depo, c.ffactur AS fmovim, p.xnombre, p.xruc, " +
-                        "c.nrofact AS ndocum, a.xdesc AS xdesc_canal2, a.ccanal_compra AS ccanal_compra, " +
-                        "ISNULL(a.xdesc,'*') AS xdesc_canal " +
-                    "FROM " +
-                        "compras c LEFT OUTER JOIN canales_compra a ON c.cod_proveed = a.cod_proveed AND C.ccanal_compra = a.ccanal_compra, " +
-                        "depositos e, proveedores p, tipos_documentos t " +
-                    "WHERE " +
-                        "c.mestado = 'A' AND c.cod_empr = 2 AND c.ffactur BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
-                        "AND c.cod_depo = e.cod_depo AND C.cod_empr = e.cod_empr  " +
-                        "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " + 
-                        extraWhere + " ";
-                query2 = 
-                    "SELECT " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
-                        "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM " +
-                        "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
-                    "WHERE " +
-                        "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
-                    "GROUP BY " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, 0 AS tgravadas_5, ISNULL(SUM(d .igravadas), 0) AS tgravadas_10, " +
-                        "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
-                    "FROM " +
-                        "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
-                    "WHERE " +
-                        "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
-                    "GROUP BY " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
-                        "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
-                    "FROM " +
-                        "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -758,7 +657,116 @@ public class LiComprasBean {
                 query4 = 
                     "SELECT " +
                         "m.*, " +
-                        "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas, i.mestado " + 
+                        "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas " +
+                    "FROM " +
+                        "( " + query + " ) m, " +
+                        "( " + query3 + " ) i " +
+                    "WHERE " +
+                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
+                query5 = 
+                    "SELECT " +
+                        "ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, " +
+                        "tgravadas_10 + timpuestos_10 AS tgravadas_10, tgravadas_5 + timpuestos_5 AS tgravadas_5, " +
+                        "ABS(timpuestos_10) AS timpuestos_10, ABS(timpuestos_5) AS timpuestos_5, texentas, " +
+                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal " +
+                    "FROM " +
+                        "( " + query4 + ") r " +
+                    "WHERE " +
+                        "timpuestos_10 < 0 OR timpuestos_5 < 0 OR texentas > 0 " +
+                    "UNION ALL " +
+                    "SELECT " +
+                        "ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, " +
+                        "tgravadas_10 AS tgravadas_10, tgravadas_5 AS tgravadas_5, timpuestos_10 AS timpuestos_10, Timpuestos_5 AS timpuestos_5, " +
+                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal " +
+                    "FROM " +
+                        "( " + query4 + " ) r " +
+                    "WHERE " +
+                        "timpuestos_10 > 0 OR timpuestos_5 > 0 ";
+                queryReport = 
+                    "SELECT " +
+                        "* " +
+                    "FROM " +
+                        "( " + query5 + " ) r " +
+                    orderBy;
+            } else if (seleccion.equals("6")) {
+                reporte = "RRESUDIA";
+                titulo = "";
+                
+                columnas = new String[11];
+                columnas[0] = "nrofact";
+                columnas[1] = "ffactur";
+                columnas[2] = "cod_proveed";            
+                columnas[3] = "xnombre";
+                columnas[4] = "xruc";
+                columnas[5] = "tgravadas_10";
+                columnas[6] = "tgravadas_5";
+                columnas[7] = "timpuestos_10";
+                columnas[8] = "timpuestos_5";
+                columnas[9] = "texentas";
+                columnas[10] = "ttotal";
+                
+                query = 
+                    "SELECT " +
+                        "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, " +
+                        "t.xdesc AS xdesc_docum, e.xdesc AS xdesc_depo, c.ffactur AS fmovim, p.xnombre, p.xruc, " +
+                        "c.nrofact AS ndocum, a.xdesc AS xdesc_canal2, a.ccanal_compra AS ccanal_compra, " +
+                        "ISNULL(a.xdesc,'*') AS xdesc_canal " +
+                    "FROM " +
+                        "compras c LEFT OUTER JOIN canales_compra a ON c.cod_proveed = a.cod_proveed AND C.ccanal_compra = a.ccanal_compra, " +
+                        "depositos e, proveedores p, tipos_documentos t " +
+                    "WHERE " +
+                        "c.mestado = 'A' AND c.cod_empr = 2 AND c.ffactur BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
+                        "AND c.cod_depo = e.cod_depo AND C.cod_empr = e.cod_empr  " +
+                        "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " + 
+                        extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
+                query2 = 
+                    "SELECT " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
+                        "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
+                    "FROM " +
+                        "compras_det d " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
+                    "WHERE " +
+                        "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
+                    "GROUP BY " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca " +
+                    "UNION ALL " +
+                    "SELECT " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, 0 AS tgravadas_5, ISNULL(SUM(d .igravadas), 0) AS tgravadas_10, " +
+                        "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
+                    "FROM " +
+                        "compras_det d " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
+                    "WHERE " +
+                        "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
+                    "GROUP BY " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca " +
+                    "UNION ALL " +
+                    "SELECT " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, ISNULL(SUM(iexentas), 0) AS texentas, " +
+                        "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
+                    "FROM " +
+                        "compras_det d " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
+                    "WHERE " +
+                        "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
+                    "GROUP BY " +
+                        "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca ";
+                query3 = 
+                    "SELECT " +
+                        "ctipo_docum, ndocum, cod_proveed, SUM(texentas) AS texentas, " +
+                        "SUM(tgravadas_5 + timpuestos_5) AS tgravadas_5, SUM(tgravadas_10 + timpuestos_10) AS tgravadas_10, " +
+                        "ROUND(SUM(ABS(timpuestos_5)), 0) AS timpuestos_5, ROUND(SUM(ABS(timpuestos_10)), 2) AS timpuestos_10 " +
+                    "FROM " +
+                        "( " + query2 + ") r " +
+                    "GROUP BY " +
+                        "ctipo_docum, ndocum, cod_proveed ";
+                query4 = 
+                    "SELECT " +
+                        "m.*, " +
+                        "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas " + 
                     "FROM " +
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
@@ -769,7 +777,6 @@ public class LiComprasBean {
                         "ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, tgravadas_10 + timpuestos_10 AS tgravadas_10, " +
                         "tgravadas_5 + timpuestos_5 AS tgravadas_5, ABS(timpuestos_10) AS timpuestos_10, ABS(timpuestos_5) AS timpuestos_5, " +
                         "texentas, (tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal " +
-                        //"mestado AS new_f " +
                     "FROM " +
                         "( " + query4 + " ) r " +
                     "WHERE " +
@@ -778,7 +785,7 @@ public class LiComprasBean {
                     "SELECT " +
                         "ndocum AS nrofact, fmovim AS ffactur, cod_proveed, xnombre, xruc, tgravadas_10 AS tgravadas_10, " +
                         "tgravadas_5 AS tgravadas_5, timpuestos_10 AS timpuestos_10, Timpuestos_5 AS timpuestos_5, texentas, " +
-                        "tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal, mestado as new_f " +
+                        "tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal " +
                     "FROM " +
                         "( " + query4 + " ) r " +
                     "WHERE " +
@@ -791,28 +798,37 @@ public class LiComprasBean {
                     orderBy;
             } else if (seleccion.equals("7")) {
                 reporte = "rliscompras2n";
-                columnas = new String[21];
-                columnas[0] = "";
-                columnas[1] = "";
-                columnas[2] = "";            
-                columnas[3] = "";
-                columnas[4] = "";
-                columnas[5] = "";
-                columnas[6] = "";
-                columnas[7] = "";
-                columnas[8] = "";
-                columnas[9] = "";
-                columnas[10] = "";
-                columnas[11] = "";
-                columnas[12] = "";
-                columnas[13] = "";
-                columnas[14] = "";
-                columnas[15] = "";
-                columnas[16] = "";
-                columnas[17] = "";
-                columnas[18] = "";
-                columnas[19] = "";
-                columnas[20] = "";
+                titulo = "";
+                
+                columnas = new String[27];
+                columnas[0] = "fvenc";
+                columnas[1] = "ctipo_docum";
+                columnas[2] = "cod_proveed";            
+                columnas[3] = "tgravadas";
+                columnas[4] = "ttotal";
+                columnas[5] = "timpuestos";
+                columnas[6] = "ntimbrado";
+                columnas[7] = "xdesc_docum";
+                columnas[8] = "xdesc_depo";
+                columnas[9] = "fmovim";
+                columnas[10] = "xnombre";
+                columnas[11] = "xruc";
+                columnas[12] = "ndocum";
+                columnas[13] = "xdesc_canal2";
+                columnas[14] = "ccanal_compra";
+                columnas[15] = "xdesc_canal";
+                columnas[16] = "tgravadas_10";
+                columnas[17] = "tgravadas_5";
+                columnas[18] = "timpuestos_10";
+                columnas[19] = "timpuestos_5";
+                columnas[20] = "texentas";
+                columnas[21] = "nro_nota";
+                columnas[22] = "fdocum";
+                columnas[23] = "cconc";
+                columnas[24] = "ctipo_nota";
+                columnas[25] = "tnota";
+                columnas[26] = "cor";
+                
                 query = 
                     " SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, t.xdesc AS xdesc_docum, e.xdesc AS xdesc_depo, " +
@@ -826,13 +842,15 @@ public class LiComprasBean {
                         "AND c.cod_depo = e.cod_depo AND C.cod_empr = e.cod_empr " +
                         "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     " SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     " FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     " WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     " GROUP BY " +
@@ -843,7 +861,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     " FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     " WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     " GROUP BY " +
@@ -854,7 +872,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     " FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     " WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     " GROUP BY " +
@@ -912,9 +930,23 @@ public class LiComprasBean {
                             "0 AS tnota, " +
                             "1 AS cor " +
                         " FROM " +
-                            "( " + query4 + " ) c ";
-                
+                            "( " + query4 + " ) c " +
+                orderBy;
             } else if (seleccion.equals("8")) {// no reporte
+                columnas = new String[12];
+                columnas[0] = "ctipo_docum";
+                columnas[1] = "nrofact";
+                columnas[2] = "cconc";            
+                columnas[3] = "ffactur";
+                columnas[4] = "xnombre";
+                columnas[5] = "xruc";
+                columnas[6] = "tgrav_10";
+                columnas[7] = "tgrav_5";
+                columnas[8] = "timp_10";
+                columnas[9] = "timp_5";
+                columnas[10] = "texentas";
+                columnas[11] = "ttotal";
+                
                 query = 
                     "SELECT " +
                         "c.fvenc, c.ctipo_docum, c.cod_proveed, c.tgravadas, c.ttotal, c.timpuestos, c.ntimbrado, t.xdesc AS xdesc_docum, " +
@@ -928,13 +960,15 @@ public class LiComprasBean {
                         "AND c.cod_depo = e.cod_depo AND c.cod_empr = e.cod_empr " +
                         "AND c.cod_proveed = p.cod_proveed AND c.ctipo_docum = t.ctipo_docum " +
                         extraWhere + " ";
+                queryTmpNum = 
+                    "SELECT DISTINCT ctipo_docum, ndocum, cod_proveed, fmovim FROM ( " + query + " ) t ";
                 query2 = 
                     "SELECT " +
                         "t.ctipo_docum, t.ndocum, t.cod_proveed, d.cod_merca, 0 AS texentas, ISNULL(SUM(d.igravadas), 0) AS tgravadas_5, " +
                         "0 AS tgravadas_10, ISNULL(SUM(impuestos), 0) AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d.pimpues = 5 AND d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -945,7 +979,7 @@ public class LiComprasBean {
                         "0 AS timpuestos_5, ISNULL(SUM(impuestos), 0) AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim " +
                     "WHERE " +
                         "d .cod_empr = 2 AND d.pimpues = 10 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -956,7 +990,7 @@ public class LiComprasBean {
                         "0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " +
                     "FROM " +
                         "compras_det d " +
-                        "INNER JOIN tmp_numeros t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.ffactur AND d.iexentas > 0 " +
+                        "INNER JOIN ( " + queryTmpNum + " ) t ON d.nrofact = t.ndocum AND d.ctipo_docum = t.ctipo_docum AND d.cod_proveed = t.cod_proveed AND d.ffactur = t.fmovim AND d.iexentas > 0 " +
                     "WHERE " +
                         "d.cod_empr = 2 AND t.ctipo_docum IN ('FCC','CVC','COC') " +
                     "GROUP BY " +
@@ -1062,9 +1096,7 @@ public class LiComprasBean {
                     "ORDER BY 4" ;
             }
             
-            System.out.println(" - - - - - - - - - - - -");
             System.out.println("QUERY: " + queryReport);
-            System.out.println(" - - - - - - - - - - - -");
             
             if (tipo.equals("VIST")) {
                 String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
