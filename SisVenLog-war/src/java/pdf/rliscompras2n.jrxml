@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rliscompras2n" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1fa78e62-b61f-409c-ae11-9af51ef5ff46">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="0.9090909090909091"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="sql" class="java.lang.String"/>
@@ -12,378 +12,34 @@
 	<parameter name="fvtodesde" class="java.util.Date"/>
 	<parameter name="fvtohasta" class="java.util.Date"/>
 	<queryString>
-		<![CDATA[-- set venlogdb.dbo. ;
-
-IF EXISTS (
-    SELECT
-        COUNT(*)
-    FROM
-        venlogdb.dbo.notas_compras   n,
-        venlogdb.dbo.tmp_numeros     t
-    WHERE
-        n.cod_empr = 2
-        AND n.nrofact = t.ndocum
-        AND n.mestado = 'A'
-        AND n.cod_proveed = t.cod_proveed
-        AND n.ffactur = t.ffactur
-        AND n.com_ctipo_docum = t.ctipo_docum
-        AND n.ctipo_docum IN (
-            'NCC',
-            'NDP'
-        )
-) SELECT DISTINCT
-    c.*,
-    n.nro_nota,
-    n.fdocum,
-    n.cconc,
-    n.ctipo_docum   AS ctipo_nota,
-    n.ttotal        AS tnota,
-    0 AS cor
-FROM ( SELECT
-    m.*,
-    i.tgravadas_10,
-    i.tgravadas_5,
-    i.timpuestos_10,
-    i.timpuestos_5,
-    i.texentas from
-( SELECT
-    c.fvenc,
-    c.ctipo_docum,
-    c.cod_proveed,
-    c.tgravadas,
-    c.ttotal,
-    c.timpuestos,
-    c.ntimbrado,
-    t.xdesc           AS xdesc_docum,
-    e.xdesc           AS xdesc_depo,
-    c.ffactur         AS fmovim,
-    p.xnombre,
-    p.xruc,
-    c.nrofact         AS ndocum,
-    a.xdesc           AS xdesc_canal2,
-    a.ccanal_compra   AS ccanal_compra,
-    isnull(a.xdesc, '*') AS xdesc_canal
-FROM
-    venlogdb.dbo.compras            c
-    LEFT OUTER JOIN venlogdb.dbo.canales_compra     a ON c.cod_proveed = a.cod_proveed
-                                        AND c.ccanal_compra = a.ccanal_compra,
-    venlogdb.dbo.depositos          e,
-    venlogdb.dbo.proveedores        p,
-    venlogdb.dbo.tipos_documentos   t
-WHERE
-    c.mestado = 'A'
-    AND c.cod_empr = 2
-    AND c.ffactur BETWEEN '2020/07/05' AND '2020/07/05'
-    AND c.cod_depo = e.cod_depo
-    AND c.cod_empr = e.cod_empr
-    AND c.cod_proveed = p.cod_proveed
-    AND c.ctipo_docum = t.ctipo_docum
-    AND c.fvenc >= '2020/07/05'
-    AND c.fvenc <= '2020/07/05'   ) m, ( SELECT
-    ctipo_docum,
-    ndocum,
-    cod_proveed,
-    SUM(texentas) AS texentas,
-    SUM(tgravadas_5 + timpuestos_5) AS tgravadas_5,
-    SUM(tgravadas_10 + timpuestos_10) AS tgravadas_10,
-    round(SUM(abs(timpuestos_5)), 0) AS timpuestos_5,
-    round(SUM(abs(timpuestos_10)), 2) AS timpuestos_10
-FROM
-    (
-        SELECT
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca,
-            0 AS texentas,
-            isnull(SUM(d.igravadas), 0) AS tgravadas_5,
-            0 AS tgravadas_10,
-            isnull(SUM(impuestos), 0) AS timpuestos_5,
-            0 AS timpuestos_10
-        FROM
-            venlogdb.dbo.compras_det   d
-            INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                        AND d.ctipo_docum = t.ctipo_docum
-                                        AND d.cod_proveed = t.cod_proveed
-                                        AND d.ffactur = t.ffactur
-        WHERE
-            d.pimpues = 5
-            AND d.cod_empr = 2
-            AND t.ctipo_docum IN (
-                'FCC',
-                'CVC',
-                'COC'
-            )
-        GROUP BY
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca
-        UNION ALL
-        SELECT
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca,
-            0 AS texentas,
-            0 AS tgravadas_5,
-            isnull(SUM(d.igravadas), 0) AS tgravadas_10,
-            0 AS timpuestos_5,
-            isnull(SUM(impuestos), 0) AS timpuestos_10
-        FROM
-            venlogdb.dbo.compras_det   d
-            INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                        AND d.ctipo_docum = t.ctipo_docum
-                                        AND d.cod_proveed = t.cod_proveed
-                                        AND d.ffactur = t.ffactur
-        WHERE
-            d.cod_empr = 2
-            AND d.pimpues = 10
-            AND t.ctipo_docum IN (
-                'FCC',
-                'CVC',
-                'COC'
-            )
-        GROUP BY
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca
-        UNION ALL
-        SELECT
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca,
-            isnull(SUM(iexentas), 0) AS texentas,
-            0 AS tgravadas_5,
-            0 AS tgravadas_10,
-            0 AS timpuestos_5,
-            0 AS timpuestos_10
-        FROM
-            venlogdb.dbo.compras_det   d
-            INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                        AND d.ctipo_docum = t.ctipo_docum
-                                        AND d.cod_proveed = t.cod_proveed
-                                        AND d.ffactur = t.ffactur
-                                        AND d.iexentas > 0
-        WHERE
-            d.cod_empr = 2
-            AND t.ctipo_docum IN (
-                'FCC',
-                'CVC',
-                'COC'
-            )
-        GROUP BY
-            t.ctipo_docum,
-            t.ndocum,
-            t.cod_proveed,
-            d.cod_merca
-    ) r
-GROUP BY
-    ctipo_docum,
-    ndocum,
-    cod_proveed  ) i WHERE m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed  ) c left outer JOIN ( SELECT
-    n.nrofact,
-    n.com_ctipo_docum,
-    n.nro_nota,
-    n.cconc,
-    n.fdocum,
-    n.cod_proveed,
-    n.ctipo_docum,
-    n.ttotal
-FROM
-    venlogdb.dbo.notas_compras   n,
-    venlogdb.dbo.tmp_numeros     t
-WHERE
-    n.cod_empr = 2
-    AND n.nrofact = t.ndocum
-    AND n.mestado = 'A'
-    AND n.cod_proveed = t.cod_proveed
-    AND n.ffactur = t.ffactur
-    AND n.com_ctipo_docum = t.ctipo_docum
-    AND n.ctipo_docum IN (
-        'NCC',
-        'NDP'
-    )  ) n ON c.ndocum = n.nrofact AND c.cod_proveed = n.cod_proveed AND c.ctipo_docum = n.com_ctipo_docum ELSE
-    SELECT c.*, 0 AS nro_nota, '' AS fdocum, '' AS cconc, '' AS ctipo_nota, 0 AS tnota, 1 AS cor
-    FROM ( SELECT m.*,
-i.tgravadas_10,
-i.tgravadas_5,
-i.timpuestos_10,
-i.timpuestos_5,
-i.texentas from (
-    SELECT
-        c.fvenc,
-        c.ctipo_docum,
-        c.cod_proveed,
-        c.tgravadas,
-        c.ttotal,
-        c.timpuestos,
-        c.ntimbrado,
-        t.xdesc           AS xdesc_docum,
-        e.xdesc           AS xdesc_depo,
-        c.ffactur         AS fmovim,
-        p.xnombre,
-        p.xruc,
-        c.nrofact         AS ndocum,
-        a.xdesc           AS xdesc_canal2,
-        a.ccanal_compra   AS ccanal_compra,
-        isnull(a.xdesc, '*') AS xdesc_canal
-    FROM
-        venlogdb.dbo.compras            c
-        LEFT OUTER JOIN venlogdb.dbo.canales_compra     a ON c.cod_proveed = a.cod_proveed
-                                            AND c.ccanal_compra = a.ccanal_compra,
-        venlogdb.dbo.depositos          e,
-        venlogdb.dbo.proveedores        p,
-        venlogdb.dbo.tipos_documentos   t
-    WHERE
-        c.mestado = 'A'
-        AND c.cod_empr = 2
-            AND c.ffactur BETWEEN '2020/07/05' AND '2020/07/05'
-                AND c.cod_depo = e.cod_depo
-                    AND c.cod_empr = e.cod_empr
-                        AND c.cod_proveed = p.cod_proveed
-                            AND c.ctipo_docum = t.ctipo_docum
-                                AND c.fvenc >= '2020/07/05'
-                                    AND c.fvenc <= '2020/07/05'
-) m,
-(
-    SELECT
-        ctipo_docum,
-        ndocum,
-        cod_proveed,
-        SUM(texentas) AS texentas,
-        SUM(tgravadas_5 + timpuestos_5) AS tgravadas_5,
-        SUM(tgravadas_10 + timpuestos_10) AS tgravadas_10,
-        round(SUM(abs(timpuestos_5)), 0) AS timpuestos_5,
-        round(SUM(abs(timpuestos_10)), 2) AS timpuestos_10
-    FROM
-        (
-            SELECT
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca,
-                0 AS texentas,
-                isnull(SUM(d.igravadas), 0) AS tgravadas_5,
-                0 AS tgravadas_10,
-                isnull(SUM(impuestos), 0) AS timpuestos_5,
-                0 AS timpuestos_10
-            FROM
-                venlogdb.dbo.compras_det   d
-                INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                            AND d.ctipo_docum = t.ctipo_docum
-                                                AND d.cod_proveed = t.cod_proveed
-                                                    AND d.ffactur = t.ffactur
-            WHERE
-                d.pimpues = 5
-                AND d.cod_empr = 2
-                    AND t.ctipo_docum IN (
-                    'FCC',
-                    'CVC',
-                    'COC'
-                )
-            GROUP BY
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca
-            UNION ALL
-            SELECT
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca,
-                0 AS texentas,
-                0 AS tgravadas_5,
-                isnull(SUM(d.igravadas), 0) AS tgravadas_10,
-                0 AS timpuestos_5,
-                isnull(SUM(impuestos), 0) AS timpuestos_10
-            FROM
-                venlogdb.dbo.compras_det   d
-                INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                            AND d.ctipo_docum = t.ctipo_docum
-                                                AND d.cod_proveed = t.cod_proveed
-                                                    AND d.ffactur = t.ffactur
-            WHERE
-                d.cod_empr = 2
-                AND d.pimpues = 10
-                    AND t.ctipo_docum IN (
-                    'FCC',
-                    'CVC',
-                    'COC'
-                )
-            GROUP BY
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca
-            UNION ALL
-            SELECT
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca,
-                isnull(SUM(iexentas), 0) AS texentas,
-                0 AS tgravadas_5,
-                0 AS tgravadas_10,
-                0 AS timpuestos_5,
-                0 AS timpuestos_10
-            FROM
-                venlogdb.dbo.compras_det   d
-                INNER JOIN venlogdb.dbo.tmp_numeros   t ON d.nrofact = t.ndocum
-                                            AND d.ctipo_docum = t.ctipo_docum
-                                                AND d.cod_proveed = t.cod_proveed
-                                                    AND d.ffactur = t.ffactur
-                                                        AND d.iexentas > 0
-            WHERE
-                d.cod_empr = 2
-                AND t.ctipo_docum IN (
-                    'FCC',
-                    'CVC',
-                    'COC'
-                )
-            GROUP BY
-                t.ctipo_docum,
-                t.ndocum,
-                t.cod_proveed,
-                d.cod_merca
-        ) r
-    GROUP BY
-        ctipo_docum,
-        ndocum,
-        cod_proveed
-) i WHERE m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum
-                                  AND m.cod_proveed = i.cod_proveed ) c
-]]>
+		<![CDATA[$P!{sql}]]>
 	</queryString>
 	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="cod_proveed" class="java.lang.Short"/>
-	<field name="fvenc" class="java.sql.Timestamp"/>
+	<field name="fvenc" class="java.util.Date"/>
 	<field name="tgravadas" class="java.math.BigDecimal"/>
 	<field name="ttotal" class="java.math.BigDecimal"/>
 	<field name="timpuestos" class="java.math.BigDecimal"/>
 	<field name="ntimbrado" class="java.math.BigDecimal"/>
 	<field name="xdesc_docum" class="java.lang.String"/>
 	<field name="xdesc_depo" class="java.lang.String"/>
-	<field name="fmovim" class="java.sql.Timestamp"/>
+	<field name="fmovim" class="java.util.Date"/>
 	<field name="xnombre" class="java.lang.String"/>
 	<field name="xruc" class="java.lang.String"/>
 	<field name="ndocum" class="java.math.BigDecimal"/>
 	<field name="xdesc_canal2" class="java.lang.String"/>
 	<field name="ccanal_compra" class="java.lang.String"/>
 	<field name="xdesc_canal" class="java.lang.String"/>
-	<field name="tgravadas_10" class="java.math.BigDecimal"/>
-	<field name="tgravadas_5" class="java.math.BigDecimal"/>
-	<field name="timpuestos_10" class="java.math.BigDecimal"/>
-	<field name="timpuestos_5" class="java.math.BigDecimal"/>
-	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="tgravadas_10" class="java.lang.Long"/>
+	<field name="tgravadas_5" class="java.lang.Long"/>
+	<field name="timpuestos_10" class="java.lang.Long"/>
+	<field name="timpuestos_5" class="java.lang.Long"/>
+	<field name="texentas" class="java.lang.Long"/>
 	<field name="nro_nota" class="java.math.BigDecimal"/>
-	<field name="fdocum" class="java.sql.Timestamp"/>
+	<field name="fdocum" class="java.util.Date"/>
 	<field name="cconc" class="java.lang.String"/>
 	<field name="ctipo_nota" class="java.lang.String"/>
-	<field name="tnota" class="java.math.BigDecimal"/>
+	<field name="tnota" class="java.lang.Double"/>
 	<field name="cor" class="java.lang.Integer"/>
 	<variable name="xdesc_canal_1" class="java.lang.Integer" resetType="Group" resetGroup="group_canal" calculation="Count">
 		<variableExpression><![CDATA[$F{xdesc_canal}]]></variableExpression>
@@ -406,107 +62,140 @@ i.texentas from (
 	<variable name="tgravadas_5_1" class="java.lang.Long" resetType="Group" resetGroup="group_docu" calculation="Sum">
 		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
 	</variable>
-	<variable name="ttotal_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_docu" calculation="Sum">
+	<variable name="ttotal_1" class="java.lang.Long" resetType="Group" resetGroup="group_docu" calculation="Sum">
 		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
 	</variable>
-	<variable name="texentas_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_canal" calculation="Sum">
+	<variable name="texentas_2" class="java.lang.Long" resetType="Group" resetGroup="group_canal" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
-	<variable name="timpuestos_10_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_canal" calculation="Sum">
+	<variable name="timpuestos_10_2" class="java.lang.Long" resetType="Group" resetGroup="group_canal" calculation="Sum">
 		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
 	</variable>
-	<variable name="timpuestos_5_3" class="java.math.BigDecimal" resetType="Group" resetGroup="group_canal" calculation="Sum">
+	<variable name="timpuestos_5_3" class="java.lang.Long" resetType="Group" resetGroup="group_canal" calculation="Sum">
 		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
 	</variable>
-	<variable name="ttotal_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_canal" calculation="Sum">
+	<variable name="ttotal_2" class="java.lang.Long" resetType="Group" resetGroup="group_canal" calculation="Sum">
 		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
 	</variable>
-	<variable name="texentas_3" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="texentas_3" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
-	<variable name="tgravadas_10_2" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="tgravadas_10_2" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
 	</variable>
-	<variable name="tgravadas_5_2" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="tgravadas_5_2" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
 	</variable>
-	<variable name="timpuestos_10_3" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="timpuestos_10_3" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
 	</variable>
-	<variable name="timpuestos_5_4" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="timpuestos_5_4" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
 	</variable>
-	<variable name="ttotal_3" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="ttotal_3" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
 	</variable>
 	<group name="group_canal">
 		<groupExpression><![CDATA[$F{ccanal_compra}]]></groupExpression>
 		<groupHeader>
-			<band height="30">
-				<textField>
-					<reportElement x="0" y="0" width="22" height="20" uuid="48c025f3-f325-4789-908f-466631a29eae"/>
+			<band height="21">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="25" height="20" uuid="48c025f3-f325-4789-908f-466631a29eae"/>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{ccanal_compra}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="group_canal">
-					<reportElement x="22" y="0" width="162" height="20" uuid="67a9a678-91d7-4625-af60-475972d919f2"/>
-					<textFieldExpression><![CDATA[$V{xdesc_canal_1}]]></textFieldExpression>
+				<textField>
+					<reportElement x="25" y="0" width="187" height="20" uuid="c6b24944-baf9-4ea1-9d99-c76fc4d9a806"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{xdesc_canal}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="20">
 				<staticText>
-					<reportElement x="37" y="0" width="169" height="20" uuid="f697bb12-1eff-49e5-9672-5f11bb8f892f"/>
+					<reportElement x="89" y="0" width="169" height="20" uuid="f697bb12-1eff-49e5-9672-5f11bb8f892f"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOTAL CANAL]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="206" y="0" width="167" height="20" uuid="99d41fce-06aa-4fa7-a5d2-7a7c9e8026e7"/>
+					<reportElement x="258" y="0" width="149" height="20" uuid="99d41fce-06aa-4fa7-a5d2-7a7c9e8026e7"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textFieldExpression><![CDATA[$F{xdesc_canal}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="425" y="0" width="55" height="20" uuid="28777c5b-7e38-4bd4-8b68-e94d737fa442"/>
+					<reportElement x="407" y="0" width="45" height="20" uuid="28777c5b-7e38-4bd4-8b68-e94d737fa442"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{texentas_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="480" y="0" width="55" height="20" uuid="283daa6b-b162-42df-9ee0-580510873b55"/>
+					<reportElement x="452" y="0" width="52" height="20" uuid="283daa6b-b162-42df-9ee0-580510873b55"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tgravadas_10}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="535" y="0" width="55" height="20" uuid="3ded11ee-a0c1-480f-8d64-f3e34df305e8"/>
+					<reportElement x="504" y="0" width="52" height="20" uuid="3ded11ee-a0c1-480f-8d64-f3e34df305e8"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tgravadas_5}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="590" y="0" width="55" height="20" uuid="c5fd5b14-b174-41a8-be35-5a51011304c8"/>
+					<reportElement x="556" y="0" width="50" height="20" uuid="c5fd5b14-b174-41a8-be35-5a51011304c8"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{timpuestos_10_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="645" y="0" width="55" height="20" uuid="2d226e7d-5eff-4ae1-89a4-490f84fc9f58"/>
+					<reportElement x="606" y="0" width="50" height="20" uuid="2d226e7d-5eff-4ae1-89a4-490f84fc9f58"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{timpuestos_5_3}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="742" y="0" width="55" height="20" uuid="c3bb3031-8315-40c7-9019-e0b1c1a75fd8"/>
+					<reportElement x="708" y="0" width="52" height="20" uuid="c3bb3031-8315-40c7-9019-e0b1c1a75fd8"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ttotal_2}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
+					<reportElement x="760" y="0" width="52" height="20" uuid="87c94b48-8726-4901-b622-edd9e3897401"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new Long($V{timpuestos_10_2} + $V{timpuestos_5_3})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -518,75 +207,103 @@ i.texentas from (
 		<groupExpression><![CDATA[$F{ndocum}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
-				<textField>
+				<textField pattern="dd/MM/yyyy">
 					<reportElement x="0" y="0" width="50" height="20" uuid="1d1e89b7-2ef1-4d05-8dc0-edba9810bf65"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{fmovim}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="50" y="0" width="20" height="20" uuid="ffc7db1a-7c9a-441b-b7f0-9d995ce94066"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{ctipo_docum}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="70" y="0" width="62" height="20" uuid="157cd152-f236-43d4-a7af-d3105544ac62"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{ndocum}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="132" y="0" width="80" height="20" uuid="8b360664-608b-4d15-8e47-9af83cc79f85"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="212" y="0" width="75" height="20" uuid="99f20b4d-10c5-4d61-a233-84757299232e"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_canal}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="287" y="0" width="75" height="20" uuid="d6dd9412-b3c2-4c4c-a7df-82136b634ef6"/>
+					<reportElement x="287" y="0" width="70" height="20" uuid="d6dd9412-b3c2-4c4c-a7df-82136b634ef6"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_depo}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="362" y="0" width="50" height="20" uuid="b0ef6128-f29c-4dcb-a264-e4cb694c66e5"/>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="357" y="0" width="50" height="20" uuid="b0ef6128-f29c-4dcb-a264-e4cb694c66e5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{fvenc}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="412" y="0" width="55" height="20" uuid="e4db7694-9e86-4a58-a4e3-612ec1ccee1a"/>
+					<reportElement x="407" y="0" width="45" height="20" uuid="e4db7694-9e86-4a58-a4e3-612ec1ccee1a"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{texentas_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="577" y="0" width="55" height="20" uuid="03f58818-83b1-4112-b750-ee41bb6c4459"/>
+					<reportElement x="556" y="0" width="50" height="20" uuid="03f58818-83b1-4112-b750-ee41bb6c4459"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{timpuestos_10_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="467" y="0" width="55" height="20" uuid="a9fb23e4-b0bf-4936-89ff-efe9084b7220"/>
+					<reportElement x="452" y="0" width="52" height="20" uuid="a9fb23e4-b0bf-4936-89ff-efe9084b7220"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tgravadas_10_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="632" y="0" width="55" height="20" uuid="ad3879e2-c6f1-4352-b053-49f1a3580128"/>
+					<reportElement x="606" y="0" width="50" height="20" uuid="ad3879e2-c6f1-4352-b053-49f1a3580128"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{timpuestos_5_2}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="522" y="0" width="55" height="20" uuid="7b15282a-b160-4d99-a8e2-03498d83337b"/>
+					<reportElement x="504" y="0" width="52" height="20" uuid="7b15282a-b160-4d99-a8e2-03498d83337b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tgravadas_5_1}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
-					<reportElement x="742" y="0" width="55" height="20" uuid="83bc6b8f-19f9-47a7-9e6c-c2038f867c43"/>
+					<reportElement x="708" y="0" width="52" height="20" uuid="83bc6b8f-19f9-47a7-9e6c-c2038f867c43"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<paragraph rightIndent="2"/>
+						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{ttotal_1}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
+					<reportElement x="760" y="0" width="52" height="20" uuid="b1ee4c5f-269f-4719-a965-0fac62f38b0c"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new Long($V{timpuestos_10_1} + $V{timpuestos_5_1})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -598,8 +315,8 @@ i.texentas from (
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="78" splitType="Stretch">
-			<textField pattern="dd/MM/yyyy">
+		<band height="83" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="273" y="64" width="109" height="14" uuid="73b4938d-af5c-42c0-85ca-3c04481e5d58"/>
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="5"/>
@@ -689,7 +406,7 @@ i.texentas from (
 				</textElement>
 				<text><![CDATA[Fecha Hasta:]]></text>
 			</staticText>
-			<textField pattern="dd/MM/yyyy">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="516" y="64" width="110" height="14" uuid="63a5fd01-082d-4262-bb5b-a5ceac55cca6"/>
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="5"/>
@@ -701,7 +418,7 @@ i.texentas from (
 	<columnHeader>
 		<band height="28" splitType="Stretch">
 			<staticText>
-				<reportElement x="522" y="0" width="55" height="28" uuid="61671f5f-2f9f-46c0-91c7-3943fd308012"/>
+				<reportElement x="504" y="0" width="52" height="28" uuid="61671f5f-2f9f-46c0-91c7-3943fd308012"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -713,7 +430,7 @@ i.texentas from (
 				<text><![CDATA[GRAVADAS 5%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="467" y="0" width="55" height="28" uuid="afbd45d3-8278-4338-a81c-bf288c0fc5f2"/>
+				<reportElement x="452" y="0" width="52" height="28" uuid="afbd45d3-8278-4338-a81c-bf288c0fc5f2"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -725,61 +442,61 @@ i.texentas from (
 				<text><![CDATA[GRAVADAS 10%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="742" y="0" width="55" height="28" uuid="4e36c08f-0324-4938-8637-9923eba32546"/>
+				<reportElement x="708" y="0" width="52" height="28" uuid="4e36c08f-0324-4938-8637-9923eba32546"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[TOTAL EN FACTURA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="287" y="0" width="75" height="28" uuid="95a11a70-a7c0-4ea8-b715-0578b0272a4f"/>
+				<reportElement x="287" y="0" width="70" height="28" uuid="95a11a70-a7c0-4ea8-b715-0578b0272a4f"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[DEPOSITO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="687" y="0" width="55" height="28" uuid="5a94a643-cd16-43af-b47f-1041ab0cd689"/>
+				<reportElement x="656" y="0" width="52" height="28" uuid="5a94a643-cd16-43af-b47f-1041ab0cd689"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="632" y="0" width="55" height="28" uuid="9889ea47-e454-4e04-b4d3-10c6454e1c7f"/>
+				<reportElement x="606" y="0" width="50" height="28" uuid="9889ea47-e454-4e04-b4d3-10c6454e1c7f"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA 5%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="577" y="0" width="55" height="28" uuid="8fdb1cdd-9f0a-4372-8359-46c322a9191e"/>
+				<reportElement x="556" y="0" width="50" height="28" uuid="8fdb1cdd-9f0a-4372-8359-46c322a9191e"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA  10 %]]></text>
@@ -790,8 +507,8 @@ i.texentas from (
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[FCH FACT]]></text>
@@ -802,8 +519,8 @@ i.texentas from (
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[FACTURA]]></text>
@@ -814,8 +531,8 @@ i.texentas from (
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[PROVEEDOR]]></text>
@@ -826,58 +543,86 @@ i.texentas from (
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[CANAL COMPRA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="362" y="0" width="50" height="28" uuid="b1e591b6-7a20-4233-988b-c1e8c561177c"/>
+				<reportElement x="357" y="0" width="50" height="28" uuid="b1e591b6-7a20-4233-988b-c1e8c561177c"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[FCHVTO.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="412" y="0" width="55" height="28" uuid="bb73b13f-3536-47a0-86a1-42c3c2b6b731"/>
+				<reportElement x="407" y="0" width="45" height="28" uuid="bb73b13f-3536-47a0-86a1-42c3c2b6b731"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[EXENTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="760" y="0" width="52" height="28" uuid="f5da1fc1-76c9-47ad-9376-8922c1e6912d"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[TOTAL IVA]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
+			<printWhenExpression><![CDATA[$F{ctipo_nota} != null]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="50" height="20" uuid="5ea1388a-dc0b-412a-8779-2c4fb058e28a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{ctipo_nota}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="50" y="0" width="82" height="20" uuid="a23cb39e-2cec-43ab-8b22-7eda56398fbb"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{nro_nota}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="132" y="0" width="80" height="20" uuid="8287d119-ef4d-4e27-ac4e-db1873548a8c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{cconc}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="212" y="0" width="61" height="20" uuid="3e1237d5-a4f1-4651-8bd5-d4c579e00b6f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{fdocum}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.0000" isBlankWhenNull="true">
 				<reportElement x="273" y="0" width="100" height="20" uuid="2996531b-6538-4cb1-aa68-1bab0130cfa0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{tnota}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -937,53 +682,81 @@ i.texentas from (
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="124" y="0" width="288" height="20" uuid="c71531ea-0f98-421a-a659-0679cdd90439"/>
+				<reportElement x="89" y="0" width="163" height="20" uuid="c71531ea-0f98-421a-a659-0679cdd90439"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL ACUMULADO]]></text>
 			</staticText>
 			<textField pattern="#,##0">
-				<reportElement x="425" y="0" width="55" height="20" uuid="cbf907ac-3826-4ee1-b59e-f3ac9fca9fac"/>
+				<reportElement x="407" y="0" width="45" height="20" uuid="cbf907ac-3826-4ee1-b59e-f3ac9fca9fac"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{texentas_3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="480" y="0" width="55" height="20" uuid="f7d0ab5e-8d58-4bb2-93f4-d8a3bbfaa5a9"/>
+				<reportElement x="452" y="0" width="52" height="20" uuid="f7d0ab5e-8d58-4bb2-93f4-d8a3bbfaa5a9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{tgravadas_10_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="535" y="0" width="55" height="20" uuid="5437858d-8d09-4529-9720-a0930b8799c9"/>
+				<reportElement x="504" y="0" width="52" height="20" uuid="5437858d-8d09-4529-9720-a0930b8799c9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{tgravadas_5_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="590" y="0" width="55" height="20" uuid="b1b52ee4-c387-4c5e-967f-4cbdb7ab1c74"/>
+				<reportElement x="556" y="0" width="50" height="20" uuid="b1b52ee4-c387-4c5e-967f-4cbdb7ab1c74"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{timpuestos_10_3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="645" y="0" width="55" height="20" uuid="937edbde-3c55-40ac-abbb-c8054019b874"/>
+				<reportElement x="606" y="0" width="50" height="20" uuid="937edbde-3c55-40ac-abbb-c8054019b874"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{timpuestos_5_4}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="742" y="0" width="55" height="20" uuid="d800629c-218a-4206-b8b4-489b4e99c655"/>
+				<reportElement x="708" y="0" width="52" height="20" uuid="d800629c-218a-4206-b8b4-489b4e99c655"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<paragraph rightIndent="2"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttotal_3}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Group" evaluationGroup="group_docu" pattern="#,##0">
+				<reportElement x="760" y="0" width="52" height="20" uuid="fd469ab6-9003-480a-b5fc-98f4128e021b"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Long($V{timpuestos_10_3} + $V{timpuestos_5_4})]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

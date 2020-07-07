@@ -57,7 +57,7 @@ public class LiComprasBean {
         this.facturacionHasta = new Date();
         this.vencimientoDesde = new Date();
         this.vencimientoHasta = new Date();
-        this.listaTiposFactura = tipoFacturaFacade.listarTipoDocumentoFactura();
+        this.listaTiposFactura = tipoFacturaFacade.listarTipoDocumentoParaConsultaDeCompras();
         this.listaCanales = canalFacade.listarCanalesOrdenadoXDesc();
         this.listaProveedores = proveedoresFacade.getProveedoresActivos();
     }
@@ -77,7 +77,7 @@ public class LiComprasBean {
             
             String titulo = "";
             String reporte = "";
-            String[] columnas;
+            String[] columnas = null;
             
             String query = ""; //cursor mostrar
             String queryTmpNum = "";
@@ -91,7 +91,7 @@ public class LiComprasBean {
             String extraWhere = "";
             
             if (proveedor != null){
-                extraWhere += "AND m.cod_proveed = " + proveedor.getCodProveed() + " ";
+                extraWhere += "AND c.cod_proveed = " + proveedor.getCodProveed() + " ";
             }       
             if (fVencimientoDesde != null) { 
                 extraWhere += "AND c.fvenc >= '" + fVencimientoDesde + "' ";
@@ -100,10 +100,10 @@ public class LiComprasBean {
                 extraWhere += "AND c.fvenc <= '" + fVencimientoHasta + "' ";
             }
             if (canal != null){
-                extraWhere += "AND mc.cod_canal = " + canal.getCodCanal() + " ";
+                extraWhere += "AND c.ccanal_compra = '" + canal.getCodCanal() + "' ";
             }
             if (tipoFactura != null){
-                extraWhere += "AND c.ctipo_docum = " + tipoFactura.getCtipoDocum() + " ";
+                extraWhere += "AND c.ctipo_docum = '" + tipoFactura.getCtipoDocum() + "' ";
             }
             
             if (seleccion.equals("1")) {
@@ -933,6 +933,7 @@ public class LiComprasBean {
                             "( " + query4 + " ) c " +
                 orderBy;
             } else if (seleccion.equals("8")) {// no reporte
+                reporte = "librocom";
                 columnas = new String[12];
                 columnas[0] = "ctipo_docum";
                 columnas[1] = "nrofact";
@@ -1098,12 +1099,14 @@ public class LiComprasBean {
             
             System.out.println("QUERY: " + queryReport);
             
-            if (tipo.equals("VIST")) {
+            if (tipo.equals("VIST") && !seleccion.equals("8") ) {
                 String usuImprime = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                 Map param = new HashMap();
                 param.put("sql", queryReport);
-                param.put("fdesde", fFacturacionDesde);
-                param.put("fhasta", fFacturacionHasta);
+                param.put("fdesde", facturacionDesde);
+                param.put("fhasta", facturacionHasta);
+                param.put("fvtodesde", vencimientoDesde);
+                param.put("fvtohasta", vencimientoHasta);
                 param.put("titulo", titulo);
                 param.put("usuImprime", usuImprime);
                 param.put("nombreRepo", reporte); 
@@ -1121,7 +1124,7 @@ public class LiComprasBean {
             } else {
                 List<Object[]> lista = new ArrayList<Object[]>();
                 lista = excelFacade.listarParaExcel(query);
-                //rep.exportarExcel(columnas, lista, reporte);
+                rep.exportarExcel(columnas, lista, reporte);
             }
             
         } catch (ParseException e) {
