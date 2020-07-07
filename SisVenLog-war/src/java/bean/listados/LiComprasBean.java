@@ -1123,7 +1123,7 @@ public class LiComprasBean {
                 rep.reporteLiContClientes(param, tipo, reporte);
             } else {
                 List<Object[]> lista = new ArrayList<Object[]>();
-                lista = excelFacade.listarParaExcel(query);
+                lista = excelFacade.listarParaExcel(queryReport);
                 rep.exportarExcel(columnas, lista, reporte);
             }
             
