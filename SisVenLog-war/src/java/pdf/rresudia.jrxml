@@ -110,6 +110,9 @@
 				</staticText>
 				<textField pattern="#,##0">
 					<reportElement x="306" y="0" width="62" height="20" uuid="9f366ce3-a786-41c8-ab7d-e2828df8433c"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -117,6 +120,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="368" y="0" width="62" height="20" uuid="3144ee76-9da1-45fb-85ed-830b2206ab63"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -124,6 +130,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="430" y="0" width="62" height="20" uuid="e000395d-13e6-45a5-8653-c74094778c28"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -131,6 +140,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="492" y="0" width="62" height="20" uuid="54205f16-36b2-4b12-958a-24ef4e22b2eb"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -138,6 +150,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="554" y="0" width="62" height="20" uuid="14d96fa3-0fa7-4311-bd57-fef86e18f102"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -145,6 +160,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="678" y="0" width="62" height="20" uuid="d1485fe4-2507-44c9-9fd7-89a53834d362"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -152,6 +170,9 @@
 				</textField>
 				<textField pattern="#,##0">
 					<reportElement x="740" y="0" width="62" height="20" uuid="f1623bba-14d8-4cce-8b91-20a992be2bc0"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -502,6 +523,9 @@
 			</staticText>
 			<textField pattern="#,##0">
 				<reportElement x="306" y="0" width="62" height="20" uuid="0eeac08a-d90c-4d3c-8aa4-ceb1115911eb"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -509,6 +533,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="368" y="0" width="62" height="20" uuid="4a8a4a29-1b01-4284-8084-acbbd0ec4c75"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -516,6 +543,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="430" y="0" width="62" height="20" uuid="416f1a4a-46d8-4dad-bbad-942dceb159b9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -523,6 +553,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="492" y="0" width="62" height="20" uuid="2be01146-7c98-4d92-ac82-18dfb769011c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -530,6 +563,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="554" y="0" width="62" height="20" uuid="a6407340-deda-4e1a-90f5-08cc0e5ad799"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -537,6 +573,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="678" y="0" width="62" height="20" uuid="6effad6c-97e2-4c71-b18e-4233665d83a2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -544,6 +583,9 @@
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="740" y="0" width="62" height="20" uuid="163576f5-02ab-4be6-a851-1c7c02e67035"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>

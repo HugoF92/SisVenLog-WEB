@@ -19,16 +19,16 @@
                                 <p:panel id="pnlParamLiClientes" header="LISTADO DE FACTURAS DE COMPRAS" style="width: 70%;">                                       
                                     <h:panelGrid columns="2" >
                                     
-                                        <p:outputLabel value="Facturación: Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Factura Desde:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liFacturacionDesde" value="#{liComprasBean.facturacionDesde}" showOn="button" style="width: 60px;" locale="es"/>
                                         
-                                        <p:outputLabel value="Facturación: Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Factura Hasta:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liFacturacionHasta" value="#{liComprasBean.facturacionHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{liComprasBean.facturacionDesde}"/>
                                         
-                                        <p:outputLabel value="Vencimiento: Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Vencimiento Desde:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liVencimientoDesde" value="#{liComprasBean.vencimientoDesde}" showOn="button" style="width: 60px;" locale="es"/>
                                         
-                                        <p:outputLabel value="Vencimiento: Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:outputLabel value="Fecha Vencimiento Hasta:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liVencimientoHasta" value="#{liComprasBean.vencimientoHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{liComprasBean.vencimientoDesde}"/>
                                         
                                         <p:outputLabel value="Proveedor" style="float: right; font-weight: bold;" />                                        

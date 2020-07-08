@@ -392,7 +392,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{texentas_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
@@ -400,7 +402,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{tgravadas_10_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
@@ -408,7 +412,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{tgravadas_5_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
@@ -416,7 +422,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{timpuestos_10_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
@@ -424,7 +432,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{timpuestos_5_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
@@ -432,7 +442,9 @@
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{ttotal_2}]]></textFieldExpression>
 			</textField>
 		</band>
