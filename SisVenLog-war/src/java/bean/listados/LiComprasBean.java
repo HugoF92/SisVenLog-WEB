@@ -219,7 +219,7 @@ public class LiComprasBean {
                         "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed ";
             } else if (seleccion.equals("2")) {
                 reporte = "RLISCOMPRAS2";
-                titulo = "";
+                titulo = "LISTADO DE FACTURAS DE COMPRA";
                 
                 columnas = new String[21];
                 columnas[0] = "fvenc";
@@ -315,7 +315,7 @@ public class LiComprasBean {
                     " ORDER BY m.ccanal_compra, m.fmovim, m.ndocum ";
             } else if (seleccion.equals("3")) {
                 reporte = "RCOMPRASDET2";
-                titulo = "";
+                titulo = "FACTURA DE COMPRA CON DETALLES";
                 
                 columnas = new String[14];
                 columnas[0] = "ctipo_docum";
@@ -431,7 +431,7 @@ public class LiComprasBean {
                         orderBy;
             } else if (seleccion.equals("4")) {
                 reporte = "RCOMPRASDET2B";
-                titulo = "";
+                titulo = "DIFERENCIAS DE PRECIOS EN FACTURAS DE COMPRA";
                 
                 columnas = new String[28];
                 columnas[0] = "ndocum";
@@ -578,7 +578,7 @@ public class LiComprasBean {
                         + orderBy;
             } else if (seleccion.equals("5")) {
                 reporte = "RCOMPRASRES";
-                titulo = "";
+                titulo = "RESUMEN DE FACTURAS DE COMPRA";
                 
                 columnas = new String[13];
                 columnas[0] = "ccanal_compra";
@@ -689,7 +689,7 @@ public class LiComprasBean {
                     orderBy;
             } else if (seleccion.equals("6")) {
                 reporte = "RRESUDIA";
-                titulo = "";
+                titulo = "RESUMEN DE FACTURAS DE COMPRA";
                 
                 columnas = new String[11];
                 columnas[0] = "nrofact";
@@ -797,7 +797,7 @@ public class LiComprasBean {
                     orderBy;
             } else if (seleccion.equals("7")) {
                 reporte = "rliscompras2n";
-                titulo = "";
+                titulo = "LISTADO DE FACTURAS DE COMPRA";
                 
                 columnas = new String[27];
                 columnas[0] = "fvenc";

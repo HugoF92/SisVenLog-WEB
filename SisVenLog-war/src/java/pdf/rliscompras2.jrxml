@@ -115,7 +115,7 @@
 				<staticText>
 					<reportElement x="120" y="0" width="100" height="20" uuid="315e9a54-a6f1-4477-abae-caca6248d9f9"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
+						<font size="9" isBold="true"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<text><![CDATA[TOTAL CANAL]]></text>
@@ -656,14 +656,14 @@
 			<staticText>
 				<reportElement x="10" y="20" width="183" height="14" uuid="df2f7d40-e12d-4b0b-8ef3-a7de8c8f0a7f"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="120" y="0" width="214" height="20" uuid="7bae56a3-2e45-49ac-aba7-220c4e052dd3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL ACUMULADO]]></text>
 			</staticText>
