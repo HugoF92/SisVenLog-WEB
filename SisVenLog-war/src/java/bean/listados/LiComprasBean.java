@@ -580,7 +580,7 @@ public class LiComprasBean {
                 reporte = "RCOMPRASRES";
                 titulo = "";
                 
-                columnas = new String[14];
+                columnas = new String[13];
                 columnas[0] = "ccanal_compra";
                 columnas[1] = "xdesc_canal";
                 columnas[2] = "nrofact";            
@@ -594,7 +594,6 @@ public class LiComprasBean {
                 columnas[10] = "timpuestos_5";
                 columnas[11] = "texentas";
                 columnas[12] = "ttotal";
-                columnas[13] = "new_f";
                 
                 query = 
                     "SELECT " +
