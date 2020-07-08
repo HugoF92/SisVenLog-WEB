@@ -17,20 +17,65 @@
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
+	<field name="fvenc" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fvenc"/>
+	</field>
 	<field name="ctipo_docum" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="ctipo_docum"/>
 	</field>
-	<field name="ccanal_compra" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="ccanal_compra"/>
+	<field name="cod_proveed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="cod_proveed"/>
 	</field>
-	<field name="xdesc_canal" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="xdesc_canal"/>
+	<field name="tgravadas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="tgravadas"/>
 	</field>
-	<field name="nrofact" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.label" value="nrofact"/>
+	<field name="ttotal" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="ttotal"/>
 	</field>
-	<field name="ffactur" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.label" value="ffactur"/>
+	<field name="timpuestos" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="timpuestos"/>
+	</field>
+	<field name="ntimbrado" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="ntimbrado"/>
+	</field>
+	<field name="cod_merca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cod_merca"/>
+	</field>
+	<field name="xdesc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc"/>
+	</field>
+	<field name="cant_cajas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="cant_cajas"/>
+	</field>
+	<field name="cant_unid" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="cant_unid"/>
+	</field>
+	<field name="igravadas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="igravadas"/>
+	</field>
+	<field name="iexentas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="iexentas"/>
+	</field>
+	<field name="itotal" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="itotal"/>
+	</field>
+	<field name="impuestos" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="impuestos"/>
+	</field>
+	<field name="pimpues" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="pimpues"/>
+	</field>
+	<field name="xdesc_docum" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_docum"/>
+	</field>
+	<field name="xdesc_depo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_depo"/>
+	</field>
+	<field name="fmovim" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fmovim"/>
+	</field>
+	<field name="xdesc_merca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_merca"/>
 	</field>
 	<field name="xnombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="xnombre"/>
@@ -38,80 +83,101 @@
 	<field name="xruc" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="xruc"/>
 	</field>
-	<field name="tgrav_10" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="tgrav_10"/>
+	<field name="ndocum" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="ndocum"/>
 	</field>
-	<field name="tgrav_5" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="tgrav_5"/>
+	<field name="nrelacion" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="nrelacion"/>
 	</field>
-	<field name="timp_10" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="timp_10"/>
+	<field name="xdesc_canal2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_canal2"/>
 	</field>
-	<field name="timp_5" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="timp_5"/>
+	<field name="iprecio_cx" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="iprecio_cx"/>
 	</field>
-	<field name="texentas" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="texentas"/>
+	<field name="iprecio_ux" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="iprecio_ux"/>
 	</field>
-	<field name="ttotal" class="java.lang.Long">
-		<property name="com.jaspersoft.studio.field.label" value="ttotal"/>
+	<field name="ccanal2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ccanal2"/>
 	</field>
-	<field name="norden" class="java.lang.Integer">
+	<field name="norden" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="norden"/>
+	</field>
+	<field name="ccanal_compra" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ccanal_compra"/>
+	</field>
+	<field name="xdesc_canal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="xdesc_canal"/>
+	</field>
+	<field name="tgravadas_10" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="tgravadas_10"/>
+	</field>
+	<field name="tgravadas_5" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="tgravadas_5"/>
+	</field>
+	<field name="timpuestos_10" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="timpuestos_10"/>
+	</field>
+	<field name="timpuestos_5" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="timpuestos_5"/>
+	</field>
+	<field name="texentas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="texentas"/>
 	</field>
 	<variable name="tfac_exentas" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tfac_gravadas_10" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="tfac_impuestos_10" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_impuestos_10" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_gravadas_10" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_exentas" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tfac_gravadas_5" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="tfac_impuestos_5" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="tcan_impuestos_5" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="tcan_gravadas_5" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="tfac_total" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tcan_total" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="ttot_exentas" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="ttot_gravadas_10" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="ttot_impuestos_10" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="ttot_gravadas_5" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgrav_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="ttot_impuestos_5" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{timp_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="ttot_total" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
 	</variable>
 	<group name="group_ccompra">
 		<groupExpression><![CDATA[$F{ccanal_compra}]]></groupExpression>
@@ -207,7 +273,7 @@
 		</groupFooter>
 	</group>
 	<group name="group_documento">
-		<groupExpression><![CDATA[$F{nrofact}]]></groupExpression>
+		<groupExpression><![CDATA[$F{ndocum}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
 				<textField>
@@ -222,7 +288,7 @@
 					<textElement verticalAlignment="Middle">
 						<paragraph leftIndent="2"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{nrofact}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{ndocum}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="117" y="0" width="120" height="20" uuid="8e9fbfc7-2afc-4cd6-ac49-524eae10a9bf"/>
@@ -243,7 +309,21 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<paragraph leftIndent="2"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{ffactur}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{fmovim}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="367" y="0" width="58" height="20" uuid="6cfd6533-d1b8-4a3d-981a-420d13543077"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{xdesc_depo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="425" y="0" width="58" height="20" uuid="e13df46e-8480-4205-b006-be955828f9f5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fvenc}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -569,35 +649,35 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgrav_5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tgravadas_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="412" y="0" width="45" height="20" uuid="5164b928-a553-431f-8620-0c2b7d293b7c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{timp_10}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="457" y="0" width="45" height="20" uuid="0d3877e3-e8cf-436a-bacf-8f07e7ce2a84"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{timp_5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="502" y="0" width="45" height="20" uuid="b8d21970-2304-4b8e-b58a-166b3fe5fd66"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="322" y="0" width="45" height="20" uuid="ba358db2-80f3-4264-9b9a-59e67cf25322"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgrav_10}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tgravadas_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
 				<reportElement x="277" y="0" width="45" height="20" uuid="e5bfa9bb-64e2-4d04-b233-ed42c46091e9"/>
@@ -605,6 +685,30 @@
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{texentas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="242" y="0" width="30" height="20" uuid="70452c85-d2a0-492b-9c90-a4c5599642d4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="0" width="30" height="20" uuid="ea5db34d-6eb4-42b8-9b04-5a14310d04c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="62" y="0" width="150" height="20" uuid="75730295-8a4f-474a-9a1f-ea51ee68d0d1"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="0" width="55" height="20" uuid="04b6e2cd-bb6c-4e0b-9452-20c459f40cd7"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
