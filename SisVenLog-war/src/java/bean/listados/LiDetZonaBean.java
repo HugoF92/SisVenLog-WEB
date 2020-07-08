@@ -121,8 +121,8 @@ public class LiDetZonaBean {
     public void ejecutarListado(String tipo){
         try{
             LlamarReportes rep = new LlamarReportes();
-            String fdesde = DateUtil.formaterDateToString(desde, "yyyy/MM/dd");
-            String fhasta = DateUtil.formaterDateToString(hasta, "yyyy/MM/dd");
+            String fdesde = DateUtil.formaterDateToString(desde, "yyyy-MM-dd");
+            String fhasta = DateUtil.formaterDateToString(hasta, "yyyy-MM-dd");
             String extras = "";
             String sql = null;
             String[] columnas = null;
@@ -198,17 +198,32 @@ public class LiDetZonaBean {
             sql += " l.cod_linea, l.xdesc as xdesc_linea, m.npeso_caja, m.npeso_unidad  "
                 + " FROM movimientos_merca  d, empleados e, zonas z, sublineas s, mercaderias m, " 
                 + " merca_canales mc, rutas r, lineas l "
-                + " WHERE d.cod_empr = 2  AND d.cod_zona = z.cod_zona " 
+                + " WHERE  "
+                + "    d.cod_empr = 2 "
                 + " AND d.cod_vendedor = e.cod_empleado "
-                + " AND d.cod_empr = e.cod_empr "
-                + " AND s.cod_linea = l.cod_linea " 
-                + " AND d.cod_empr = m.cod_empr " 
-                + " AND d.cod_merca = m.cod_merca " 
-                + " AND d.cod_ruta = r.cod_ruta " 
-                + " AND m.cod_sublinea = s.cod_sublinea " 
+		+ " 	and d.cod_empr = e.cod_empr "
+		
+		+ " 	AND d.cod_zona = z.cod_zona "
+		+ " 	AND d.cod_empr = z.cod_empr "
+                
+                + "  AND d.cod_empr = m.cod_empr "
+                + "  AND d.cod_merca = m.cod_merca "
+			
+		+ " 	AND m.cod_sublinea = s.cod_sublinea "
+			
+		+ " 	AND s.cod_linea = l.cod_linea "
+			
+		+ " 	AND d.cod_empr = mc.cod_empr "
+		+ " 	AND d.cod_merca = mc.cod_merca "
+		
+                + " AND d.cod_empr = r.cod_empr "
+		+ "	AND d.cod_zona = r.cod_zona "
+		+ "	AND d.cod_ruta = r.cod_ruta "
+                    
                 + " AND d.ctipo_docum IN ('FCO','FCR','CPV','NCV','NDV') " 
-                + " AND d.fmovim between '"+fdesde+"' AND '"+fhasta+"'"  
-                + " AND m.cod_merca = mc.cod_merca " 
+                //+ " AND d.fmovim between '"+fdesde+"' AND '"+fhasta+"'"
+                + " AND d.fmovim > '"+fdesde+"' "
+		+ " AND d.fmovim < '"+fhasta+"' "
                 + extras +
                 " GROUP BY d.cod_zona, z.xdesc, d.cod_vendedor, e.xnombre, " 
                 + " s.cod_sublinea, s.xdesc, d.cod_merca, m.xdesc, M.NRELACION, "

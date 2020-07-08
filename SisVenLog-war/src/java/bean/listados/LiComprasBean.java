@@ -111,7 +111,7 @@ public class LiComprasBean {
             } else if (seleccion.equals("2")) {
                 orderBy += "ORDER BY ccanal_compra, ffactur, ctipo_docum, nrofact";
             } else if (seleccion.equals("3")) {
-                orderBy += "ORDER BY ffactur, nrofact, norden";
+                orderBy += "ORDER BY fmovim, ndocum, norden";
             } else if (seleccion.equals("4")) {
                 orderBy += "ORDER BY cod_proveed, ndocum";
             } else if (seleccion.equals("5")) {
@@ -400,7 +400,7 @@ public class LiComprasBean {
                         "( " + query2 + ") r " +
                     "GROUP BY " +
                         "ctipo_docum, ndocum, cod_proveed, cod_merca ";
-                query4 = 
+                queryReport = 
                     "SELECT " +
                         "m.*, " +
                         "i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, i.timpuestos_5, i.texentas " +
@@ -408,8 +408,9 @@ public class LiComprasBean {
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
                     "WHERE " +
-                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed AND m.cod_merca = i.cod_merca ";
-                queryReport = 
+                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed AND m.cod_merca = i.cod_merca " +
+                        orderBy;
+                /*queryReport = 
                     "SELECT " +
                         "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
                         "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
@@ -428,7 +429,7 @@ public class LiComprasBean {
                         "( " + query4 + " ) c " +
                     "WHERE " +
                         "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;
+                        orderBy;*/
             } else if (seleccion.equals("4")) {
                 reporte = "RCOMPRASDET2B";
                 titulo = "DIFERENCIAS DE PRECIOS EN FACTURAS DE COMPRA";
