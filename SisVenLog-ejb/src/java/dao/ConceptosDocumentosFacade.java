@@ -6,9 +6,12 @@
 package dao;
 
 import entidad.ConceptosDocumentos;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +30,20 @@ public class ConceptosDocumentosFacade extends AbstractFacade<ConceptosDocumento
 
     public ConceptosDocumentosFacade() {
         super(ConceptosDocumentos.class);
+    }
+    
+    public List<ConceptosDocumentos> listarTipoDocumentoFacturaVtaCredito() {
+        Query q = getEntityManager().createNativeQuery("select * "
+                + " FROM conceptos_documentos "
+                + " WHERE ctipo_docum IN ('NDV','NCV') ", ConceptosDocumentos.class);
+
+        System.out.println(q.toString());
+
+        List<ConceptosDocumentos> respuesta = new ArrayList<ConceptosDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
     }
     
 }

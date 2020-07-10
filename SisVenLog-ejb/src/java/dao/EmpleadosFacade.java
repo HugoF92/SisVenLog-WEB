@@ -63,6 +63,17 @@ public class EmpleadosFacade extends AbstractFacade<Empleados> {
 
         return respuesta;
     }
+    
+    public List<Empleados> listarEmpPorEmpresaTipoEstado(String codEmpresa, String tipo, String estado) {
+        Query q = getEntityManager().createNativeQuery("SELECT * "
+                + " FROM empleados "
+                + " WHERE cod_empr = "+codEmpresa+" AND ctipo_emp LIKE '"+tipo+"%' "
+                + " AND mestado = '"+estado+"' ", Empleados.class);
+        System.out.println(q.toString());
+        List<Empleados> respuesta = new ArrayList<Empleados>();
+        respuesta = q.getResultList();
+        return respuesta;
+    }
 
     public Empleados getNombreEmpleado(Integer codigo) {
         Query q = getEntityManager().createNativeQuery("select *\n"
