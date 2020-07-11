@@ -79,8 +79,8 @@ public class LiComprasBean {
             String reporte = "";
             String[] columnas = null;
             
-            String query = ""; //cursor mostrar
-            String queryTmpNum = "";
+            String query; //cursor mostrar
+            String queryTmpNum;
             String query2; //cursor curdet
             String query3; //cursor totdet
             String query4; //cursor infototdoc
@@ -107,21 +107,21 @@ public class LiComprasBean {
             }
             
             if (seleccion.equals("1")) {
-                orderBy += "ORDER BY ffactur, ctipo_docum, nrofact";
+                orderBy += "ORDER BY m.ffactur, m.ctipo_docum, m.nrofact";
             } else if (seleccion.equals("2")) {
-                orderBy += "ORDER BY ccanal_compra, ffactur, ctipo_docum, nrofact";
+                orderBy += "ORDER BY m.ccanal_compra, m.fmovim, m.ctipo_docum, m.ndocum";
             } else if (seleccion.equals("3")) {
-                orderBy += "ORDER BY fmovim, ndocum, norden";
+                orderBy += "ORDER BY m.fmovim, m.ndocum, m.norden";
             } else if (seleccion.equals("4")) {
-                orderBy += "ORDER BY cod_proveed, ndocum";
+                orderBy += "ORDER BY m.cod_proveed, m.ndocum";
             } else if (seleccion.equals("5")) {
-                orderBy += "ORDER BY cod_proveed, nrofact";
+                orderBy += "ORDER BY r.cod_proveed, r.nrofact";
             } else if (seleccion.equals("6")) {
-                orderBy += "ORDER BY cod_proveed, ffactur, nrofact";
+                orderBy += "ORDER BY r.cod_proveed, r.ffactur, r.nrofact";
             } else if (seleccion.equals("7")) {
-                orderBy += "ORDER BY ctipo_docum, ndocum, cod_proveed";
+                orderBy += "ORDER BY c.ctipo_docum, c.ndocum, c.cod_proveed";
             } else {
-                orderBy += "ORDER BY ffactur, ccanal_compra, ctipo_docum, nrofact";
+                orderBy += "ORDER BY m.ffactur, m.ccanal_compra, m.ctipo_docum, m.nrofact";
             }
             
             if (seleccion.equals("1")) {
@@ -311,27 +311,50 @@ public class LiComprasBean {
                         "( " + query + " ) m, " +
                         "( " + query3 + " ) i " +
                     "WHERE " +
-                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed "+
-                    " ORDER BY m.ccanal_compra, m.fmovim, m.ndocum ";
+                        "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed " +
+                    orderBy;
+                    //" ORDER BY m.ccanal_compra, m.fmovim, m.ndocum ";
             } else if (seleccion.equals("3")) {
                 reporte = "RCOMPRASDET2";
                 titulo = "FACTURA DE COMPRA CON DETALLES";
                 
-                columnas = new String[14];
-                columnas[0] = "ctipo_docum";
-                columnas[1] = "ccanal_compra";
-                columnas[2] = "xdesc_canal";            
-                columnas[3] = "nrofact";
-                columnas[4] = "ffactur";
-                columnas[5] = "xnombre";
-                columnas[6] = "xruc";
-                columnas[7] = "tgrav_10";
-                columnas[8] = "tgrav_5";
-                columnas[9] = "timp_10";
-                columnas[10] = "timp_5";
-                columnas[11] = "texentas";
-                columnas[12] = "ttotal";
-                columnas[13] = "norden";
+                columnas = new String[36];
+                columnas[0] = "fvenc";
+                columnas[1] = "ctipo_docum";
+                columnas[2] = "cod_proveed";            
+                columnas[3] = "tgravadas";
+                columnas[4] = "ttotal";
+                columnas[5] = "timpuestos";
+                columnas[6] = "ntimbrado";
+                columnas[7] = "cod_merca";
+                columnas[8] = "xdesc";
+                columnas[9] = "cant_cajas";
+                columnas[10] = "cant_unid";
+                columnas[11] = "igravadas";
+                columnas[12] = "iexentas";
+                columnas[13] = "itotal";
+                columnas[14] = "impuestos";
+                columnas[15] = "pimpues";
+                columnas[16] = "xdesc_docum";
+                columnas[17] = "xdesc_depo";
+                columnas[18] = "fmovim";
+                columnas[19] = "xdesc_merca";
+                columnas[20] = "xnombre";
+                columnas[21] = "xruc";
+                columnas[22] = "ndocum";
+                columnas[23] = "nrelacion";
+                columnas[24] = "xdesc_canal2";
+                columnas[25] = "iprecio_cx";
+                columnas[26] = "iprecio_ux";
+                columnas[27] = "ccanal2";
+                columnas[28] = "norden";
+                columnas[29] = "ccanal_compra";
+                columnas[30] = "xdesc_canal";
+                columnas[31] = "tgravadas_10";
+                columnas[32] = "tgravadas_5";
+                columnas[33] = "i.timpuestos_10";
+                columnas[34] = "timpuestos_5";
+                columnas[35] = "texentas";
                 
                 query = 
                     "SELECT " +
@@ -410,26 +433,6 @@ public class LiComprasBean {
                     "WHERE " +
                         "m.ndocum = i.ndocum AND m.ctipo_docum = i.ctipo_docum AND m.cod_proveed = i.cod_proveed AND m.cod_merca = i.cod_merca " +
                         orderBy;
-                /*queryReport = 
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 + timpuestos_10 AS tgrav_10, tgravadas_5 + timpuestos_5 AS tgrav_5, " +
-                        "ABS(timpuestos_10) AS timp_10, ABS(timpuestos_5) AS timp_5, texentas, " +
-                        "(tgravadas_10 + timpuestos_10) + (tgravadas_5 + timpuestos_5) + ABS(timpuestos_10) + ABS(timpuestos_5) + texentas AS ttotal, norden " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 < 0 OR timpuestos_5 < 0 OR TEXENTAS > 0 " +
-                    "UNION ALL " +
-                    "SELECT " +
-                        "ctipo_docum, ccanal_compra, xdesc_canal, ndocum AS nrofact, fmovim AS ffactur, xnombre, xruc, " +
-                        "tgravadas_10 AS tgrav_10, tgravadas_5 AS tgrav_5, timpuestos_10 AS timp_10, Timpuestos_5 AS timp_5, " +
-                        "texentas, tgravadas_10 + tgravadas_5 + timpuestos_10 + timpuestos_5 + texentas AS ttotal, norden " +
-                    "FROM " +
-                        "( " + query4 + " ) c " +
-                    "WHERE " +
-                        "timpuestos_10 > 0 OR timpuestos_5 > 0 " +
-                        orderBy;*/
             } else if (seleccion.equals("4")) {
                 reporte = "RCOMPRASDET2B";
                 titulo = "DIFERENCIAS DE PRECIOS EN FACTURAS DE COMPRA";

@@ -129,55 +129,67 @@
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tfac_gravadas_10" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="tfac_impuestos_10" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_impuestos_10" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_gravadas_10" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="tcan_exentas" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tfac_gravadas_5" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="tfac_impuestos_5" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="tcan_impuestos_5" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="tcan_gravadas_5" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="tfac_total" class="java.lang.Long" resetType="Group" resetGroup="group_documento" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
+		<variableExpression><![CDATA[($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
+($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}) +
+$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="tcan_total" class="java.lang.Long" resetType="Group" resetGroup="group_ccompra" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
+		<variableExpression><![CDATA[($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
+($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}) +
+$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="ttot_exentas" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
 	</variable>
 	<variable name="ttot_gravadas_10" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}]]></variableExpression>
 	</variable>
 	<variable name="ttot_impuestos_10" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}]]></variableExpression>
 	</variable>
 	<variable name="ttot_gravadas_5" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}]]></variableExpression>
 	</variable>
 	<variable name="ttot_impuestos_5" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+		<variableExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}]]></variableExpression>
 	</variable>
 	<variable name="ttot_total" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></variableExpression>
+		<variableExpression><![CDATA[($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
+($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}) +
+$F{texentas}]]></variableExpression>
 	</variable>
 	<group name="group_ccompra">
 		<groupExpression><![CDATA[$F{ccanal_compra}]]></groupExpression>
@@ -186,7 +198,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement x="7" y="0" width="30" height="15" uuid="17af69b1-ed74-4924-99fa-e24f24749855"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ccanal_compra}]]></textFieldExpression>
@@ -194,7 +206,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement x="37" y="0" width="184" height="15" uuid="d2b4dd22-3cc7-4a89-8bc6-66cd2b6c9a6b"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_canal}]]></textFieldExpression>
@@ -206,7 +218,7 @@
 				<staticText>
 					<reportElement x="119" y="0" width="125" height="15" uuid="089db18c-23cc-4435-b4bb-a48dce8e1f3e"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<text><![CDATA[TOTAL CANAL]]></text>
@@ -217,7 +229,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_impuestos_10}]]></textFieldExpression>
@@ -228,7 +240,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_gravadas_5}]]></textFieldExpression>
@@ -239,7 +251,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_gravadas_10}]]></textFieldExpression>
@@ -250,7 +262,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_impuestos_5}]]></textFieldExpression>
@@ -261,7 +273,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_total}]]></textFieldExpression>
@@ -272,7 +284,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tcan_exentas}]]></textFieldExpression>
@@ -287,55 +299,55 @@
 				<textField isBlankWhenNull="true">
 					<reportElement x="7" y="0" width="30" height="15" uuid="a8c74715-625d-470f-aaf1-59ca03aa70b9"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ctipo_docum}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="37" y="0" width="80" height="15" uuid="652c3dd4-f801-442d-ba00-ccb5137943ba"/>
+					<reportElement x="37" y="0" width="50" height="15" uuid="652c3dd4-f801-442d-ba00-ccb5137943ba"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ndocum}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="117" y="0" width="120" height="15" uuid="8e9fbfc7-2afc-4cd6-ac49-524eae10a9bf"/>
+					<reportElement x="87" y="0" width="92" height="15" uuid="8e9fbfc7-2afc-4cd6-ac49-524eae10a9bf"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="237" y="0" width="72" height="15" uuid="af869d3a-567f-4c50-adf3-f0bff51ce51c"/>
+					<reportElement x="179" y="0" width="72" height="15" uuid="af869d3a-567f-4c50-adf3-f0bff51ce51c"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_canal}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="309" y="0" width="58" height="15" uuid="f365443c-ab52-457d-904f-f767f58524d9"/>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="251" y="0" width="58" height="15" uuid="f365443c-ab52-457d-904f-f767f58524d9"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fmovim}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="367" y="0" width="58" height="15" uuid="6cfd6533-d1b8-4a3d-981a-420d13543077"/>
+					<reportElement x="309" y="0" width="58" height="15" uuid="6cfd6533-d1b8-4a3d-981a-420d13543077"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_depo}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement x="425" y="0" width="58" height="15" uuid="e13df46e-8480-4205-b006-be955828f9f5"/>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="367" y="0" width="58" height="15" uuid="e13df46e-8480-4205-b006-be955828f9f5"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fvenc}]]></textFieldExpression>
@@ -347,7 +359,7 @@
 				<staticText>
 					<reportElement x="119" y="0" width="125" height="15" uuid="83ae3bd4-6b31-421e-aeb5-eec46e7fa781"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="8" isBold="true"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<text><![CDATA[TOTAL FACTURA]]></text>
@@ -358,7 +370,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_gravadas_10}]]></textFieldExpression>
@@ -369,7 +381,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_gravadas_5}]]></textFieldExpression>
@@ -380,7 +392,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_impuestos_10}]]></textFieldExpression>
@@ -391,7 +403,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_impuestos_5}]]></textFieldExpression>
@@ -402,7 +414,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_total}]]></textFieldExpression>
@@ -413,7 +425,7 @@
 						<topPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{tfac_exentas}]]></textFieldExpression>
@@ -533,19 +545,19 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA 10%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="0" width="94" height="14" uuid="98568018-6fb8-4a95-9a05-704ed2e53007"/>
+				<reportElement x="7" y="0" width="78" height="14" uuid="98568018-6fb8-4a95-9a05-704ed2e53007"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<text><![CDATA[FACTURA]]></text>
@@ -556,7 +568,7 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[IVA 5%]]></text>
@@ -567,30 +579,30 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAV 5%]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="221" y="0" width="88" height="14" uuid="db7f2285-9a39-4abc-bf6e-973f960c4227"/>
+				<reportElement x="179" y="0" width="73" height="14" uuid="db7f2285-9a39-4abc-bf6e-973f960c4227"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CANAL COMPRA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="101" y="0" width="120" height="14" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
+				<reportElement x="87" y="0" width="92" height="14" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
+					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PROVEEDOR]]></text>
 			</staticText>
@@ -601,40 +613,40 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="309" y="0" width="58" height="14" uuid="ac2e4a06-d45a-47c4-80a9-f212a53e8772"/>
+				<reportElement x="252" y="0" width="58" height="14" uuid="ac2e4a06-d45a-47c4-80a9-f212a53e8772"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[FECHA FACT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="367" y="0" width="58" height="14" uuid="574ecf09-90d9-4c3d-ba84-1111038be40f"/>
+				<reportElement x="310" y="0" width="58" height="14" uuid="574ecf09-90d9-4c3d-ba84-1111038be40f"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[DEPOSITO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="425" y="0" width="58" height="14" uuid="0934f8c1-e815-47e1-97f8-7f8c716dc09d"/>
+				<reportElement x="368" y="0" width="57" height="14" uuid="0934f8c1-e815-47e1-97f8-7f8c716dc09d"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<text><![CDATA[FECHA VTO.]]></text>
@@ -645,7 +657,7 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[GRAV 10%]]></text>
@@ -656,10 +668,32 @@
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font size="7" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[EXENTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="14" width="245" height="14" uuid="f82f02c2-b453-42b6-9fd5-bec785d8bffd"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="0" width="77" height="14" uuid="e6567ab7-0c1f-4657-8ade-3520f892d6ed"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -668,47 +702,51 @@
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="352" y="0" width="50" height="15" uuid="196af548-f21b-4c77-b198-9318606355f0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgravadas_5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="402" y="0" width="50" height="15" uuid="5164b928-a553-431f-8620-0c2b7d293b7c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{timpuestos_10}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="452" y="0" width="50" height="15" uuid="0d3877e3-e8cf-436a-bacf-8f07e7ce2a84"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{timpuestos_5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="502" y="0" width="50" height="15" uuid="b8d21970-2304-4b8e-b58a-166b3fe5fd66"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgravadas_5}+$F{tgravadas_10}+$F{timpuestos_5}+$F{timpuestos_10}+$F{texentas}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
+($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1 : $F{timpuestos_5}) +
+$F{texentas}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="302" y="0" width="50" height="15" uuid="ba358db2-80f3-4264-9b9a-59e67cf25322"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgravadas_10}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="252" y="0" width="50" height="15" uuid="e5bfa9bb-64e2-4d04-b233-ed42c46091e9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{texentas}]]></textFieldExpression>
@@ -716,21 +754,21 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="222" y="0" width="25" height="15" uuid="70452c85-d2a0-492b-9c90-a4c5599642d4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="197" y="0" width="25" height="15" uuid="ea5db34d-6eb4-42b8-9b04-5a14310d04c9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="57" y="0" width="140" height="15" uuid="75730295-8a4f-474a-9a1f-ea51ee68d0d1"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xdesc_merca}]]></textFieldExpression>
@@ -738,7 +776,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="7" y="0" width="50" height="15" uuid="04b6e2cd-bb6c-4e0b-9452-20c459f40cd7"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
@@ -793,9 +831,9 @@
 	<summary>
 		<band height="34" splitType="Stretch">
 			<staticText>
-				<reportElement x="56" y="0" width="162" height="20" uuid="b20082c4-221c-41dd-9889-33a3e2f41fc3"/>
+				<reportElement x="119" y="0" width="125" height="20" uuid="b20082c4-221c-41dd-9889-33a3e2f41fc3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL ACUMULADO]]></text>
 			</staticText>
@@ -807,67 +845,67 @@
 				<text><![CDATA[*FIN DEL INFORME*]]></text>
 			</staticText>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="383" y="0" width="55" height="20" uuid="482454be-a84b-4aa2-b1e3-0e45dd1183ce"/>
+				<reportElement x="402" y="0" width="50" height="20" uuid="482454be-a84b-4aa2-b1e3-0e45dd1183ce"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_impuestos_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="328" y="0" width="55" height="20" uuid="3ca8a591-f758-4091-8257-046efe7030bb"/>
+				<reportElement x="352" y="0" width="50" height="20" uuid="3ca8a591-f758-4091-8257-046efe7030bb"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_gravadas_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="273" y="0" width="55" height="20" uuid="309f919d-fb31-4b4f-a1ac-350256a23c51"/>
+				<reportElement x="302" y="0" width="50" height="20" uuid="309f919d-fb31-4b4f-a1ac-350256a23c51"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_gravadas_10}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="438" y="0" width="55" height="20" uuid="3195df72-d7ed-4759-be39-d54fd40dff5b"/>
+				<reportElement x="452" y="0" width="50" height="20" uuid="3195df72-d7ed-4759-be39-d54fd40dff5b"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_impuestos_5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="493" y="0" width="55" height="20" uuid="64ffd094-c0da-4185-abef-39406961788e"/>
+				<reportElement x="502" y="0" width="50" height="20" uuid="64ffd094-c0da-4185-abef-39406961788e"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
-				<reportElement x="218" y="0" width="55" height="20" uuid="67631f2c-bc97-4ae5-99aa-660544cc9f20"/>
+				<reportElement x="252" y="0" width="50" height="20" uuid="67631f2c-bc97-4ae5-99aa-660544cc9f20"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ttot_exentas}]]></textFieldExpression>
