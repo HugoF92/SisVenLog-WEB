@@ -180,7 +180,7 @@
 				<textField>
 					<reportElement x="118" y="0" width="238" height="20" uuid="896822e5-dbd4-4295-80bf-88c46a448df1"/>
 					<textElement verticalAlignment="Middle">
-						<font isBold="false"/>
+						<font isBold="true"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
@@ -188,7 +188,7 @@
 				<textField>
 					<reportElement x="356" y="0" width="65" height="20" uuid="628ed980-7c05-42dc-934a-fb19896b80b9"/>
 					<textElement verticalAlignment="Middle">
-						<font isBold="false"/>
+						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_vendedor}]]></textFieldExpression>
 				</textField>
@@ -575,7 +575,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOAL VENTAS]]></text>
+				<text><![CDATA[TOTAL VENTAS]]></text>
 			</staticText>
 			<textField pattern="#,##0">
 				<reportElement x="421" y="0" width="80" height="20" uuid="8d4e6432-f96f-469f-8754-60420eacc3bd"/>

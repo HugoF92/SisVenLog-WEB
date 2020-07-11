@@ -372,7 +372,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[TOAL VENTAS]]></text>
+				<text><![CDATA[TOTAL VENTAS]]></text>
 			</staticText>
 			<textField pattern="#,##0">
 				<reportElement x="421" y="2" width="80" height="20" uuid="8d4e6432-f96f-469f-8754-60420eacc3bd"/>

@@ -209,6 +209,20 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return resp;
     }
     
+    public List<TiposDocumentos> listarTipoDocumentoFacturaVtaCredito() {
+        Query q = getEntityManager().createNativeQuery("select * "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ('NDV','NCV')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
+    
     public TiposDocumentos getTipoDocumentoFromList(TiposDocumentos pk, List<TiposDocumentos> lista){
         return lista.stream()
                 .filter(obj -> obj.getCtipoDocum().equals(pk.getCtipoDocum()))

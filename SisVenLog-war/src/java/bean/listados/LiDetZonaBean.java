@@ -160,7 +160,7 @@ public class LiDetZonaBean {
                 extras = extras.substring(0, extras.length()-1) + " ) ";
             }
             
-            columnas = new String[16];
+            columnas = new String[14];
             columnas[0] = "cod_vendedor";
             columnas[1] = "xnombre";
             columnas[2] = "cod_zona";            
@@ -169,14 +169,12 @@ public class LiDetZonaBean {
             columnas[5] = "xdesc_merca";
             columnas[6] = "cod_sublinea";
             columnas[7] = "xdesc_sublinea";
-            columnas[8] = "nrelacion";
-            columnas[9] = "cant_cajas";
-            columnas[10] = "cant_unid";
-            columnas[11] = "ttotal";
-            columnas[12] = "cod_linea";
-            columnas[13] = "xdesc_linea";
-            columnas[14] = "npeso_caja";
-            columnas[15] = "npeso_unidad";
+            columnas[8] = "cod_linea";
+            columnas[9] = "xdesc_linea";
+            columnas[10] = "cant_cajas";
+            columnas[11] = "cant_unid";            
+            columnas[12] = "tpeso_vta";
+            columnas[13] = "ttotal";            
             
             sql = " SELECT cod_vendedor, xnombre, cod_zona, xdesc_zona, cod_merca, " 
                 + "     xdesc_merca, cod_sublinea, xdesc_sublinea, cod_linea, xdesc_linea, " 

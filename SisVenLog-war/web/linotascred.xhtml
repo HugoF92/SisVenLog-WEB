@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiClientes" header="NOTAS DEBITO/CREDITO A FACTURAS DE VENTA" style="width: 70%;">                                       
+                                    <h:panelGrid columns="2" >
+                                    
+                                        <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liRetornoMercaDesde" value="#{liNotaCredVtas.desde}" showOn="button" 
+                                                    style="width: 60px;" locale="es">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liEnviosHasta" value="#{liNotaCredVtas.hasta}" showOn="button" 
+                                                    style="width: 60px;" locale="es" mindate="#{liNotaCredVtas.desde}"/>                                        
+                                        
+                                        <p:outputLabel value="Vendedor" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liNotaCredVtas.vendedor}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liNotaCredVtas.listaVendedor}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Entregador" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liNotaCredVtas.entregador}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liNotaCredVtas.listaEntregador}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Concepto" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liNotaCredVtas.concepto}" 
+                                                         filterMatchMode="contains" filter="true"                                                         
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px" converter="#{conceptoDocumentoConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liNotaCredVtas.listaConceptosDocumentos}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Documento" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liNotaCredVtas.tipoFactura}" 
+                                                         filterMatchMode="contains" filter="true"                                                          
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px" converter="#{TiposDocumentosConverter}" >
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{liNotaCredVtas.listaTiposDocumentos}" var="item" 
+                                                           itemValue="#{item}" 
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                               
+                                        <p:outputLabel value="Canal" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu value="#{liNotaCredVtas.canal}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    converter="#{CanalesVentaConverter}"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" >
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liNotaCredVtas.listaCanales}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Proveedor" style="float: right; font-weight: bold;" />                                        
+                                        <p:selectOneMenu value="#{liNotaCredVtas.proveedor}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{liNotaCredVtas.listaProveedores}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                                                                
+                                        <p:outputLabel value="Depósito:" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu value="#{asociarMercaderiaBean.depositoSeleccionado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 60%;" converter="#{depositosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{asociarMercaderiaBean.listaDepositos}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
+                                        <p:commandButton icon="fa fa-filter"
+                                                    oncomplete="PF('dlgSelectMerca').show()"
+                                                    style="margin-top:10px" />
+                                        
+                                        <p:outputLabel value="Estado: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneRadio value="#{liNotaCredVtas.estado}">
+                                            <f:selectItem itemLabel="Activo" itemValue="1"/>
+                                            <f:selectItem itemLabel="Inactivo" itemValue="2" />
+                                            <f:selectItem itemLabel="Todos" itemValue="3" />
+                                        </p:selectOneRadio>
+                                        
+                                        <p:outputLabel value="IVA Discriminado" style="float: right; font-weight: bold;"/>
+                                        <p:selectBooleanCheckbox value="#{liNotaCredVtas.sinIVA}"/>
+                                        
+                                        <p:outputLabel value="Con detalles" style="float: right; font-weight: bold;"/>                                        
+                                        <p:selectBooleanCheckbox value="#{liNotaCredVtas.resumido}"/>
+                                        
+                                        <p:outputLabel for="discriminar" value="Discriminar:" />
+                                        <p:selectOneRadio id="discriminar" value="#{liNotaCredVtas.seleccion}" 
+                                                    layout="grid" columns="1" style="border: solid;border-width: thin">
+                                             <f:selectItem itemLabel="Por Concepto"  itemValue="1"/>
+                                             <f:selectItem itemLabel="Por Vendedor" itemValue="2"/>
+                                             <f:selectItem itemLabel="Por Entregador" itemValue="3"/>
+                                             <f:selectItem itemLabel="Por Fecha" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resumen por Mercaderia" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resumen por Sublinea" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resumen por Division" itemValue="4"/>
+                                             <f:selectItem itemLabel="Por Cliente" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resument Zona Concepto" itemValue="4"/>
+                                             <f:selectItem itemLabel="Por Numero" itemValue="4"/>
+                                             <f:selectItem itemLabel="Resumen por Zona Mercaderia" itemValue="4"/>                                             
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{liNotaCredVtas.ejecutarListado('VIST')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Vista Previa" icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{liNotaCredVtas.ejecutarListado('ARCH')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Archivo" icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
+                                    
+                                </p:panel>
+                                
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+
+                                    <p:pickList id="pickListMerca" value="#{liNotaCredVtas.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                </p:dialog>
+                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>
