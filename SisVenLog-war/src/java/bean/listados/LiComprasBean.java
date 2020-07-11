@@ -902,14 +902,14 @@ public class LiComprasBean {
                     " SELECT " +
                         "n.nrofact, n.com_ctipo_docum, n.nro_nota, n.cconc, n.fdocum, n.cod_proveed, n.ctipo_docum, n.ttotal " +
                     " FROM " +
-                        "notas_compras n, tmp_numeros t " +
+                        "notas_compras n, ( " + queryTmpNum + " ) t " +
                     " WHERE " +
                         "n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed " +
                         "AND n.ffactur = t.ffactur AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP') ";
                 queryReport = 
                     " IF EXISTS " +
                         "(SELECT COUNT(*) " +
-                            "FROM notas_compras n, tmp_numeros t " +
+                            "FROM notas_compras n, ( " + queryTmpNum + " ) t " +
                             "WHERE n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed AND n.ffactur = t.ffactur " +
                             "AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP')) " +
                         " SELECT DISTINCT " +
