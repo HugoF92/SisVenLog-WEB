@@ -1,9 +1,11 @@
 package bean.listados;
 
+import dao.CanalesCompraFacade;
 import dao.CanalesVentaFacade;
 import dao.ExcelFacade;
 import dao.ProveedoresFacade;
 import dao.TiposDocumentosFacade;
+import entidad.CanalesCompra;
 import entidad.CanalesVenta;
 import entidad.Proveedores;
 import entidad.TiposDocumentos;
@@ -35,16 +37,16 @@ public class LiComprasBean {
     private Date vencimientoDesde;
     private Date vencimientoHasta;
     private TiposDocumentos tipoFactura;
-    private CanalesVenta canal;
+    private CanalesCompra canal;
     private Proveedores proveedor;
     private List<TiposDocumentos> listaTiposFactura;
-    private List<CanalesVenta> listaCanales;
+    private List<CanalesCompra> listaCanales;
     private List<Proveedores> listaProveedores;
     private String seleccion;
     @EJB
     private TiposDocumentosFacade tipoFacturaFacade;
     @EJB
-    private CanalesVentaFacade canalFacade;
+    private CanalesCompraFacade canalFacade;
     @EJB
     private ProveedoresFacade proveedoresFacade;
     @EJB
@@ -100,7 +102,7 @@ public class LiComprasBean {
                 extraWhere += "AND c.fvenc <= '" + fVencimientoHasta + "' ";
             }
             if (canal != null){
-                extraWhere += "AND c.ccanal_compra = '" + canal.getCodCanal() + "' ";
+                extraWhere += "AND c.ccanal_compra = '" + canal.getCanalesCompraPK().getCcanalCompra()+ "' ";
             }
             if (tipoFactura != null){
                 extraWhere += "AND c.ctipo_docum = '" + tipoFactura.getCtipoDocum() + "' ";
@@ -566,8 +568,8 @@ public class LiComprasBean {
                         "m.ndocum, m.cod_proveed, m.xnombre, m.nrelacion, m.ntimbrado, m.ccanal_compra, m.xdesc_canal, m.ctipo_docum, " +
                         "m.fmovim, m.fvenc, m.xdesc_depo, m.cod_merca, m.xdesc_merca, m.cant_cajas, m.cant_unid, m.tgravadas_10, m.tgravadas_5, " +
                         "m.timpuestos_10, m.texentas, iprecio_ux  AS iprecio_ux, iprecio_caja, iprecio_unid, m.xdesc_canal2, " +
-                        "m.timpuestos_5, m.iexentas, iprecio_unid - (iprecio_ux ) AS idif_unidad, " +
-                        "iprecio_caja - (iprecio_cx  ) AS idif_caja, iprecio_cx  AS iprecio_cx " +
+                        "m.timpuestos_5, m.iexentas, iprecio_ux - iprecio_unid  AS idif_unidad, " +
+                        "iprecio_cx - (iprecio_caja) AS idif_caja, iprecio_cx  AS iprecio_cx " +
                     "FROM " +
                         "( " + query4 + " ) m " +
                     "WHERE " +
@@ -905,12 +907,12 @@ public class LiComprasBean {
                         "notas_compras n, ( " + queryTmpNum + " ) t " +
                     " WHERE " +
                         "n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed " +
-                        "AND n.ffactur = t.ffactur AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP') ";
+                        "AND n.ffactur = t.fmovim AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP') ";
                 queryReport = 
                     " IF EXISTS " +
                         "(SELECT COUNT(*) " +
                             "FROM notas_compras n, ( " + queryTmpNum + " ) t " +
-                            "WHERE n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed AND n.ffactur = t.ffactur " +
+                            "WHERE n.cod_empr = 2 AND n.nrofact = t.ndocum AND n.mestado ='A' AND n.cod_proveed = t.cod_proveed AND n.ffactur = t.fmovim " +
                             "AND n.com_ctipo_docum = t.ctipo_docum AND n.ctipo_docum IN ('NCC','NDP')) " +
                         " SELECT DISTINCT " +
                             "c.*, " +
@@ -1114,15 +1116,15 @@ public class LiComprasBean {
                 param.put("usuImprime", usuImprime);
                 param.put("nombreRepo", reporte); 
 
-                if (this.tipoFactura != null) param.put("tipo", tipoFacturaFacade.getTipoDocumentoFromList(this.tipoFactura, this.listaTiposFactura).getXdesc());
-                else param.put("vendedor", "TODOS");
+                if (this.tipoFactura != null) param.put("tipoFactura", tipoFacturaFacade.getTipoDocumentoFromList(this.tipoFactura, this.listaTiposFactura).getXdesc());
+                else param.put("tipoFactura", "TODOS");
                 
-                if (this.canal != null) param.put("canal", canalFacade.getCanalVentaFromList(this.canal, this.listaCanales).getXdesc()); 
+                if (this.canal != null) param.put("canal", canalFacade.getCanalCompraFromList(this.canal, this.listaCanales).getXdesc()); 
                 else param.put("canal", "TODOS");
                 
                 if (this.proveedor != null) param.put("proveedor", proveedoresFacade.getProveedorFromList(this.proveedor, this.listaProveedores).getXnombre()); 
                 else param.put("proveedor", "TODOS");
-            
+                
                 rep.reporteLiContClientes(param, tipo, reporte);
             } else {
                 List<Object[]> lista = new ArrayList<Object[]>();
@@ -1176,11 +1178,11 @@ public class LiComprasBean {
         this.tipoFactura = tipoFactura;
     }
 
-    public CanalesVenta getCanal() {
+    public CanalesCompra getCanal() {
         return canal;
     }
 
-    public void setCanal(CanalesVenta canal) {
+    public void setCanal(CanalesCompra canal) {
         this.canal = canal;
     }
 
@@ -1200,11 +1202,11 @@ public class LiComprasBean {
         this.listaTiposFactura = listaTiposFactura;
     }
 
-    public List<CanalesVenta> getListaCanales() {
+    public List<CanalesCompra> getListaCanales() {
         return listaCanales;
     }
 
-    public void setListaCanales(List<CanalesVenta> listaCanales) {
+    public void setListaCanales(List<CanalesCompra> listaCanales) {
         this.listaCanales = listaCanales;
     }
 

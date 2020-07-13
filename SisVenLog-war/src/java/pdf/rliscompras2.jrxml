@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rliscompras2" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e7e2654a-c78d-4b10-a95b-60e5d728f538">
 	<property name="ireport.zoom" value="0.9090909090909095"/>
 	<property name="ireport.x" value="0"/>
@@ -13,6 +12,9 @@
 	<parameter name="usuImprime" class="java.lang.String"/>
 	<parameter name="fvtodesde" class="java.util.Date"/>
 	<parameter name="fvtohasta" class="java.util.Date"/>
+	<parameter name="tipoFactura" class="java.lang.String"/>
+	<parameter name="canal" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -91,24 +93,24 @@
 		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
 	</variable>
 	<variable name="tftotal_doc" class="java.lang.Long" resetType="Group" resetGroup="group_ndocum" calculation="Sum">
-		<variableExpression><![CDATA[$F{texentas} + 
+		<variableExpression><![CDATA[$F{texentas} +
 ($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
-($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) + 
-($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) + 
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
 ($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1: $F{timpuestos_5})]]></variableExpression>
 	</variable>
 	<variable name="tftotal_can" class="java.lang.Long" resetType="Group" resetGroup="group_canal" calculation="Sum">
-		<variableExpression><![CDATA[$F{texentas} + 
+		<variableExpression><![CDATA[$F{texentas} +
 ($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
-($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) + 
-($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) + 
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
 ($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1: $F{timpuestos_5})]]></variableExpression>
 	</variable>
 	<variable name="tftotal" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{texentas} + 
+		<variableExpression><![CDATA[$F{texentas} +
 ($F{timpuestos_10} < 0 ? $F{tgravadas_10} + $F{timpuestos_10} : $F{tgravadas_10}) +
-($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) + 
-($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) + 
+($F{timpuestos_5} < 0 ? $F{tgravadas_5} + $F{timpuestos_5} : $F{tgravadas_5}) +
+($F{timpuestos_10} < 0 ? $F{timpuestos_10} * -1: $F{timpuestos_10}) +
 ($F{timpuestos_5} < 0 ? $F{timpuestos_5} * -1: $F{timpuestos_5})]]></variableExpression>
 	</variable>
 	<group name="group_canal">
@@ -135,6 +137,7 @@
 		</groupHeader>
 		<groupFooter>
 			<band height="20">
+				<printWhenExpression><![CDATA[!$F{xdesc_canal}.isEmpty()]]></printWhenExpression>
 				<textField>
 					<reportElement x="120" y="0" width="100" height="20" uuid="3c8779d5-c757-4253-98dd-8a1606fb32cd"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -372,10 +375,11 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="85" splitType="Stretch">
+		<band height="99" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="516" y="65" width="110" height="14" uuid="31b110cb-d39f-4bdf-8ecb-002cb406a016"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fvtohasta}]]></textFieldExpression>
@@ -383,13 +387,14 @@
 			<staticText>
 				<reportElement x="182" y="65" width="91" height="14" uuid="6f32e4ba-2d0f-4195-a62c-5f80f66e955d"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.Vto.Desde]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="273" y="65" width="109" height="14" uuid="fb4e0ecf-98d7-46c1-8c65-c86913ab3d5a"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fvtodesde}]]></textFieldExpression>
@@ -397,13 +402,14 @@
 			<textField>
 				<reportElement x="1" y="31" width="800" height="20" uuid="18727c6f-5dbe-4bce-ac80-954f6d7df289"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="273" y="51" width="109" height="14" uuid="8c4eb25b-7596-4b3f-a54b-9efab2a95d90"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fdesde}]]></textFieldExpression>
@@ -411,27 +417,28 @@
 			<staticText>
 				<reportElement x="1" y="1" width="101" height="16" uuid="2841b2ec-e86e-4966-b712-548a341b7195"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[VENLOG S.A.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="17" width="101" height="14" uuid="857aa890-2414-47eb-9c18-d5b232c5fdf6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Stock y Cta. Cte.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="182" y="51" width="91" height="14" uuid="c49b0d39-2b6f-4091-aec9-1793f5690528"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Desde:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="516" y="51" width="110" height="14" uuid="955e484e-8079-44d8-adf5-7af1587ba9e6"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
@@ -439,21 +446,21 @@
 			<staticText>
 				<reportElement x="425" y="65" width="91" height="14" uuid="f1ea5356-a5e4-4d13-808f-7e3becbd900b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.Vto.Hasta:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="677" y="1" width="49" height="16" uuid="444807df-2b3f-428e-813d-d542187a3830"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="726" y="1" width="75" height="16" uuid="ea66ca8a-3035-47ad-bbdc-2d6c02cb2932"/>
 				<textElement verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="9"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
@@ -461,15 +468,65 @@
 			<staticText>
 				<reportElement x="425" y="51" width="91" height="14" uuid="a608c326-3c41-4b72-bdb1-bca361af0ca1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Hasta:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="678" y="17" width="123" height="14" uuid="75df7d11-e7d5-4788-a12e-ac1fc4c8f87a"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{nombreRepo}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="117" y="79" width="65" height="14" uuid="9c5b9375-eb30-4b9c-b143-0f0d1b188421"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Proveedor: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="79" width="65" height="14" uuid="f77a0d0a-1da5-4ce4-8e52-a54e5c535158"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Tipo Factura: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="559" y="79" width="96" height="14" uuid="9ab3fe48-7e1b-435a-90b5-572078ec7541"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tipoFactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="382" y="79" width="112" height="14" uuid="777dc1a2-6132-480d-b69a-ad7469ca672c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="79" width="135" height="14" uuid="ce506090-64be-48ae-bfec-894e91199bf1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="317" y="79" width="65" height="14" uuid="3b3c76e3-61b3-43d7-8f34-f40ef564632c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Canal: ]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rresudia" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b0c26b85-81bb-4430-8a2a-f1cd0a8cf2ad">
 	<property name="ireport.zoom" value="0.9090909090909091"/>
 	<property name="ireport.x" value="0"/>
@@ -12,6 +11,9 @@
 	<parameter name="usuImprime" class="java.lang.String"/>
 	<parameter name="fvtodesde" class="java.util.Date"/>
 	<parameter name="fvtohasta" class="java.util.Date"/>
+	<parameter name="tipoFactura" class="java.lang.String"/>
+	<parameter name="canal" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -287,31 +289,32 @@ $F{texentas}]]></variableExpression>
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="86" splitType="Stretch">
+		<band height="102" splitType="Stretch">
 			<textField>
 				<reportElement x="1" y="31" width="800" height="20" uuid="cc100555-5369-4385-9860-1bdebfd4e5c3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="677" y="1" width="49" height="16" uuid="eb41395a-3eea-4da6-9726-a8e4fca7ce8a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="425" y="65" width="91" height="14" uuid="cae37e9e-e70a-4fc2-99c8-29f0939b927b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.Vto.Hasta:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="516" y="51" width="110" height="14" uuid="4c6f20a8-3166-43d1-8bdf-b5a849fb8c73"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
@@ -319,6 +322,7 @@ $F{texentas}]]></variableExpression>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="516" y="65" width="110" height="14" uuid="7eb237c8-e1bb-42ea-ac55-84611e563905"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fvtohasta}]]></textFieldExpression>
@@ -326,19 +330,21 @@ $F{texentas}]]></variableExpression>
 			<staticText>
 				<reportElement x="425" y="51" width="91" height="14" uuid="ffcda229-fe95-47d8-a324-c9f59ba4e593"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Hasta:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="678" y="17" width="123" height="14" uuid="6a9c048d-80e2-4c65-a79f-a7e43999c5e2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{nombreRepo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="726" y="1" width="75" height="16" uuid="71926aa8-175e-4e13-832d-05b8a40d27f8"/>
 				<textElement verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="9"/>
 					<paragraph leftIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
@@ -346,27 +352,28 @@ $F{texentas}]]></variableExpression>
 			<staticText>
 				<reportElement x="1" y="1" width="101" height="16" uuid="5d387601-a0cc-48ad-8fa4-c0f34758b836"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[VENLOG S.A.]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="182" y="51" width="91" height="14" uuid="b452b9a6-40db-4538-9475-2b95a73d2125"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Desde:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="182" y="65" width="91" height="14" uuid="ce76236b-c781-4a81-a0b8-dd2ee5bf1f03"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[F.Vto.Desde]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="273" y="65" width="109" height="14" uuid="7d67b867-97be-469c-b423-97ec1882c6cf"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fvtodesde}]]></textFieldExpression>
@@ -374,17 +381,66 @@ $F{texentas}]]></variableExpression>
 			<staticText>
 				<reportElement x="1" y="17" width="101" height="14" uuid="152a3bc0-5dbf-4a22-962f-03db84e5b251"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Stock y Cta. Cte.]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="273" y="51" width="109" height="14" uuid="f403df95-e2de-4a15-948f-d2dd97de499b"/>
 				<textElement verticalAlignment="Middle">
+					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fdesde}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="494" y="79" width="65" height="14" uuid="b4f447ca-4d0f-45cc-9abc-8a9c1b1f26f5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Tipo Factura: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="382" y="79" width="112" height="14" uuid="e66711d2-9444-402f-92f6-97b381663d7f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="317" y="79" width="65" height="14" uuid="205223bd-26ab-4de4-b47d-0db11afc8a13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Canal: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="182" y="79" width="135" height="14" uuid="5a455e59-0c45-42de-8dbf-1ae07f054b02"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="559" y="79" width="96" height="14" uuid="c661e252-2996-4735-b825-81f5147509d4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tipoFactura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="117" y="79" width="65" height="14" uuid="b92d34f0-3b9d-4adb-a6ff-44b2fd1bf35a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Proveedor: ]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>

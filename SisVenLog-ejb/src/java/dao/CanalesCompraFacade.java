@@ -6,12 +6,12 @@
 package dao;
 
 import entidad.CanalesCompra;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
+import javax.persistence.Query;
 
 /**
  *
@@ -32,6 +32,19 @@ public class CanalesCompraFacade extends AbstractFacade<CanalesCompra> {
         super(CanalesCompra.class);
     }
     
+    public List<CanalesCompra> listarCanalesOrdenadoXDesc(){
+        Query q = getEntityManager().createNativeQuery("SELECT c.* FROM canales_compra c " +
+                " where mestado = 'A' order by c.xdesc ", CanalesCompra.class);
+        System.out.println(q.toString());
+        List<CanalesCompra> resp = new ArrayList<>();
+        resp = q.getResultList();
+        return resp;
+    }
     
+    public CanalesCompra getCanalCompraFromList(CanalesCompra pk, List<CanalesCompra> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCanalesCompraPK().equals(pk.getCanalesCompraPK()))
+                .findAny().orElse(null);
+    }
     
 }

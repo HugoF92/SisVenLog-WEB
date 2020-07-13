@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rliscompras2n" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1fa78e62-b61f-409c-ae11-9af51ef5ff46">
 	<property name="ireport.zoom" value="0.9090909090909091"/>
 	<property name="ireport.x" value="0"/>
@@ -12,6 +11,9 @@
 	<parameter name="usuImprime" class="java.lang.String"/>
 	<parameter name="fvtodesde" class="java.util.Date"/>
 	<parameter name="fvtohasta" class="java.util.Date"/>
+	<parameter name="tipoFactura" class="java.lang.String"/>
+	<parameter name="canal" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -360,7 +362,7 @@ $F{texentas}]]></variableExpression>
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="83" splitType="Stretch">
+		<band height="98" splitType="Stretch">
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="273" y="64" width="109" height="14" uuid="73b4938d-af5c-42c0-85ca-3c04481e5d58"/>
 				<textElement verticalAlignment="Middle">
@@ -457,6 +459,54 @@ $F{texentas}]]></variableExpression>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fvtohasta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="382" y="78" width="112" height="14" uuid="22238c94-34bf-4769-a9fd-fa3fb5cb33f1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="117" y="78" width="65" height="14" uuid="02d732bd-2147-42f6-8208-7a32d20c5b7f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Proveedor: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="494" y="78" width="65" height="14" uuid="69e1c0db-ab63-4a67-aed4-28e7565869aa"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Tipo Factura: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="559" y="78" width="96" height="14" uuid="938bdf1a-dbcd-4308-96d6-c659fe106e0b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tipoFactura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="317" y="78" width="65" height="14" uuid="457457cf-df97-4a77-93ff-260217dbd381"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<text><![CDATA[Canal: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="182" y="78" width="135" height="14" uuid="ec139dc9-f71b-4189-ab3c-643ca90f5f63"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
