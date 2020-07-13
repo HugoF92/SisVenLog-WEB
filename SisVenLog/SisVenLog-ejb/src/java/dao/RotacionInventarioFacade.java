@@ -4,7 +4,6 @@ import entidad.Depositos;
 import entidad.Divisiones;
 import entidad.Mercaderias;
 import entidad.Sublineas;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,11 +13,15 @@ import java.util.logging.Logger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 import util.DateUtil;
 
 /**
@@ -37,7 +40,7 @@ public class RotacionInventarioFacade {
 
     //TODO: cambiar fecha para entorno local yyyy/dd/MM y para el server
     // de prueba yyyy/MM/dd
-    static final private String DATE_FORMAT = "yyyy/dd/MM";
+    static final private String DATE_FORMAT = "yyyy/MM/dd";
     
     public void generateTableMostrar(Connection conexion, Date fechaDesde,
             Date fechaHasta, Depositos deposito, Sublineas sublinea,
@@ -45,24 +48,24 @@ public class RotacionInventarioFacade {
         Statement stmt = conexion.createStatement();
         this.createTempTableCurImp(stmt, fechaDesde, fechaHasta);
         this.createTempTableMercasel(stmt);
-        this.recreateExistencia2(stmt, fechaHasta, deposito);
+        //this.recreateExistencia2(stmt);
         this.calculateVentas(stmt, fechaDesde, fechaHasta, sublinea, division,
                 conPrecioCosto);
         this.calculateStockValorizado(stmt, fechaHasta, conPrecioCosto);
-        this.juntarTablasTemp(stmt);
         this.crearTableMostrar(stmt, discriminar);
     }
 
     private void createTempTableCurImp(Statement stmt, Date desde, Date hasta) throws SQLException {
-        Calendar calendar = Calendar.getInstance();
         // l_finicial = '01/01/'+STR(YEAR(Thisform.ffINAL.Value),4)
-        calendar.setTime(desde != null? desde: new Date());
-        calendar.set(calendar.get(Calendar.YEAR), 1, 1);
-        Date finicial = calendar.getTime();
+        Date from = desde != null? desde: new Date();
+        //default time zone
+	ZoneId defaultZoneId = ZoneId.systemDefault();
+        LocalDate f = from.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date finicial = Date.from(LocalDate.of(f.getYear(), Month.JANUARY, 1).atStartOfDay(defaultZoneId).toInstant());
         // l_ffinal = '31/12/'+STR(YEAR(Thisform.ffINAL.Value),4)
-        calendar.setTime(hasta != null? hasta: new Date());
-        calendar.set(calendar.get(Calendar.YEAR), 12, 31);
-        Date ffinal = calendar.getTime();
+        Date to = hasta != null? hasta: new Date();
+        LocalDate t = to.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date ffinal = Date.from(LocalDate.of(t.getYear(), Month.DECEMBER, 31).atStartOfDay(defaultZoneId).toInstant());
 
         String sql = "SELECT DISTINCT t.cod_merca, d.pimpues "
                 + "INTO #curimp "
@@ -80,40 +83,48 @@ public class RotacionInventarioFacade {
     }
 
     private void createTempTableMercasel(Statement stmt) throws SQLException {
-        stmt.execute("IF OBJECT_ID('dbo.mercasel', 'U') IS NOT NULL DROP TABLE dbo.mercasel;");
-        stmt.execute("CREATE TABLE mercasel ( "
+        String sql = "IF OBJECT_ID('dbo.mercasel', 'U') IS NOT NULL DROP TABLE dbo.mercasel";
+        System.out.println(sql);
+        stmt.execute(sql);
+        sql = "CREATE TABLE mercasel ( "
                     + "cod_merca CHAR(13), "
                     + "xdesc CHAR(50), "
-//                    + "cajas_mov integer, "
+                    + "cajas_mov integer, "
                     + "cant_cajas integer, "
-//                    + "iprecio_caja integer, "
-//                    + "unid_mov integer,"
+                    + "iprecio_caja integer, "
+                    + "unid_mov integer,"
                     + "cant_unid integer, "
-//                    + "iprecio_unid integer,"
-//                    + "ttotal integer,"
-//                    + "tcosto integer,"
+                    + "iprecio_unid integer,"
+                    + "ttotal integer,"
+                    + "tcosto integer,"
                     + "pimpues decimal(12,2), "
-                    + "mgrav_exe CHAR(1)"
-                    + ")");
-        String sql = "INSERT INTO mercasel (cod_merca, xdesc, cant_cajas, cant_unid, pimpues, mgrav_exe) "
-                    + "SELECT tm.cod_merca, tm.xdesc, tm.cant_cajas, tm.cant_unid, "
-                    + "CASE "
-                    + "	WHEN ci.pimpues != 10 AND ci.pimpues != 5 "
-                    + "	THEN 10 "
-                    + "	ELSE ci.pimpues "
-                    + "END as pimpues, "
-                    + "tm.mgrav_exe "
-                    + "FROM tmp_mercaderias tm, #curimp ci "
-                    + "WHERE tm.cod_merca = ci.cod_merca "
-                    + "ORDER BY tm.cod_merca ";
+                    + "mgrav_exe CHAR(1),"
+                    + "cod_sublinea integer,"
+                    + "cod_division integer,"
+                    + ")";
+        System.out.println(sql);
+        stmt.execute(sql);
+        sql = "INSERT INTO mercasel (cod_merca, xdesc, cant_cajas, cant_unid, pimpues, mgrav_exe) "
+            + "SELECT tm.cod_merca, tm.xdesc, tm.cant_cajas, tm.cant_unid, "
+            + "CASE "
+            + "	WHEN ci.pimpues != 10 AND ci.pimpues != 5 "
+            + "	THEN 10 "
+            + "	ELSE ci.pimpues "
+            + "END as pimpues, "
+            + "tm.mgrav_exe "
+            + "FROM tmp_mercaderias tm, #curimp ci "
+            + "WHERE tm.cod_merca = ci.cod_merca "
+            + "ORDER BY tm.cod_merca ";
         System.out.println(sql);
         stmt.execute(sql);
     }
     
     public void insertarMercaderiasSeleccionadas(Statement stmt,
             List<Mercaderias> mercaderias, List<Mercaderias> mercaderiasActivas) throws SQLException {
-        stmt.execute("IF OBJECT_ID('dbo.tmp_mercaderias', 'U') IS NOT NULL DROP TABLE tmp_mercaderias");
-        stmt.execute("CREATE TABLE tmp_mercaderias ( "
+        String sql = "IF OBJECT_ID('dbo.tmp_mercaderias', 'U') IS NOT NULL DROP TABLE tmp_mercaderias";
+        System.out.println(sql);
+        stmt.execute(sql);
+        sql = "CREATE TABLE tmp_mercaderias ( "
                     + "cod_merca CHAR(13), "
                     + "cod_barra CHAR(20), "
                     + "xdesc CHAR(50), "
@@ -121,7 +132,9 @@ public class RotacionInventarioFacade {
                     + "cant_cajas integer, "
                     + "cant_unid integer, "
                     + "mgrav_exe CHAR(1)"
-                    + ")");
+                    + ")";
+        System.out.println(sql);
+        stmt.execute(sql);
         if (mercaderias.size() > 0) {
             Mercaderias aux;
             for (Mercaderias m : mercaderias) {
@@ -133,18 +146,20 @@ public class RotacionInventarioFacade {
                     stmt.execute("INSERT INTO tmp_mercaderias (cod_merca, "
                         + "cod_barra, xdesc, nrelacion,cant_cajas, cant_unid, mgrav_exe ) "
                         + "VALUES ('" + aux.getMercaderiasPK().getCodMerca()
-                        + "', '" + aux.getCodBarra() + "', '" + aux.getXdesc()
+                        + "', '" + aux.getCodBarra() + "', '" + aux.getXdesc().replace("'", "''")
                         + "', " + aux.getNrelacion() + ",0,0, '" + aux.getMgravExe()+"' )");
                 }
             }
         } else {
-            stmt.execute("INSERT INTO tmp_mercaderias "
+            sql = "INSERT INTO tmp_mercaderias "
                     + "SELECT m.cod_merca, m.cod_barra, m.xdesc, m.nrelacion, "
                     + "1 as cant_cajas, 1 as cant_unid, m.mgrav_exe "
                     + "FROM mercaderias m, existencias e "
                     + "WHERE m.cod_merca = e.cod_merca "
                     + "AND m.mestado = 'A' "
-                    + "AND e.cod_depo = 1");
+                    + "AND e.cod_depo = 1";
+            System.out.println(sql);
+            stmt.execute(sql);
         }
     }
     
@@ -165,6 +180,74 @@ public class RotacionInventarioFacade {
         return lista;
     }
 
+    private class Totcur {
+        private String codMerca;
+        private String xdesc;
+        private Integer cajasMov;
+        private Integer unidMov;
+        private Integer codSublinea;
+        private Integer codDivision;
+        private Date fmovim;
+        public Totcur(){}
+
+        public String getCodMerca() {
+            return codMerca;
+        }
+
+        public void setCodMerca(String codMerca) {
+            this.codMerca = codMerca;
+        }
+
+        public String getXdesc() {
+            return xdesc;
+        }
+
+        public void setXdesc(String xdesc) {
+            this.xdesc = xdesc;
+        }
+
+        public Integer getCajasMov() {
+            return cajasMov;
+        }
+
+        public void setCajasMov(Integer cajasMov) {
+            this.cajasMov = cajasMov;
+        }
+
+        public Integer getUnidMov() {
+            return unidMov;
+        }
+
+        public void setUnidMov(Integer unidMov) {
+            this.unidMov = unidMov;
+        }
+
+        public Integer getCodSublinea() {
+            return codSublinea;
+        }
+
+        public void setCodSublinea(Integer codSublinea) {
+            this.codSublinea = codSublinea;
+        }
+
+        public Integer getCodDivision() {
+            return codDivision;
+        }
+
+        public void setCodDivision(Integer codDivision) {
+            this.codDivision = codDivision;
+        }
+
+        public Date getFmovim() {
+            return fmovim;
+        }
+
+        public void setFmovim(Date fmovim) {
+            this.fmovim = fmovim;
+        }
+        
+    }
+    
     private void calculateVentas(Statement stmt, Date fechaDesde, Date fechaHasta,
             Sublineas sublinea, Divisiones division, Boolean conPrecioCosto) throws SQLException {
 //        Calculamos la tabla Totcur
@@ -194,140 +277,220 @@ public class RotacionInventarioFacade {
         sql += "GROUP BY m.fmovim, m.cod_merca, e.nrelacion, e.cod_sublinea, e.xdesc, g.cod_division ";
         System.out.println(sql);
         stmt.execute(sql);
-//        Creamos una nueva tabla mercasel_totcu segun la logica del programa
-        // columnas: cod_merca, xdesc, cajas_mov, unid_mov, cod_sublinea, cod_division
-        // tcosto
-        sql = "SELECT "
-//            + "-- en caso que no exista el registro de totcur en mercasel "
-            + "ISNULL(ms.cod_merca, tc.cod_merca) as cod_merca,  "
-                // revisar por que no le gusta xdesc
-//            + "ISNULL(ms.xdesc, tc.xdesc) as xdesc, "
-            + "tc.cajas_mov, tc.unid_mov, tc.cod_sublinea, tc.cod_division, "
-            + "((tc.cajas_mov * ISNULL(curppp.nppp_caja, 0))+(tc.unid_mov * ISNULL(curppp.nprecio_ppp, 0))) as tcosto "
-            + "INTO #mercasel_totcur "
-            + "FROM #totcur tc "
-            + "	LEFT JOIN mercasel ms "
-            + "		ON tc.cod_merca = ms.cod_merca ";
-        if(!conPrecioCosto) {
-            sql += "	LEFT JOIN ( "
-            + "		SELECT cod_merca, fppp, nprecio_ppp, nppp_caja FROM ppp "
-            + "		WHERE cod_empr = 2 "
-            + "	) AS curppp "
-            + "		ON tc.cod_merca = curppp.cod_merca "
-            + "WHERE "
-//            + "-- Para ambos casos  de las tablas curppp "
-            + "curppp.fppp <= tc.fmovim ";
-            
-        } else {
-            sql += "	LEFT JOIN ( "
-            + "			SELECT cod_merca, frige_desde as fppp, frige_hasta,"
-            + "                 iprecio_unidad as nprecio_ppp, iprecio_caja as nppp_caja"
-            + "                 FROM precios "
-            + "			WHERE cod_empr = 2 "
-            + "			AND ctipo_vta = 'X' "
-            + "			AND cod_depo = 1 "
-            + "		) AS curppp "
-            + "			ON tc.cod_merca = curppp.cod_merca "
-            + "WHERE "
-//            + "-- Para ambos casos  de las tablas curppp "
-            + "curppp.fppp <= tc.fmovim "
-            + "AND (curppp.frige_hasta is null OR curppp.frige_hasta >= '"
-            + DateUtil.dateToString(fechaHasta, DATE_FORMAT) + "') ";
-        }
+        sql = "SELECT cod_merca, xdesc, cajas_mov, unid_mov, cod_sublinea, cod_division, fmovim FROM #totcur";
         System.out.println(sql);
-        stmt.execute(sql);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Totcur> totcurList = new ArrayList<>();
+        while (rs.next()) {
+            Totcur totcurItem = new Totcur();
+            totcurItem.setCodMerca(rs.getString("cod_merca"));
+            totcurItem.setXdesc(rs.getString("xdesc"));
+            totcurItem.setCajasMov(rs.getInt("cajas_mov"));
+            totcurItem.setUnidMov(rs.getInt("unid_mov"));
+            totcurItem.setCodSublinea(rs.getInt("cod_sublinea"));
+            totcurItem.setCodDivision(rs.getInt("cod_division"));
+            totcurItem.setFmovim(rs.getDate("fmovim"));
+            totcurList.add(totcurItem);
+        }
+        Double l_nprecio_ppp, l_nppp_caja;
+        Boolean exist;
+        for(Totcur totcur : totcurList){
+            // si no existe insertar el registro totcur
+            sql = "SELECT COUNT(*) as cant FROM mercasel WHERE cod_merca = '" + totcur.getCodMerca() + "'";
+            System.out.println(sql);
+            ResultSet res = stmt.executeQuery(sql);
+            res.next();
+            if(res.getInt("cant") == 0){ // no se encuentra el registro
+                sql = "INSERT INTO mercasel (cod_merca, xdesc, tcosto) "
+                    + "VALUES('" + totcur.getCodMerca() +"', '" + totcur.getXdesc() +"', 0) ";
+                System.out.println(sql);
+                stmt.execute(sql);
+            }
+            sql = "UPDATE mercasel "
+                + "SET cajas_mov = (cajas_mov + " + totcur.getCajasMov() + "), "
+                + "SET unid_mov = (unid_mov + " + totcur.getUnidMov() + "), "
+                + "SET cod_sublinea = " + totcur.getCodSublinea() + ", "
+                + "SET cod_division = " + totcur.getCodDivision() + " "
+                + "WHERE cod_merca = '" + totcur.getCodMerca() + "'";
+            System.out.println(sql);
+            stmt.execute(sql);
+            // Buscando PPP a la fecha del movimiento
+            if(!conPrecioCosto) {
+                sql = "SELECT TOP 1 fppp, nprecio_ppp, nppp_caja "
+                    + "FROM ppp "
+                    + "WHERE cod_merca = '" + totcur.getCodMerca() +"' "
+                    + "AND cod_empr = 2 "
+                    + "AND fppp <= '" + DateUtil.dateToString(totcur.getFmovim(), DATE_FORMAT) + "' "
+                    + "ORDER BY fppp DESC ";
+                System.out.println(sql);
+                rs = stmt.executeQuery(sql);
+                exist = rs.next();
+                l_nprecio_ppp = exist? rs.getDouble("nprecio_ppp"): 0;
+                l_nppp_caja = exist? rs.getDouble("nppp_caja"): 0;
+            } else {
+                sql = "SELECT "
+                    + "  iprecio_caja, iprecio_unidad  "
+                    + "FROM precios "
+                    + "WHERE cod_merca = '" + totcur.getCodMerca() +"' "
+                    + "AND cod_empr = 2 "
+                    + "AND frige_desde  <= '" + DateUtil.dateToString(totcur.getFmovim(), DATE_FORMAT) + "' "
+                    + "AND ctipo_vta = 'X' "
+                    + "AND cod_depo = 1 "
+                    + "AND (frige_hasta is null "
+                    + "OR frige_hasta >= '" + DateUtil.dateToString(totcur.getFmovim(), DATE_FORMAT) + "') ";
+                System.out.println(sql);
+                rs = stmt.executeQuery(sql);
+                rs.next();
+                l_nprecio_ppp = rs.getDouble("iprecio_unidad");
+                l_nppp_caja = rs.getDouble("iprecio_caja");
+            }
+            // se actualizan los totales
+            sql = "UPDATE mercasel SET tcosto = (tcosto + ((" + totcur.getCajasMov() 
+                    + "*" + l_nppp_caja + ") + (" + totcur.getUnidMov() + "*" 
+                    + l_nprecio_ppp + "))) ";
+            System.out.println(sql);
+            getEntityManager().createNativeQuery(sql).executeUpdate();
+        }
+    }
+    
+    private class Mercasel {
+        private String codMerca;
+        private Double pimpues;
+        private Integer cantCajas;
+        private Double precioCaja;
+        private Integer cantUnid;
+        private Double precioUnid;
+        public Mercasel(){}
+
+        public String getCodMerca() {
+            return codMerca;
+        }
+
+        public void setCodMerca(String codMerca) {
+            this.codMerca = codMerca;
+        }
+
+        public Double getPimpues() {
+            return pimpues;
+        }
+
+        public void setPimpues(Double pimpues) {
+            this.pimpues = pimpues;
+        }
+
+        public Integer getCantCajas() {
+            return cantCajas;
+        }
+
+        public void setCantCajas(Integer cantCajas) {
+            this.cantCajas = cantCajas;
+        }
+
+        public Double getPrecioCaja() {
+            return precioCaja;
+        }
+
+        public void setPrecioCaja(Double precioCaja) {
+            this.precioCaja = precioCaja;
+        }
+
+        public Integer getCantUnid() {
+            return cantUnid;
+        }
+
+        public void setCantUnid(Integer cantUnid) {
+            this.cantUnid = cantUnid;
+        }
+
+        public Double getPrecioUnid() {
+            return precioUnid;
+        }
+
+        public void setPrecioUnid(Double precioUnid) {
+            this.precioUnid = precioUnid;
+        }
     }
 
     private void calculateStockValorizado(Statement stmt, Date fechaHasta, Boolean conPrecioCosto) throws SQLException {
-        // Primero creamos la tabla impucur
         String sql = "SELECT "
-                + "    SUM(b.ifijo) as l_ifijo,  "
-                + "    SUM(b.pimpues/100) as l_pimpues, "
-                + "    a.cod_merca "
-                + "INTO #impucur "
-                + "FROM merca_impuestos a, impuestos b   "
-                + "WHERE  a.cod_empr = 2 "
-                + "AND a.cod_impu = b.cod_impu "
-                + "GROUP BY a.cod_merca ";
+        + "  cod_merca, pimpues, cant_cajas, iprecio_caja, cant_unid, iprecio_unid "
+        + "FROM mercasel ";
         System.out.println(sql);
-        stmt.execute(sql);
-        // luego creamos la tabla temporal mercasel_tot
-        String l_ffinal = DateUtil.dateToString(fechaHasta, DATE_FORMAT);
-        // impuestos, pimpues, ttotal, iprecio_unid, iprecio_caja
-        sql = "SELECT "
-            + "ms.cod_merca, "
-            + "CASE "
-            + "    WHEN ms.mgrav_exe = 'G' "
-            + "    THEN "
-            + "        CASE "
-            + "            WHEN ms.pimpues = 0 "
-            + "            THEN "
-            + "                CASE "
-            + "                    WHEN curppp.nprecio_ppp> 0 "
-            + "                    THEN (curppp.nprecio_ppp - ((curppp.nprecio_ppp / (1 + ic.l_pimpues)) + ic.l_ifijo)) "
-//            + "                    -- l_importe = a esta funcion sin iva "
-            + "                    ELSE 0 "
-            + "                END "
-            + "            ELSE ISNULL(curppp.nprecio_ppp, 0) - (ISNULL(curppp.nprecio_ppp, 0) / (1+(ms.pimpues/100))) "
-            + "        END "
-            + "    ELSE 0 "
-            + "END as impuestos, "
-            + "CASE "
-            + "    WHEN ms.mgrav_exe = 'G' "
-            + "    THEN "
-            + "        CASE "
-            + "            WHEN ms.pimpues = 0 "
-            + "            THEN "
-            + "                CASE "
-            + "                    WHEN curppp.nprecio_ppp> 0 "
-            + "                    THEN ROUND(ABS((curppp.nprecio_ppp - ((curppp.nprecio_ppp / (1 + ic.l_pimpues)) + ic.l_ifijo)))/(curppp.nprecio_ppp - (curppp.nprecio_ppp - ((curppp.nprecio_ppp / (1 + ic.l_pimpues)) + ic.l_ifijo))) ,2) * 100 "
-//            + "                    -- l_impuesto = l_importe "
-//            + "                    -- l_pimpues = ROUND(ABS(l_impuesto)/(mercasel->iprecio_unid - l_impuesto) ,2) "
-//            + "                    -- en el programa se realiza REPLACE  pimpues WITH l_pimpues * 100 "
-            + "                    ELSE 1 "
-            + "                END "
-            + "            ELSE 0 "
-            + "        END "
-            + "    ELSE 0 "
-            + "END as pimpues, "
-            + "((mm.cant_cajas * ISNULL(curppp.nppp_caja, 0))+(mm.cant_unid * ISNULL(curppp.nprecio_ppp, 0))) as ttotal, "
-            + "ISNULL(curppp.nprecio_ppp, 0) as iprecio_unid, ISNULL(curppp.nppp_caja,0) as iprecio_caja "
-            + "INTO #mercasel_costo "
-            + "FROM mercasel ms "
-            + "	INNER JOIN movimientos_merca mm  "
-            + "		ON ms.cod_merca = mm.cod_merca "
-            + "	INNER JOIN #impucur ic "
-            + "		ON ms.cod_merca = ic.cod_merca ";
-        if(!conPrecioCosto) {
-            sql += "	LEFT JOIN ( "
-                + "		SELECT cod_merca, fppp, nprecio_ppp, nppp_caja FROM ppp "
-                + "		WHERE cod_empr = 2 "
-                + "	) AS curppp "
-                + "		ON ms.cod_merca = curppp.cod_merca "
-                + "WHERE "
-//                + "-- Para ambos casos  de las tablas curppp "
-                + "curppp.fppp <= '" + l_ffinal + "' ";
-        } else {
-            sql += "	LEFT JOIN ( "
-                + "			SELECT cod_merca, frige_desde as fppp, frige_hasta, iprecio_unidad as nprecio_ppp, iprecio_caja as nppp_caja FROM precios "
-                + "			WHERE cod_empr = 2 "
-                + "			AND ctipo_vta = 'X' "
-                + "			AND cod_depo = 1 "
-                + "		) AS curppp "
-                + "			ON ms.cod_merca = curppp.cod_merca "
-                + "WHERE "
-//                + "-- Para ambos casos  de las tablas curppp "
-                + "curppp.fppp <= '" + l_ffinal + "' "
-                + "AND (curppp.frige_hasta is null OR curppp.frige_hasta >= '" + l_ffinal + "') ";
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Mercasel> mercaselList = new ArrayList<>();
+        while (rs.next()) {
+            Mercasel m = new Mercasel();
+            m.setCodMerca(rs.getString("cod_merca"));
+            m.setPimpues(rs.getDouble("pimpues"));
+            m.setCantCajas(rs.getInt("cant_cajas"));
+            m.setPrecioCaja(rs.getDouble("iprecio_caja"));
+            m.setCantUnid(rs.getInt("cant_unid"));
+            m.setPrecioUnid(rs.getDouble("iprecio_unid"));
+            mercaselList.add(m);
         }
+        String l_ffinal = DateUtil.dateToString(fechaHasta, DATE_FORMAT);
+        Double l_nprecio_ppp, l_nppp_caja;
+        Boolean exist;
+        for(Mercasel mercasel: mercaselList) {
+            if(!conPrecioCosto) {
+                sql = "SELECT TOP 1 fppp, nprecio_ppp, nppp_caja "
+                    + "FROM ppp "
+                    + "WHERE cod_merca = '" + mercasel.getCodMerca() +"' "
+                    + "AND cod_empr = 2 "
+                    + "AND fppp <= '" + l_ffinal + "' "
+                    + "ORDER BY fppp DESC ";
+                System.out.println(sql);
+                rs = stmt.executeQuery(sql);
+                exist = rs.next();
+                l_nprecio_ppp = exist? rs.getDouble("nprecio_ppp"): 0;
+                l_nppp_caja = exist? rs.getDouble("nppp_caja"): 0;
+            } else {
+                sql = "SELECT "
+                    + "  iprecio_caja, iprecio_unidad  "
+                    + "FROM precios "
+                    + "WHERE cod_merca = '" + mercasel.getCodMerca() +"' "
+                    + "AND cod_empr = 2 "
+                    + "AND frige_desde  <= '" + l_ffinal + "' "
+                    + "AND ctipo_vta = 'X' "
+                    + "AND cod_depo = 1 "
+                    + "AND (frige_hasta is null "
+                    + "OR frige_hasta >= '" + l_ffinal + "') ";
+                System.out.println(sql);
+                rs = stmt.executeQuery(sql);
+                exist = rs.next();
+                l_nprecio_ppp = exist? rs.getDouble("iprecio_unidad"): 0;
+                l_nppp_caja = exist? rs.getDouble("iprecio_caja"): 0;
+            }
+            sql = " UPDATE mercasel "
+                + " SET iprecio_unid = " + l_nprecio_ppp + ", iprecio_caja = " + l_nppp_caja
+                + " WHERE cod_merca = '" + mercasel.getCodMerca() + "'";
+            System.out.println(sql);
+            getEntityManager().createNativeQuery(sql).executeUpdate();
+        }
+        // se actualizan los totales
+        sql = "UPDATE mercasel SET ttotal = (cant_cajas*iprecio_caja)+(cant_unid*iprecio_unid) ";
         System.out.println(sql);
-        stmt.execute(sql);
+        getEntityManager().createNativeQuery(sql).executeUpdate();
     }
 
-    private void recreateExistencia2(Statement stmt, Date fechaHasta, Depositos deposito) throws SQLException {
+    private void recreateExistencia2(Statement stmt) throws SQLException {
+//        // TODO: ajustar con las tablas que tenes
+//        String query = "select * from calc_exist_deposito('"+DateUtil.dateToString(fechaHasta, DATE_FORMAT)+"', "
+//                +(deposito != null ? deposito.getDepositosPK().getCodDepo() : null)+")";
+//        stmt.execute(query);
+        
         // TODO: ajustar con las tablas que tenes
-        String query = "select * from calc_exist_deposito('"+DateUtil.dateToString(fechaHasta, DATE_FORMAT)+"', "
-                +(deposito != null ? deposito.getDepositosPK().getCodDepo() : null)+")";
+        // Se calcula la la ultima fecha del mes anterior
+        LocalDate today = LocalDate.now();
+        LocalDate end = today.minus(1, ChronoUnit.MONTHS).withDayOfMonth(today.lengthOfMonth());
+        //default time zone
+	ZoneId defaultZoneId = ZoneId.systemDefault();
+        
+         //local date + atStartOfDay() + default time zone + toInstant() = Date
+        Date date = Date.from(end.atStartOfDay(defaultZoneId).toInstant());
+
+        String query = "select * from calc_exist_deposito('"+DateUtil.dateToString(date, DATE_FORMAT)+"',1)";
+        System.out.println(query);
         stmt.execute(query);
     }
 
@@ -340,7 +503,7 @@ public class RotacionInventarioFacade {
                 + "    cod_sublinea, cod_division, unid_mov, cant_unid, iprecio_unid, tcosto, "
                 + "    ttotal, (30/(tcosto/ttotal)) as ndias "
                 + "INTO #mostrar "
-                + "FROM #mercaselec "
+                + "FROM mercasel "
                 + "WHERE cant_cajas > 0 "
                 + "OR cant_unid > 0 ";
         }
@@ -353,7 +516,7 @@ public class RotacionInventarioFacade {
                 + "    SUM((m.cant_cajas * m.iprecio_caja) + (m.cant_unid * m.iprecio_unid)) as ttotal,  "
                 + "    (30/(SUM(m.tcosto)/SUM((m.cant_cajas * m.iprecio_caja) + (m.cant_unid * m.iprecio_unid)))) as ndias "
                 + "INTO #mostrar "
-                + "FROM #mercaselec m, sublineas s "
+                + "FROM mercasel m, sublineas s "
                 + "WHERE m.cod_sublinea = s.cod_sublinea "
                 + "AND (m.cant_cajas > 0 OR m.cant_unid > 0) "
                 + "GROUP BY m.cod_merca, s.cod_sublinea, s.xdesc, m.iprecio_caja, s.cod_sublinea, m.cod_division, m.iprecio_unid "
@@ -369,27 +532,12 @@ public class RotacionInventarioFacade {
                 + "    SUM((m.cant_cajas * m.iprecio_caja) + (m.cant_unid * m.iprecio_unid)) as ttotal, "
                 + "    (30/(SUM(m.tcosto)/SUM((m.cant_cajas * m.iprecio_caja) + (m.cant_unid * m.iprecio_unid)))) as ndias "
                 + "INTO #mostrar "
-                + "FROM #mercaselec m, divisiones d "
+                + "FROM mercasel m, divisiones d "
                 + "WHERE m.cod_division = d.cod_division "
                 + "AND (m.cant_cajas > 0 OR m.cant_unid > 0) "
                 + "GROUP BY m.cod_merca, d.cod_division, d.xdesc, m.iprecio_caja, d.cod_division, m.iprecio_unid ";
             
         }
-        System.out.println(sql);
-        stmt.execute(sql);
-    }
-
-    private void juntarTablasTemp(Statement stmt) throws SQLException {
-        String sql = "SELECT "
-                + "    m.cod_merca, m.xdesc, mt.cajas_mov, m.cant_cajas, "
-                + "    mc.iprecio_caja, mt.cod_sublinea, mt.cod_division, mt.unid_mov, "
-                + "    m.cant_unid, mc.iprecio_unid, mt.tcosto, mc.ttotal "
-                + "INTO #mercaselec "
-                + "FROM mercasel m "
-                + "    INNER JOIN #mercasel_totcur mt "
-                + "        ON m.cod_merca = mt.cod_merca "
-                + "    INNER JOIN #mercasel_costo mc "
-                + "        ON m.cod_merca = mc.cod_merca ";
         System.out.println(sql);
         stmt.execute(sql);
     }
