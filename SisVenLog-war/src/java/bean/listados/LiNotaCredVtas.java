@@ -91,7 +91,8 @@ public class LiNotaCredVtas {
     
     @PostConstruct
     public void init() {
-        this.seleccion = new String("1");        
+        this.seleccion = new String("1");
+        this.estado = new String("1");
         this.desde = new Date();
         this.hasta = new Date();
         listaDepositos = depositoFacade.listarDepositosActivos();
@@ -308,7 +309,7 @@ public class LiNotaCredVtas {
             sql_nro_notas += " AND n.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
         }
 
-         sql_nro_notas += " AND n.ctipo_docum = "+this.tipoFactura.getCtipoDocum() +
+         sql_nro_notas += " AND n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase() +"' " +
 		" AND n.nro_nota = d.nro_nota "+
 		" AND n.fdocum = d.fdocum "+
 		" AND n.cod_empr = d.cod_empr ";
@@ -340,7 +341,7 @@ public class LiNotaCredVtas {
         }
         
         sql += " AND (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
-            + " AND (n.ctipo_docum = " + this.tipoFactura.getCtipoDocum() + ") "
+            + " AND (n.ctipo_docum = '" + this.tipoFactura.getCtipoDocum().toUpperCase() + "') "
             + " AND n.nro_nota = t.nro_nota  ";
         
         if (this.seleccion.equals("1")){
@@ -438,7 +439,7 @@ public class LiNotaCredVtas {
         sql3 += " SELECT ctipo_docum, nro_nota, SUM(texentas) as texentas, "
             + " sum(tgravadas_5) as tgravadas_5, SUM(tgravadas_10) as tgravadas_10, " 
             + "	SUM(timpuestos_5) as timpuestos_5, sum(timpuestos_10) as timpuestos_10 " 
-            + "	FROM ( "+sql2+" ) GROUP BY ctipo_docum, nro_nota ";
+            + "	FROM ( "+sql2+" ) a GROUP BY ctipo_docum, nro_nota ";
         
         String [] a = {sql,sql3};
         return a;
@@ -472,8 +473,8 @@ public class LiNotaCredVtas {
             + " conceptos_documentos d ON n.cconc = d.cconc AND n.ctipo_docum = d.ctipo_docum AND n.cconc = d.cconc "
             + " WHERE n.cod_empr = 2 AND f.cod_empr = 2 "
             + " AND n.fdocum = nd.fdocum "
-            + "	AND  (n.fdocum BETWEEN BETWEEN '"+fdesde+"' AND '"+fhasta+"'"
-            + " AND (n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum()+"') "
+            + "	AND  (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'"
+            + " AND (n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase()+"') "
             + extras;
         
         if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
