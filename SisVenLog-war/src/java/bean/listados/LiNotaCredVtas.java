@@ -153,7 +153,7 @@ public class LiNotaCredVtas {
                 extras = extras.substring(0, extras.length()-1) + " ) ";
             }
 
-            if ( this.estado.equals("1") || this.seleccion.equals("5") || this.seleccion.equals("6") 
+            if ( this.resumido || this.seleccion.equals("5") || this.seleccion.equals("6") 
                     || this.seleccion.equals("7") || this.seleccion.equals("11")  ) {
                 sqls = preEjecutarSQL2(fdesde, fhasta, extras);
             } else {
@@ -254,9 +254,11 @@ public class LiNotaCredVtas {
                     + " WHERE m.nro_nota = i.nro_nota ";
             }
             
-            System.out.println(sqls[0]);
-            System.out.println(sqls[1]);
-            
+            for (int i=0; i<sqls.length; i++ ) {
+                System.out.println(sqls[i]);
+            }
+            System.out.println("reporte "+reporte);
+            System.out.println("sqlReport "+sqlReport);            
             if (tipo.equals("VIST")){
                 String usuImprime = "";//FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
                 Map param = new HashMap();
@@ -473,7 +475,7 @@ public class LiNotaCredVtas {
             + " conceptos_documentos d ON n.cconc = d.cconc AND n.ctipo_docum = d.ctipo_docum AND n.cconc = d.cconc "
             + " WHERE n.cod_empr = 2 AND f.cod_empr = 2 "
             + " AND n.fdocum = nd.fdocum "
-            + "	AND  (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'"
+            + "	AND  (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
             + " AND (n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase()+"') "
             + extras;
         
