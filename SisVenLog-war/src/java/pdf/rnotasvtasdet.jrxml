@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotasvtasdet" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f468d1ca-3a44-4988-8e4a-3524fc7f0b09">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="15"/>
+	<property name="ireport.y" value="5"/>
 	<parameter name="sql" class="java.lang.String"/>
 	<parameter name="nombreRepo" class="java.lang.String"/>
 	<parameter name="titulo" class="java.lang.String"/>
@@ -13,7 +13,7 @@
 	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="empleado" class="java.lang.String"/>
 	<field name="nro_nota" class="java.math.BigDecimal"/>
-	<field name="fdocum" class="java.sql.Timestamp"/>
+	<field name="fdocum" class="java.util.Date"/>
 	<field name="fac_ctipo_docum" class="java.lang.String"/>
 	<field name="cconc" class="java.lang.String"/>
 	<field name="texentas" class="java.math.BigDecimal"/>
@@ -28,7 +28,7 @@
 	<field name="xnombre_vendedor" class="java.lang.String"/>
 	<field name="xdesc_conc" class="java.lang.String"/>
 	<field name="fac_ttotal" class="java.math.BigDecimal"/>
-	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="ffactur" class="java.util.Date"/>
 	<field name="cod_entregador" class="java.lang.Short"/>
 	<field name="xnombre_entregador" class="java.lang.String"/>
 	<field name="cod_merca" class="java.lang.String"/>
@@ -60,9 +60,9 @@
 	<group name="group_fdocum">
 		<groupExpression><![CDATA[$F{fdocum}]]></groupExpression>
 		<groupHeader>
-			<band height="25">
-				<textField>
-					<reportElement uuid="8b228fac-b8cf-4756-b7bb-256d8e8c48d3" x="14" y="3" width="143" height="20"/>
+			<band height="20">
+				<textField pattern="dd/MM/yyyy">
+					<reportElement uuid="8b228fac-b8cf-4756-b7bb-256d8e8c48d3" x="14" y="0" width="143" height="20"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{fdocum}]]></textFieldExpression>
 				</textField>
@@ -70,8 +70,11 @@
 		</groupHeader>
 		<groupFooter>
 			<band height="25">
-				<textField>
-					<reportElement uuid="644b1399-67b7-4349-bbb4-380acc3fbbe7" x="124" y="3" width="112" height="20"/>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement uuid="644b1399-67b7-4349-bbb4-380acc3fbbe7" x="124" y="3" width="190" height="20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -90,7 +93,12 @@
 				</staticText>
 				<textField>
 					<reportElement uuid="1b72f514-5c9a-4184-8802-c1731f9afbe3" x="314" y="3" width="55" height="20"/>
-					<textElement/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{ttotal_2}]]></textFieldExpression>
 				</textField>
 			</band>
@@ -99,9 +107,9 @@
 	<group name="group_cconc">
 		<groupExpression><![CDATA[$F{cconc}]]></groupExpression>
 		<groupHeader>
-			<band height="25">
+			<band height="20">
 				<staticText>
-					<reportElement uuid="9cc11169-685a-42c8-b3ee-f3b459949537" x="14" y="3" width="40" height="20"/>
+					<reportElement uuid="9cc11169-685a-42c8-b3ee-f3b459949537" x="14" y="0" width="40" height="20"/>
 					<box>
 						<topPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.0"/>
@@ -112,7 +120,7 @@
 					<text><![CDATA[Concepto: ]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="cee1e05e-110c-4469-b880-cc0093fc1250" x="54" y="3" width="150" height="20"/>
+					<reportElement uuid="cee1e05e-110c-4469-b880-cc0093fc1250" x="54" y="0" width="150" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -134,7 +142,10 @@
 					<text><![CDATA[TOTAL CONCEPTO]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="6f2a6e0f-15aa-4898-a35d-f1437f092009" x="124" y="3" width="148" height="20"/>
+					<reportElement uuid="6f2a6e0f-15aa-4898-a35d-f1437f092009" x="124" y="3" width="190" height="20"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -142,7 +153,12 @@
 				</textField>
 				<textField>
 					<reportElement uuid="a20aedcd-779d-4852-966e-5fbe09ef5d1e" x="314" y="3" width="55" height="20"/>
-					<textElement/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{ttotal_1}]]></textFieldExpression>
 				</textField>
 			</band>
@@ -163,6 +179,7 @@
 					<reportElement uuid="705679f0-94b4-49c8-95bf-9d32c3cc8c2f" x="370" y="0" width="89" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
+						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre_vendedor}]]></textFieldExpression>
 				</textField>
@@ -187,7 +204,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="dd/MM/yyyy">
 					<reportElement uuid="3e790920-f666-4857-bf87-ac824c185332" x="124" y="0" width="55" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
@@ -212,6 +229,7 @@
 					<reportElement uuid="e32c9a72-2469-4fc3-a915-85496089055a" x="459" y="0" width="89" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
+						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre_entregador}]]></textFieldExpression>
 				</textField>
@@ -522,12 +540,20 @@
 		<band height="42" splitType="Stretch">
 			<textField>
 				<reportElement uuid="caa44a93-f255-4b3f-9122-25f867afbfd9" x="314" y="3" width="55" height="20"/>
-				<textElement/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{ttotal_3}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="e78d82b9-f793-427f-ad01-40f6033ad7ac" x="124" y="3" width="156" height="20"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<reportElement uuid="e78d82b9-f793-427f-ad01-40f6033ad7ac" x="124" y="3" width="190" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL GENERAL]]></text>
