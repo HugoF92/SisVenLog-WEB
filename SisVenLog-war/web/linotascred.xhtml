@@ -96,11 +96,11 @@
                                         </p:selectOneMenu>
                                                                                 
                                         <p:outputLabel value="Depósito:" style="float: right; font-weight: bold;" />
-                                        <p:selectOneMenu value="#{asociarMercaderiaBean.depositoSeleccionado}" 
+                                        <p:selectOneMenu value="#{liNotaCredVtas.deposito}" 
                                                          filterMatchMode="contains" filter="true"
                                                          style=" width: 60%;" converter="#{depositosConverter}">
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
-                                            <f:selectItems value="#{asociarMercaderiaBean.listaDepositos}" var="item"
+                                            <f:selectItems value="#{liNotaCredVtas.listaDepositos}" var="item"
                                                            itemValue="#{item}"
                                                            itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
@@ -118,7 +118,7 @@
                                         </p:selectOneRadio>
                                         
                                         <p:outputLabel value="IVA Discriminado" style="float: right; font-weight: bold;"/>
-                                        <p:selectBooleanCheckbox value="#{liNotaCredVtas.sinIVA}"/>
+                                        <p:selectBooleanCheckbox value="#{liNotaCredVtas.conIVA}"/>
                                         
                                         <p:outputLabel value="Con detalles" style="float: right; font-weight: bold;"/>                                        
                                         <p:selectBooleanCheckbox value="#{liNotaCredVtas.resumido}"/>

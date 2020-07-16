@@ -128,13 +128,13 @@ public class LiNotaCredVtas {
                 extras += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
             }
             if (this.concepto != null){
-                extras += " AND n.cconc = '" + this.concepto.getConceptosDocumentosPK() +"' ";
+                extras += " AND n.cconc = '" + this.concepto.getConceptosDocumentosPK().getCconc() +"' ";
             }
             if (this.canal != null){
                 extras += " AND f.cod_canal = '" + this.canal.getCodCanal()  +"' ";
             }
             if (this.deposito != null){
-                extras += " AND d.cod_ruta = " + this.deposito.getDepositosPK()  +" ";
+                extras += " AND f.cod_depo = " + this.deposito.getDepositosPK().getCodDepo()  +" ";
             }
             if (this.proveedor != null){
                 extras += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
@@ -143,18 +143,18 @@ public class LiNotaCredVtas {
             //if (this.tipoFactura != null){
             //    extras += " AND s.cod_linea = " + this.tipoFactura.getCtipoDocum()+ " ";
             //}
-            if (mercaderias.getTarget().size() > 0) {
-                listaMercaderiasSeleccionadas = mercaderias.getTarget();
-                extras += " AND m.cod_merca IN (";
-                for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
-                    MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                    extras += " '" + pk.getCodMerca() + "',";
-                }
-                extras = extras.substring(0, extras.length()-1) + " ) ";
-            }
-
+            
             if ( this.resumido || this.seleccion.equals("5") || this.seleccion.equals("6") 
                     || this.seleccion.equals("7") || this.seleccion.equals("11")  ) {
+                if (mercaderias.getTarget().size() > 0) {
+                    listaMercaderiasSeleccionadas = mercaderias.getTarget();
+                    extras += " AND nd.cod_merca IN (";
+                    for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
+                        MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
+                        extras += " '" + pk.getCodMerca() + "',";
+                    }
+                    extras = extras.substring(0, extras.length()-1) + " ) ";
+                }
                 sqls = preEjecutarSQL2(fdesde, fhasta, extras);
             } else {
                 sqls = preEjecutarSQL(fdesde, fhasta, extras);
@@ -240,7 +240,7 @@ public class LiNotaCredVtas {
                     break;
                 case "11":
                     titulo = " ** ";
-                    reporte = "rnotasvtaszm";
+                    reporte = "rnotasvtaszn";
                     sqlReport = sqls[1];
                     break;
             }
@@ -250,7 +250,7 @@ public class LiNotaCredVtas {
                 reporte = "rnotasvtas6";
                 sqlReport = "SELECT m.*, i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, "
                     + " i.timpuestos_5 "
-                    + " FROM " + sqls[0]  + " m, " + sqls[1] + " i "
+                    + " FROM (" + sqls[0]  + " ) m, (" + sqls[1] + ") i "
                     + " WHERE m.nro_nota = i.nro_nota ";
             }
             
@@ -295,7 +295,7 @@ public class LiNotaCredVtas {
                         + " i.tgravadas_10 + i.timpuestos_10 tgrav_10, "
                         + " i.tgravadas_5 + i.timpuestos_5 tgrav_5, "
                         + " i.timpuestos_10 * -1 timpu_10, i.timpuestos_5 * -1 timpu_5"
-                        + " FROM " + sqls[0]  + " m, " + sqls[1] + " i "
+                        + " FROM ( " + sqls[0]  + " ) m, ( " + sqls[1] + " ) i "
                         + " WHERE m.nro_nota = i.nro_nota ";
                 } 
                 
@@ -372,32 +372,33 @@ public class LiNotaCredVtas {
         
         sql += extras;
         
-        switch ( this.seleccion ) {
-            case "1":
-                sql += " ORDER BY n.cconc, n.fdocum, n.nro_nota ";
-                break;
-            case "2":
-                sql += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum ";
-                break;
-            case "3":
-                sql += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum ";
-                break;
-            case "4":
-                sql += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
-                break;            
-            case "8":
-                sql += " ORDER BY c.cod_cliente, n.fdocum, n.cconc, n.nro_nota  ";
-                break;
-            case "9":
-                sql += " ORDER BY f.cod_zona, n.cconc, n.nro_nota, n.fdocum ";
-                break;
-            case "10":
-                sql += " ORDER BY n.nro_nota ";
-                break;
-            case "11":
-                sql += " ORDER BY f.cod_zona ";
-                break;
-        }                
+        if (!this.conIVA)
+            switch ( this.seleccion ) {
+                case "1":
+                    sql += " ORDER BY n.cconc, n.fdocum, n.nro_nota ";
+                    break;
+                case "2":
+                    sql += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum ";
+                    break;
+                case "3":
+                    sql += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum ";
+                    break;
+                case "4":
+                    sql += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
+                    break;            
+                case "8":
+                    sql += " ORDER BY c.cod_cliente, n.fdocum, n.cconc, n.nro_nota  ";
+                    break;
+                case "9":
+                    sql += " ORDER BY f.cod_zona, n.cconc, n.nro_nota, n.fdocum ";
+                    break;
+                case "10":
+                    sql += " ORDER BY n.nro_nota ";
+                    break;
+                case "11":
+                    sql += " ORDER BY f.cod_zona ";
+                    break;
+            }                
         
         if (this.conIVA) {
             sql2 = " SELECT   t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota,  0 AS texentas, "
@@ -533,27 +534,27 @@ public class LiNotaCredVtas {
             case "5":
                 sql2 += "SELECT cod_merca, xdesc, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID "
-                    + " FROM ("+sql+") " 
+                    + " FROM ("+sql+") a" 
                     + " GROUP BY cod_merca, xdesc";
                 break;
             case "6":
                 sql2 += " SELECT cod_sublinea, xdesc_sublinea, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID, SUM(igravadas) as igravadas, "
                     + " sum(iexentas) as iexentas, sum(impuestos) as impuestos " 
-                    + " FROM ("+sql+") " 
+                    + " FROM ("+sql+") a" 
                     + "	GROUP BY cod_sublinea, xdesc_sublinea  ";
                 break;
             case "7":
                 sql2 += " SELECT cod_division, xdesc_division, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID, SUM(igravadas) as igravadas, "
                     + " sum(iexentas) as iexentas, sum(impuestos) as impuestos "
-                    + " FROM ("+sql+") " 
+                    + " FROM ("+sql+") a" 
                     + " GROUP BY cod_division, xdesc_division";
                 break;
             case "11":
                 sql2 += " SELECT cod_zona, cod_merca, xdesc, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID "
-                    + " FROM ("+sql+") " 
+                    + " FROM ("+sql+") a" 
                     + "	GROUP BY cod_zona, cod_merca, xdesc " 
                     + "	ORDER BY cod_zona, cod_merca";
                 break;
