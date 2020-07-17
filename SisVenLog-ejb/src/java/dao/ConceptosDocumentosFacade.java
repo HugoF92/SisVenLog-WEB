@@ -46,4 +46,11 @@ public class ConceptosDocumentosFacade extends AbstractFacade<ConceptosDocumento
         return respuesta;
     }
     
+    public ConceptosDocumentos getConceptoFromList(ConceptosDocumentos pk, List<ConceptosDocumentos> lista){
+        return lista.stream()
+                .filter(obj -> obj.getConceptosDocumentosPK().getCtipoDocum().equals(pk.getConceptosDocumentosPK().getCtipoDocum()) && 
+                        pk.getConceptosDocumentosPK().getCconc().equals(pk.getConceptosDocumentosPK().getCconc()))
+                .findAny().orElse(null);
+    }
+    
 }

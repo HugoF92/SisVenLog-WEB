@@ -26,7 +26,17 @@
                                         
                                         <p:outputLabel value="Fecha Hasta:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liEnviosHasta" value="#{liNotaCredVtas.hasta}" showOn="button" 
-                                                    style="width: 60px;" locale="es" mindate="#{liNotaCredVtas.desde}"/>                                        
+                                                    style="width: 60px;" locale="es" mindate="#{liNotaCredVtas.desde}"/>
+                                        
+                                        <p:outputLabel value="Tipo Documento" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liNotaCredVtas.tipoFactura}" 
+                                                         filterMatchMode="contains" filter="true"                                                          
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px" converter="#{TiposDocumentosConverter}" >
+                                            <f:selectItems value="#{liNotaCredVtas.listaTiposDocumentos}" var="item" 
+                                                           itemValue="#{item}" 
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
                                         
                                         <p:outputLabel value="Vendedor" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu value="#{liNotaCredVtas.vendedor}" 
@@ -58,17 +68,6 @@
                                             <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
                                             <f:selectItems value="#{liNotaCredVtas.listaConceptosDocumentos}" var="item"
                                                            itemValue="#{item}"
-                                                           itemLabel="#{item.xdesc}"/>
-                                        </p:selectOneMenu>
-                                        
-                                        <p:outputLabel value="Tipo Documento" style="float: right; font-weight: bold;"/>
-                                        <p:selectOneMenu value="#{liNotaCredVtas.tipoFactura}" 
-                                                         filterMatchMode="contains" filter="true"                                                          
-                                                         panelStyle="width:170px"
-                                                         style=" width:170px" converter="#{TiposDocumentosConverter}" >
-                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
-                                            <f:selectItems value="#{liNotaCredVtas.listaTiposDocumentos}" var="item" 
-                                                           itemValue="#{item}" 
                                                            itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
                                                

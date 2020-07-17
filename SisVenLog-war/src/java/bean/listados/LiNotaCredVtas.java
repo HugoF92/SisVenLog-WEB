@@ -115,6 +115,7 @@ public class LiNotaCredVtas {
             String fdesde = DateUtil.formaterDateToString(desde, "yyyy-MM-dd");
             String fhasta = DateUtil.formaterDateToString(hasta, "yyyy-MM-dd");
             String extras = "";
+            String extras2 = "";
             String sqlReport = null;
             String[] sqls = null;
             String[] columnas = null;
@@ -136,28 +137,24 @@ public class LiNotaCredVtas {
             if (this.deposito != null){
                 extras += " AND f.cod_depo = " + this.deposito.getDepositosPK().getCodDepo()  +" ";
             }
-            if (this.proveedor != null){
-                extras += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
+            if (mercaderias.getTarget().size() > 0) {
+                listaMercaderiasSeleccionadas = mercaderias.getTarget();
+                extras2 += " AND nd.cod_merca IN (";
+                for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
+                    MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
+                    extras += " '" + pk.getCodMerca() + "',";
+                }
+                extras = extras.substring(0, extras.length()-1) + " ) ";
             }
-            // ya se usa abajo borrar posiblemente
-            //if (this.tipoFactura != null){
-            //    extras += " AND s.cod_linea = " + this.tipoFactura.getCtipoDocum()+ " ";
-            //}
+            if (this.proveedor != null){
+                extras2 += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
+            }
             
             if ( this.resumido || this.seleccion.equals("5") || this.seleccion.equals("6") 
-                    || this.seleccion.equals("7") || this.seleccion.equals("11")  ) {
-                if (mercaderias.getTarget().size() > 0) {
-                    listaMercaderiasSeleccionadas = mercaderias.getTarget();
-                    extras += " AND nd.cod_merca IN (";
-                    for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
-                        MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                        extras += " '" + pk.getCodMerca() + "',";
-                    }
-                    extras = extras.substring(0, extras.length()-1) + " ) ";
-                }
-                sqls = preEjecutarSQL2(fdesde, fhasta, extras);
+                    || this.seleccion.equals("7") || this.seleccion.equals("11")  ) {                
+                sqls = preEjecutarSQL2(fdesde, fhasta, extras, extras2);
             } else {
-                sqls = preEjecutarSQL(fdesde, fhasta, extras);
+                sqls = preEjecutarSQL(fdesde, fhasta, extras, extras2);
             }
             
             columnas = new String[14];
@@ -171,7 +168,7 @@ public class LiNotaCredVtas {
                         titulo += " ** ";
                         reporte = "rnotasvtasdet";
                     }
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "2":
                     if (!this.resumido) {
@@ -181,7 +178,7 @@ public class LiNotaCredVtas {
                         titulo += " ** ";
                         reporte = "rnotasvtas2det";
                     }
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "3":
                     if (!this.resumido) {
@@ -252,8 +249,7 @@ public class LiNotaCredVtas {
                     + " i.timpuestos_5 "
                     + " FROM (" + sqls[0]  + " ) m, (" + sqls[1] + ") i "
                     + " WHERE m.nro_nota = i.nro_nota ";
-            }
-            
+            }            
             for (int i=0; i<sqls.length; i++ ) {
                 System.out.println(sqls[i]);
             }
@@ -269,8 +265,8 @@ public class LiNotaCredVtas {
                 param.put("usuImprime", usuImprime);
                 param.put("nombreRepo", reporte); 
 
-                if (this.vendedor != null) param.put("vendedor", empleadoFacade.getEmpeladoFromList(this.vendedor, this.listaVendedor).getXnombre());
-                else param.put("vendedor", "TODOS");
+                if (this.vendedor != null) param.put("empleado", empleadoFacade.getEmpeladoFromList(this.vendedor, this.listaVendedor).getXnombre());
+                else param.put("empleado", "TODOS");
                 
                 if (this.canal != null) param.put("canal", canalFacade.getCanalVentaFromList(this.canal, this.listaCanales).getXdesc()); 
                 else param.put("canal", "TODOS");
@@ -281,13 +277,12 @@ public class LiNotaCredVtas {
                 if (this.entregador != null) param.put("entregador", empleadoFacade.getEmpeladoFromList(this.entregador, this.listaEntregador).getXnombre());
                 else param.put("entregador", "TODOS");
                 
-                if (this.concepto != null){
-                    extras += " AND n.cconc = '" + this.concepto.getConceptosDocumentosPK() +"' ";
-                }
-                if (this.deposito != null){
-                    extras += " AND d.cod_ruta = " + this.deposito.getDepositosPK()  +" ";
-                }
-            
+                if (this.concepto != null) param.put("concepto", conceptoDocumFacade.getConceptoFromList(this.concepto, this.listaConceptosDocumentos).getXdesc());
+                else param.put("concepto", "TODOS");
+                
+                if (this.deposito != null) param.put("deposito", depositoFacade.getDepositoFromList(this.deposito, this.listaDepositos).getXdesc());
+                else param.put("deposito", "TODOS");
+                
                 rep.reporteLiContClientes(param, tipo, reporte);                
             } else {
                 if (this.conIVA) {
@@ -311,35 +306,44 @@ public class LiNotaCredVtas {
         }
     }
     
-    public String[] preEjecutarSQL(String fdesde, String fhasta, String extras){
+    public String[] preEjecutarSQL(String fdesde, String fhasta, String extras, String extras2){
         String sql = "";
+        String aux_sql = "";
         String sql2 = "";
         String sql3 = "";
         String sql_nro_notas = "";
+        String sql_order = "";
         
-        sql_nro_notas = " SELECT DISTINCT n.nro_nota  FROM notas_ventas n, notas_ventas_det d " +
+        sql_nro_notas = " SELECT DISTINCT n.nro_nota  FROM notas_ventas n, notas_ventas_det nd " +
                 "  WHERE n.cod_empr = 2 " +
-                "  AND n.fdocum between '"+fdesde+"' AND '"+fhasta+"'";
+                " AND n.fdocum between '"+fdesde+"' AND '"+fhasta+"'" +
+                " AND n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase() +"' " +
+		" AND n.nro_nota = nd.nro_nota "+
+		" AND n.fdocum = nd.fdocum "+
+		" AND n.cod_empr = nd.cod_empr ";
         
         if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
-            sql_nro_notas += " AND n.ctipo_docum = 'NCV' AND d.ctipo_docum = 'NCV' ";
+            sql_nro_notas += " AND n.ctipo_docum = 'NCV' AND nd.ctipo_docum = 'NCV' ";
+            aux_sql += " AND n.ctipo_docum = 'NCV'  ";
         }
         
         if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
-            sql_nro_notas += " AND n.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
+            sql_nro_notas += " AND n.ctipo_docum = 'NDV' AND nd.ctipo_docum = 'NDV' ";
+            aux_sql += " AND n.ctipo_docum = 'NDV'  ";
         }
-
-         sql_nro_notas += " AND n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase() +"' " +
-		" AND n.nro_nota = d.nro_nota "+
-		" AND n.fdocum = d.fdocum "+
-		" AND n.cod_empr = d.cod_empr ";
-        
+                
         if (this.estado.equals("1")){
             sql_nro_notas += " AND n.mestado = 'A' ";
+            aux_sql += " AND n.mestado = 'A' ";
+            sql2 += " AND t.mestado = 'A' ";
         }else if (this.estado.equals("2")){
             sql_nro_notas += " AND n.mestado = 'X' ";
+            aux_sql += " AND n.mestado = 'X' ";
+            sql2 += " AND t.mestado = 'X' ";
         }
-        // esto es tmp_notas
+        
+        sql_nro_notas += extras2;
+        
         sql = " SELECT n.nro_nota, n.fdocum, n.fac_ctipo_docum, n.cconc, n.texentas, n.tgravadas, " 
             + " n.timpuestos, f.nrofact, f.ctipo_docum, c.cod_cliente, c.xnombre, n.ttotal,  "
             + " f.cod_vendedor, e.xnombre AS xnombre_vendedor, d.xdesc AS xdesc_conc, f.ttotal AS fac_ttotal, "
@@ -351,54 +355,40 @@ public class LiNotaCredVtas {
             + " empleados e ON f.cod_vendedor = e.cod_empleado AND f.cod_empr = e.cod_empr INNER JOIN " 
             + " clientes c ON n.cod_cliente = c.cod_cliente AND n.cod_cliente = c.cod_cliente INNER JOIN " 
             + "    conceptos_documentos d ON n.cconc = d.cconc AND n.ctipo_docum = d.ctipo_docum AND n.cconc = d.cconc, (" +sql_nro_notas+ ") t "
-            + " WHERE n.cod_empr = 2 AND f.cod_empr = 2 ";
-        
-        if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
-            sql += " AND n.ctipo_docum = 'NCV'  ";
-        }
-        if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
-            sql += " AND n.ctipo_docum = 'NDV'  ";
-        }
-        
-        sql += " AND (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
+            + " WHERE n.cod_empr = 2 AND f.cod_empr = 2 "
+            + " AND (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
             + " AND (n.ctipo_docum = '" + this.tipoFactura.getCtipoDocum().toUpperCase() + "') "
             + " AND n.nro_nota = t.nro_nota  ";
         
-        if (this.estado.equals("1")){
-            sql += " AND n.mestado = 'A' ";
-        }else if (this.estado.equals("2")){
-            sql += " AND n.mestado = 'X' ";
-        }
+        sql += aux_sql + " " + extras;
         
-        sql += extras;
-        
-        if (!this.conIVA)
-            switch ( this.seleccion ) {
-                case "1":
-                    sql += " ORDER BY n.cconc, n.fdocum, n.nro_nota ";
-                    break;
-                case "2":
-                    sql += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum ";
-                    break;
-                case "3":
-                    sql += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum ";
-                    break;
-                case "4":
-                    sql += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
-                    break;            
-                case "8":
-                    sql += " ORDER BY c.cod_cliente, n.fdocum, n.cconc, n.nro_nota  ";
-                    break;
-                case "9":
-                    sql += " ORDER BY f.cod_zona, n.cconc, n.nro_nota, n.fdocum ";
-                    break;
-                case "10":
-                    sql += " ORDER BY n.nro_nota ";
-                    break;
-                case "11":
-                    sql += " ORDER BY f.cod_zona ";
-                    break;
-            }                
+        //if (!this.conIVA)
+        switch ( this.seleccion ) {
+            case "1":
+                sql_order += " ORDER BY n.cconc, n.fdocum, n.nro_nota ";
+                break;
+            case "2":
+                sql_order += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum ";
+                break;
+            case "3":
+                sql_order += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum ";
+                break;
+            case "4":
+                sql_order += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
+                break;            
+            case "8":
+                sql_order += " ORDER BY c.cod_cliente, n.fdocum, n.cconc, n.nro_nota  ";
+                break;
+            case "9":
+                sql_order += " ORDER BY f.cod_zona, n.cconc, n.nro_nota, n.fdocum ";
+                break;
+            case "10":
+                sql_order += " ORDER BY n.nro_nota ";
+                break;
+            case "11":
+                sql_order += " ORDER BY f.cod_zona ";
+                break;
+        }                
         
         if (this.conIVA) {
             sql2 = " SELECT   t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota,  0 AS texentas, "
@@ -450,28 +440,21 @@ public class LiNotaCredVtas {
                 sql2 += " AND t.ctipo_docum = 'NDV' ";
             }
 
-            if (this.estado.equals("1")){
-                sql2 += " AND t.mestado = 'A' ";
-            }else if (this.estado.equals("2")){
-                sql2 += " AND t.mestado = 'X' ";
-            }
-
             sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota ";
 
             sql3 += " SELECT ctipo_docum, nro_nota, SUM(texentas) as texentas, "
                 + " sum(tgravadas_5) as tgravadas_5, SUM(tgravadas_10) as tgravadas_10, " 
                 + "	SUM(timpuestos_5) as timpuestos_5, sum(timpuestos_10) as timpuestos_10 " 
                 + "	FROM ( "+sql2+" ) a GROUP BY ctipo_docum, nro_nota ";
-        }
-        String [] a = {sql,sql3};
+        } 
+        String [] a = {sql,sql3,sql_order};
         return a;
     }
     
-    public String[] preEjecutarSQL2(String fdesde, String fhasta, String extras){
+    public String[] preEjecutarSQL2(String fdesde, String fhasta, String extras, String extras2){
         String sql = "";
         String sql2 = "";
-        String sql3 = "";
-        String sql_nro_notas = "";
+        String sql_order = "";
         
         sql = " SELECT n.nro_nota, n.fdocum, n.fac_ctipo_docum, n.cconc, n.texentas, "
             + " n.tgravadas, n.timpuestos, f.nrofact, f.ctipo_docum, c.cod_cliente, c.xnombre, n.ttotal,  " 
@@ -497,7 +480,7 @@ public class LiNotaCredVtas {
             + " AND n.fdocum = nd.fdocum "
             + "	AND  (n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"') "
             + " AND (n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase()+"') "
-            + extras;
+            + extras + " " + extras2;
         
         if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
             sql += " AND n.ctipo_docuM = 'NCV' And d.ctipo_docum = 'NCV'  ";
@@ -514,19 +497,19 @@ public class LiNotaCredVtas {
         
         switch ( this.seleccion ) {
             case "1":
-                sql += " ORDER BY n.cconc, n.nro_nota, n.fdocum ";
+                sql_order += " ORDER BY n.cconc, n.nro_nota, n.fdocum ";
                 break;
             case "2":
-                sql += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum  ";
+                sql_order += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum  ";
                 break;
             case "3":
-                sql += " ORDER BY n.cod_entregador, n.cconc, n.nro_nota, n.fdocum ";
+                sql_order += " ORDER BY n.cod_entregador, n.cconc, n.nro_nota, n.fdocum ";
                 break;
             case "4":
-                sql += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
+                sql_order += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
                 break;            
             case "8":
-                sql += " ORDER BY C.COD_CLIENTE, n.nro_nota  ";
+                sql_order += " ORDER BY C.COD_CLIENTE, n.nro_nota  ";
                 break;
         }
         
@@ -560,7 +543,7 @@ public class LiNotaCredVtas {
                 break;
         }
         
-        String [] a = {sql, sql2};
+        String [] a = {sql, sql2, sql_order};
         return a;
     }    
     
