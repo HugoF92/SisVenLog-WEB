@@ -168,8 +168,9 @@ public class DepositosFacade extends AbstractFacade<Depositos> {
     
     public Depositos getDepositoFromList(Depositos pk, List<Depositos> lista){
         return lista.stream()
-                .filter(obj -> obj.getDepositosPK().getCodDepo()==pk.getDepositosPK().getCodDepo() && 
-                        pk.getDepositosPK().getCodEmpr()==pk.getDepositosPK().getCodDepo())
+                .filter(obj -> obj.getDepositosPK().getCodDepo()==pk.getDepositosPK().getCodDepo() 
+                        //&&  pk.getDepositosPK().getCodEmpr()==pk.getDepositosPK().getCodDepo()
+                    )
                 .findAny().orElse(null);
     }
     

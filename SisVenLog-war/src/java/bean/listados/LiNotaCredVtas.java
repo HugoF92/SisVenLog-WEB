@@ -142,9 +142,9 @@ public class LiNotaCredVtas {
                 extras2 += " AND nd.cod_merca IN (";
                 for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
                     MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                    extras += " '" + pk.getCodMerca() + "',";
+                    extras2 += " '" + pk.getCodMerca() + "',";
                 }
-                extras = extras.substring(0, extras.length()-1) + " ) ";
+                extras2 = extras2.substring(0, extras2.length()-1) + " ) ";
             }
             if (this.proveedor != null){
                 extras2 += " AND m.cod_proveed = " + this.proveedor.getCodProveed()  +" ";
@@ -157,93 +157,204 @@ public class LiNotaCredVtas {
                 sqls = preEjecutarSQL(fdesde, fhasta, extras, extras2);
             }
             
+            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
+                titulo = " NOTAS DE DEBITO ";
+            } else {
+                titulo = " NOTAS DE CREDITO ";
+            }
             columnas = new String[14];
             columnas[0] = "cod_vendedor";
+            
             switch ( this.seleccion ) {
                 case "1":
-                    if (!this.resumido) {
-                        titulo = " ** ";
-                        reporte = "rnotasvtas";
-                    } else {
-                        titulo += " ** ";
-                        reporte = "rnotasvtasdet";
+                case "2":
+                case "3":
+                case "4":
+                case "8":
+                case "9":
+                case "10":
+                    if (!this.resumido) { 
+                        columnas = new String[21];
+                        columnas[0] = "nro_nota";
+                        columnas[1] = "fdocum";
+                        columnas[2] = "fac_ctipo_docum";
+                        columnas[3] = "cconc";
+                        columnas[4] = "texentas";
+                        columnas[5] = "tgravadas";
+                        columnas[6] = "timpuestos";
+                        columnas[7] = "nrofact";
+                        columnas[8] = "ctipodocum";
+                        columnas[9] = "cod_cliente";
+                        columnas[10] = "xnombre";
+                        columnas[11] = "ttotal";
+                        columnas[12] = "cod_vendedor";
+                        columnas[13] = "xnombre_vendedor";
+                        columnas[14] = "xdesc_conc";
+                        columnas[15] = "fac_ttotal";
+                        columnas[16] = "ffactur";
+                        columnas[17] = "cod_entregador";
+                        columnas[18] = "cod_zona";
+                        columnas[19] = "xnombre_entregador";
+                        columnas[20] = "mestado";
+                    } else{
+                        columnas = new String[32];
+                        columnas[0] = "nro_nota";
+                        columnas[1] = "fdocum";
+                        columnas[2] = "fac_ctipo_docum";
+                        columnas[3] = "cconc";
+                        columnas[4] = "texentas";
+                        columnas[5] = "tgravadas";
+                        columnas[6] = "timpuestos";
+                        columnas[7] = "nrofact";
+                        columnas[8] = "ctipo_docum";
+                        columnas[9] = "cod_cliente";
+                        columnas[10] = "xnombre";
+                        columnas[11] = "ttotal";
+                        columnas[12] = "cod_vendedor";
+                        columnas[13] = "xnombre_vendedor";
+                        columnas[14] = "xdesc_conc";
+                        columnas[15] = "fac_ttotal";
+                        columnas[16] = "ffactur";
+                        columnas[17] = "cod_entregador";
+                        columnas[18] = "xnombre_entregador";
+                        columnas[19] = "cod_merca";
+                        columnas[20] = "xdesc";
+                        columnas[21] = "cant_cajas";
+                        columnas[22] = "cant_unid";
+                        columnas[23] = "cod_sublinea";
+                        columnas[24] = "xdesc_sublinea";
+                        columnas[25] = "igravadas";
+                        columnas[26] = "iexentas";
+                        columnas[27] = "impuestos";
+                        columnas[28] = "xdesc_division";
+                        columnas[29] = "cod_division";
+                        columnas[30] = "mestado";
+                        columnas[31] = "cod_zona";
                     }
+                    break;
+            }
+            
+            switch ( this.seleccion ) {
+                case "1":
+                    if (!this.resumido) {                        
+                        reporte = "rnotasvtas";                        
+                    } else {                        
+                        reporte = "rnotasvtasdet";
+                    }                    
                     sqlReport = sqls[0] + sqls[2];
                     break;
                 case "2":
                     if (!this.resumido) {
-                        titulo = " ** ";
                         reporte = "rnotasvtas2";
                     } else {
-                        titulo += " ** ";
                         reporte = "rnotasvtas2det";
                     }
                     sqlReport = sqls[0] + sqls[2];
                     break;
                 case "3":
                     if (!this.resumido) {
-                        titulo = " ** ";
                         reporte = "rnotasvtas3";
                     } else {
-                        titulo += " ** ";
                         reporte = "rnotasvtas3det";
                     }
                     sqlReport = sqls[0];
                     break;
                 case "4":
                     if (!this.resumido) {
-                        titulo = " ** ";
                         reporte = "rnotasvtas4";
                     } else {
-                        titulo += " ** ";
                         reporte = "rnotasvtas4det";
                     }
                     sqlReport = sqls[0];
                     break;
                 case "5":
-                    titulo = " ** ";
+                    columnas = new String[4];
+                    columnas[0] = "cod_merca";
+                    columnas[1] = "xdesc";
+                    columnas[2] = "kcajas";
+                    columnas[3] = "kunidad";                    
                     reporte = "rnotasvtasr";
                     sqlReport = sqls[1];
                     break;
                 case "6":
-                    titulo = " ** ";
+                    columnas = new String[7];
+                    columnas[0] = "cod_sublinea";
+                    columnas[1] = "xdesc_sublinea";
+                    columnas[2] = "kcajas";
+                    columnas[3] = "kunidad";
+                    columnas[4] = "igrabadas";
+                    columnas[5] = "iexentas";
+                    columnas[6] = "impuestos";
                     reporte = "rnotasvtass";
                     sqlReport = sqls[1];
                     break;
                 case "7":
-                    titulo = " ** ";
+                    columnas = new String[7];
+                    columnas[0] = "cod_division";
+                    columnas[1] = "xdesc_division";
+                    columnas[2] = "kcajas";
+                    columnas[3] = "kunidad";
+                    columnas[4] = "igrabadas";
+                    columnas[5] = "iexentas";
+                    columnas[6] = "impuestos";
                     reporte = "rnotasvtasd";
                     sqlReport = sqls[1];
                     break;
                 case "8":
                     if (!this.resumido) {
-                        titulo = " ** ";
                         reporte = "rnotasvtasc";
                     } else {
-                        titulo += " ** ";
                         reporte = "rnotasvtascd";
                     }
                     sqlReport = sqls[0];
                     break;
                 case "9":
-                    titulo = " ** ";
                     reporte = "rnotasvtasz";
                     sqlReport = sqls[0];
                     break;
                 case "10":
-                    titulo = " ** ";
                     reporte = "rnotasvtasn";
                     sqlReport = sqls[0];
                     break;
                 case "11":
-                    titulo = " ** ";
+                    columnas = new String[5];
+                    columnas[0] = "cod_zona";
+                    columnas[1] = "cod_merca";
+                    columnas[2] = "xdesc";
+                    columnas[3] = "kcajas";
+                    columnas[4] = "kunidad";
                     reporte = "rnotasvtaszn";
                     sqlReport = sqls[1];
                     break;
             }
             
             if (this.conIVA) {
-                titulo = " ** ";
+                columnas = new String[25];
+                columnas[0] = "nro_nota";
+                columnas[1] = "fdocum";
+                columnas[2] = "fac_ctipo_docum";
+                columnas[3] = "cconc";
+                columnas[4] = "texentas";
+                columnas[5] = "tgravadas";
+                columnas[6] = "timpuestos";
+                columnas[7] = "nrofact";
+                columnas[8] = "ctipodocum";
+                columnas[9] = "cod_cliente";
+                columnas[10] = "xnombre";
+                columnas[11] = "ttotal";
+                columnas[12] = "cod_vendedor";
+                columnas[13] = "xnombre_vendedor";
+                columnas[14] = "xdesc_conc";
+                columnas[15] = "fac_ttotal";
+                columnas[16] = "ffactur";
+                columnas[17] = "cod_entregador";
+                columnas[18] = "cod_zona";
+                columnas[19] = "xnombre_entregador";
+                columnas[20] = "mestado";
+                columnas[21] = "tgravadas_10";
+                columnas[22] = "tgravadas_5";
+                columnas[23] = "timpuestos_10";
+                columnas[24] = "timpuestos_5";
                 reporte = "rnotasvtas6";
                 sqlReport = "SELECT m.*, i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, "
                     + " i.timpuestos_5 "
@@ -314,13 +425,14 @@ public class LiNotaCredVtas {
         String sql_nro_notas = "";
         String sql_order = "";
         
-        sql_nro_notas = " SELECT DISTINCT n.nro_nota  FROM notas_ventas n, notas_ventas_det nd " +
+        sql_nro_notas = " SELECT DISTINCT n.nro_nota  FROM notas_ventas n, "
+                + " notas_ventas_det nd, mercaderias m " +
                 "  WHERE n.cod_empr = 2 " +
                 " AND n.fdocum between '"+fdesde+"' AND '"+fhasta+"'" +
                 " AND n.ctipo_docum = '"+this.tipoFactura.getCtipoDocum().toUpperCase() +"' " +
 		" AND n.nro_nota = nd.nro_nota "+
 		" AND n.fdocum = nd.fdocum "+
-		" AND n.cod_empr = nd.cod_empr ";
+		" and nd.cod_merca = m.cod_merca ";
         
         if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
             sql_nro_notas += " AND n.ctipo_docum = 'NCV' AND nd.ctipo_docum = 'NCV' ";
@@ -391,61 +503,7 @@ public class LiNotaCredVtas {
         }                
         
         if (this.conIVA) {
-            sql2 = " SELECT   t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota,  0 AS texentas, "
-                + " isnull(SUM(d.igravadas), 0)  AS tgravadas_5, 0 AS tgravadas_10, isnull(SUM(impuestos), 0) AS timpuestos_5, "
-                + " 0 AS timpuestos_10 " 
-                + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
-                + "     ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota  " 
-                + " WHERE d.pimpues = 5 and  (d.cod_empr = 2) "
-                + "   AND t.fdocum = d.fdocum "
-                + " AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
-
-            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NCV' AND d.ctipo_docum = 'NCV' ";
-            }        
-            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
-            }
-
-            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
-                + " UNION ALL "
-                + " SELECT t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota, 0 AS texentas, "
-                + " 0 AS tgravadas_5, isnull(SUM(d .igravadas), 0) AS tgravadas_10, 0 AS timpuestos_5, "
-                + " isnull(SUM(impuestos), 0)  AS timpuestos_10 "
-                + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
-                + " ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota AND d.fdocum = t.fdocum  " 
-                + " WHERE d.pimpues = 10 and (d .cod_empr = 2) "
-                + "  AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
-
-            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NCV' AND d.ctipo_docum = 'NCV' ";
-            }        
-            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
-            }
-
-            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
-                + " UNION ALL " 
-                + " SELECT t.fdocum, t.cconc, t.ctipo_docum , t.nro_nota, isnull(SUM(iexentas), 0) AS texentas, "
-                + " 0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " 
-                + " FROM notas_ventas_det d INNER JOIN notas_ventas t ON d.nro_nota = t.nro_nota AND "
-                + " d.ctipo_docum = t.ctipo_docum AND t.fdocum = d.fdocum AND d .iexentas > 0 "
-                + " WHERE (d .cod_empr = 2) "
-                + "  AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
-
-            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NCV' ";
-            }        
-            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
-                sql2 += " AND t.ctipo_docum = 'NDV' ";
-            }
-
-            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota ";
-
-            sql3 += " SELECT ctipo_docum, nro_nota, SUM(texentas) as texentas, "
-                + " sum(tgravadas_5) as tgravadas_5, SUM(tgravadas_10) as tgravadas_10, " 
-                + "	SUM(timpuestos_5) as timpuestos_5, sum(timpuestos_10) as timpuestos_10 " 
-                + "	FROM ( "+sql2+" ) a GROUP BY ctipo_docum, nro_nota ";
+            sql3 = getSQLIVA(fdesde, fhasta);
         } 
         String [] a = {sql,sql3,sql_order};
         return a;
@@ -543,9 +601,75 @@ public class LiNotaCredVtas {
                 break;
         }
         
+        if (this.conIVA) {
+            sql2 = getSQLIVA(fdesde, fhasta);
+        } 
+        
         String [] a = {sql, sql2, sql_order};
         return a;
-    }    
+    }
+
+    private String getSQLIVA(String fdesde, String fhasta){
+        String sql2 = "";
+        String sql3 = "";
+        sql2 = " SELECT   t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota,  0 AS texentas, "
+                + " isnull(SUM(d.igravadas), 0)  AS tgravadas_5, 0 AS tgravadas_10, isnull(SUM(impuestos), 0) AS timpuestos_5, "
+                + " 0 AS timpuestos_10 " 
+                + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
+                + "     ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota  " 
+                + " WHERE d.pimpues = 5 and  (d.cod_empr = 2) "
+                + "   AND t.fdocum = d.fdocum "
+                + " AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
+
+            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NCV' AND d.ctipo_docum = 'NCV' ";
+            }        
+            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
+            }
+
+            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
+                + " UNION ALL "
+                + " SELECT t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota, 0 AS texentas, "
+                + " 0 AS tgravadas_5, isnull(SUM(d .igravadas), 0) AS tgravadas_10, 0 AS timpuestos_5, "
+                + " isnull(SUM(impuestos), 0)  AS timpuestos_10 "
+                + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
+                + " ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota AND d.fdocum = t.fdocum  " 
+                + " WHERE d.pimpues = 10 and (d .cod_empr = 2) "
+                + "  AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
+
+            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NCV' AND d.ctipo_docum = 'NCV' ";
+            }        
+            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NDV' AND d.ctipo_docum = 'NDV' ";
+            }
+
+            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
+                + " UNION ALL " 
+                + " SELECT t.fdocum, t.cconc, t.ctipo_docum , t.nro_nota, isnull(SUM(iexentas), 0) AS texentas, "
+                + " 0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " 
+                + " FROM notas_ventas_det d INNER JOIN notas_ventas t ON d.nro_nota = t.nro_nota AND "
+                + " d.ctipo_docum = t.ctipo_docum AND t.fdocum = d.fdocum AND d .iexentas > 0 "
+                + " WHERE (d .cod_empr = 2) "
+                + "  AND t.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"'";
+
+            if ("NCV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NCV' ";
+            }        
+            if ("NDV".equals(this.tipoFactura.getCtipoDocum())){
+                sql2 += " AND t.ctipo_docum = 'NDV' ";
+            }
+
+            sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota ";
+
+            sql3 += " SELECT ctipo_docum, nro_nota, SUM(texentas) as texentas, "
+                + " sum(tgravadas_5) as tgravadas_5, SUM(tgravadas_10) as tgravadas_10, " 
+                + "	SUM(timpuestos_5) as timpuestos_5, sum(timpuestos_10) as timpuestos_10 " 
+                + "	FROM ( "+sql2+" ) a GROUP BY ctipo_docum, nro_nota ";
+        
+        return sql3;
+    }
     
     /* GETTER Y SETTER */
 
