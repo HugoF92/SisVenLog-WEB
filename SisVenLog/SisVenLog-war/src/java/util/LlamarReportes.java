@@ -2959,4 +2959,42 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             System.out.println(e);
         }
     }
+
+    public void reporteStockValorizado(Date fechaHasta, Depositos deposito,
+            Sublineas sublinea, Divisiones division, String discriminar,
+            Boolean conPrecioCosto, Boolean sinIVA, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaHasta", DateUtil.formaterDateToString(fechaHasta));
+            param.put("deposito", deposito == null ? null : deposito.getXdesc());
+            param.put("sublinea", sublinea == null ? null : sublinea.getXdesc());
+            param.put("division", division == null ? null: division.getXdesc());
+            param.put("discriminar", discriminar);
+            param.put("conPrecioCosto", conPrecioCosto);
+            param.put("sinIVA", sinIVA);
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = ("PM".equals(discriminar)? "rstockval": "rstockval2");
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/"+filename+".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename + ".pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
 }
