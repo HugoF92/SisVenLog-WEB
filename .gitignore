@@ -5,3 +5,7 @@
 /SisVenLog-ejb/nbproject/
 /nbproject/
 /SisVenLog-ejb/
+/build/
+/SisVenLog-war/build/
+/SisVenLog-war/dist/
+/dist/

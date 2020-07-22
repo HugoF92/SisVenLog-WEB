@@ -2783,6 +2783,32 @@ public class LlamarReportes {
         }
     }
     
+    public void reporteGenerico(Map parametrosReporte, String tipo, String nombreReporte) {
+        try {
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/"+nombreReporte+".jasper");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parametrosReporte, conexion);
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition;
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename="+nombreReporte+".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
     public void exportarCSV(List<Object[]> lista, String nombre) {
         List<String> ListStrin = new ArrayList<>();
         for ( Object[] i : lista){

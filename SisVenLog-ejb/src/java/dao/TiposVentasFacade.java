@@ -53,4 +53,17 @@ public class TiposVentasFacade extends AbstractFacade<TiposVentas> {
         return listado;
     }
     
+    public List<TiposVentas> listarTiposVentasOrdenadoXDesc() {
+        Query q = getEntityManager().createNativeQuery("SELECT c.* FROM tipos_ventas c " +
+                " order by c.xdesc ", TiposVentas.class);
+        List<TiposVentas> resp = q.getResultList();
+        return resp;
+    }
+    
+    public TiposVentas getTipoVentaFromList(TiposVentas pk, List<TiposVentas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getTiposVentasPK().getCtipoVta().equals(pk.getTiposVentasPK().getCtipoVta()))
+                .findAny().orElse(null);
+    }
+    
 }

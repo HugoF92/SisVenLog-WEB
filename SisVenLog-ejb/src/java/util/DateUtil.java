@@ -32,6 +32,12 @@ public class DateUtil {
         return date;
     }
     
+    public static String formaterDateToString(Date fecha, String formato) throws ParseException {
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(formato);
+        String date = DATE_FORMAT.format(fecha);
+        return date;
+    }
+    
     public static String obtenerDiaSemana(Date fecha) {
         String[] dias = {"domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"};
         Calendar cal = Calendar.getInstance();

@@ -88,5 +88,11 @@ public class ZonasFacade extends AbstractFacade<Zonas> {
         System.out.println(q.toString());
         return q.getResultList();
     }
+    
+    public Zonas getZonaFromList(Zonas pk, List<Zonas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getZonasPK().getCodZona().equals(pk.getZonasPK().getCodZona()))
+                .findAny().orElse(null);
+    }
 
 }

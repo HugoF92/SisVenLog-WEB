@@ -1,0 +1,148 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiClientes" header="LISTADO DE VENTAS DEL DIA" style="width: 70%;">                                       
+                                    <h:panelGrid columns="2" >
+                                    
+                                        <p:outputLabel value="Fecha Factura Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionDesde" value="#{liVtaDiaBean.facturacionDesde}" showOn="button" style="width: 60px;" locale="es"/>
+                                        
+                                        <p:outputLabel value="Fecha Factura Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionHasta" value="#{liVtaDiaBean.facturacionHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{LiVtaDiaBean.facturacionDesde}"/>
+                                        
+                                        <p:outputLabel value="Zona" style="float: right; font-weight: bold;" />                                        
+                                        <p:selectOneMenu 
+                                            value="#{liVtaDiaBean.zona}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liVtaDiaBean.listaZonas}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu 
+                                            value="#{liVtaDiaBean.canal}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{CanalesVentaConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liVtaDiaBean.listaCanales}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo de Venta" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu 
+                                            value="#{liVtaDiaBean.tipoVenta}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{TiposVentasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liVtaDiaBean.listaTiposVentas}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel for="discriminar" value="Seleccionar:" />
+                                        <p:selectOneRadio 
+                                            id="discriminar" 
+                                            value="#{liVtaDiaBean.seleccion}" 
+                                            layout="grid" 
+                                            columns="1" 
+                                            style="border: 
+                                            solid;border-width: 
+                                            thin">
+                                                <f:selectItem itemLabel="Todas las facturas" itemValue="1"/>
+                                                <f:selectItem itemLabel="Agrupadas por ruta" itemValue="2"/>
+                                                <f:selectItem itemLabel="Consolidado por día" itemValue="3"/>
+                                                <f:selectItem itemLabel="Consolidado por zona" itemValue="4"/>
+                                                <f:selectItem itemLabel="Consolidado por entregador" itemValue="5"/>
+                                                <f:selectItem itemLabel="Consolidado por zona, div, tipo de precio" itemValue="6"/>
+                                                <f:selectItem itemLabel="Consolidado por vendedor" itemValue="7"/>
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="Solo notas dev.: " style="float: right; font-weight: bold;"/>   
+                                        <p:selectBooleanCheckbox id="soloNotasId" value="#{liVtaDiaBean.soloNotas}" itemLabel="" style="padding-left: 3px"/>
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liVtaDiaBean.ejecutarListado('VIST')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Vista Previa" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" 
+                                            id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liVtaDiaBean.ejecutarListado('ARCH')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Archivo" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
+                                    
+                                </p:panel>
+                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>
