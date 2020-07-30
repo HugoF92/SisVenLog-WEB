@@ -1,0 +1,210 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlParamLiClientes" header="Ventas a Clientes" style="width: 70%;">                                       
+                                    <h:panelGrid columns="2" >
+                                    
+                                        <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liRetornoMercaDesde" value="#{livtascli2Bean.desde}" showOn="button" 
+                                                    style="width: 60px;" locale="es">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="Fecha Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liEnviosHasta" value="#{livtascli2Bean.hasta}" showOn="button" 
+                                                    style="width: 60px;" locale="es" mindate="#{livtascli2Bean.desde}"/>
+                                                                                
+                                        <p:outputLabel value="Vendedor" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{livtascli2Bean.vendedor}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{livtascli2Bean.listaVendedor}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Cliente" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{livtascli2Bean.tipoCliente}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{TiposClientesConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{livtascli2Bean.listaTiposClientes}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                                                                
+                                        <p:outputLabel value="Sub Linea" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{livtascli2Bean.subLinea}" 
+                                                         filterMatchMode="contains" filter="true" 
+                                                         converter="#{SublineasConverter}" 
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px">
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{livtascli2Bean.listaSubLinea}" var="item" 
+                                                           itemValue="#{item}" 
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Linea:" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{livtascli2Bean.linea}" 
+                                                         filterMatchMode="contains" filter="true" 
+                                                         converter="#{LineasConverter}" 
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px">
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{livtascli2Bean.listaLineas}" var="item" 
+                                                           itemValue="#{item}" 
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Zona" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{livtascli2Bean.zona}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         converter="#{ZonasConverter}"
+                                                         panelStyle="width:170px"
+                                                         style=" width:170px">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{livtascli2Bean.listaZonas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                               
+                                        <p:outputLabel value="Proveedor" style="float: right; font-weight: bold;" />                                        
+                                        <p:selectOneMenu value="#{livtascli2Bean.proveedor}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{livtascli2Bean.listaProveedores}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Venta" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu value="#{livtascli2Bean.tipoVentas}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 60%;" converter="#{TiposVentasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{livtascli2Bean.listaTiposVentas}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu value="#{livtascli2Bean.canal}" 
+                                                    filterMatchMode="contains" filter="true"
+                                                    converter="#{CanalesVentaConverter}"
+                                                    panelStyle="width:170px"
+                                                    style=" width:170px" >
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems value="#{livtascli2Bean.listaCanales}" var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
+                                        <h:panelGrid columns="4" > 
+                                            <p>Todos</p>
+                                            <h:selectBooleanCheckbox id="ocultarBtnPag" value="#{livtascli2Bean.checkCliente}" >
+                                                <p:ajax event="change" listener="#{livtascli2Bean.marcarTodos()}" update="mostrarBtnPag, ocultarBtnPag"/>
+                                            </h:selectBooleanCheckbox>
+                                            <p>Seleccionar Clientes</p>
+                                            <h:selectBooleanCheckbox id="mostrarBtnPag" value="#{livtascli2Bean.seleccionarClientes}">
+                                                <p:ajax event="change" listener="#{livtascli2Bean.llamarSelectorDatos()}" update="mostrarBtnPag,ocultarBtnPag"/>
+                                            </h:selectBooleanCheckbox>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
+                                        <p:commandButton icon="fa fa-filter"
+                                                    oncomplete="PF('dlgSelectMerca').show()"
+                                                    style="margin-top:10px" />
+                                        
+                                        <p:outputLabel value="Sin IVA" style="float: right; font-weight: bold;"/>
+                                        <p:selectBooleanCheckbox value="#{livtascli2Bean.sinIVA}"/>
+                                        
+                                        <p:outputLabel value="Discriminar:" />
+                                        <p:selectOneRadio value="#{livtascli2Bean.seleccion}" 
+                                                    layout="grid" columns="1" style="border: solid;border-width: thin">
+                                             <f:selectItem itemLabel="Por Cliente y Mercaderia"  itemValue="1"/>
+                                             <f:selectItem itemLabel="Por Cliente y SubLinea" itemValue="2"/>
+                                             <f:selectItem itemLabel="Por Cliente" itemValue="3"/>
+                                             <f:selectItem itemLabel="Por Cliente y Documento" itemValue="4"/>
+                                             <f:selectItem itemLabel="Por Tipo Precio y Mercaderia" itemValue="5"/>
+                                        </p:selectOneRadio>
+                                        
+                                        <p:outputLabel value="" />
+                                        <p:selectOneRadio value="#{livtascli2Bean.seleccion2}" 
+                                                    layout="grid" columns="1" style="border: solid;border-width: thin">
+                                             <f:selectItem itemLabel="Detallado"  itemValue="1"/>
+                                             <f:selectItem itemLabel="Resumen General" itemValue="2"/>
+                                             <f:selectItem itemLabel="Resumen por Proveedor" itemValue="3"/>
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{livtascli2Bean.ejecutarListado('VIST')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Vista Previa" icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                            action="#{livtascli2Bean.ejecutarListado('ARCH')}"
+                                            ajax="false" immediate="false" update="messageLiRetorno">
+                                        <p:commandButton value="Archivo" icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlParamLiClientes" trigger="VPbtn"/>
+                                    
+                                </p:panel>
+                                
+                                <p:dialog header="Seleccionar Mercaderias"
+                                          widgetVar="dlgSelectMerca"
+                                          modal="true" closable="false" closeOnEscape="false">
+
+                                    <p:pickList value="#{livtascli2Bean.mercaderias}" 
+                                                var="merca" itemLabel="#{merca.mercaderiasPK.codMerca}- #{merca.xdesc}" itemValue="#{merca}" 
+                                                filterMatchMode="contains" responsive="true"
+                                                showSourceFilter="true" showTargetFilter="true"
+                                                converter="#{MercaderiasConverter}"
+                                                style="float: left;"/>
+                                    <br></br>
+                                    <br></br>
+                                    <p:commandButton value="Aceptar"
+                                                     oncomplete="PF('dlgSelectMerca').hide()"
+                                                     styleClass="green-btn raised-btn" />
+                                </p:dialog>
+                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>

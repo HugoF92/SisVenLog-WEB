@@ -53,4 +53,10 @@ public class TiposVentasFacade extends AbstractFacade<TiposVentas> {
         return listado;
     }
     
+    public TiposVentas getTiposVentasFromList(TiposVentas pk, List<TiposVentas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getTiposVentasPK().getCtipoVta().equals(pk.getTiposVentasPK().getCtipoVta()))
+                .findAny().orElse(null);
+    }
+    
 }

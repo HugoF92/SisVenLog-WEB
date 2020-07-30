@@ -77,4 +77,11 @@ public class TiposClientesFacade extends AbstractFacade<TiposClientes> {
 
         return respuesta;
     }
+    
+    public TiposClientes getTiposClientesFromList(TiposClientes pk, List<TiposClientes> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCtipoCliente().equals(pk.getCtipoCliente()))
+                .findAny().orElse(null);
+    }
+    
 }

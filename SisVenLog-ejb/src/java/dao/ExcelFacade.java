@@ -3,6 +3,9 @@ package dao;
 import dto.AuxiliarImpresionMasivaDto;
 import dto.AuxiliarImpresionRemisionDto;
 import dto.AuxiliarImpresionServiciosDto;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import dto.LiMercaSinDto;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,5 +83,14 @@ public class ExcelFacade {
 
         return respuesta;
 
+    }
+    
+    public ResultSet ejecutarSQLQueryParaExcelGenerico(String sql) {
+        try {
+            return em.unwrap(Connection.class).createStatement().executeQuery(sql);
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atención", "Error al ejecutar SQL para Excel"));
+            return null;
+        }
     }
 }
