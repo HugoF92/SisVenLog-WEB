@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+    
+    <ui:define name="content">
+        
+        <h:body style="font-size: medium;">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" prependId="false">
+                            <p:growl id="messageLiRetorno" showDetail="true"/>
+                            <center>
+                                <p:panel id="pnlMoroCli" header="INDICE DE MOROSIDAD" style="width: 70%;">
+                                    <h:panelGrid columns="2" id="pnlGridMoro">
+                                    
+                                        <p:outputLabel value="Fecha Factura Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionDesde" value="#{liMoroCliBean.facturacionDesde}" showOn="button" style="width: 60px;" locale="es"/>
+                                        
+                                        <p:outputLabel value="Fecha Factura Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="liFacturacionHasta" value="#{liMoroCliBean.facturacionHasta}" showOn="button" style="width: 60px;" locale="es" mindate="#{liMoroCliBean.facturacionDesde}"/>
+                                        
+                                        <p:outputLabel value="Zona Cliente" style="float: right; font-weight: bold;" />
+                                        <p:selectOneMenu 
+                                            value="#{liMoroCliBean.zona}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{ZonasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liMoroCliBean.listaZonas}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
+                                        <h:panelGrid columns="4" > 
+                                            <p>Todos</p>
+                                            <h:selectBooleanCheckbox id="ocultarBtnMor" value="#{liMoroCliBean.checkCliente}" >
+                                                <p:ajax event="change" listener="#{liMoroCliBean.marcarTodos()}" update="mostrarBtnMor, ocultarBtnMor"/>
+                                            </h:selectBooleanCheckbox>
+                                            <p>Seleccionar Clientes</p>
+                                            <h:selectBooleanCheckbox id="mostrarBtnMor" value="#{liMoroCliBean.seleccionarClientes}">
+                                                <p:ajax event="change" listener="#{liMoroCliBean.llamarSelectorDatos()}" update="mostrarBtnMor, ocultarBtnMor"/>
+                                            </h:selectBooleanCheckbox>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel for="discriminar" value="Discriminar:" />
+                                        <p:selectOneRadio 
+                                            id="discriminar" 
+                                            value="#{liMoroCliBean.seleccion}" 
+                                            layout="grid" 
+                                            columns="1" 
+                                            style="border: 
+                                            solid;border-width: 
+                                            thin">
+                                                <f:selectItem itemLabel="Por Cliente" itemValue="1"/>
+                                                <f:selectItem itemLabel="Por Zona" itemValue="2"/>
+                                        </p:selectOneRadio>
+                                        
+                                    </h:panelGrid>
+                                    
+                                    <br></br>
+                                    
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liMoroCliBean.ejecutarListado('VIST')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Vista Previa" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="orange-btn raised-btn" 
+                                            id="VPbtn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+
+                                    <p:commandLink 
+                                        title="report" 
+                                        target="_blank"
+                                        action="#{liMoroCliBean.ejecutarListado('ARCH')}"
+                                        ajax="false" 
+                                        immediate="false" 
+                                        update="messageLiRetorno">
+                                        <p:commandButton 
+                                            value="Archivo" 
+                                            icon="fa fa-file-pdf-o" 
+                                            styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    
+                                    <p:blockUI block="pnlMoroCli" trigger="VPbtn"/>
+                                    
+                                </p:panel>
+                                
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <p:dialog id="exceptionDialogMor" header="Ocurrió un error" widgetVar="exceptionDialogMor" height="500px" width="700px">
+                Message: #{liMoroCliBean.tituloError} <br/>
+                StackTrace: <h:outputText value="#{liMoroCliBean.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+        </h:body>
+        
+    </ui:define>
+    
+</ui:composition>

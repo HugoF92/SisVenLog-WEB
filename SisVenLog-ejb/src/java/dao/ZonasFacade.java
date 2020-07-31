@@ -6,8 +6,6 @@
 package dao;
 
 import entidad.Zonas;
-import entidad.Zonas;
-import entidad.Zonas;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -89,4 +87,15 @@ public class ZonasFacade extends AbstractFacade<Zonas> {
         return q.getResultList();
     }
 
+    public List<Zonas> listarZonasPorEstado(String estado) {
+        Query q = getEntityManager().createNativeQuery("SELECT * FROM zonas WHERE mestado = '" + estado + "'", Zonas.class);
+        return q.getResultList();
+    }
+    
+    public Zonas getZonaFromList(Zonas pk, List<Zonas> lista){
+        return lista.stream()
+                .filter(obj -> obj.getZonasPK().getCodZona().equals(pk.getZonasPK().getCodZona()))
+                .findAny().orElse(null);
+    }
+    
 }

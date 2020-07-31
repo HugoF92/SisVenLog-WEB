@@ -69,7 +69,7 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://192.168.0.7;databaseName=VenlogDB", "sa", "123456");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -2823,6 +2823,32 @@ public class LlamarReportes {
             escapedData = "\"" + data + "\"";
         }
         return escapedData;
+    }
+    
+    public void reporteGenerico(Map parametrosReporte, String tipo, String nombreReporte) {
+        try {
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/"+nombreReporte+".jasper");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parametrosReporte, conexion);
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition;
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename="+nombreReporte+".pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
     }
     
 }

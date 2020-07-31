@@ -590,6 +590,70 @@
 
 
         </h:form>
+        
+        <h:form id="formSelDatosPag"  prependId="false">
+            <p:growl id="msgSelDatosPag" showDetail="true"/>
+            <p:dialog header="Seleccionar Datos"
+                      widgetVar="dlgSelDatos"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="1000">
+                <p:ajax event="open" listener="#{selectorDatosBean.cargarLista()}" update="pickListdatosPag"/>
+                <p:panel id="pnlSelectorDatos" 
+                         header="SELECCIONE LOS DATOS QUE DESEA PASANDOLOS A LA DERECHA"
+                         style="width: 98%;">
+                    <center>
+                        <p:blockUI block="pickListdatosPag" trigger="pickListdatosPag">
+                            <p:graphicImage name="images/loader.gif"/>
+                        </p:blockUI>
+                    </center>
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <p:inputText id="filtroSelDatos"
+                                 value="#{selectorDatosBean.filtro}"
+                                 style="width: 200px;"
+                                 onkeypress="if (event.keyCode == 13) {
+                                             onchange();
+                                             return false;
+                                         }">
+                        <p:tooltip  for="filtroSelDatos" value="Ingrese codigo, nombre, descripcion, etc." position="bottom"/>
+                        
+                        <p:ajax event="change" listener="#{selectorDatosBean.filtrarDatos()}"
+                                                        update="pickListdatosPag msgSelDatosPag"/>
+
+                    </p:inputText>
+
+
+
+
+                    <p:pickList id="pickListdatosPag" value="#{selectorDatosBean.datos}" var="dato"
+                                itemValue="#{dato}" itemLabel="#{dato.codigo}- #{dato.descripcion}" showCheckbox="true"
+                                converter="#{TmpDatosConverter}" responsive="true"
+                                style="float: left;">
+
+                        <f:facet name="sourceCaption">Lista de Clientes</f:facet>
+                        <f:facet name="targetCaption">Clientes Seleccionados</f:facet>
+                        
+                        <p:ajax event="transfer" listener="#{selectorDatosBean.onTransfer(event)}" update="pickListdatosPag msgSelDatosPag" />
+
+
+                        <p:column style="width:85%;">
+                            <h:outputText value="#{dato.codigo}- #{dato.descripcion}" />
+                        </p:column>
+                    </p:pickList>
+
+                    <br></br>
+                    <br></br>
+                    <p:commandButton value="Aceptar"
+                                     actionListener="#{selectorDatosBean.ejecutar()}"
+                                     oncomplete="PF('dlgSelDatos').hide()"
+                                     styleClass="green-btn raised-btn" />
+                </p:panel>
+            </p:dialog>
+        </h:form>
 
 
     </h:body>
