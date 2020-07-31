@@ -69,7 +69,7 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://192.168.0.7;databaseName=VenlogDB", "sa", "123456");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
