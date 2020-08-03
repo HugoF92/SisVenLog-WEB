@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <style type="text/css">
+                .ui-datalist .ui-datalist-content {
+                        border:0 none
+                }
+
+                .ui-datalist ul {
+                        padding:0px 0px 10px;
+                        margin: 5px 0;
+                }
+
+                .label, .value {
+                        float: right; 
+                        font-weight: bold;
+                }
+
+                .output {
+                        font-weight: bold;
+                }
+
+                .ui-selectmanymenu {
+                        width: 350px;
+                }
+            </style>
+            
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiAtrasos" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlCliConCre" header="INFORME DE DEUDAS VENCIDAS"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="2" >
+
+                                        <p:outputLabel value="Vencimiento al:" style="float: left; font-weight: bold;"/>
+                                        <p:calendar id="fechaVencimiento" value="#{liVencidasBean.fechaVencimiento}" 
+                                                    showOn="button" style="width: 60px;">
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha Movimiento Hasta:" style="float: left; font-weight: bold;"/>
+                                        <p:calendar id="fechaMovimientoHasta" value="#{liVencidasBean.fechaHasta}" 
+                                                    showOn="button" style="width: 60px;">
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Zona Cliente:" style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu id="zonas" value="#{liVencidasBean.zona}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;" converter="#{ZonasConverter}">
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems value="#{liVencidasBean.listaZonas}"
+                                                           var="zona" 
+                                                           itemValue="#{zona}" 
+                                                           itemLabel="#{zona.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Deuda:" style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVencidasBean.tipoDocumento}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 230px;" converter="#{TiposDocumentosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liVencidasBean.tiposDocumentos}" var="tipoDoc"
+                                                           itemValue="#{tipoDoc}"
+                                                           itemLabel="#{tipoDoc.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Discriminar: " style="float: left; font-weight: bold;"/>
+                                        <p:fieldset>
+                                            <p:selectOneRadio id="discriminarId" value="#{liVencidasBean.discriminar}">
+                                                <f:selectItem itemLabel="No Discriminar" itemValue="ND" />
+                                                <f:selectItem itemLabel="Por Zona" itemValue="PZ" />
+                                            </p:selectOneRadio>
+                                        </p:fieldset>
+                                        
+                                        <p:outputLabel value="Plazo Credito Desde:" style="float: left; font-weight: bold;"/>
+                                        <p:inputNumber id="plazoCreditoDesde" decimalPlaces="0" value="#{liVencidasBean.plazoCreditoDesde}"/>
+                                        
+                                        <p:outputLabel value="Plazo Credito Hasta:" style="float: left; font-weight: bold;"/>
+                                        <p:inputNumber id="plazoCreditoHasta" decimalPlaces="0" value="#{liVencidasBean.plazoCreditoHasta}"/>
+
+                                        <p:outputLabel value="Vendedor:" style="float: left; font-weight: bold;"/>
+                                        <p:selectOneMenu value="#{liVencidasBean.vendedor}" style="width: 300px;"
+                                                         converter="#{empleadosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{liVencidasBean.listaVendedores}"
+                                                           var="vendedor"
+                                                           itemValue="#{vendedor}"
+                                                           itemLabel="#{vendedor.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel for="clientesId" value="Clientes:" style="float: left; font-weight: bold;"/>
+                                        <h:panelGrid columns="4" >
+                                            <p:outputLabel for="ocultarBtn" value="Todos " style="float: left; font-weight: bold;"/>
+                                            <h:selectBooleanCheckbox id="ocultarBtn" onclick="ocultarClientes()" value="#{liVencidasBean.todosClientes}"/>    
+                                            <p:outputLabel for="mostrarBtn" value="Seleccionar Clientes " style="float: left; font-weight: bold;"/>
+                                            <h:selectBooleanCheckbox id="mostrarBtn" onclick="mostrarClientes()" value="#{liVencidasBean.seleccionarClientes}"/>
+                                        </h:panelGrid>
+                                        <p></p>
+                                        <p:selectManyMenu id="clientesId" value="#{liVencidasBean.listadoClientesSeleccionados}" converter="#{ClientesConverter}"
+                                                          var="t" filter="true" filterMatchMode="contains" showCheckbox="true" style="display: none">
+                                            <f:selectItems id="selectItemsCodCliente" value="#{liVencidasBean.listadoClientes}" var="codigo" itemLabel="#{codigo.codCliente}" itemValue="#{cliente}" />
+                                            <f:selectItems id="selectItemsClientes" value="#{liVencidasBean.listadoClientes}" var="cliente" itemLabel="#{cliente.xnombre}" itemValue="#{cliente}" />
+                                            <p:column>
+                                                <h:outputText value="#{t.codCliente}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{t.xnombre}" />
+                                            </p:column>
+                                        </p:selectManyMenu>
+                                    </h:panelGrid>
+
+                                    <br></br>
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liVencidasBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liVencidasBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-excel-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                </p:panel>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                
+                    function mostrarClientes() {
+                        document.getElementById('ocultarBtn').checked = false;                
+                        document.getElementById("clientesId").style.display = "block";
+                    };
+                    function ocultarClientes() {
+                        document.getElementById('mostrarBtn').checked = false;
+                        document.getElementById("clientesId").style.display = "none";
+                        document.getElementById("selectItemsClientes").value = "";
+                    };								 
+                
+            </script>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

@@ -2959,4 +2959,44 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             System.out.println(e);
         }
     }
+    
+    public void reporteFacturasVencidas(String fechaVencimiento, String fechaHasta,
+            Zonas zona, String discriminar, TiposDocumentos td, Empleados vendedor,
+            String listaCodClientes, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaVencimiento", fechaVencimiento);
+            param.put("fechaHasta", fechaHasta);
+            param.put("zona", zona != null? zona.getXdesc():null);
+            param.put("vendedor", vendedor != null? vendedor.getXnombre():null);
+            param.put("discriminar", discriminar);
+            param.put("tipoDocumento", td == null ? null : td.getXdesc());
+            param.put("listaCodClientes", listaCodClientes);
+
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+
+            String filename = "rvencidas";
+            String jasperFile = "/WEB-INF/classes/pdf/" + filename + ".jasper";
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath(jasperFile);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename + ".pdf");
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
 }
