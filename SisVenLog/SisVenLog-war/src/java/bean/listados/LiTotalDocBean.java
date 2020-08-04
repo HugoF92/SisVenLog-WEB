@@ -47,7 +47,8 @@ public class LiTotalDocBean {
     public void instanciar() {
         this.fechaDesde = new Date();
         this.fechaHasta = new Date();
-        this.tiposDocumentos = tiposDocumentosFacade.getTipoDocumentosByCtipo(Arrays.asList("FCO", "FCR", "CPV", "FCP", "FCS", "NDV", "NCV"));
+        this.tiposDocumentos = tiposDocumentosFacade.getTipoDocumentosByCtipo(
+                Arrays.asList("FCO", "FCR", "CPV", "FCP", "FCS", "NDV", "NCV", "NCS"));
         this.opcion = "";
     }
     

@@ -249,13 +249,5 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
             return null;
         }
     }
-
-    public List<TiposDocumentos> getTipoDocumentosByCtipo(List<String> tiposDocumentos) {
-        String tipos = tiposDocumentos.stream().map(tipo -> "'" +  tipo + "'").collect(Collectors.joining(", "));
-        Query q = getEntityManager().createNativeQuery("select * "
-                + "from tipos_documentos "
-                + "where ctipo_docum in ("+ tipos +") order by xdesc", TiposDocumentos.class);
-        return q.getResultList();
-    }
       
 }
