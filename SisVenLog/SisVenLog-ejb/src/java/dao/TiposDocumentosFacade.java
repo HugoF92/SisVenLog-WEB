@@ -232,14 +232,6 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         return q.getResultList();
     }
       
-    public List<TiposDocumentos> getTipoDocumentosByCtipo(List<String> tiposDocumentos) {
-        String tipos = tiposDocumentos.stream().map(tipo -> "'" +  tipo + "'").collect(Collectors.joining(", "));
-        Query q = getEntityManager().createNativeQuery("select * "
-                + "from tipos_documentos "
-                + "where ctipo_docum in ("+ tipos +") order by xdesc", TiposDocumentos.class);
-        return q.getResultList();
-    }
-      
     public TiposDocumentos getTipoDocumentosByCtipo(String ctipoDocum){
         try{
             Query q = getEntityManager().createNativeQuery("select * from tipos_documentos where ctipo_docum = "+ctipoDocum);
@@ -248,6 +240,14 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
         }catch(NoResultException ex){
             return null;
         }
+    }
+
+    public List<TiposDocumentos> getTipoDocumentosByCtipo(List<String> tiposDocumentos) {
+        String tipos = tiposDocumentos.stream().map(tipo -> "'" +  tipo + "'").collect(Collectors.joining(", "));
+        Query q = getEntityManager().createNativeQuery("select * "
+                + "from tipos_documentos "
+                + "where ctipo_docum in ("+ tipos +") order by xdesc", TiposDocumentos.class);
+        return q.getResultList();
     }
       
 }
