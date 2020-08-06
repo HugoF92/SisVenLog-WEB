@@ -7,10 +7,12 @@ package dao;
 
 import entidad.Rutas;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 
 /**
@@ -31,8 +33,8 @@ public class RutasFacade extends AbstractFacade<Rutas> {
     public RutasFacade() {
         super(Rutas.class);
     }
+    
     public void insertarRutas(Rutas rutas) {
-
         StoredProcedureQuery q = getEntityManager().createStoredProcedureQuery("InsertarRutas");
         q.registerStoredProcedureParameter("cod_zona", String.class, ParameterMode.IN);
         q.registerStoredProcedureParameter("xdesc", String.class, ParameterMode.IN);
@@ -44,9 +46,12 @@ public class RutasFacade extends AbstractFacade<Rutas> {
         q.setParameter("falta", rutas.getFalta());
         q.setParameter("cusuario", rutas.getCusuario());
         
-        
         q.execute();
-
-    
     }
+    
+    public List<Rutas> listarRutas() {
+        Query q = getEntityManager().createNativeQuery("select * from rutas order by xdesc", Rutas.class);
+        return q.getResultList();
+    }
+    
 }

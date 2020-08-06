@@ -76,6 +76,40 @@
                                                 itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
                                         
+                                        <p:outputLabel value="Ruta (Agrup. p/ prov.)" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu 
+                                            value="#{liVtaDiaBean.ruta}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{RutasConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liVtaDiaBean.listaRutas}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Proveedor (Agrup. p/ prov.)" style="float: right; font-weight: bold;"/>
+                                        <p:selectOneMenu 
+                                            value="#{liVtaDiaBean.proveedor}" 
+                                            filterMatchMode="contains" 
+                                            filter="true"
+                                            panelStyle="width:170px"
+                                            style=" 
+                                            width:170px" 
+                                            converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                            <f:selectItems 
+                                                value="#{liVtaDiaBean.listaProveedores}" 
+                                                var="item"
+                                                itemValue="#{item}"
+                                                itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
                                         <p:outputLabel for="discriminar" value="Seleccionar:" />
                                         <p:selectOneRadio 
                                             id="discriminar" 
@@ -92,6 +126,7 @@
                                                 <f:selectItem itemLabel="Consolidado por entregador" itemValue="5"/>
                                                 <f:selectItem itemLabel="Consolidado por zona, div, tipo de precio" itemValue="6"/>
                                                 <f:selectItem itemLabel="Consolidado por vendedor" itemValue="7"/>
+                                                <f:selectItem itemLabel="Agrupadas por proveedor" itemValue="8"/>
                                         </p:selectOneRadio>
                                         
                                     </h:panelGrid>
