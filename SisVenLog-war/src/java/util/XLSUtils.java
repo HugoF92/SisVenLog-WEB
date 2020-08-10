@@ -1,8 +1,10 @@
 package util;
 
+import dao.ExcelFacade;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellUtil;
 
 /**
@@ -23,12 +26,32 @@ public class XLSUtils {
     private static TiposDeDato[] tiposDatosColumnas;
     private static HSSFWorkbook wb;
     
+    @EJB
+    private ExcelFacade excelFacade;  
+    
+    public void exportarExcelGenerico(String sql, String nombre) throws Exception {
+        
+        Workbook wbk = excelFacade.crearExcelGenerico(sql);
+        
+        HttpServletResponse respuesta = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        respuesta.setContentType("application/vnd.ms-excel");
+        respuesta.setHeader("Content-disposition", "attachment; filename=" + nombre + ".xls");
+
+        try (ServletOutputStream out = respuesta.getOutputStream()) {
+            wbk.write(out);
+            out.flush();
+        }
+        
+        FacesContext faces = FacesContext.getCurrentInstance();
+        faces.responseComplete();
+    }
+    
     public static void crearExcelGenerico(ResultSet rs, String nombre) throws Exception{
         wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Hoja 1");
         ResultSetMetaData metaDatos = rs.getMetaData();
         tiposDatosColumnas = new TiposDeDato[metaDatos.getColumnCount()];
-        
+                
         int filaActual = 0;
         HSSFRow fila = sheet.createRow(filaActual);
         for (int i = 0; i < metaDatos.getColumnCount(); i++) {

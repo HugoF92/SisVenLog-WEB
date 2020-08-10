@@ -62,9 +62,9 @@
 	<group name="group_mercaderia">
 		<groupExpression><![CDATA[$F{cod_merca}]]></groupExpression>
 		<groupHeader>
-			<band height="20">
+			<band height="16">
 				<staticText>
-					<reportElement x="0" y="0" width="74" height="20" uuid="32dd621a-78c3-47a5-9d7c-9bb58c9e40b4"/>
+					<reportElement x="0" y="0" width="74" height="16" uuid="32dd621a-78c3-47a5-9d7c-9bb58c9e40b4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 						<paragraph rightIndent="3"/>
@@ -72,14 +72,14 @@
 					<text><![CDATA[MERCADERIA]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="74" y="0" width="40" height="20" uuid="ca0bcb4b-a9bf-4ffe-a499-af8751dd1afb"/>
+					<reportElement x="74" y="0" width="40" height="16" uuid="ca0bcb4b-a9bf-4ffe-a499-af8751dd1afb"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="114" y="0" width="161" height="20" uuid="a52f4022-b06c-48e6-a167-eae9d65d21c5"/>
+					<reportElement x="114" y="0" width="161" height="16" uuid="a52f4022-b06c-48e6-a167-eae9d65d21c5"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -88,9 +88,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="20">
+			<band height="16">
 				<staticText>
-					<reportElement x="6" y="0" width="109" height="20" uuid="240636d4-3fc9-4715-a9ec-1eb2e653857f"/>
+					<reportElement x="6" y="0" width="109" height="16" uuid="240636d4-3fc9-4715-a9ec-1eb2e653857f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 						<paragraph rightIndent="3"/>
@@ -98,14 +98,14 @@
 					<text><![CDATA[TOTAL MERCADERIA]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="115" y="0" width="50" height="20" uuid="b10e4c0c-742d-4688-aaa0-d3c320c03a2e"/>
+					<reportElement x="115" y="0" width="50" height="16" uuid="b10e4c0c-742d-4688-aaa0-d3c320c03a2e"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="275" y="0" width="61" height="20" uuid="1b9e90f9-2e7c-47a6-95b7-997a191ce2a4"/>
+					<reportElement x="275" y="0" width="61" height="16" uuid="1b9e90f9-2e7c-47a6-95b7-997a191ce2a4"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -115,7 +115,7 @@
 					<textFieldExpression><![CDATA[$V{cant_cajas_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="336" y="0" width="60" height="20" uuid="99f4316b-c90e-4cb1-a962-9f22e7487aca"/>
+					<reportElement x="336" y="0" width="60" height="16" uuid="99f4316b-c90e-4cb1-a962-9f22e7487aca"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -125,7 +125,7 @@
 					<textFieldExpression><![CDATA[$V{cant_unid_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="634" y="0" width="80" height="20" uuid="5e7b6708-aee4-4d1b-82ed-4be8800e851d"/>
+					<reportElement x="634" y="0" width="80" height="16" uuid="5e7b6708-aee4-4d1b-82ed-4be8800e851d"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -135,7 +135,7 @@
 					<textFieldExpression><![CDATA[$V{itot_lista_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="714" y="0" width="80" height="20" uuid="97018acf-2b75-4972-881b-7f52a84522ea"/>
+					<reportElement x="714" y="0" width="80" height="16" uuid="97018acf-2b75-4972-881b-7f52a84522ea"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -150,9 +150,9 @@
 	<group name="group_tventa">
 		<groupExpression><![CDATA[$F{ctipo_vta}]]></groupExpression>
 		<groupHeader>
-			<band height="20">
+			<band height="16">
 				<staticText>
-					<reportElement x="19" y="0" width="95" height="20" uuid="0bde9363-ef23-4896-9603-622df65c631f"/>
+					<reportElement x="19" y="0" width="95" height="16" uuid="0bde9363-ef23-4896-9603-622df65c631f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 						<paragraph rightIndent="3"/>
@@ -160,7 +160,7 @@
 					<text><![CDATA[TIPO VENTA]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="114" y="0" width="161" height="20" uuid="889bf7c4-fbfc-478c-b1b8-ac0adf28edf1"/>
+					<reportElement x="114" y="0" width="161" height="16" uuid="889bf7c4-fbfc-478c-b1b8-ac0adf28edf1"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
@@ -169,9 +169,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="20">
+			<band height="16">
 				<staticText>
-					<reportElement x="20" y="0" width="95" height="20" uuid="3952d754-a0c9-4e5d-a361-540ce1ce4edc"/>
+					<reportElement x="20" y="0" width="95" height="16" uuid="3952d754-a0c9-4e5d-a361-540ce1ce4edc"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 						<paragraph rightIndent="3"/>
@@ -179,14 +179,14 @@
 					<text><![CDATA[TOTAL TIPO VENTA]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="115" y="0" width="161" height="20" uuid="4aa772a6-ecf2-4c70-ac16-b9d42178dafc"/>
+					<reportElement x="115" y="0" width="161" height="16" uuid="4aa772a6-ecf2-4c70-ac16-b9d42178dafc"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ctipo_vta}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="276" y="0" width="60" height="20" uuid="0613833e-2415-43fb-ba39-14fa9b382c49"/>
+					<reportElement x="276" y="0" width="60" height="16" uuid="0613833e-2415-43fb-ba39-14fa9b382c49"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -196,7 +196,7 @@
 					<textFieldExpression><![CDATA[$V{cant_cajas_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="336" y="0" width="60" height="20" uuid="2517c83d-bc3b-4575-a7a0-af10ca153c6c"/>
+					<reportElement x="336" y="0" width="60" height="16" uuid="2517c83d-bc3b-4575-a7a0-af10ca153c6c"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -206,7 +206,7 @@
 					<textFieldExpression><![CDATA[$V{cant_unid_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="634" y="0" width="80" height="20" uuid="2b921aef-2090-458e-aca2-4bd00d4d3558"/>
+					<reportElement x="634" y="0" width="80" height="16" uuid="2b921aef-2090-458e-aca2-4bd00d4d3558"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -216,7 +216,7 @@
 					<textFieldExpression><![CDATA[$V{itot_lista_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="714" y="0" width="80" height="20" uuid="9abcb27e-d22b-4192-8829-ebb1be02769a"/>
+					<reportElement x="714" y="0" width="80" height="16" uuid="9abcb27e-d22b-4192-8829-ebb1be02769a"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -580,72 +580,72 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="0" width="40" height="20" uuid="cb75b7b1-315b-4899-b4d0-92e3b4da4273"/>
+				<reportElement x="0" y="0" width="40" height="16" uuid="cb75b7b1-315b-4899-b4d0-92e3b4da4273"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="40" y="0" width="235" height="20" uuid="200475b7-7092-4a40-9a37-92354e072cbe"/>
+				<reportElement x="40" y="0" width="235" height="16" uuid="200475b7-7092-4a40-9a37-92354e072cbe"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="275" y="0" width="60" height="20" uuid="65e66728-2a1b-4e5b-ade2-1947a825aaff"/>
+				<reportElement x="275" y="0" width="60" height="16" uuid="65e66728-2a1b-4e5b-ade2-1947a825aaff"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="335" y="0" width="59" height="20" uuid="bb48a193-935a-4995-b61e-8ab4a77b30ea"/>
+				<reportElement x="335" y="0" width="59" height="16" uuid="bb48a193-935a-4995-b61e-8ab4a77b30ea"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="394" y="0" width="60" height="20" uuid="fae74929-9631-4231-9230-d8b0c47fca6b"/>
+				<reportElement x="394" y="0" width="60" height="16" uuid="fae74929-9631-4231-9230-d8b0c47fca6b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ilista_caja}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="454" y="0" width="60" height="20" uuid="498ea212-a33e-45d4-ad1e-51c4075d9b22"/>
+				<reportElement x="454" y="0" width="60" height="16" uuid="498ea212-a33e-45d4-ad1e-51c4075d9b22"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ilista_unidad}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="514" y="0" width="60" height="20" uuid="ff328e14-9208-45a6-bd3b-c2ea31dda883"/>
+				<reportElement x="514" y="0" width="60" height="16" uuid="ff328e14-9208-45a6-bd3b-c2ea31dda883"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iprecio_caja}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="574" y="0" width="60" height="20" uuid="88c27990-2665-47f5-ba6f-3a33809536c0"/>
+				<reportElement x="574" y="0" width="60" height="16" uuid="88c27990-2665-47f5-ba6f-3a33809536c0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iprecio_unidad}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="634" y="0" width="80" height="20" uuid="a210805c-bfff-46d7-81e7-f499557acab6"/>
+				<reportElement x="634" y="0" width="80" height="16" uuid="a210805c-bfff-46d7-81e7-f499557acab6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{itot_lista}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="714" y="0" width="80" height="20" uuid="c54e0325-be29-4337-b857-e422106dfda0"/>
+				<reportElement x="714" y="0" width="80" height="16" uuid="c54e0325-be29-4337-b857-e422106dfda0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>

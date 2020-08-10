@@ -31,16 +31,16 @@
 	<field name="xdesc_merca" class="java.lang.String"/>
 	<field name="cant_cajas" class="java.math.BigDecimal"/>
 	<field name="cant_unid" class="java.math.BigDecimal"/>
-	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.lang.Double"/>
 	<field name="nplazo_cheque" class="java.lang.Short"/>
-	<field name="itotal" class="java.lang.Long"/>
+	<field name="itotal" class="java.lang.Double"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_mercaderia" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_cajas}]]></variableExpression>
 	</variable>
 	<variable name="cant_unid_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_mercaderia" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_mercaderia" calculation="Sum">
+	<variable name="itotal_1" class="java.lang.Double" resetType="Group" resetGroup="group_mercaderia" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
 	<variable name="cant_cajas_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_cliente" calculation="Sum">
@@ -49,7 +49,7 @@
 	<variable name="cant_unid_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_cliente" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_2" class="java.math.BigDecimal" resetType="Group" resetGroup="group_cliente" calculation="Sum">
+	<variable name="itotal_2" class="java.lang.Double" resetType="Group" resetGroup="group_cliente" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
 	<variable name="cant_cajas_3" class="java.math.BigDecimal" calculation="Sum">
@@ -58,24 +58,24 @@
 	<variable name="cant_unid_3" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_3" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="itotal_3" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
-	<variable name="itotal_cr" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_cr" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCR" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_che1" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_che1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>0 &&
     $F{nplazo_cheque}.intValue()<=15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_che2" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_che2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_co" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_co" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
@@ -83,17 +83,17 @@
 	<group name="group_cliente">
 		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
 		<groupHeader>
-			<band height="20">
+			<band height="16">
 				<textField>
-					<reportElement x="2" y="0" width="30" height="20" uuid="ca5c97c2-db45-4e58-84f6-0dd3d519c5b1"/>
-					<textElement>
+					<reportElement x="2" y="0" width="30" height="16" uuid="ca5c97c2-db45-4e58-84f6-0dd3d519c5b1"/>
+					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="32" y="0" width="214" height="20" uuid="13147da7-d35a-41be-a873-6d55452ea5c9"/>
-					<textElement>
+					<reportElement x="32" y="0" width="214" height="16" uuid="13147da7-d35a-41be-a873-6d55452ea5c9"/>
+					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
@@ -101,9 +101,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="20">
+			<band height="16">
 				<textField pattern="#,##0">
-					<reportElement x="329" y="0" width="60" height="20" uuid="ddcbe8fc-62c7-4a31-b7a8-99caa1563d47"/>
+					<reportElement x="329" y="0" width="60" height="16" uuid="ddcbe8fc-62c7-4a31-b7a8-99caa1563d47"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -113,7 +113,7 @@
 					<textFieldExpression><![CDATA[$V{cant_cajas_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="389" y="0" width="60" height="20" uuid="e4a6b9e0-cc33-4c95-b46d-1e0afdc5eb96"/>
+					<reportElement x="389" y="0" width="60" height="16" uuid="e4a6b9e0-cc33-4c95-b46d-1e0afdc5eb96"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -123,7 +123,7 @@
 					<textFieldExpression><![CDATA[$V{cant_unid_2}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="449" y="0" width="80" height="20" uuid="c59b4715-6bbd-4a74-8d81-68833ea5992d"/>
+					<reportElement x="449" y="0" width="80" height="16" uuid="c59b4715-6bbd-4a74-8d81-68833ea5992d"/>
 					<box>
 						<topPen lineWidth="0.5"/>
 					</box>
@@ -133,7 +133,7 @@
 					<textFieldExpression><![CDATA[$V{itotal_2}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="186" y="0" width="143" height="20" uuid="017d5a45-60e6-44c9-95b0-35851dc9066d"/>
+					<reportElement x="186" y="0" width="143" height="16" uuid="017d5a45-60e6-44c9-95b0-35851dc9066d"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 					</textElement>
@@ -145,37 +145,37 @@
 	<group name="group_mercaderia">
 		<groupExpression><![CDATA[$F{cod_merca}]]></groupExpression>
 		<groupFooter>
-			<band height="20">
+			<band height="16">
 				<textField>
-					<reportElement x="120" y="0" width="40" height="20" uuid="80e9ef19-1fe3-4a1e-b453-d9c477c470f0"/>
-					<textElement>
+					<reportElement x="120" y="0" width="40" height="16" uuid="80e9ef19-1fe3-4a1e-b453-d9c477c470f0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="160" y="0" width="169" height="20" uuid="8e7f3051-0746-4481-8b42-92a980545df2"/>
-					<textElement>
+					<reportElement x="160" y="0" width="169" height="16" uuid="8e7f3051-0746-4481-8b42-92a980545df2"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_merca}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="329" y="0" width="60" height="20" uuid="f642a277-56e9-4b26-853b-c3cd0bddf059"/>
+					<reportElement x="329" y="0" width="60" height="16" uuid="f642a277-56e9-4b26-853b-c3cd0bddf059"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{cant_cajas_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="389" y="0" width="60" height="20" uuid="5e45f977-272b-4c5e-8314-ff1e34d569b0"/>
+					<reportElement x="389" y="0" width="60" height="16" uuid="5e45f977-272b-4c5e-8314-ff1e34d569b0"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{cant_unid_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="449" y="0" width="80" height="20" uuid="0303cf43-82fa-4e27-82da-7a9c60c38d5a"/>
+					<reportElement x="449" y="0" width="80" height="16" uuid="0303cf43-82fa-4e27-82da-7a9c60c38d5a"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>

@@ -26,8 +26,8 @@
 	<field name="xnombre" class="java.lang.String"/>
 	<field name="cant_cajas" class="java.math.BigDecimal"/>
 	<field name="cant_unid" class="java.math.BigDecimal"/>
-	<field name="ttotal" class="java.math.BigDecimal"/>
-	<field name="itotal" class="java.lang.Long"/>
+	<field name="ttotal" class="java.lang.Double"/>
+	<field name="itotal" class="java.lang.Double"/>
 	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="nplazo_cheque" class="java.lang.Short"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_cliente" calculation="Sum">
@@ -42,65 +42,65 @@
 	<variable name="cant_unid_2" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_1" class="java.math.BigDecimal" resetType="Group" resetGroup="group_cliente" calculation="Sum">
+	<variable name="itotal_1" class="java.lang.Double" resetType="Group" resetGroup="group_cliente" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
-	<variable name="itotal_2" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="itotal_2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
-	<variable name="itotal_3" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="itotal_3" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_4" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_4" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCR" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_5" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_5" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>0 &&
     $F{nplazo_cheque}.intValue()<=15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_6" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_6" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
 	<group name="group_cliente">
 		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
 		<groupFooter>
-			<band height="20">
+			<band height="16">
 				<textField>
-					<reportElement x="10" y="0" width="30" height="20" uuid="1083e9a6-5305-4ded-8520-1ccc7b505dca"/>
+					<reportElement x="10" y="0" width="30" height="16" uuid="1083e9a6-5305-4ded-8520-1ccc7b505dca"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="40" y="0" width="299" height="20" uuid="c978bb35-2656-4f92-99f1-54b2ee59d69c"/>
+					<reportElement x="40" y="0" width="299" height="16" uuid="c978bb35-2656-4f92-99f1-54b2ee59d69c"/>
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="339" y="0" width="60" height="20" uuid="b567cbc3-6aa9-461f-92fb-3e61ad36dec2"/>
+					<reportElement x="339" y="0" width="60" height="16" uuid="b567cbc3-6aa9-461f-92fb-3e61ad36dec2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{cant_cajas_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="399" y="0" width="60" height="20" uuid="631ba2d7-359b-45e2-bb84-b220f87d6d63"/>
+					<reportElement x="399" y="0" width="60" height="16" uuid="631ba2d7-359b-45e2-bb84-b220f87d6d63"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{cant_unid_1}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0">
-					<reportElement x="459" y="0" width="80" height="20" uuid="31995de0-521d-4c77-9cff-38232a94a7b1"/>
+					<reportElement x="459" y="0" width="80" height="16" uuid="31995de0-521d-4c77-9cff-38232a94a7b1"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>

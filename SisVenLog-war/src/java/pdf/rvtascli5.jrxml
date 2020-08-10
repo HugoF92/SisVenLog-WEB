@@ -26,12 +26,12 @@
 	<field name="xvendedor" class="java.lang.String"/>
 	<field name="cant_cajas" class="java.math.BigDecimal"/>
 	<field name="cant_unid" class="java.math.BigDecimal"/>
-	<field name="itotal" class="java.math.BigDecimal"/>
-	<field name="tot_cli" class="java.lang.Integer"/>
-	<field name="tot_fco" class="java.math.BigDecimal"/>
-	<field name="tot_fcr" class="java.math.BigDecimal"/>
-	<field name="tot_che_1" class="java.math.BigDecimal"/>
-	<field name="tot_che_2" class="java.math.BigDecimal"/>
+	<field name="itotal" class="java.lang.Double"/>
+	<field name="tot_cli" class="java.lang.Double"/>
+	<field name="tot_fco" class="java.lang.Double"/>
+	<field name="tot_fcr" class="java.lang.Double"/>
+	<field name="tot_che_1" class="java.lang.Double"/>
+	<field name="tot_che_2" class="java.lang.Double"/>
 	<variable name="tot_cli_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{tot_cli}]]></variableExpression>
 	</variable>
@@ -41,7 +41,7 @@
 	<variable name="cant_unid_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="itotal_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
 	<background>
@@ -347,44 +347,44 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="16" splitType="Stretch">
 			<textField>
-				<reportElement x="2" y="0" width="40" height="20" uuid="9f077f31-3387-4d3a-8075-c6f947a6014d"/>
+				<reportElement x="2" y="0" width="40" height="16" uuid="9f077f31-3387-4d3a-8075-c6f947a6014d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_vendedor}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="42" y="0" width="227" height="20" uuid="65a528d2-ad59-4598-ab88-476609321632"/>
+				<reportElement x="42" y="0" width="227" height="16" uuid="65a528d2-ad59-4598-ab88-476609321632"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xvendedor}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="329" y="0" width="60" height="20" uuid="216397da-256d-4c2d-ba45-450037eac1ce"/>
+				<reportElement x="329" y="0" width="60" height="16" uuid="216397da-256d-4c2d-ba45-450037eac1ce"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="389" y="0" width="60" height="20" uuid="f520331e-7b58-4566-b9be-2b196de9e6cb"/>
+				<reportElement x="389" y="0" width="60" height="16" uuid="f520331e-7b58-4566-b9be-2b196de9e6cb"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="449" y="0" width="80" height="20" uuid="a9d46d1c-8093-4d7d-8b07-bf48a144eb4a"/>
+				<reportElement x="449" y="0" width="80" height="16" uuid="a9d46d1c-8093-4d7d-8b07-bf48a144eb4a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{itotal}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0">
-				<reportElement x="269" y="0" width="60" height="20" uuid="d0e98a21-f108-43ba-baf9-acf1f62e5e0f"/>
+				<reportElement x="269" y="0" width="60" height="16" uuid="d0e98a21-f108-43ba-baf9-acf1f62e5e0f"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
@@ -481,7 +481,7 @@
 				</textElement>
 				<text><![CDATA[TOTAL FACTURAS CONTADO]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement x="269" y="0" width="60" height="14" uuid="96a9db4e-4145-49dd-926f-bdd436139540"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -491,7 +491,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{tot_cli_1}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement x="329" y="0" width="60" height="14" uuid="63e1ea4f-409c-4e81-a397-5c410cc44bfb"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -501,7 +501,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{cant_cajas_1}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement x="389" y="0" width="60" height="14" uuid="1d727f2e-7112-426a-8f6c-99b902f90000"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -511,7 +511,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{cant_unid_1}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement x="449" y="0" width="80" height="14" uuid="fa456a08-0606-4863-8809-2ffce36fa7a6"/>
 				<box>
 					<topPen lineWidth="0.5"/>

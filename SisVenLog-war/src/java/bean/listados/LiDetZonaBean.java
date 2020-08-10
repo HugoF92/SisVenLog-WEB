@@ -326,8 +326,12 @@ public class LiDetZonaBean {
                 rep.reporteLiContClientes(param, tipo, reporte);
             } else {
                 List<Object[]> lista = new ArrayList<Object[]>();
+                
+                System.out.println("antes de sql " + System.currentTimeMillis());
                 lista = excelFacade.listarParaExcel(sql);
-                rep.exportarExcel(columnas, lista, reporte);
+                System.out.println("post sql " + System.currentTimeMillis());
+                rep.exportarExcel(columnas, lista, reporte);                
+                
             }
             
         } catch (Exception e) {

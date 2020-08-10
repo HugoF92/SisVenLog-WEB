@@ -25,33 +25,33 @@
 	<field name="ctipo_docum" class="java.lang.String"/>
 	<field name="cant_cajas" class="java.math.BigDecimal"/>
 	<field name="cant_unid" class="java.math.BigDecimal"/>
-	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.lang.Double"/>
 	<field name="nplazo_cheque" class="java.lang.Short"/>
-	<field name="itotal" class="java.math.BigDecimal"/>
+	<field name="itotal" class="java.lang.Double"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_cajas}]]></variableExpression>
 	</variable>
 	<variable name="cant_unid_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
 	</variable>
-	<variable name="itotal_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="itotal_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
-	<variable name="itotal_cr" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_cr" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCR" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_che1" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_che1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>0 &&
     $F{nplazo_cheque}.intValue()<=15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_che2" class="java.lang.Long" calculation="Sum">
+	<variable name="itotal_che2" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
-	<variable name="itotal_co" class="java.lang.String">
+	<variable name="itotal_co" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()==0 &&
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>

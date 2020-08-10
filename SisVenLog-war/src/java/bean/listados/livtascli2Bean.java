@@ -29,7 +29,6 @@ import entidad.TiposClientes;
 import entidad.TiposVentas;
 import entidad.TmpDatos;
 import entidad.Zonas;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +40,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DualListModel;
 import util.DateUtil;
@@ -105,11 +105,14 @@ public class livtascli2Bean {
     @EJB
     private TiposVentasFacade tiposVentasFacade;
     @EJB
-    private TiposClientesFacade tiposClientesFacade;    
+    private TiposClientesFacade tiposClientesFacade; 
     @EJB
-    private ExcelFacade excelFacade;    
-    @EJB
-    private GenericFacadeSQL sqlFacade;    
+    private GenericFacadeSQL sqlFacade;
+    @Inject
+    private XLSUtils xlsUtil;
+    
+   @EJB
+    private ExcelFacade excelFacade;
     
     @PostConstruct
     public void init() {
@@ -138,16 +141,16 @@ public class livtascli2Bean {
     }
     
     public void ejecutarListado(String tipo){
-        try{            
+        try{      
+            System.out.println("iniciando " + System.currentTimeMillis());
             LlamarReportes rep = new LlamarReportes();                      
             String sql = null;
             String sqlReport = null;
             String titulo = null;
             String reporte = null;
+            this.listadoClientesSeleccionados = new ArrayList<Clientes>();
             
-            if (checkCliente) {
-                this.listadoClientesSeleccionados = new ArrayList<Clientes>();
-            } else {
+            if (!checkCliente) {
                 for (TmpDatos t : sqlFacade.getDatosSelctor("select * from tmp_datos order by codigo")) {
                     Clientes c = new Clientes();
                     c.setCodCliente(Integer.valueOf(t.getCodigo()));
@@ -157,7 +160,7 @@ public class livtascli2Bean {
             }
             
             this.preEjecutarSQL();
-            
+            System.out.println("fin sql 1 " + System.currentTimeMillis());
             switch ( this.seleccion2 ) {
                 case "1":
                     switch ( this.seleccion ) {
@@ -323,8 +326,18 @@ public class livtascli2Bean {
                 rep.reporteLiContClientes(param, tipo, reporte);
                 
             } else {
-                ResultSet r = excelFacade.ejecutarSQLQueryParaExcelGenerico(sqlReport);
-                XLSUtils.crearExcelGenerico(r, reporte);
+                //ResultSet r = excelFacade.ejecutarSQLQueryParaExcelGenerico(sqlReport);
+                //xlsUtil.exportarExcelGenerico(sqlReport, reporte);
+                
+                
+                
+                System.out.println("antes de sql " + System.currentTimeMillis());
+                List<Object[]> lista = new ArrayList<Object[]>();
+                String[] columnas = new String[40];
+                lista = excelFacade.listarParaExcel(sqlReport);
+                System.out.println("post sql " + System.currentTimeMillis());
+                rep.exportarExcel(columnas, lista, reporte);  
+                
             }
             
         } catch (Exception e) {

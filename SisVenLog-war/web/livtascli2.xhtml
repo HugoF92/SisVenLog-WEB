@@ -16,8 +16,8 @@
                         <h:form id="form" prependId="false">
                             <p:growl id="messageLiRetorno" showDetail="true"/>
                             <center>
-                                <p:panel id="pnlParamLiClientes" header="Ventas a Clientes" style="width: 70%;">                                       
-                                    <h:panelGrid columns="2" >
+                                <p:panel id="pnlParamLiClientes" header="Ventas a Clientes" style="width: 80%;">                                       
+                                    <h:panelGrid columns="4" >
                                     
                                         <p:outputLabel value="Fecha Desde:" style="float: right; font-weight: bold;"/>
                                         <p:calendar id="liRetornoMercaDesde" value="#{livtascli2Bean.desde}" showOn="button" 
@@ -118,9 +118,13 @@
                                                     itemValue="#{item}"
                                                     itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
-                                        
-                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
-                                        <h:panelGrid columns="4" > 
+                                    
+                                    </h:panelGrid>
+                                    
+                                    <h:panelGrid columns="2" >
+                                            
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>                                             
+                                        <h:panelGrid  columns="4" > 
                                             <p>Todos</p>
                                             <h:selectBooleanCheckbox id="ocultarBtnPag" value="#{livtascli2Bean.checkCliente}" >
                                                 <p:ajax event="change" listener="#{livtascli2Bean.marcarTodos()}" update="mostrarBtnPag, ocultarBtnPag"/>
@@ -130,7 +134,7 @@
                                                 <p:ajax event="change" listener="#{livtascli2Bean.llamarSelectorDatos()}" update="mostrarBtnPag,ocultarBtnPag"/>
                                             </h:selectBooleanCheckbox>
                                         </h:panelGrid>
-                                        
+                                                                           
                                         <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
                                         <p:commandButton icon="fa fa-filter"
                                                     oncomplete="PF('dlgSelectMerca').show()"
@@ -139,7 +143,12 @@
                                         <p:outputLabel value="Sin IVA" style="float: right; font-weight: bold;"/>
                                         <p:selectBooleanCheckbox value="#{livtascli2Bean.sinIVA}"/>
                                         
+                                    </h:panelGrid>
+                                    
+                                    <h:panelGrid columns="3" >
+                                            
                                         <p:outputLabel value="Discriminar:" />
+                                            
                                         <p:selectOneRadio value="#{livtascli2Bean.seleccion}" 
                                                     layout="grid" columns="1" style="border: solid;border-width: thin">
                                              <f:selectItem itemLabel="Por Cliente y Mercaderia"  itemValue="1"/>
@@ -149,7 +158,6 @@
                                              <f:selectItem itemLabel="Por Tipo Precio y Mercaderia" itemValue="5"/>
                                         </p:selectOneRadio>
                                         
-                                        <p:outputLabel value="" />
                                         <p:selectOneRadio value="#{livtascli2Bean.seleccion2}" 
                                                     layout="grid" columns="1" style="border: solid;border-width: thin">
                                              <f:selectItem itemLabel="Detallado"  itemValue="1"/>
