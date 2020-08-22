@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rvta_proveed" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fd399242-086f-4ba9-ac5b-19a75d737bec">
 	<property name="ireport.zoom" value="1.3310000000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="77"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SisVenLog.xml"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
@@ -111,17 +110,17 @@
 		<groupHeader>
 			<band height="15">
 				<textField isBlankWhenNull="true">
-					<reportElement x="191" y="0" width="50" height="15" uuid="4e6e75c2-4f7e-4364-88d5-8dd7c52bd77e"/>
+					<reportElement x="10" y="0" width="40" height="15" uuid="4e6e75c2-4f7e-4364-88d5-8dd7c52bd77e"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="8" isBold="true"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_proveed}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="21" y="0" width="170" height="15" uuid="baf275fe-6bcf-45d5-947b-0794731a0446"/>
+					<reportElement x="50" y="0" width="170" height="15" uuid="baf275fe-6bcf-45d5-947b-0794731a0446"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="8" isBold="true"/>
 						<paragraph rightIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre_proveedor}]]></textFieldExpression>
@@ -297,73 +296,84 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="20" splitType="Stretch">
+		<band height="27" splitType="Stretch">
 			<staticText>
-				<reportElement x="85" y="0" width="100" height="20" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
+				<reportElement x="85" y="0" width="100" height="27" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FACTURA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="0" width="100" height="20" uuid="6ca088b6-5674-4264-9f73-9bbc63481344"/>
+				<reportElement x="185" y="0" width="100" height="27" uuid="6ca088b6-5674-4264-9f73-9bbc63481344"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<text><![CDATA[FACTURA RELACIONADA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="309" y="0" width="80" height="20" uuid="8910f981-c57f-4b67-bc26-dd5665d3e681"/>
+				<reportElement x="309" y="0" width="80" height="27" uuid="8910f981-c57f-4b67-bc26-dd5665d3e681"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<text><![CDATA[EXENTAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="389" y="0" width="80" height="20" uuid="d37c8a68-a240-4d07-b23b-c3cd651e6541"/>
+				<reportElement x="389" y="0" width="80" height="27" uuid="d37c8a68-a240-4d07-b23b-c3cd651e6541"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[GRAVADAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="469" y="0" width="80" height="20" uuid="5a94a5ff-af25-414c-a9c6-8b6c437a3829"/>
+				<reportElement x="469" y="0" width="80" height="27" uuid="5a94a5ff-af25-414c-a9c6-8b6c437a3829"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL FACTURA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="285" y="0" width="24" height="20" uuid="07a4cec5-43fb-4493-9503-366bd705d4fd"/>
+				<reportElement x="285" y="0" width="24" height="27" uuid="07a4cec5-43fb-4493-9503-366bd705d4fd"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="8" isBold="true"/>
 					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="0" width="75" height="27" uuid="3b6e2e22-9d19-4d42-8b8a-b4a236d7a539"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
@@ -397,7 +407,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="85" y="0" width="30" height="15" uuid="53378d0e-fcc5-49b8-a5c2-526f7e2d9376"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
@@ -405,7 +415,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="115" y="0" width="70" height="15" uuid="389a5bca-6906-4aac-a621-18671bc52c0a"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
@@ -413,7 +423,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="185" y="0" width="30" height="15" uuid="8a7642a6-86e5-46c4-b593-b348aeedef5f"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
@@ -421,7 +431,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="215" y="0" width="70" height="15" uuid="5dc4b588-632a-4d9c-98f2-8e7b8015d26c"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
