@@ -58,23 +58,28 @@
                                                 itemValue="#{item}"
                                                 itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu>
+                                    
                                         
                                         <p:outputLabel value="Tipo de Venta" style="float: right; font-weight: bold;"/>
-                                        <p:selectOneMenu 
-                                            value="#{liVtaDiaBean.tipoVenta}" 
-                                            filterMatchMode="contains" 
-                                            filter="true"
-                                            panelStyle="width:170px"
-                                            style=" 
-                                            width:170px" 
-                                            converter="#{TiposVentasConverter}">
-                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
-                                            <f:selectItems 
-                                                value="#{liVtaDiaBean.listaTiposVentas}" 
-                                                var="item"
-                                                itemValue="#{item}"
-                                                itemLabel="#{item.xdesc}"/>
-                                        </p:selectOneMenu>
+                                        <h:panelGrid columns="3" >
+                                            <p:selectOneMenu 
+                                                value="#{liVtaDiaBean.tipoVenta}" 
+                                                filterMatchMode="contains" 
+                                                filter="true"
+                                                panelStyle="width:170px"
+                                                style=" 
+                                                width:170px" 
+                                                converter="#{TiposVentasConverter}">
+                                                <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                                <f:selectItems 
+                                                    value="#{liVtaDiaBean.listaTiposVentas}" 
+                                                    var="item"
+                                                    itemValue="#{item}"
+                                                    itemLabel="#{item.xdesc}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Solo Notas DEV: " style="float: right; font-weight: bold;"/>   
+                                            <p:selectBooleanCheckbox id="soloNotasId" value="#{liVtaDiaBean.soloNotas}" itemLabel="" style="padding-left: 3px"/>
+                                        </h:panelGrid>
                                         
                                         <p:outputLabel value="Ruta (Agrup. p/ prov.)" style="float: right; font-weight: bold;"/>
                                         <p:selectOneMenu 
@@ -129,11 +134,6 @@
                                                 <f:selectItem itemLabel="Agrupadas por proveedor" itemValue="8"/>
                                         </p:selectOneRadio>
                                         
-                                    </h:panelGrid>
-                                    
-                                    <h:panelGrid columns="2">
-                                        <h:outputText value="Solo notas dev.: " style="float: right; font-weight: bold;"/>   
-                                        <p:selectBooleanCheckbox id="soloNotasId" value="#{liVtaDiaBean.soloNotas}" itemLabel="" style="padding-left: 3px"/>
                                     </h:panelGrid>
                                     
                                     <br></br>

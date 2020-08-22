@@ -25,6 +25,7 @@ public class conectar_BD {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             //this.con = DriverManager.getConnection("jdbc:sqlserver://localhost\\SQLEXPRESS;instance=SQLEXPRESS;databaseName=VenlogDB;user=sa;password=root;");
             this.conVenlog = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB",user,password);
+            //this.conVenlog = DriverManager.getConnection("jdbc:sqlserver://192.168.0.9;databaseName=VenlogDB",user,password);
             return true;
             //System.out.println("Conectado con exito a AdminIntercambioAJ!");
         } catch (Exception ex) {
