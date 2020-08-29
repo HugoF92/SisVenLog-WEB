@@ -84,28 +84,28 @@
 		<property name="com.jaspersoft.studio.field.label" value="xvendedor"/>
 	</field>
 	<variable name="texentas_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{texentas} : 0]]></variableExpression>
 	</variable>
 	<variable name="tgravadas_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
 	</variable>
 	<variable name="timpuestos_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos}*-1 : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{timpuestos}*-1 : 0]]></variableExpression>
 	</variable>
 	<variable name="ttotal_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{ttotal} : 0]]></variableExpression>
 	</variable>
 	<variable name="texentas" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{texentas} : 0]]></variableExpression>
 	</variable>
 	<variable name="tgravadas" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
 	</variable>
 	<variable name="timpuestos" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos}*-1 : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{timpuestos}*-1 : 0]]></variableExpression>
 	</variable>
 	<variable name="ttotal" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'X' ? $F{ttotal} : 0]]></variableExpression>
 	</variable>
 	<group name="group_fecha">
 		<groupExpression><![CDATA[$F{fmovim}]]></groupExpression>
@@ -422,7 +422,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'X' ? $F{texentas} : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="355" y="0" width="65" height="15" uuid="0d16b3b7-2bce-4bc2-8899-5a13838c8dc2"/>
@@ -430,7 +430,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'X' ? $F{tgravadas}+$F{timpuestos} : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="420" y="0" width="65" height="15" uuid="87a2965e-c428-466c-a2f3-a9c72b257c91"/>
@@ -438,7 +438,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos} * -1 : 0]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'X' ? $F{timpuestos} * -1 : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="485" y="0" width="65" height="15" uuid="68fbbdd3-515e-44fa-9e68-9dd078fbf63e"/>
@@ -446,7 +446,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'X' ? $F{ttotal} : 0]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="11" y="0" width="20" height="15" uuid="53378d0e-fcc5-49b8-a5c2-526f7e2d9376"/>
@@ -486,7 +486,7 @@
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{xnombre} : "ANULADA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'X' ? $F{xnombre} : "ANULADA"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
