@@ -103,4 +103,10 @@ public class ProveedoresFacade extends AbstractFacade<Proveedores> {
         listaProveedores = q.getResultList();
         return listaProveedores;
     }
+    
+    public Proveedores getProveedorFromList(Proveedores pk, List<Proveedores> lista){
+        return lista.stream()
+                .filter(obj -> obj.getCodProveed().shortValue() == pk.getCodProveed().shortValue())
+                .findAny().orElse(null);
+    }
 }

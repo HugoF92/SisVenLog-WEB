@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rvtaruta" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fd399242-086f-4ba9-ac5b-19a75d737bec">
-	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SisVenLog.xml"/>
@@ -15,6 +15,8 @@
 	<parameter name="zona" class="java.lang.String"/>
 	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="tipo_venta" class="java.lang.String"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -274,7 +276,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
+		<band height="93" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="17" width="101" height="14" uuid="4276e141-3c3e-4c21-9747-cdf9562d5b5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -349,22 +351,37 @@
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="91" y="65" width="109" height="14" uuid="93197832-93cb-4748-8e00-93b4c66ae218"/>
+				<reportElement x="384" y="65" width="160" height="14" uuid="5ce3b95f-c52f-437b-a5ec-239ee78f30ba"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="61" y="65" width="30" height="14" uuid="afbade9e-877c-4e08-adb9-e54c3af3d873"/>
+				<reportElement x="20" y="65" width="30" height="14" uuid="4ec335ce-0276-4331-bce5-20b7bcb97db9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Zona]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="274" y="65" width="110" height="14" uuid="e1d6a030-ca75-48db-86cd-ce1e7fe61429"/>
+				<reportElement x="50" y="79" width="130" height="14" uuid="70d15d52-94b6-4b91-bb1f-f351f9aa9484"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ruta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="65" width="54" height="14" uuid="9552f9b8-0a51-4c44-a8e6-dbcb9fde2d5c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Canal Vta.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="65" width="150" height="14" uuid="238fbb4a-e235-4fd2-a956-4aee84f58fe5"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -372,19 +389,34 @@
 				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="224" y="65" width="50" height="14" uuid="8d958abc-ea58-4fe8-995f-5ae913ceb428"/>
+				<reportElement x="180" y="79" width="54" height="14" uuid="17e8554b-790d-4c4c-b2e7-123c56b11c5c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Canal]]></text>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="79" width="30" height="14" uuid="a4af821d-70c5-440a-b1ac-63e62a5109e9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruta]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="384" y="65" width="167" height="14" uuid="c28e9a9a-6f3f-4ac1-b6c7-a7cc8a12bfdf"/>
+				<reportElement x="50" y="65" width="130" height="14" uuid="5cdccac9-9205-46d0-a68f-c84ad5145a2e"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="79" width="150" height="14" uuid="966a6b89-67a7-4061-993d-dd6d0fb00d8a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -533,7 +565,7 @@
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? $F{fac_ctipo_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? ($F{fac_ctipo_docum} == $F{ctipo_docum} ? "" : $F{fac_ctipo_docum}) : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="215" y="0" width="70" height="15" uuid="5dc4b588-632a-4d9c-98f2-8e7b8015d26c"/>
@@ -541,7 +573,7 @@
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_docum} != null ? $F{fac_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_docum} != null ? ($F{fac_docum} == $F{nrofact} ? "" : $F{fac_docum}) : ""]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

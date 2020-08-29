@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rvta_proveed" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fd399242-086f-4ba9-ac5b-19a75d737bec">
-	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SisVenLog.xml"/>
@@ -15,6 +15,8 @@
 	<parameter name="zona" class="java.lang.String"/>
 	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="tipo_venta" class="java.lang.String"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -131,6 +133,9 @@
 			<band height="15">
 				<textField pattern="#,##0" isBlankWhenNull="true">
 					<reportElement x="309" y="0" width="80" height="15" uuid="8da6c920-ce82-4303-8f24-2cb7f7cccd45"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 						<paragraph rightIndent="2"/>
@@ -139,6 +144,9 @@
 				</textField>
 				<textField pattern="#,##0" isBlankWhenNull="true">
 					<reportElement x="389" y="0" width="80" height="15" uuid="193f323d-b50e-425f-8f15-fd28e5c8497f"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 						<paragraph rightIndent="2"/>
@@ -147,6 +155,9 @@
 				</textField>
 				<textField pattern="#,##0" isBlankWhenNull="true">
 					<reportElement x="469" y="0" width="80" height="15" uuid="5b45d5e6-997d-4f1b-9501-359e3cf7b0b9"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 						<paragraph rightIndent="2"/>
@@ -181,7 +192,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
+		<band height="93" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="17" width="101" height="14" uuid="4276e141-3c3e-4c21-9747-cdf9562d5b5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -255,43 +266,73 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="91" y="65" width="109" height="14" uuid="93197832-93cb-4748-8e00-93b4c66ae218"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="61" y="65" width="30" height="14" uuid="afbade9e-877c-4e08-adb9-e54c3af3d873"/>
+				<reportElement x="20" y="79" width="30" height="14" uuid="75d5340c-2bf7-498c-9392-2a149db9c519"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="79" width="54" height="14" uuid="115163db-f93e-494e-9785-348195318f29"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="65" width="30" height="14" uuid="655a1a2e-1ba5-411d-b241-1d5124d8f152"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Zona]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="274" y="65" width="110" height="14" uuid="e1d6a030-ca75-48db-86cd-ce1e7fe61429"/>
+				<reportElement x="50" y="79" width="130" height="14" uuid="44975071-e4f6-4a00-8f79-258614c46207"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ruta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="65" width="130" height="14" uuid="fb018163-1df9-45fe-b0f7-6413fe957428"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="79" width="150" height="14" uuid="c12472f7-47e1-4ed8-bade-3878bd16fafb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="384" y="65" width="160" height="14" uuid="b1f9a98f-71b0-4a46-b1d4-da26007e30dd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="224" y="65" width="50" height="14" uuid="8d958abc-ea58-4fe8-995f-5ae913ceb428"/>
+				<reportElement x="180" y="65" width="54" height="14" uuid="fc688ed6-5019-4c4d-a20d-10fb39cfa42d"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Canal Vta.]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="384" y="65" width="167" height="14" uuid="c28e9a9a-6f3f-4ac1-b6c7-a7cc8a12bfdf"/>
+				<reportElement x="234" y="65" width="150" height="14" uuid="f0edeb87-50a2-4cc7-b515-c40d95cc9091"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -427,7 +468,7 @@
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? $F{fac_ctipo_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? ($F{fac_ctipo_docum} == $F{ctipo_docum} ? "" : $F{fac_ctipo_docum}) : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="215" y="0" width="70" height="15" uuid="5dc4b588-632a-4d9c-98f2-8e7b8015d26c"/>
@@ -435,7 +476,7 @@
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_docum} != null ? $F{fac_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_docum} != null ? ($F{fac_docum} == $F{nrofact} ? "" : $F{fac_docum}) : ""]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -503,7 +544,7 @@
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="309" y="0" width="80" height="20" uuid="309f919d-fb31-4b4f-a1ac-350256a23c51"/>
 				<box>
-					<topPen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
@@ -514,7 +555,7 @@
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="389" y="0" width="80" height="20" uuid="bd2b700b-769d-42a6-8d04-2929d7ede9b7"/>
 				<box>
-					<topPen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
@@ -525,7 +566,7 @@
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="469" y="0" width="80" height="20" uuid="f5f6cd8b-3891-4903-8f98-f2c8b9564103"/>
 				<box>
-					<topPen lineWidth="0.5"/>
+					<topPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>

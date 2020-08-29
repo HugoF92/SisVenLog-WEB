@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rvtadia" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fd399242-086f-4ba9-ac5b-19a75d737bec">
-	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SisVenLog.xml"/>
@@ -15,6 +15,8 @@
 	<parameter name="zona" class="java.lang.String"/>
 	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="tipo_venta" class="java.lang.String"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -82,42 +84,33 @@
 		<property name="com.jaspersoft.studio.field.label" value="xvendedor"/>
 	</field>
 	<variable name="texentas_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></variableExpression>
 	</variable>
 	<variable name="tgravadas_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas}+$F{timpuestos}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
 	</variable>
 	<variable name="timpuestos_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos}*-1]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos}*-1 : 0]]></variableExpression>
 	</variable>
 	<variable name="ttotal_fmovim" class="java.lang.Long" resetType="Group" resetGroup="group_fecha" calculation="Sum">
-		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></variableExpression>
 	</variable>
 	<variable name="texentas" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></variableExpression>
 	</variable>
 	<variable name="tgravadas" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{tgravadas}+$F{timpuestos}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></variableExpression>
 	</variable>
 	<variable name="timpuestos" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{timpuestos}*-1]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos}*-1 : 0]]></variableExpression>
 	</variable>
 	<variable name="ttotal" class="java.lang.Long" calculation="Sum">
-		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></variableExpression>
 	</variable>
 	<group name="group_fecha">
 		<groupExpression><![CDATA[$F{fmovim}]]></groupExpression>
 		<groupHeader>
-			<band height="15">
-				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement x="5" y="0" width="50" height="15" uuid="4e6e75c2-4f7e-4364-88d5-8dd7c52bd77e"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph rightIndent="2"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{fmovim}]]></textFieldExpression>
-				</textField>
-			</band>
+			<band/>
 		</groupHeader>
 		<groupFooter>
 			<band height="15">
@@ -193,7 +186,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
+		<band height="93" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="17" width="101" height="14" uuid="4276e141-3c3e-4c21-9747-cdf9562d5b5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -268,7 +261,7 @@
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="91" y="65" width="109" height="14" uuid="93197832-93cb-4748-8e00-93b4c66ae218"/>
+				<reportElement x="50" y="65" width="130" height="14" uuid="93197832-93cb-4748-8e00-93b4c66ae218"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -276,14 +269,14 @@
 				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="61" y="65" width="30" height="14" uuid="afbade9e-877c-4e08-adb9-e54c3af3d873"/>
+				<reportElement x="20" y="65" width="30" height="14" uuid="afbade9e-877c-4e08-adb9-e54c3af3d873"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Zona]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="274" y="65" width="110" height="14" uuid="e1d6a030-ca75-48db-86cd-ce1e7fe61429"/>
+				<reportElement x="234" y="65" width="150" height="14" uuid="e1d6a030-ca75-48db-86cd-ce1e7fe61429"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -291,38 +284,56 @@
 				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="224" y="65" width="50" height="14" uuid="8d958abc-ea58-4fe8-995f-5ae913ceb428"/>
+				<reportElement x="180" y="65" width="54" height="14" uuid="8d958abc-ea58-4fe8-995f-5ae913ceb428"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Canal]]></text>
+				<text><![CDATA[Canal Vta.]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="384" y="65" width="167" height="14" uuid="c28e9a9a-6f3f-4ac1-b6c7-a7cc8a12bfdf"/>
+				<reportElement x="384" y="65" width="160" height="14" uuid="c28e9a9a-6f3f-4ac1-b6c7-a7cc8a12bfdf"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="20" y="79" width="30" height="14" uuid="a7e03c88-c74d-43eb-8816-7f7e8bb6453d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="79" width="54" height="14" uuid="e6c3a087-9b5f-4798-83f9-ef1bb3fd5f23"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="79" width="150" height="14" uuid="42eb5a3b-602c-4a3b-bb7b-7186276a5c3d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="79" width="130" height="14" uuid="5c723a79-6048-4f86-9b57-c80531102e09"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ruta}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement x="5" y="0" width="40" height="25" uuid="98568018-6fb8-4a95-9a05-704ed2e53007"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<text><![CDATA[FECHA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="45" y="0" width="65" height="25" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
+				<reportElement x="16" y="0" width="65" height="25" uuid="dda43773-baed-4db7-a086-6910030ea8d8"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -333,7 +344,7 @@
 				<text><![CDATA[FACTURA / NOTA DB.CR.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="110" y="0" width="65" height="25" uuid="6ca088b6-5674-4264-9f73-9bbc63481344"/>
+				<reportElement x="81" y="0" width="70" height="25" uuid="6ca088b6-5674-4264-9f73-9bbc63481344"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -345,7 +356,7 @@
 				<text><![CDATA[FACTURA RELACIONADA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="175" y="0" width="115" height="25" uuid="b95eed67-6928-4d71-a7e0-118952bee784"/>
+				<reportElement x="151" y="0" width="139" height="25" uuid="b95eed67-6928-4d71-a7e0-118952bee784"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -411,7 +422,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{texentas}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{texentas} : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="355" y="0" width="65" height="15" uuid="0d16b3b7-2bce-4bc2-8899-5a13838c8dc2"/>
@@ -419,7 +430,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tgravadas}+$F{timpuestos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{tgravadas}+$F{timpuestos} : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="420" y="0" width="65" height="15" uuid="87a2965e-c428-466c-a2f3-a9c72b257c91"/>
@@ -427,7 +438,7 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{timpuestos} * -1]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{timpuestos} * -1 : 0]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="485" y="0" width="65" height="15" uuid="68fbbdd3-515e-44fa-9e68-9dd078fbf63e"/>
@@ -435,10 +446,10 @@
 					<font size="8" isStrikeThrough="false"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{ttotal} : 0]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="45" y="0" width="20" height="15" uuid="53378d0e-fcc5-49b8-a5c2-526f7e2d9376"/>
+				<reportElement x="11" y="0" width="20" height="15" uuid="53378d0e-fcc5-49b8-a5c2-526f7e2d9376"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
@@ -446,7 +457,7 @@
 				<textFieldExpression><![CDATA[$F{ctipo_docum}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="65" y="0" width="45" height="15" uuid="389a5bca-6906-4aac-a621-18671bc52c0a"/>
+				<reportElement x="31" y="0" width="50" height="15" uuid="389a5bca-6906-4aac-a621-18671bc52c0a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
@@ -454,28 +465,28 @@
 				<textFieldExpression><![CDATA[$F{nrofact}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="110" y="0" width="20" height="15" uuid="8a7642a6-86e5-46c4-b593-b348aeedef5f"/>
+				<reportElement x="81" y="0" width="20" height="15" uuid="8a7642a6-86e5-46c4-b593-b348aeedef5f"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? $F{fac_ctipo_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_ctipo_docum} != null ? ($F{fac_ctipo_docum} == $F{ctipo_docum} ? "" : $F{fac_ctipo_docum}) : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="130" y="0" width="45" height="15" uuid="5dc4b588-632a-4d9c-98f2-8e7b8015d26c"/>
+				<reportElement x="101" y="0" width="50" height="15" uuid="5dc4b588-632a-4d9c-98f2-8e7b8015d26c"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{fac_docum} != null ? $F{fac_docum} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fac_docum} != null ? ($F{fac_docum} == $F{nrofact} ? "" : $F{fac_docum}) : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="175" y="0" width="115" height="15" uuid="29d52c8c-17a4-4500-9057-f018b35f1de4"/>
+				<reportElement x="151" y="0" width="139" height="15" uuid="29d52c8c-17a4-4500-9057-f018b35f1de4"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{mestado} != 'A' ? $F{xnombre} : "ANULADA"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

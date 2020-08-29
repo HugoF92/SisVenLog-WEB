@@ -88,11 +88,12 @@ public class LiVtaDiaBean {
             String query2;
             String queryReport = ""; //cursor curfin
             String orderBy = "";
-            String extraWhere = "";
-            String extraWhere2 = "";
-            String extraWhere3 = "";
-            String extraWhere8 = "";
-            String extraWhere9 = "";
+            String extraWhere = ""; //1,2,3,4,5,7 union 1 (zona, canal, ruta, tipo_venta)
+            String extraWhere2 = ""; //1,2,3,4,5,7 union 2
+            String extraWhere3 = ""; //1,2,3,4,5,7 union 2, union 3 (zona, canal, ruta, tipo_venta)
+            String extraWhereProv1 = ""; //1,2,3,4,5,7 union 1, 2 y 3
+            String extraWhereProv6 = ""; //6 union 1, 2 y 3 y 8 union 2 y 3 
+            String extraWhereProv8 = ""; //8 union 1
             
             if (zona != null){
                 extraWhere += "AND z.cod_zona = '" + zona.getZonasPK().getCodZona() + "' ";
@@ -107,12 +108,21 @@ public class LiVtaDiaBean {
                 extraWhere3 += "AND a.ctipo_vta = '" + tipoVenta.getTiposVentasPK().getCtipoVta() + "' ";
             }
             if (ruta != null){
-                extraWhere8 += "AND r.cod_ruta = " + ruta.getRutasPK().getCodRuta()+ " ";
-                extraWhere9 += "AND r.cod_ruta = " + ruta.getRutasPK().getCodRuta()+ " ";
+                extraWhere += "AND r.cod_ruta = '" + ruta.getRutasPK().getCodRuta() + "' ";
+                extraWhere3 += "AND r.cod_ruta = '" + ruta.getRutasPK().getCodRuta() + "' ";
             }
             if (proveedor != null){
-                extraWhere8 += "AND p.cod_proveed = " + proveedor.getCodProveed() + " ";
-                extraWhere9 += "AND m.cod_proveed = " + proveedor.getCodProveed() + " ";
+                extraWhereProv1 += 
+                    "AND EXISTS " +
+                    "(SELECT 1 FROM facturas_det fd, mercaderias m " +
+                    "WHERE f.nrofact = fd.nrofact " +
+                    "AND f.ffactur = fd.ffactur " +
+                    "AND f.ctipo_docum = fd.ctipo_docum " +
+                    "AND fd.cod_empr = 2 " +
+                    "AND m.cod_merca = fd.cod_merca " +
+                    "AND m.cod_proveed = " + proveedor.getCodProveed() + ") ";
+                extraWhereProv6 += "AND m.cod_proveed = " + proveedor.getCodProveed() + " ";
+                extraWhereProv8 += "AND p.cod_proveed = " + proveedor.getCodProveed() + " ";
             }
             if (!seleccion.equals("1")) {
         	extraWhere += "AND f.mestado = 'A' ";
@@ -196,6 +206,7 @@ public class LiVtaDiaBean {
                         "AND f.ffactur BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND f.ctipo_docum != 'FPO' " +
                         extraWhere +
+                        extraWhereProv1 +
                     "UNION ALL " +
                     "SELECT " +
                         "a.cod_zona, z.xdesc AS xdesc_zona, f.cconc, a.cod_ruta, r.xdesc AS xdesc_ruta, f.ctipo_docum, f.nro_nota AS nrofact, f.fdocum AS fmovim, " + 
@@ -217,6 +228,7 @@ public class LiVtaDiaBean {
                         "AND f.ctipo_docum = 'NCV' " +
                         "AND a.ctipo_docum != 'FPO' " +
                         extraWhere3 +
+                        extraWhereProv1 +
                         extraWhere2 +
                     "UNION ALL " + 
                     "SELECT " +
@@ -238,7 +250,8 @@ public class LiVtaDiaBean {
                         "AND f.fdocum BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND f.ctipo_docum = 'NDV' " +
                         "AND a.ctipo_docum != 'FPO' " +
-                        extraWhere3;
+                        extraWhere3 + 
+                        extraWhereProv1;
                 queryReport = 
                     query + orderBy;
                 
@@ -272,6 +285,7 @@ public class LiVtaDiaBean {
                         "AND f.ffactur BETWEEN '" + fFacturacionDesde + "' AND '" + fFacturacionHasta + "' " +
                         "AND f.ctipo_docum != 'FPO' " +
                         extraWhere +
+                        extraWhereProv6 +
                     "UNION ALL " +
                     "SELECT " +
                         "a.cod_zona, z.xdesc AS xdesc_zona, f.cconc, a.cod_ruta, r.xdesc AS xdesc_ruta, f.ctipo_docum, f.nro_nota AS nrofact, f.fdocum AS fmovim, " +
@@ -299,6 +313,7 @@ public class LiVtaDiaBean {
                         "AND a.ctipo_docum != 'FPO' " + 
                         extraWhere3 +
                         extraWhere2 +
+                        extraWhereProv6 +
                     "UNION ALL " + 
                     "SELECT " +
                         "a.cod_zona, z.xdesc AS xdesc_zona, f.cconc, a.cod_ruta, r.xdesc AS xdesc_ruta, f.ctipo_docum, f.nro_nota AS nrofact, f.fdocum AS fmovim, " +
@@ -324,7 +339,8 @@ public class LiVtaDiaBean {
                         "AND d.cod_empr= 2 " +
                         "AND d.cod_merca = m.cod_merca " +
                         "AND a.ctipo_docum != 'FPO' " +
-                        extraWhere3;
+                        extraWhere3 + 
+                        extraWhereProv6;
                 query2 = 
                     "SELECT " + 
                         "m.cod_zona, d.cod_division, d.xdesc, SUM(ttotal) AS vta_mayorista, 0 AS vta_detalle, 0 AS vta_contado, 0 AS vta_otras " +
@@ -434,7 +450,7 @@ public class LiVtaDiaBean {
                         "AND d.cod_merca = m.cod_merca " +
                         "AND m.cod_proveed = p.cod_proveed " + 
                     extraWhere +
-                    extraWhere8 + 
+                    extraWhereProv8 + 
                     "UNION ALL " +
                     "SELECT " +
                         "a.cod_zona, z.xdesc AS xdesc_zona, f.cconc, a.cod_ruta, r.xdesc AS xdesc_ruta, f.ctipo_docum, f.nro_nota AS nrofact, f.fdocum AS fmovim, " +
@@ -464,7 +480,7 @@ public class LiVtaDiaBean {
                         "AND m.cod_proveed = p.cod_proveed " +
                         extraWhere3 + 
                         extraWhere2 +
-                        extraWhere9 +
+                        extraWhereProv6 +
                     "UNION ALL " +
                     "SELECT " +
                         "a.cod_zona, z.xdesc AS xdesc_zona, f.cconc, a.cod_ruta, r.xdesc AS xdesc_ruta, f.ctipo_docum, f.nro_nota AS nrofact, f.fdocum AS fmovim, " + 
@@ -492,7 +508,7 @@ public class LiVtaDiaBean {
                         "AND d.cod_merca = m.cod_merca " +
                         "AND m.cod_proveed = p.cod_proveed " + 
                         extraWhere3 + 
-                        extraWhere9;
+                        extraWhereProv6;
                 queryReport = 
                     query + orderBy;
             }
@@ -518,6 +534,12 @@ public class LiVtaDiaBean {
                 
                 if (this.zona != null) param.put("zona", zonasFacade.getZonaFromList(this.zona, this.listaZonas).getXdesc()); 
                 else param.put("zona", "TODOS");
+                
+                if (this.ruta != null) param.put("ruta", rutasFacade.getRutaFromList(this.ruta, this.listaRutas).getXdesc()); 
+                else param.put("ruta", "TODOS");
+                
+                if (this.proveedor != null) param.put("proveedor", proveedoresFacade.getProveedorFromList(this.proveedor, this.listaProveedores).getXnombre()); 
+                else param.put("proveedor", "TODOS");
                 
                 rep.reporteGenerico(param, tipo, reporte);
             } else {

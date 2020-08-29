@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rreszona" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fd399242-086f-4ba9-ac5b-19a75d737bec">
-	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SisVenLog.xml"/>
@@ -15,6 +15,8 @@
 	<parameter name="zona" class="java.lang.String"/>
 	<parameter name="canal" class="java.lang.String"/>
 	<parameter name="tipo_venta" class="java.lang.String"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{sql}]]>
 	</queryString>
@@ -117,7 +119,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
+		<band height="93" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="17" width="101" height="14" uuid="4276e141-3c3e-4c21-9747-cdf9562d5b5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -191,8 +193,23 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fhasta}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="180" y="79" width="54" height="14" uuid="21d730c6-1810-4093-8465-c847dfe7e483"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="91" y="65" width="109" height="14" uuid="93197832-93cb-4748-8e00-93b4c66ae218"/>
+				<reportElement x="50" y="79" width="130" height="14" uuid="7287e5f9-f48c-4964-8ae1-d02c22ebf212"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ruta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="65" width="130" height="14" uuid="ccc059fa-cfff-4806-b065-df7de06a73fe"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -200,35 +217,50 @@
 				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="61" y="65" width="30" height="14" uuid="afbade9e-877c-4e08-adb9-e54c3af3d873"/>
+				<reportElement x="20" y="65" width="30" height="14" uuid="4f8fe639-7cc5-4532-a5fb-3c8db13200bd"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Zona]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="274" y="65" width="110" height="14" uuid="e1d6a030-ca75-48db-86cd-ce1e7fe61429"/>
+				<reportElement x="234" y="65" width="150" height="14" uuid="75d4b398-781b-47c4-9376-4d981aae07b6"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{canal}]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="234" y="79" width="150" height="14" uuid="803880ea-4cc9-41c0-89b9-b866252cd6a1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
+			</textField>
 			<staticText>
-				<reportElement x="224" y="65" width="50" height="14" uuid="8d958abc-ea58-4fe8-995f-5ae913ceb428"/>
+				<reportElement x="20" y="79" width="30" height="14" uuid="7383eb44-fbcf-4d5e-b27f-fd144c25c063"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Canal]]></text>
+				<text><![CDATA[Ruta]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="384" y="65" width="167" height="14" uuid="c28e9a9a-6f3f-4ac1-b6c7-a7cc8a12bfdf"/>
+				<reportElement x="384" y="65" width="160" height="14" uuid="f52d9eee-1078-43ed-a592-28c78f01340b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{l_xdetalle}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="180" y="65" width="54" height="14" uuid="45d7be67-cc4f-4cde-af6e-3694a69aab86"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Canal]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
