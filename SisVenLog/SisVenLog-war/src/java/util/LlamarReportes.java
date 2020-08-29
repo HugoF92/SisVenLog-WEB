@@ -16,6 +16,7 @@ import entidad.Sublineas;
 import entidad.Empleados;
 import entidad.Promociones;
 import entidad.Lineas;
+import entidad.Mercaderias;
 import entidad.Proveedores;
 import entidad.Rutas;
 import entidad.Sublineas;
@@ -2947,6 +2948,41 @@ public void reporteVencProveedores(Date fechaDesde, Date fechaHasta,
             HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 
             httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename);
+            httpServletResponse.addHeader("Content-type", "application/pdf");
+
+            ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+            FacesContext.getCurrentInstance().responseComplete();
+
+        } catch (IOException | NumberFormatException | JRException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void reporteMovimientosMercaderias(Date fechaDesde, Date fechaHasta,
+            Zonas zona, Mercaderias mercaderia, String usuarioImpresion) {
+        try {
+            Map param = new HashMap();
+            param.put("fechaDesde", fechaDesde == null ? "" : DateUtil.dateToString(fechaDesde, "dd/MM/yyyy"));
+            param.put("fechaHasta", fechaHasta == null ? "" : DateUtil.dateToString(fechaHasta, "dd/MM/yyyy"));
+            param.put("zona", zona == null ? null : zona.getXdesc());
+            param.put("codMercaderia", mercaderia == null ? null : mercaderia.getMercaderiasPK().getCodMerca());
+            param.put("mercaderia", mercaderia == null ? null : mercaderia.getXdesc());
+            param.put("usuarioImpresion", usuarioImpresion);
+            param.put("REPORT_LOCALE", new Locale("es", "PY"));
+
+            String report;
+            String filename = "rmercamov";
+
+            report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/"+filename+".jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            httpServletResponse.addHeader("Content-disposition", "inline" + "; filename=" + filename + ".pdf");
             httpServletResponse.addHeader("Content-type", "application/pdf");
 
             ServletOutputStream servletStream = httpServletResponse.getOutputStream();
