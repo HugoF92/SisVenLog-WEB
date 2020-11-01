@@ -53,7 +53,13 @@ public class TiposVentasFacade extends AbstractFacade<TiposVentas> {
         return listado;
     }
     
-    public TiposVentas getTiposVentasFromList(TiposVentas pk, List<TiposVentas> lista){
+     public List<TiposVentas> listarTiposVentasOrdenadoXDesc(){
+        Query q = em.createNativeQuery("SELECT * FROM tipos_ventas", TiposVentas.class);
+        List<TiposVentas> resultados = (List<TiposVentas>) q.getResultList();
+        return resultados;
+    }
+   
+    public TiposVentas getTipoVentaFromList(TiposVentas pk, List<TiposVentas> lista){
         return lista.stream()
                 .filter(obj -> obj.getTiposVentasPK().getCtipoVta().equals(pk.getTiposVentasPK().getCtipoVta()))
                 .findAny().orElse(null);

@@ -78,6 +78,9 @@
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
+	<variable name="cod_cliente_1" class="java.lang.Integer" incrementType="Group" incrementGroup="group_cliente" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{cod_cliente}]]></variableExpression>
+	</variable>
 	<group name="group_cliente">
 		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
 		<groupHeader>
@@ -85,14 +88,14 @@
 				<textField>
 					<reportElement x="2" y="0" width="30" height="16" uuid="c983c1c1-9590-48e2-9f82-847318cc0f1f"/>
 					<textElement verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="32" y="0" width="214" height="16" uuid="a1ee0741-4280-42e9-b541-79759fa9f939"/>
 					<textElement verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
@@ -323,20 +326,12 @@
 				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="136" y="106" width="110" height="14" uuid="3e84779b-ca5a-4ca8-8d24-e4e00b032dbe"/>
+				<reportElement x="416" y="92" width="110" height="14" uuid="3e84779b-ca5a-4ca8-8d24-e4e00b032dbe"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="416" y="92" width="110" height="14" uuid="8c23a9b1-0f67-4d85-930f-94128c9a99e0"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="186" y="64" width="60" height="14" uuid="84396464-6db0-4959-80e1-6def9a2816ff"/>
@@ -346,7 +341,7 @@
 				<text><![CDATA[Zona:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="106" width="60" height="14" uuid="5bacdbc0-1a38-4945-b511-19c6f0a067d3"/>
+				<reportElement x="356" y="92" width="60" height="14" uuid="5bacdbc0-1a38-4945-b511-19c6f0a067d3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -367,15 +362,8 @@
 				</textElement>
 				<text><![CDATA[Precio Vta:]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="356" y="92" width="60" height="14" uuid="8c441cc2-841e-431a-95ed-7aab583c574a"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="246" y="106" width="110" height="14" uuid="defb1174-d91f-462a-853d-1bdffde9def5"/>
+				<reportElement x="200" y="106" width="110" height="14" uuid="defb1174-d91f-462a-853d-1bdffde9def5"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -525,7 +513,7 @@
 	<summary>
 		<band height="110" splitType="Stretch">
 			<staticText>
-				<reportElement x="93" y="0" width="60" height="14" uuid="3bbc0f11-15c5-4b23-8d24-9d0ddd783dec"/>
+				<reportElement x="113" y="0" width="60" height="14" uuid="3bbc0f11-15c5-4b23-8d24-9d0ddd783dec"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -638,6 +626,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{itotal_co}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="52" y="0" width="61" height="14" uuid="d34c7ff8-be64-44d1-b565-a70697abd5e4"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cod_cliente_1}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

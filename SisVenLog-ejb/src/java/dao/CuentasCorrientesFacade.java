@@ -18,6 +18,7 @@ import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
+import util.DateUtil;
 
 /**
  *
@@ -107,6 +108,25 @@ public class CuentasCorrientesFacade extends AbstractFacade<CuentasCorrientes>{
         q.executeUpdate();
     }
     
+    public void insertarCuentas2(CuentasCorrientes cuentaCorriente) throws Exception {
+        String sql = "INSERT INTO cuentas_corrientes(cod_empr, ctipo_docum, fvenc, fmovim, ndocum_cheq, ipagado, iretencion, cod_banco, cod_cliente, isaldo, mindice, manulado, texentas, tgravadas, timpuestos) values (?, ?, "+DateUtil.formaterDateToString(cuentaCorriente.getFvenc(), "yyyy-MM-dd")+", '"+DateUtil.formaterDateToString(cuentaCorriente.getFmovim(), "yyyy-MM-dd")+"', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Query q = em.createNativeQuery(sql);
+        q.setParameter(1, cuentaCorriente.getCodEmpr());
+        q.setParameter(2, cuentaCorriente.getCtipoDocum());
+        q.setParameter(3, cuentaCorriente.getNdocumCheq());
+        q.setParameter(4, cuentaCorriente.getIpagado());
+        q.setParameter(5, cuentaCorriente.getIretencion());
+        q.setParameter(6, cuentaCorriente.getCodBanco() == null ? null : cuentaCorriente.getCodBanco().getCodBanco());
+        q.setParameter(7, cuentaCorriente.getCodCliente() == null ? null : cuentaCorriente.getCodCliente().getCodCliente());
+        q.setParameter(8, cuentaCorriente.getIsaldo());
+        q.setParameter(9, cuentaCorriente.getMindice());
+        q.setParameter(10, cuentaCorriente.getManulado());
+        q.setParameter(11, cuentaCorriente.getTexentas());
+        q.setParameter(12, cuentaCorriente.getTgravadas());
+        q.setParameter(13, cuentaCorriente.getTimpuestos());
+        q.executeUpdate();
+    }
+    
     public List<CuentaCorrienteDto> listadoDeFacturasCuentasCorrientesPorNrofacturaYFecha(Long numeroFactura, Date fechaFactura){
         
         String sql =    "SELECT c.ctipo_docum, c.ndocum_cheq, " +
@@ -191,6 +211,17 @@ public class CuentasCorrientesFacade extends AbstractFacade<CuentasCorrientes>{
             total = resultado[0] == null ? Long.parseLong("0") : Long.parseLong(resultado[0].toString());
         }
         return total;
+    }
+    
+    public void borrarCuentaCorriente(String lCTipoDocum, long lNroFact){
+        String sql =    "DELETE FROM " +
+                        "cuentas_corrientes " +
+                        "WHERE cod_empr = 2 " +
+                        "AND ctipo_docum = '"+lCTipoDocum+"' "+
+                        "AND ndocum_cheq = "+lNroFact;
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
     }
     
 }

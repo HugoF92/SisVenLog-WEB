@@ -228,5 +228,29 @@ public class TiposDocumentosFacade extends AbstractFacade<TiposDocumentos> {
                 .filter(obj -> obj.getCtipoDocum().equals(pk.getCtipoDocum()))
                 .findAny().orElse(null);
     }
+    
+    public List<TiposDocumentos> listarTipoDocumentoDeudas() {
+        Query q = getEntityManager().createNativeQuery("select *\n"
+                + "from tipos_documentos\n"
+                + "where ctipo_docum in ('CHQ','FCR','PAG')", TiposDocumentos.class);
+
+        System.out.println(q.toString());
+
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+
+        respuesta = q.getResultList();
+
+        return respuesta;
+    }
+    
+    public List<TiposDocumentos> listarTipoDocumentoPorTipo(String tipoDoc) {
+        Query q = getEntityManager().createNativeQuery("select * "
+                + " from tipos_documentos "
+                + " where ctipo_docum in ( "+tipoDoc+" ) ", TiposDocumentos.class);
+        System.out.println(q.toString());
+        List<TiposDocumentos> respuesta = new ArrayList<TiposDocumentos>();
+        respuesta = q.getResultList();
+        return respuesta;
+    }
      
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotasvtasd" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f4e43c87-6266-41c5-8193-cf2f70c5e2f7">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.1000000000000003"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="sql" class="java.lang.String"/>
@@ -20,25 +20,30 @@
 	</queryString>
 	<field name="cod_division" class="java.lang.Short"/>
 	<field name="xdesc_division" class="java.lang.String"/>
-	<field name="KCAJAS" class="java.math.BigDecimal"/>
-	<field name="KUNID" class="java.math.BigDecimal"/>
-	<field name="igravadas" class="java.math.BigDecimal"/>
-	<field name="iexentas" class="java.math.BigDecimal"/>
-	<field name="impuestos" class="java.math.BigDecimal"/>
+	<field name="KCAJAS" class="java.lang.Double"/>
+	<field name="KUNID" class="java.lang.Double"/>
+	<field name="igravadas" class="java.lang.Double"/>
+	<field name="iexentas" class="java.lang.Double"/>
+	<field name="impuestos" class="java.lang.Double"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{KCAJAS}]]></variableExpression>
 	</variable>
 	<variable name="cant_unid_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{KUNID}]]></variableExpression>
 	</variable>
-	<variable name="iexentas_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="iexentas_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{iexentas}]]></variableExpression>
 	</variable>
-	<variable name="igravadas_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="igravadas_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{igravadas}]]></variableExpression>
 	</variable>
-	<variable name="impuestos_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="impuestos_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{impuestos}]]></variableExpression>
+	</variable>
+	<variable name="tgeneral" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[( $F{impuestos}.intValue()<0 )
+? new Double($F{igravadas}+$F{iexentas})
+: new Double($F{igravadas}+$F{iexentas}+$F{impuestos})]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -310,54 +315,66 @@
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="32" y="0" width="185" height="20" uuid="282f3ce0-4b0d-4916-8a76-2ce26f2e5c46"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xdesc_division}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="272" y="0" width="55" height="20" uuid="d05c7399-2140-4245-a40f-fe77a89fe9e1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KUNID}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="217" y="0" width="55" height="20" uuid="8c184f38-53b8-4f0f-9d39-4535e700ec60"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KCAJAS}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="2" y="0" width="30" height="20" uuid="3038ed31-2b00-4c9e-9e71-ec7795df8cf2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_division}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="437" y="0" width="55" height="20" uuid="44cf28e7-4b88-45be-ae9c-402480b7adbc"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{impuestos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{impuestos} < 0 )
+    ? new Double($F{impuestos}*-1)
+    : new Double($F{impuestos})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="327" y="0" width="55" height="20" uuid="0916ac38-9d1c-49ac-8df3-4e5ce8b0b8d5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iexentas}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="382" y="0" width="55" height="20" uuid="25e1c35a-e403-48bd-a30c-7229ea8a6982"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{igravadas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="492" y="0" width="55" height="20" uuid="6d78c2d0-21a8-4610-a672-86a3dc311b25"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{impuestos}<0 )
+? new Double($F{igravadas}+$F{iexentas})
+:new Double($F{igravadas}+$F{iexentas}+$F{impuestos})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -416,7 +433,9 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{impuestos_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{impuestos_1}.intValue() < 0)
+? $V{impuestos_1}*-1
+: $V{impuestos_1}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="32" y="0" width="185" height="15" uuid="1b995da8-4ce1-436c-9532-341678a16fb3"/>
@@ -471,6 +490,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{iexentas_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="492" y="0" width="55" height="15" uuid="2ed007d8-2996-4504-ba70-ccf2fd1629e2"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tgeneral}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

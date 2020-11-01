@@ -67,6 +67,9 @@
 		<variableExpression><![CDATA[( $F{nplazo_cheque}.intValue()>15)
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
+	<variable name="cod_cliente_1" class="java.lang.Integer" incrementType="Group" incrementGroup="group_cliente" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{cod_cliente}]]></variableExpression>
+	</variable>
 	<group name="group_cliente">
 		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
 		<groupFooter>
@@ -278,27 +281,12 @@
 				<text><![CDATA[Cliente:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="356" y="92" width="60" height="14" uuid="d7d36867-962a-49d7-ac82-4380f3b7e55a"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="186" y="92" width="60" height="14" uuid="d2064258-78b2-4cd2-b655-18fc19eed9e9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Precio Vta:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="416" y="92" width="110" height="14" uuid="ed05248f-6c3d-4ebc-b975-42e7513079ec"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
-			</textField>
 			<textField>
 				<reportElement x="76" y="92" width="110" height="14" uuid="ed50993c-756e-448f-83df-9eba2c971dc1"/>
 				<textElement verticalAlignment="Middle">
@@ -323,14 +311,14 @@
 				<textFieldExpression><![CDATA[$P{precio_vta}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="76" y="106" width="60" height="14" uuid="e37f872e-defb-4670-9fde-06fb63f53ff1"/>
+				<reportElement x="356" y="92" width="60" height="14" uuid="e37f872e-defb-4670-9fde-06fb63f53ff1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Proveedor:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="136" y="106" width="110" height="14" uuid="cb7be86c-39c7-41e5-b280-e8de41241058"/>
+				<reportElement x="416" y="92" width="110" height="14" uuid="cb7be86c-39c7-41e5-b280-e8de41241058"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -338,7 +326,7 @@
 				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="246" y="106" width="110" height="14" uuid="3bf6796d-6ef7-458b-bd14-270dd20fe2f1"/>
+				<reportElement x="186" y="106" width="110" height="14" uuid="3bf6796d-6ef7-458b-bd14-270dd20fe2f1"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -482,7 +470,7 @@
 				<text><![CDATA[TOTAL FACTURAS CHEQ.DIF.>15]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="0" width="60" height="14" uuid="d7f821f6-cebe-4442-aebd-35e14f5b970b"/>
+				<reportElement x="101" y="0" width="60" height="14" uuid="d7f821f6-cebe-4442-aebd-35e14f5b970b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -560,6 +548,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{itotal_6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="40" y="0" width="61" height="14" uuid="b9e130e2-9c27-40b6-9426-88c00db9305c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cod_cliente_1}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

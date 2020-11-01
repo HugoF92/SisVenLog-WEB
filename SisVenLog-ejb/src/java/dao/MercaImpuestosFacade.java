@@ -55,4 +55,19 @@ public class MercaImpuestosFacade extends AbstractFacade<MercaImpuestos> {
         return listado;
     }
     
+    public Impuestos obtenerPorcentajeImpuestoPorMercaderiaDos(String lCodMerca){
+        String sql =    "SELECT sum(i.pimpues) \n" +
+                        "FROM merca_impuestos m, impuestos i " +
+                        "WHERE m.cod_impu = i.cod_impu " +
+                        "AND upper(m.cod_merca) like upper('"+lCodMerca+"') "+
+                        "AND m.cod_empr = 2 ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        Object resultados = (Object) q.getSingleResult();
+        Impuestos i = new Impuestos();
+        BigDecimal bd = new BigDecimal(resultados.toString());
+        i.setPimpues(bd);
+        return i;
+    }
+    
 }

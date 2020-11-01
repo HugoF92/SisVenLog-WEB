@@ -80,6 +80,10 @@
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
+	<variable name="cod_cliente_1" class="java.lang.Integer" incrementType="Group" incrementGroup="group_cliente" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{cod_cliente}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
 	<group name="group_cliente">
 		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
 		<groupHeader>
@@ -87,14 +91,14 @@
 				<textField>
 					<reportElement x="2" y="0" width="30" height="16" uuid="ca5c97c2-db45-4e58-84f6-0dd3d519c5b1"/>
 					<textElement verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="32" y="0" width="214" height="16" uuid="13147da7-d35a-41be-a873-6d55452ea5c9"/>
 					<textElement verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xnombre}]]></textFieldExpression>
 				</textField>
@@ -241,7 +245,7 @@
 				<text><![CDATA[Linea:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="106" width="60" height="14" uuid="c71762f1-77d8-40f6-8d88-cc3c2abe5781"/>
+				<reportElement x="356" y="92" width="60" height="14" uuid="c71762f1-77d8-40f6-8d88-cc3c2abe5781"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -270,13 +274,6 @@
 				<text><![CDATA[Canal de Venta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="356" y="92" width="60" height="14" uuid="b24908d6-e9ea-45c8-840b-54f9d52ff3bc"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="16" y="64" width="60" height="14" uuid="eb848e14-60ca-4180-9ab3-a0f2980a00aa"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
@@ -284,7 +281,7 @@
 				<text><![CDATA[Vendedor:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="246" y="106" width="110" height="14" uuid="264ee886-7ed2-4f35-9e42-ae09e2f9e8fb"/>
+				<reportElement x="200" y="106" width="110" height="14" uuid="264ee886-7ed2-4f35-9e42-ae09e2f9e8fb"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -315,7 +312,7 @@
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="136" y="106" width="110" height="14" uuid="4f1d4315-e2a1-4dbf-b04f-a285be3c49e7"/>
+				<reportElement x="416" y="92" width="110" height="14" uuid="4f1d4315-e2a1-4dbf-b04f-a285be3c49e7"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -359,14 +356,6 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{canal_vta}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="416" y="92" width="110" height="14" uuid="7b2c8883-834e-4743-b4f7-35d82f6f1ddd"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="246" y="78" width="110" height="14" uuid="5501104c-0d19-4bb7-af43-19af99358ec7"/>
@@ -437,7 +426,7 @@
 				<text><![CDATA[CAJAS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="4" width="60" height="28" uuid="4eef9807-a189-4e40-8b10-b0a28abf49c3"/>
+				<reportElement x="0" y="4" width="120" height="28" uuid="4eef9807-a189-4e40-8b10-b0a28abf49c3"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
@@ -459,18 +448,6 @@
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<text><![CDATA[MONTO ACUMULADO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="60" y="4" width="60" height="28" uuid="98045918-b496-4c8a-9b72-0b6d7cd79c5e"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-					<paragraph rightIndent="2"/>
-				</textElement>
-				<text><![CDATA[SUBLINEA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="389" y="4" width="60" height="28" uuid="a6d8f3f2-f9d5-40f7-bd59-0f5cfc142406"/>
@@ -546,7 +523,7 @@
 	<summary>
 		<band height="105" splitType="Stretch">
 			<staticText>
-				<reportElement x="93" y="0" width="60" height="14" uuid="ee8fe92a-3658-455f-ad4e-865bcb55f22d"/>
+				<reportElement x="120" y="0" width="60" height="14" uuid="ee8fe92a-3658-455f-ad4e-865bcb55f22d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -659,6 +636,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{itotal_cr}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="59" y="0" width="61" height="14" uuid="aa9ee1cf-e8af-4fb8-897f-13bc2bfc4770"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cod_cliente_1}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

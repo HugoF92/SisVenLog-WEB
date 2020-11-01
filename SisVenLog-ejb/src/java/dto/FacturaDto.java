@@ -17,6 +17,9 @@ public class FacturaDto {
     private String nombreDeposito;
     private String nombreVendedor;
     private String descripcionCanal;
+    private Short codRuta;
+    private Character ctipoCliente;
+    private String tipoDocumentoDescripcion;
 
     public Facturas getFactura() {
         return factura;
@@ -48,6 +51,30 @@ public class FacturaDto {
 
     public void setDescripcionCanal(String descripcionCanal) {
         this.descripcionCanal = descripcionCanal;
+    }
+
+    public Short getCodRuta() {
+        return codRuta;
+    }
+
+    public void setCodRuta(Short codRuta) {
+        this.codRuta = codRuta;
+    }
+
+    public Character getCtipoCliente() {
+        return ctipoCliente;
+    }
+
+    public void setCtipoCliente(Character ctipoCliente) {
+        this.ctipoCliente = ctipoCliente;
+    }
+
+    public String getTipoDocumentoDescripcion() {
+        return tipoDocumentoDescripcion;
+    }
+
+    public void setTipoDocumentoDescripcion(String tipoDocumentoDescripcion) {
+        this.tipoDocumentoDescripcion = tipoDocumentoDescripcion;
     }
     
     

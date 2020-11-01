@@ -20,25 +20,30 @@
 	</queryString>
 	<field name="cod_sublinea" class="java.lang.Short"/>
 	<field name="xdesc_sublinea" class="java.lang.String"/>
-	<field name="KCAJAS" class="java.math.BigDecimal"/>
-	<field name="KUNID" class="java.math.BigDecimal"/>
-	<field name="igravadas" class="java.math.BigDecimal"/>
-	<field name="iexentas" class="java.math.BigDecimal"/>
-	<field name="impuestos" class="java.math.BigDecimal"/>
+	<field name="KCAJAS" class="java.lang.Double"/>
+	<field name="KUNID" class="java.lang.Double"/>
+	<field name="igravadas" class="java.lang.Double"/>
+	<field name="iexentas" class="java.lang.Double"/>
+	<field name="impuestos" class="java.lang.Double"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{KCAJAS}]]></variableExpression>
 	</variable>
 	<variable name="cant_unid_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{KUNID}]]></variableExpression>
 	</variable>
-	<variable name="iexentas_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="iexentas_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{iexentas}]]></variableExpression>
 	</variable>
-	<variable name="igravadas_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="igravadas_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{igravadas}]]></variableExpression>
 	</variable>
-	<variable name="impuestos_1" class="java.math.BigDecimal" calculation="Sum">
+	<variable name="impuestos_1" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{impuestos}]]></variableExpression>
+	</variable>
+	<variable name="tgeneral" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[( $F{impuestos}.intValue()<0 )
+? new Double($F{igravadas}+$F{iexentas})
+:new Double($F{igravadas}+$F{iexentas}+$F{impuestos})]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -310,54 +315,66 @@
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="30" height="20" uuid="640142e7-91ed-44af-9741-44b131f6c15b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cod_sublinea}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="31" y="0" width="185" height="20" uuid="372a8899-0562-41be-b9c3-70b17bd31a26"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{xdesc_sublinea}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="216" y="0" width="55" height="20" uuid="241ebe83-fb72-4ecf-91fe-d88f905c9a19"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KCAJAS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="271" y="0" width="55" height="20" uuid="db472f98-65f2-439f-9a6e-37c28786afc5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KUNID}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="326" y="0" width="55" height="20" uuid="104fe74a-b58f-4acd-a3e3-1c22e229fbb8"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{iexentas}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="381" y="0" width="55" height="20" uuid="e3fee28f-0173-4710-95d2-944363a6b594"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{igravadas}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0">
+			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement x="436" y="0" width="55" height="20" uuid="f0201b6d-e92c-48b6-a9dd-5e6bf60fcc6b"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{impuestos}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{impuestos}.intValue() < 0)
+? $F{impuestos}*-1
+: $F{impuestos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="491" y="0" width="55" height="20" uuid="e8170786-bcfd-4e14-a7e8-88155931004c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{impuestos}<0 )
+? new Double($F{igravadas}+$F{iexentas})
+:new Double($F{igravadas}+$F{iexentas}+$F{impuestos})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -470,7 +487,20 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{impuestos_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{impuestos_1}.intValue() < 0)
+? $V{impuestos_1}*-1
+: $V{impuestos_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="491" y="4" width="55" height="15" uuid="9f79d819-8d4d-4216-bf38-3079ac563a0f"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tgeneral}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

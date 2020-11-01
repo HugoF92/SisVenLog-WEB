@@ -12,6 +12,9 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -126,7 +129,12 @@ public class FacturasDet implements Serializable {
     @NotNull
     @Column(name = "pimpues")
     private BigDecimal pimpues;
-
+    @JoinColumns({
+        @JoinColumn(name = "cod_empr", referencedColumnName = "cod_empr", insertable = false, updatable = false)
+        , @JoinColumn(name = "cod_merca", referencedColumnName = "cod_merca", insertable = false, updatable = false)})
+    @ManyToOne(optional = false)
+    private Mercaderias mercaderias;
+    
     public FacturasDet() {
     }
 
@@ -310,6 +318,14 @@ public class FacturasDet implements Serializable {
         this.pimpues = pimpues;
     }
 
+    public Mercaderias getMercaderias() {
+        return mercaderias;
+    }
+
+    public void setMercaderias(Mercaderias mercaderias) {
+        this.mercaderias = mercaderias;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

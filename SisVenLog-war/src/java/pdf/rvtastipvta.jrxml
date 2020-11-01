@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rvtastipvta" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="755d85a8-e902-4b41-9fc2-eae3004cf09b">
-	<property name="ireport.zoom" value="0.9090909090909096"/>
+	<property name="ireport.zoom" value="1.1000000000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="sql" class="java.lang.String"/>
@@ -74,21 +74,21 @@
 				<textField>
 					<reportElement x="74" y="0" width="40" height="16" uuid="ca0bcb4b-a9bf-4ffe-a499-af8751dd1afb"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="114" y="0" width="161" height="16" uuid="a52f4022-b06c-48e6-a167-eae9d65d21c5"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{xdesc_merca}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="16">
+			<band height="25">
 				<staticText>
 					<reportElement x="6" y="0" width="109" height="16" uuid="240636d4-3fc9-4715-a9ec-1eb2e653857f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -162,14 +162,14 @@
 				<textField>
 					<reportElement x="114" y="0" width="161" height="16" uuid="889bf7c4-fbfc-478c-b1b8-ac0adf28edf1"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="9"/>
+						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ctipo_vta}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="16">
+			<band height="25">
 				<staticText>
 					<reportElement x="20" y="0" width="95" height="16" uuid="3952d754-a0c9-4e5d-a361-540ce1ce4edc"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -268,7 +268,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
+				<text><![CDATA[Proveedor:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="469" y="78" width="60" height="14" uuid="ec1d6663-7f9b-4dff-bfcb-ffe44d962749"/>
@@ -386,7 +386,7 @@
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{proveedor}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="30" width="802" height="20" uuid="16744057-43fb-4480-aeac-ef6c6ca750eb"/>

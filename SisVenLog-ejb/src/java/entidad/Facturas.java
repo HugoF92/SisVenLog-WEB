@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -227,6 +229,16 @@ public class Facturas implements Serializable {
         , @JoinColumn(name = "cod_zona", referencedColumnName = "cod_zona")})
     @ManyToOne(optional = false)
     private Zonas zonas;
+    
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "facturas")
+    @Transient
+    private List<FacturasDet> facturasDetCollection;
+    
+    @Transient
+    private String ctipoVtaDesc;
+    
+    @Transient
+    private String ctipoDocumDesc;
 
     public Facturas() {
     }
@@ -603,6 +615,31 @@ public class Facturas implements Serializable {
         this.zonas = zonas;
     }
 
+    public List<FacturasDet> getFacturasDetCollection() {
+        return facturasDetCollection;
+    }
+
+    public void setFacturasDetCollection(List<FacturasDet> facturasDetCollection) {
+        this.facturasDetCollection = facturasDetCollection;
+    }
+
+    public String getCtipoVtaDesc() {
+        return ctipoVtaDesc;
+    }
+
+    public void setCtipoVtaDesc(String ctipoVtaDesc) {
+        this.ctipoVtaDesc = ctipoVtaDesc;
+    }
+
+    public String getCtipoDocumDesc() {
+        return ctipoDocumDesc;
+    }
+
+    public void setCtipoDocumDesc(String ctipoDocumDesc) {
+        this.ctipoDocumDesc = ctipoDocumDesc;
+    }
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

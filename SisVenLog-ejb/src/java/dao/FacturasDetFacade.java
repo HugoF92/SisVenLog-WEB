@@ -9,11 +9,13 @@ import dto.FacturaDetDto;
 import entidad.FacturasDet;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -92,5 +94,33 @@ public class FacturasDetFacade extends AbstractFacade<FacturasDet> {
         System.out.println(q.toString());
         List<FacturasDet> resultados = q.getResultList();
         return resultados;
+    }
+    
+    public List<FacturasDet> obtenerDetallesDeFacturasMerc(String lCTipoDocum, long lNroFact, Date lFFactura){
+        String sql = " SELECT d " +
+                    " FROM FacturasDet d inner join fetch d.mercaderias " +
+                    " WHERE d.facturasDetPK.nrofact = :lNroFact " +
+                    " AND d.facturasDetPK.ctipoDocum = :lCTipoDocum " +
+                    " AND d.facturasDetPK.ffactur = :lFFactura " +
+                    " AND d.facturasDetPK.codEmpr = '02'";
+        Query q = em.createQuery(sql)
+                .setParameter("lNroFact", lNroFact)
+                .setParameter("lCTipoDocum", lCTipoDocum)
+                .setParameter("lFFactura", lFFactura, TemporalType.DATE);
+        System.out.println(q.toString());
+        List<FacturasDet> resultados = q.getResultList();
+        return resultados;
+    }
+    
+    public void disminuirImporteNotas(long lNroFact, String lFactTipoDocum, String lFFact, String lCodMerca, long lITotal){
+        String sql =    "UPDATE facturas_det SET inotas = inotas + "+lITotal+" "+
+                        "WHERE cod_empr = 2 " +
+                        "AND nrofact = "+lNroFact+" "+
+                        "AND ctipo_docum = '"+lFactTipoDocum+"' "+
+                        "AND ffactur = '"+lFFact+"' "+
+                        "AND cod_merca = '"+lCodMerca+"' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
     }
 }

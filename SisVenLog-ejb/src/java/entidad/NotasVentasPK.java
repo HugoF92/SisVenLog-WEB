@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -40,6 +41,9 @@ public class NotasVentasPK implements Serializable {
     @Column(name = "fdocum")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fdocum;
+    
+    @Transient
+    private String descripcionTipoDocumento;
 
     public NotasVentasPK() {
     }
@@ -83,6 +87,14 @@ public class NotasVentasPK implements Serializable {
         this.fdocum = fdocum;
     }
 
+    public String getDescripcionTipoDocumento() {
+        return descripcionTipoDocumento;
+    }
+
+    public void setDescripcionTipoDocumento(String descripcionTipoDocumento) {
+        this.descripcionTipoDocumento = descripcionTipoDocumento;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

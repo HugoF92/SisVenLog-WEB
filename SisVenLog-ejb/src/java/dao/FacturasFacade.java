@@ -34,6 +34,9 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
     
     @EJB
     private EmpleadosFacade empleadosFacade;
+    
+    @EJB
+    private ClientesFacade clientesFacade;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -438,4 +441,54 @@ public class FacturasFacade extends AbstractFacade<Facturas> {
         }
         return listadoFacturas;
     }
+    
+    public List<Facturas> buscarFactuaPorNro(Long nroFactura){
+        String sql = "SELECT f " +
+                    " FROM Facturas f inner join fetch f.codCliente join fetch f.empleados join fetch f.empleados1 join fetch f.depositos " +
+                    " WHERE f.facturasPK.codEmpr = 2 " +
+                    " AND f.facturasPK.nrofact = :nroFactura "+
+                    " AND f.facturasPK.ctipoDocum IN ( 'FCO', 'FCR') " +
+                    " AND f.facturasPK.ffactur >= '2013-01-01'";
+        
+        Query q = em.createQuery(sql).setParameter("nroFactura", nroFactura);
+        System.out.println(q.toString());
+        List<Facturas> resultados = q.getResultList();
+        return resultados;        
+    }
+    
+    public List<Facturas> buscarFactuaPorNroYFecha(Long nroFactura, Date fechaFactura){
+        String sql = "SELECT f " +
+                    " FROM Facturas f join fetch f.codCliente join fetch f.empleados join fetch f.empleados1  join fetch f.depositos " +
+                    " WHERE f.facturasPK.codEmpr = 2 " +
+                    " AND f.facturasPK.nrofact = :nroFactura1 "+
+                    " AND f.facturasPK.ctipoDocum IN ( 'FCO', 'FCR') ";
+        if (fechaFactura == null){
+            sql += " AND f.facturasPK.ffactur = ( SELECT max(ff.facturasPK.ffactur) FROM Facturas ff " +
+                    "       WHERE ff.facturasPK.codEmpr = 2 " +
+                    "           AND ff.facturasPK.nrofact = :nroFactura2 "+
+                    "           AND ff.facturasPK.ctipoDocum IN ( 'FCO', 'FCR') ) ";
+        } else {
+            sql += " AND f.facturasPK.ffactur >= :fechaFactura ";
+        }
+                    
+        Query q = em.createQuery(sql).setParameter("nroFactura1", nroFactura);
+        
+        if (fechaFactura == null) q.setParameter("nroFactura2", nroFactura);
+        else q.setParameter("fechaFactura", fechaFactura);
+                
+        System.out.println(q.toString());
+        List<Facturas> resultados = q.getResultList();
+        return resultados;        
+    }
+    
+    public void aumentarTotalNotas(long lTotal, long lNroFact, String fdocum, String lFactTipo){
+        String sql =    "UPDATE facturas SET tnotas = tnotas + "+lTotal+" "+
+                        " WHERE cod_empr = 2 and nrofact = "+lNroFact+" "+
+                        " AND ctipo_docum = '"+lFactTipo+"' " +
+                        " AND ffactur = '"+fdocum+"' ";
+        Query q = em.createNativeQuery(sql);
+        System.out.println(q.toString());
+        q.executeUpdate();
+    }
+    
 }

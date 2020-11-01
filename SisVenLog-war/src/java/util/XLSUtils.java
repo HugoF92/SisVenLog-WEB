@@ -35,7 +35,7 @@ public class XLSUtils {
         
         HttpServletResponse respuesta = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
         respuesta.setContentType("application/vnd.ms-excel");
-        respuesta.setHeader("Content-disposition", "attachment; filename=" + nombre + ".xls");
+        respuesta.setHeader("Content-disposition", "attachment; filename=" + nombre + ".xlsx");
 
         try (ServletOutputStream out = respuesta.getOutputStream()) {
             wbk.write(out);

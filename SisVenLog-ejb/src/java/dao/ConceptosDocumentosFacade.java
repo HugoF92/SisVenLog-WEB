@@ -46,6 +46,17 @@ public class ConceptosDocumentosFacade extends AbstractFacade<ConceptosDocumento
         return respuesta;
     }
     
+    public List<ConceptosDocumentos> obtenerConceptosPorTipoYConcepto(String tipo, String conceptos){
+        String sql = "SELECT * FROM conceptos_documentos "
+                + " WHERE ctipo_docum IN ("+tipo+") "
+                + " AND cconc IN ("+conceptos+") ";
+        Query q = getEntityManager().createNativeQuery(sql, ConceptosDocumentos.class);
+        System.out.println(q.toString());
+        List<ConceptosDocumentos> respuesta = new ArrayList<>();
+        respuesta = q.getResultList();
+        return respuesta;
+    }
+    
     public ConceptosDocumentos getConceptoFromList(ConceptosDocumentos pk, List<ConceptosDocumentos> lista){
         return lista.stream()
                 .filter(obj -> obj.getConceptosDocumentosPK().getCtipoDocum().equals(pk.getConceptosDocumentosPK().getCtipoDocum()) && 

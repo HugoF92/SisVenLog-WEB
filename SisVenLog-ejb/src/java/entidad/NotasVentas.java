@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -135,6 +136,12 @@ public class NotasVentas implements Serializable {
     private Empleados empleados;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notasVentas")
     private Collection<NotasVentasSer> notasVentasSerCollection;
+    
+    @Transient
+    private String nombreCliente;
+    
+    @Transient
+    private Double porcentajeDesc;
 
     public NotasVentas() {
     }
@@ -344,6 +351,24 @@ public class NotasVentas implements Serializable {
         this.notasVentasSerCollection = notasVentasSerCollection;
     }
 
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public Double getPorcentajeDesc() {
+        return porcentajeDesc;
+    }
+
+    public void setPorcentajeDesc(Double porcentajeDesc) {
+        this.porcentajeDesc = porcentajeDesc;
+    }
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

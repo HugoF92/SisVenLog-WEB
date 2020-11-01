@@ -13,9 +13,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 /**
@@ -173,6 +171,13 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
         System.out.println(q.toString());
         List<Object[]> resultados = q.getResultList();
         return resultados.size() > 0;
+    }
+    
+    public Mercaderias getMercaderiaFromList(Mercaderias pk, List<Mercaderias> lista){
+        return lista.stream()
+                .filter(obj -> obj.getMercaderiasPK().getCodEmpr() == pk.getMercaderiasPK().getCodEmpr() && 
+                        obj.getMercaderiasPK().getCodMerca().equals(pk.getMercaderiasPK().getCodMerca()))
+                .findAny().orElse(null);
     }
 
 }

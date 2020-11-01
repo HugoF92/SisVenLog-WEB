@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -100,6 +101,21 @@ public class NotasVentasDet implements Serializable {
         , @JoinColumn(name = "fdocum", referencedColumnName = "fdocum", insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private NotasVentas notasVentas;
+    
+    @JoinColumns({
+        @JoinColumn(name = "cod_empr", referencedColumnName = "cod_empr", insertable = false, updatable = false)
+        , @JoinColumn(name = "cod_merca", referencedColumnName = "cod_merca", insertable = false, updatable = false)})
+    @ManyToOne(optional = false)
+    private Mercaderias mercaderia;
+    
+    @Transient
+    private long exentaCredito;
+    
+    @Transient
+    private long gravadaCredito;
+    
+    @Transient
+    private long impuestoCredito;
 
     public NotasVentasDet() {
     }
@@ -222,6 +238,38 @@ public class NotasVentasDet implements Serializable {
         this.notasVentas = notasVentas;
     }
 
+    public Mercaderias getMercaderia() {
+        return mercaderia;
+    }
+
+    public void setMercaderia(Mercaderias mercaderia) {
+        this.mercaderia = mercaderia;
+    }
+
+    public long getExentaCredito() {
+        return exentaCredito;
+    }
+
+    public void setExentaCredito(long exentaCredito) {
+        this.exentaCredito = exentaCredito;
+    }
+
+    public long getGravadaCredito() {
+        return gravadaCredito;
+    }
+
+    public void setGravadaCredito(long gravadaCredito) {
+        this.gravadaCredito = gravadaCredito;
+    }
+
+    public long getImpuestoCredito() {
+        return impuestoCredito;
+    }
+
+    public void setImpuestoCredito(long impuestoCredito) {
+        this.impuestoCredito = impuestoCredito;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

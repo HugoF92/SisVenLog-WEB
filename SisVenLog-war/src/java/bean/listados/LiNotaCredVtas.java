@@ -257,7 +257,7 @@ public class LiNotaCredVtas {
                     } else {
                         reporte = "rnotasvtas3det";
                     }
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "4":
                     if (!this.resumido) {
@@ -265,7 +265,7 @@ public class LiNotaCredVtas {
                     } else {
                         reporte = "rnotasvtas4det";
                     }
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "5":
                     columnas = new String[4];
@@ -274,7 +274,7 @@ public class LiNotaCredVtas {
                     columnas[2] = "kcajas";
                     columnas[3] = "kunidad";                    
                     reporte = "rnotasvtasr";
-                    sqlReport = sqls[1];
+                    sqlReport = sqls[1] + sqls[2];
                     break;
                 case "6":
                     columnas = new String[7];
@@ -286,7 +286,7 @@ public class LiNotaCredVtas {
                     columnas[5] = "iexentas";
                     columnas[6] = "impuestos";
                     reporte = "rnotasvtass";
-                    sqlReport = sqls[1];
+                    sqlReport = sqls[1] + sqls[2];
                     break;
                 case "7":
                     columnas = new String[7];
@@ -298,7 +298,7 @@ public class LiNotaCredVtas {
                     columnas[5] = "iexentas";
                     columnas[6] = "impuestos";
                     reporte = "rnotasvtasd";
-                    sqlReport = sqls[1];
+                    sqlReport = sqls[1] + sqls[2];
                     break;
                 case "8":
                     if (!this.resumido) {
@@ -306,15 +306,15 @@ public class LiNotaCredVtas {
                     } else {
                         reporte = "rnotasvtascd";
                     }
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "9":
                     reporte = "rnotasvtasz";
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2];
                     break;
                 case "10":
                     reporte = "rnotasvtasn";
-                    sqlReport = sqls[0];
+                    sqlReport = sqls[0] + sqls[2] ;
                     break;
                 case "11":
                     columnas = new String[5];
@@ -324,7 +324,7 @@ public class LiNotaCredVtas {
                     columnas[3] = "kcajas";
                     columnas[4] = "kunidad";
                     reporte = "rnotasvtaszn";
-                    sqlReport = sqls[1];
+                    sqlReport = sqls[1] + sqls[2];
                     break;
             }
             
@@ -359,7 +359,8 @@ public class LiNotaCredVtas {
                 sqlReport = "SELECT m.*, i.tgravadas_10, i.tgravadas_5, i.timpuestos_10, "
                     + " i.timpuestos_5 "
                     + " FROM (" + sqls[0]  + " ) m, (" + sqls[1] + ") i "
-                    + " WHERE m.nro_nota = i.nro_nota ";
+                    + " WHERE m.nro_nota = i.nro_nota "
+                    + " ORDER BY m.cconc, m.fdocum, m.nro_nota";
             }            
             for (int i=0; i<sqls.length; i++ ) {
                 System.out.println(sqls[i]);
@@ -367,7 +368,9 @@ public class LiNotaCredVtas {
             System.out.println("reporte "+reporte);
             System.out.println("sqlReport "+sqlReport);            
             if (tipo.equals("VIST")){
-                String usuImprime = "";//FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                String usuImprime = (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario") != null ?
+                        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString()
+                        : "");
                 Map param = new HashMap();
                 param.put("sql", sqlReport);
                 param.put("fdesde", this.desde);
@@ -402,7 +405,8 @@ public class LiNotaCredVtas {
                         + " i.tgravadas_5 + i.timpuestos_5 tgrav_5, "
                         + " i.timpuestos_10 * -1 timpu_10, i.timpuestos_5 * -1 timpu_5"
                         + " FROM ( " + sqls[0]  + " ) m, ( " + sqls[1] + " ) i "
-                        + " WHERE m.nro_nota = i.nro_nota ";
+                        + " WHERE m.nro_nota = i.nro_nota "
+                        + " "+ sqls[2];
                 } 
                 
                 List<Object[]> lista = new ArrayList<Object[]>();
@@ -456,8 +460,8 @@ public class LiNotaCredVtas {
         
         sql_nro_notas += extras2;
         
-        sql = " SELECT n.nro_nota, n.fdocum, n.fac_ctipo_docum, n.cconc, n.texentas, n.tgravadas, " 
-            + " n.timpuestos, f.nrofact, f.ctipo_docum, c.cod_cliente, c.xnombre, n.ttotal,  "
+        sql = " SELECT n.nro_nota, n.fdocum, n.fac_ctipo_docum, n.cconc, abs(n.texentas) as texentas, n.tgravadas, " 
+            + " abs(n.timpuestos) as timpuestos, f.nrofact, f.ctipo_docum, c.cod_cliente, c.xnombre, n.ttotal,  "
             + " f.cod_vendedor, e.xnombre AS xnombre_vendedor, d.xdesc AS xdesc_conc, f.ttotal AS fac_ttotal, "
             + " f.ffactur, n.cod_entregador, f.cod_zona, e2.xnombre AS xnombre_entregador, n.mestado " 
             + " FROM notas_ventas n INNER JOIN " 
@@ -483,7 +487,7 @@ public class LiNotaCredVtas {
                 sql_order += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum ";
                 break;
             case "3":
-                sql_order += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum ";
+                sql_order += " ORDER BY n.cod_entregador, n.nro_nota, n.fdocum";
                 break;
             case "4":
                 sql_order += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
@@ -519,8 +523,8 @@ public class LiNotaCredVtas {
             + " f.cod_vendedor, e.xnombre AS xnombre_vendedor, d.xdesc AS xdesc_conc, f.ttotal AS fac_ttotal, "
             + " f.ffactur, n.cod_entregador,  "
             + " e2.xnombre AS xnombre_entregador,nd.cod_merca, nd.xdesc, nd.cant_cajas, nd.cant_unid, "
-            + " m.cod_sublinea, s.xdesc as xdesc_sublinea, nd.igravadas, nd.iexentas, nd.impuestos, " 
-            + " v.xdesc as xdesc_division, V.COD_DIVISION, n.mestado, f.cod_zona " 
+            + " m.cod_sublinea, s.xdesc as xdesc_sublinea, nd.igravadas, (nd.iexentas) as iexentas, (nd.impuestos) as impuestos, " 
+            + " v.xdesc as xdesc_division, V.COD_DIVISION, n.mestado, f.cod_zona, m.cod_barra " 
             + " FROM notas_ventas n INNER JOIN " 
             + " notas_ventas_det nd ON n.nro_nota = nd.nro_nota INNER JOIN " 
             + " mercaderias m ON nd.cod_merca = m.cod_merca INNER JOIN "
@@ -555,13 +559,13 @@ public class LiNotaCredVtas {
         
         switch ( this.seleccion ) {
             case "1":
-                sql_order += " ORDER BY n.cconc, n.nro_nota, n.fdocum ";
+                sql_order += " ORDER BY n.cconc, n.fdocum,  n.nro_nota ";
                 break;
             case "2":
-                sql_order += " ORDER BY f.cod_vendedor, n.cconc, n.nro_nota, n.fdocum  ";
+                sql_order += " ORDER BY n.fdocum, f.cod_vendedor, n.cconc, n.nro_nota  ";
                 break;
             case "3":
-                sql_order += " ORDER BY n.cod_entregador, n.cconc, n.nro_nota, n.fdocum ";
+                sql_order += " ORDER BY n.fdocum, n.cod_entregador, n.cconc, n.nro_nota ";
                 break;
             case "4":
                 sql_order += " ORDER BY n.fdocum, n.cconc, n.nro_nota ";
@@ -569,14 +573,20 @@ public class LiNotaCredVtas {
             case "8":
                 sql_order += " ORDER BY C.COD_CLIENTE, n.nro_nota  ";
                 break;
+            case "9":
+                sql_order += " ORDER BY f.cod_zona, n.cconc, n.nro_nota, n.fdocum ";
+                break;
+            case "10":
+                sql_order += " ORDER BY n.nro_nota ";
+                break;
         }
         
         switch ( this.seleccion ) {
             case "5":
-                sql2 += "SELECT cod_merca, xdesc, sum(cant_cajas) AS KCAJAS, "
+                sql2 += "SELECT cod_merca, xdesc, cod_barra, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID "
                     + " FROM ("+sql+") a" 
-                    + " GROUP BY cod_merca, xdesc";
+                    + " GROUP BY cod_merca, xdesc, cod_barra";
                 break;
             case "6":
                 sql2 += " SELECT cod_sublinea, xdesc_sublinea, sum(cant_cajas) AS KCAJAS, "
@@ -593,10 +603,10 @@ public class LiNotaCredVtas {
                     + " GROUP BY cod_division, xdesc_division";
                 break;
             case "11":
-                sql2 += " SELECT cod_zona, cod_merca, xdesc, sum(cant_cajas) AS KCAJAS, "
+                sql2 += " SELECT cod_zona, cod_merca, xdesc, cod_barra, sum(cant_cajas) AS KCAJAS, "
                     + " sum(cant_unid) AS KUNID "
                     + " FROM ("+sql+") a" 
-                    + "	GROUP BY cod_zona, cod_merca, xdesc " 
+                    + "	GROUP BY cod_zona, cod_merca, xdesc, cod_barra " 
                     + "	ORDER BY cod_zona, cod_merca";
                 break;
         }
@@ -613,7 +623,7 @@ public class LiNotaCredVtas {
         String sql2 = "";
         String sql3 = "";
         sql2 = " SELECT   t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota,  0 AS texentas, "
-                + " isnull(SUM(d.igravadas), 0)  AS tgravadas_5, 0 AS tgravadas_10, isnull(SUM(impuestos), 0) AS timpuestos_5, "
+                + " isnull(SUM(d.igravadas), 0)  AS tgravadas_5, 0 AS tgravadas_10, isnull(SUM(abs(impuestos)), 0) AS timpuestos_5, "
                 + " 0 AS timpuestos_10 " 
                 + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
                 + "     ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota  " 
@@ -631,8 +641,8 @@ public class LiNotaCredVtas {
             sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
                 + " UNION ALL "
                 + " SELECT t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota, 0 AS texentas, "
-                + " 0 AS tgravadas_5, isnull(SUM(d .igravadas), 0) AS tgravadas_10, 0 AS timpuestos_5, "
-                + " isnull(SUM(impuestos), 0)  AS timpuestos_10 "
+                + " 0 AS tgravadas_5, isnull(SUM(d.igravadas), 0) AS tgravadas_10, 0 AS timpuestos_5, "
+                + " isnull(SUM(abs(impuestos)), 0)  AS timpuestos_10 "
                 + " FROM notas_ventas_det d INNER JOIN notas_ventas t " 
                 + " ON d.ctipo_docum = t.ctipo_docum AND d.nro_nota = t.nro_nota AND d.fdocum = t.fdocum  " 
                 + " WHERE d.pimpues = 10 and (d .cod_empr = 2) "
@@ -647,7 +657,7 @@ public class LiNotaCredVtas {
 
             sql2 += " GROUP BY t.fdocum, t.cconc, t.ctipo_docum, t.nro_nota " 
                 + " UNION ALL " 
-                + " SELECT t.fdocum, t.cconc, t.ctipo_docum , t.nro_nota, isnull(SUM(iexentas), 0) AS texentas, "
+                + " SELECT t.fdocum, t.cconc, t.ctipo_docum , t.nro_nota, isnull(SUM(abs(iexentas)), 0) AS texentas, "
                 + " 0 AS tgravadas_5, 0 AS tgravadas_10, 0 AS timpuestos_5, 0 AS timpuestos_10 " 
                 + " FROM notas_ventas_det d INNER JOIN notas_ventas t ON d.nro_nota = t.nro_nota AND "
                 + " d.ctipo_docum = t.ctipo_docum AND t.fdocum = d.fdocum AND d .iexentas > 0 "

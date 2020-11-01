@@ -1,0 +1,741 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body> 
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+                .ui-dialog-content{ 
+                    max-height: 700px !important;
+                    margin-bottom: 5px !important;
+                }
+            </style>
+                
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formRecibosCompras" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE NOTAS - DESCUENTO DE MERCADERIAS</h1>
+
+                            <p:growl id="msgRecibosCom" showDetail="true" life="10000"/>
+
+                            <center>
+                                
+                                <p:commandButton 
+                                    value="Agregar"
+                                    action="#{notasCreditoMercBean.nuevaNotaVenta}"
+                                    update="dlgNuevaNota formNuevaNota panel_nuevo_articulo"
+                                    oncomplete="PF('dlgNuevaNota').show()"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+                                
+                                <p:commandButton 
+                                    value="Anular"   
+                                    styleClass="orange-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    update="dlgNuevaNota formNuevaNota"
+                                    action="#{notasCreditoMercBean.anular('N')}"
+                                    disabled="#{notasCreditoMercBean.habilitaBotonAnular}"
+                                    />
+                                
+                                <p:commandButton 
+                                    value="Eliminar"   
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    update="dlgNuevaNota formNuevaNota"
+                                    action="#{notasCreditoMercBean.anular('E')}"
+                                    disabled="#{notasCreditoMercBean.habilitaBotonEliminar}"
+                                    oncomplete="PF('dlgNuevaNota').show()"/>
+                                
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formListadoRecibosCompras" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaRecibosCompras" var="itemp"
+                                                    paginator="true" rows="20" paginatorPosition="bottom"
+                                                    emptyMessage="Sin datos para mostrar."
+                                                    selectionMode="single" reflow="true" lazy="true"
+                                                    value="#{notasCreditoMercBean.modelNotas}" 
+                                                    selection="#{notasCreditoMercBean.notaVentaSeleccionada}">
+                                            
+                                            <p:ajax event="rowSelect" 
+                                                    listener="#{notasCreditoMercBean.onRowSelect}"
+                                                    update="formRecibosCompras"/>
+                                            
+                                            <p:ajax event="rowDblselect"
+                                                    listener="#{notasCreditoMercBean.visualizarNota}"
+                                                    update="dlgNuevaNota formNuevaNota"/>
+                                            
+                                            <p:column headerText="Fecha" filterBy="#{itemp.notasVentasPK.fdocum}">
+                                                <h:outputText value="#{itemp.notasVentasPK.fdocum}" >
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Tipo Documento">
+                                                <h:outputText value="#{itemp.notasVentasPK.ctipoDocum}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Concepto Documento">
+                                                <h:outputText value="#{itemp.conceptosDocumentos.xdesc}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Nro. Nota" filterBy="#{itemp.notasVentasPK.nroNota}">
+                                                <h:outputText value="#{itemp.notasVentasPK.nroNota}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Código Cliente" filterBy="#{itemp.codCliente}">
+                                                <h:outputText value="#{itemp.codCliente}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Nombre Cliente" filterBy="#{itemp.nombreCliente}">
+                                                <h:outputText value="#{itemp.nombreCliente}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Monto" filterBy="#{itemp.ttotal}">
+                                                <h:outputText value="#{itemp.ttotal}" >
+                                                    <f:convertNumber type="number"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Estado" filterBy="#{itemp.mestado}">
+                                                <h:outputText value="#{itemp.mestado}"></h:outputText>
+                                            </p:column>
+                                            
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+                        
+                        <!-- AGREGAR NOTA -->                        
+                        <p:dialog header="#{notasCreditoMercBean.titulo}"
+                                widgetVar="dlgNuevaNota"
+                                id="dlgNuevaNota"
+                                modal="true"
+                                closable="false"
+                                closeOnEscape="false"
+                                responsive="true"
+                                onShow="PF('dlgNuevaNota').initPosition();"
+                                >
+                            
+                            <h:form id="formNuevaNota"  prependId="false">
+                                
+                                <p:growl id="msgAgreNota" showDetail="true" life="10000"/>
+
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_nueva_nota" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+
+                                        <p:outputLabel value="Tipo Nota" style="font-weight: bold; text-align: left;"/>
+                                        <p:outputLabel value="#{notasCreditoMercBean.notaVenta.notasVentasPK.ctipoDocum} - #{notasCreditoMercBean.notaVenta.notasVentasPK.descripcionTipoDocumento}" 
+                                                style="font-weight: bold; text-align: left;"/>                                        
+                                        
+                                        <p:outputLabel value="Tipo Vta." style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="tipo_vnta" 
+                                                value="#{notasCreditoMercBean.factura.ctipoVta} - #{notasCreditoMercBean.factura.ctipoVtaDesc}" 
+                                                style="width: 250px;" 
+                                                disabled="true"/>
+                                        
+                                        <p:outputLabel value="Concepto" style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="concepto_id" 
+                                                        value="#{notasCreditoMercBean.notaVenta.conceptosDocumentos}" 
+                                                        filterMatchMode="contains" filter="true"
+                                                        disabled="#{!notasCreditoMercBean.modificar}"
+                                                        style="width: 220px;"
+                                                        converter="#{conceptoDocumentoConverter}">
+                                            <p:ajax event="itemSelect" update="id_promo"
+                                                    listener="#{notasCreditoMercBean.onConceptoSelectedListener}"/>
+                                            <f:selectItem itemLabel="Seleccione" itemValue="#{null}" />
+                                            <f:selectItems value="#{notasCreditoMercBean.listadoConceptosDocumentos}" 
+                                                           var="conceptoDocumento"
+                                                           itemValue="#{conceptoDocumento}"
+                                                           itemLabel="#{conceptoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Factura" style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="tipo_factura_id" style="width: 250px;" disabled="true"
+                                                     value="#{notasCreditoMercBean.factura.facturasPK.ctipoDocum} - #{notasCreditoMercBean.factura.ctipoDocumDesc}" />
+                                        
+                                        <p:outputLabel value="Fecha Nota:" style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_nota_id" size="8" showOn="button" style="width: 100px;"
+                                                    value="#{notasCreditoMercBean.notaVenta.notasVentasPK.fdocum}"
+                                                    disabled="#{!notasCreditoMercBean.modificar}">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="F. Saldo: " style="font-weight: bold; text-align: left;"/>
+                                        <p:outputLabel id="saldo_fc" value="#{notasCreditoMercBean.factura.isaldo}" style="width: 100px;" >
+                                            <f:convertNumber type="number"/>
+                                        </p:outputLabel>
+                                                                                
+                                        <p:outputLabel value="Nro. Nota: " style="font-weight: bold; text-align: left;"/>    
+                                        <h:panelGrid columns="3">
+                                            <p:inputText id="nro_establec_nota_id" 
+                                                        value="#{notasCreditoMercBean.puntoEstabNota}" style="width: 50px;" maxlength="2"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                            </p:inputText>
+                                            <p:inputText id="nro_expedic_nota_id" 
+                                                        value="#{notasCreditoMercBean.puntoExpedNota}" style="width: 50px;" maxlength="2"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                            </p:inputText>
+                                            <p:inputText id="nro_factura_nota_id" 
+                                                        value="#{notasCreditoMercBean.nroNota}" style="width: 100px;" maxlength="7"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                                <p:ajax event="blur" listener="#{notasCreditoMercBean.cambiaNroNota}" 
+                                                        update="@this msgAgreNota nro_establec_nota_id nro_expedic_nota_id nro_factura_nota_id" 
+                                                        process="nro_establec_nota_id nro_expedic_nota_id nro_factura_nota_id fecha_nota_id"/>
+                                            </p:inputText>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Factura: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_factura_id" size="8" value="#{notasCreditoMercBean.ffactura}" 
+                                                showOn="button" style="width: 100px;" required="false"
+                                                disabled="#{!notasCreditoMercBean.modificar}">
+                                        </p:calendar>
+                                        
+                                        <p:outputLabel value="% Descuento" style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="descuento" value="#{notasCreditoMercBean.notaVenta.porcentajeDesc}" 
+                                                    disabled="#{!notasCreditoMercBean.modificar}" size="5"
+                                                    decimalPlaces="2" style="width: 50px;"  
+                                                    />
+                                        
+                                        <p:outputLabel value="Nro. Factura:  " style="font-weight: bold; text-align: left;"/>    
+                                        <h:panelGrid columns="4">
+                                            <p:inputText id="nro_establec_fact_id" value="#{notasCreditoMercBean.puntoEstabFact}" 
+                                                        style="width: 50px;" maxlength="2"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                            </p:inputText>
+                                            <p:inputText id="nro_expedic_fact_id" value="#{notasCreditoMercBean.puntoExpedFact}" 
+                                                        style="width: 50px;" maxlength="2"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                            </p:inputText>
+                                            <p:inputText id="nro_factura_fact_id" value="#{notasCreditoMercBean.nroFact}" 
+                                                        style="width: 100px;" maxlength="7"
+                                                        disabled="#{!notasCreditoMercBean.modificar}">
+                                                <p:ajax event="blur" 
+                                                        update="@this msgAgreNota panel_grid_nueva_nota panel_nuevo_articulo tablaRecibosComprasDet totales mercaderia_id" 
+                                                        listener="#{notasCreditoMercBean.buscarFactura}" 
+                                                        process="nro_establec_fact_id nro_expedic_fact_id nro_factura_fact_id fecha_factura_id descuento"/>
+                                            </p:inputText>
+                                            <p:commandButton 
+                                                id="btnVerDetFactura"
+                                                disabled="#{notasCreditoMercBean.habilitaBotonBusquedaDetalleFacturas}"
+                                                process="@this"
+                                                oncomplete="PF('dlgDetalleCompra').show()"
+                                                update="formDetalleFactura panel_grid_nuevo_detalle_notas"
+                                                icon="fa fa-search"
+                                                styleClass="blue-btn raised-btn" 
+                                                style="width: 30px;"
+                                                ajax="true"/>
+                                        </h:panelGrid>                                        
+                                        
+                                        <p:outputLabel id="id_promo_label" value="Nro.Promo" style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="id_promo" disabled="#{notasCreditoMercBean.habilitaPromo}" 
+                                                    value="#{notasCreditoMercBean.notaVenta.nroPromo}" style="width: 50px;"
+                                                    />
+                                        
+                                        <p:outputLabel value="Deposito:" style="font-weight: bold; text-align: left;"/>
+                                        <p:outputLabel value="#{notasCreditoMercBean.factura.depositos.depositosPK.codDepo} - #{notasCreditoMercBean.factura.depositos.xdesc}" />
+                                        
+                                        <p:outputLabel value="Observación: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id" value="#{notasCreditoMercBean.notaVenta.xobs}" 
+                                                cols="20" rows="3" disabled="#{!notasCreditoMercBean.modificar}"/>
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <p:outputLabel id="codigo_cliente" 
+                                                value="#{notasCreditoMercBean.notaVenta.codCliente} - #{notasCreditoMercBean.notaVenta.nombreCliente}" 
+                                                style="width: 50px;"/>
+                                        
+                                        <p:outputLabel value="Estado" style="font-weight: bold; text-align: left;"/>
+                                        <p:outputLabel value="#{notasCreditoMercBean.notaVenta.mestado == 'A' ? 'ACTIVO' : 'INACTIVO'}" 
+                                                    />
+
+                                        <p:outputLabel value="Vendedor: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid columns="2">
+                                            <p:inputText id="codigo_vendedor" value="#{notasCreditoMercBean.factura.empleados1.empleadosPK.codEmpleado}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nombre_vendedor" value="#{notasCreditoMercBean.factura.empleados1.xnombre}" style="width: 250px;" disabled="true"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel value="Entregador: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid columns="2">
+                                            <p:inputText id="codigo_entregador" value="#{notasCreditoMercBean.factura.empleados.empleadosPK.codEmpleado}" style="width: 50px;" disabled="true"/>
+                                            <p:inputText id="nombre_entregador" value="#{notasCreditoMercBean.factura.empleados.xnombre}" style="width: 250px;" disabled="true"/>
+                                        </h:panelGrid>
+                                        
+                                    </p:panelGrid>
+                                    
+                                </div>
+                                
+                                <p:panel header="Detalle" id="panel_nuevo_articulo">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">                                        
+                                        <tr>
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+                                                            <!-- SERVICIOS   -->
+                                                            <div class="ui-fluid">                                                                
+                                                                <p:panelGrid id="panel_grid_nuevo_detalle_notas" 
+                                                                            columns="4" 
+                                                                            layout="grid"                                                                            
+                                                                            columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                                            styleClass="ui-panelgrid-blank ui-fluid"
+                                                                            rendered="#{notasCreditoMercBean.modificar}">
+                                                                    
+                                                                    <p:outputLabel value="Mercaderia" 
+                                                                                   style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu id="mercaderia_id" 
+                                                                                    value="#{notasCreditoMercBean.notaDet.mercaderia}"
+                                                                                    filterMatchMode="contains" 
+                                                                                    filter="true"
+                                                                                    converter="#{MercaderiasConverter}"
+                                                                                    style="width: 250px;">
+                                                                        <f:selectItems value="#{notasCreditoMercBean.listaMercaderias}" 
+                                                                                    var="merca"
+                                                                                    itemValue="#{merca}"
+                                                                                    itemLabel="#{merca.mercaderiasPK.codMerca} - #{merca.xdesc}"/>
+                                                                        <p:ajax event="itemSelect" update="exentas_id gravadas_id msgAgreNota"
+                                                                                process="@this descuneto_det"
+                                                                            listener="#{notasCreditoMercBean.onMercaderiaSelectedListener}"/>
+                                                                    </p:selectOneMenu>
+                                                                    
+                                                                    <p:outputLabel value="% Descuento " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputNumber id="descuneto_det" value="#{notasCreditoMercBean.notaDetDesc}" 
+                                                                                   size="5" decimalPlaces="2" required="false" title="% Descuento "
+                                                                                   style="width: 50px;" thousandSeparator="." decimalSeparator=",">
+                                                                        <p:ajax event="blur" update="exentas_id gravadas_id msgAgreNota"
+                                                                                process="@this exentas_id gravadas_id"
+                                                                            listener="#{notasCreditoMercBean.onPorcentajeBlur}"/>
+                                                                    </p:inputNumber>
+                                                                                                                                        
+                                                                    <p:outputLabel value="Exentas : " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputNumber id="exentas_id" value="#{notasCreditoMercBean.notaDet.iexentas}" 
+                                                                                   style="width: 70px;" size="20" decimalPlaces="0">
+                                                                    </p:inputNumber>
+
+                                                                    <p:outputLabel value="Gravadas: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputNumber id="gravadas_id" value="#{notasCreditoMercBean.notaDet.igravadas}" 
+                                                                                   style="width: 70px;" size="20" decimalPlaces="0">
+                                                                    </p:inputNumber>
+
+                                                                    <p:commandButton
+                                                                        action="#{notasCreditoMercBean.agregarDetalle}"
+                                                                        type="submit"
+                                                                        process="@this panel_grid_nuevo_detalle_notas"
+                                                                        update="msgAgreNota panel_nuevo_articulo totales"
+                                                                        ajax="true"
+                                                                        icon="fa fa-plus"
+                                                                        styleClass="blue-btn raised-btn"
+                                                                        style="margin-left:10px; width: 40px;"/>
+                                                                    
+                                                                    <p:commandButton
+                                                                        action="#{notasCreditoMercBean.eliminarTodos}"
+                                                                        type="submit"
+                                                                        process="@this"
+                                                                        update="panel_nuevo_articulo tablaRecibosComprasDet totales"
+                                                                        ajax="true"
+                                                                        icon="fa fa-trash"
+                                                                        styleClass="blue-btn raised-btn"
+                                                                        style="margin-left:10px; width: 40px;"/>
+                                                                    
+                                                                </p:panelGrid>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Detalles</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+                                                            <!-- LISTADO DE Detalles   -->
+                                                            
+                                                            <p:remoteCommand name="onCellEdit" 
+                                                                    update="tablaRecibosComprasDet totales" />
+                                                            
+                                                            <p:dataTable id="tablaRecibosComprasDet" var="itemd"
+                                                                    emptyMessage="Sin datos para mostrar."
+                                                                    value="#{notasCreditoMercBean.notaVenta.notasVentasDetCollection}"
+                                                                    editable="true" editMode="cell" widgetVar="cellCars"
+                                                                    rowKey="#{itemd.mercaderia.mercaderiasPK.codMerca}"
+                                                                    style="width: 950px;">
+                                                                
+                                                                <p:ajax event="cellEdit" listener="#{notasCreditoMercBean.onCellEdit}" 
+                                                                        oncomplete="onCellEdit()" update="msgAgreNota"/>
+                                                                                                                         
+                                                                <p:column width="20"
+                                                                        rendered="#{notasCreditoMercBean.modificar}">
+                                                                    <p:commandButton 
+                                                                        action="#{notasCreditoMercBean.borrarNotaVentaDet(itemd)}"
+                                                                        process="@this"
+                                                                        update="tablaRecibosComprasDet 
+                                                                                msgAgreNota
+                                                                                totales"
+                                                                        icon="fa fa-minus"
+                                                                        ajax="true"
+                                                                        style="width: 30px;"/>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Descripción" >
+                                                                    <h:outputText value="#{itemd.mercaderia.mercaderiasPK.codMerca} - #{itemd.mercaderia.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Exentas Factura" width="60" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.iexentas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Gravadas Factura" width="60" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.igravadas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="% IVA" width="60">
+                                                                    <h:outputText value="#{itemd.pimpues}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <!--p:column headerText="Impuesto" width="50">
+                                                                    <h:outputText value="{itemd.impuestos}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column-->
+                                                                
+                                                                <p:column headerText="% Desc" width="30" >
+                                                                    <p:cellEditor disabled="#{!notasCreditoMercBean.modificar}">
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{itemd.pdesc}" />
+                                                                        </f:facet>
+                                                                        <f:facet name="input">                                                                            
+                                                                            <p:inputNumber  value="#{itemd.pdesc}" size="5"
+                                                                                decimalPlaces="2" style="width:96;"  
+                                                                            />
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Exenta Credito" width="60"
+                                                                        style="text-align: right;">
+                                                                    <p:cellEditor disabled="#{!notasCreditoMercBean.modificar}">
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{itemd.exentaCredito}" >
+                                                                                <f:convertNumber type="number"/>
+                                                                            </h:outputText>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:inputText value="#{itemd.exentaCredito}" style="width:96%"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                                                                                
+                                                                <p:column headerText="Gravada Credito" width="50"
+                                                                        style="text-align: right;">
+                                                                    <p:cellEditor disabled="#{!notasCreditoMercBean.modificar}">
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{itemd.gravadaCredito}" >
+                                                                                <f:convertNumber type="number"/>
+                                                                            </h:outputText>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:inputText value="#{itemd.gravadaCredito}" style="width:96%"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                    <p:spacer></p:spacer>
+
+                                </p:panel>
+
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid id="totales" columns="5">
+
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        <p:outputLabel value="EXENTAS: " style="font-weight: bold; text-align: center;"/>
+                                        <p:outputLabel value="GRAVADAS:  " style="font-weight: bold; text-align: center;"/>
+                                        
+                                        
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        <p:inputNumber id="total_gravada_excenta_id" value="#{notasCreditoMercBean.totalExentas}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        <p:inputNumber id="total_gravadas_id_nuevo" value="#{notasCreditoMercBean.totalGravadas}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        
+                                        
+                                        <p:outputLabel value="I.V.A 5%:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_gravada_iva5_id" value="#{notasCreditoMercBean.totalGrabada5}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        <p:inputNumber id="total_impuesto_iva5_id" value="#{notasCreditoMercBean.totalImpuestosIva5}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        <p:outputLabel value="IMPUESTOS" style="font-weight: bold; text-align: center;"/>
+                                        <p:inputNumber id="total_impu_id_nuevo" value="#{notasCreditoMercBean.totalImpuestos}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        
+                                        
+                                        <p:outputLabel value="I.V.A 10%:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_gravada_iva10_id" value="#{notasCreditoMercBean.totalGrabada10}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        <p:inputNumber id="total_impuesto_iva10_id" value="#{notasCreditoMercBean.totalImpuestosIva10}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                        <p:outputLabel value="TOTAL:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_nota_id_nuevo" value="#{notasCreditoMercBean.totalNota}" style="width: 100px;" disabled="true" inputStyle="text-align: right" decimalPlaces="0"/>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+
+                                <p:spacer></p:spacer>
+                                <hr/>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            process="@this"                                            
+                                            action="#{notasCreditoMercBean.guardarNotaVenta}"                                            
+                                            rendered="#{notasCreditoMercBean.modificar}"
+                                            update="msgAgreNota formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+                                        
+                                        <p:commandButton
+                                            value="Anular"
+                                            process="@this"                                            
+                                            oncomplete="PF('dlgConfirmarAnulacion').show();" 
+                                            rendered="#{notasCreditoMercBean.anular}"
+                                            update="msgAgreNota formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+                                        
+                                        <p:commandButton
+                                            process="@this"
+                                            value="Eliminar"
+                                            action="#{notasCreditoMercBean.eliminarNota}"
+                                            rendered="#{notasCreditoMercBean.eliminar}"
+                                            update="msgAgreNota formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgNuevaNota').hide()" 
+                                            process="@this" update="formListadoRecibosCompras"
+                                            styleClass="red-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                            icon="fa fa-times"/>
+
+                                    </h:panelGrid>
+                                </center>
+                                                                
+                                <p:dialog modal="true" 
+                                      closable="false" 
+                                      closeOnEscape="false"
+                                      header="Aviso" 
+                                      width="250" 
+                                      appendTo="@(body)"
+                                      widgetVar="dlgConfirmarAnulacion">
+                                                                      
+                                    <p:outputLabel value="Desea anular la nota?" style="font-weight: bold;"/>  
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Si"
+                                            process="@this"
+                                            action="#{notasCreditoMercBean.anularNota}"
+                                            update="msgAgreNota formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="blue-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+                                        <p:commandButton 
+                                            value="No"
+                                            type="button"                                            
+                                            onclick="PF('dlgConfirmarAnulacion').hide();" 
+                                            styleClass="blue-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                            icon="fa fa-times"/>
+
+                                    </h:panelGrid>
+
+                                </p:dialog>
+                                
+                            </h:form> 
+
+                        </p:dialog>
+                        
+                        <!-- LISTADO DETALLE FACTURA -->
+                        <h:form id="formDetalleFactura" prependId="false">
+
+                            <p:dialog header="Detalles de Facturas de Venta"
+                                      widgetVar="dlgDetalleCompra"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      appendTo="@(body)"
+                                      onShow="PF('dlgDetalleCompra').initPosition();">
+                                
+                                <p:panel header="Detalle">
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Detalles de Facturas de Venta</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+                                                            <!-- LISTADO DE FACTURAS   -->
+                                                            <p:dataTable id="tablaDetalleFacturas" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{notasCreditoMercBean.factura.facturasDetCollection}"
+                                                                         style="width: 800px;">
+
+                                                                <p:column headerText="Artículo" width="80">
+                                                                    <h:outputText value="#{itemd.facturasDetPK.codMerca}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Descripción" width="100" >
+                                                                    <h:outputText value="#{itemd.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Cajas" width="50" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.cantCajas}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Unid." width="50" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.cantUnid}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Exentas" width="80" style="text-align: right;"> 
+                                                                    <h:outputText value="#{itemd.iexentas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Gravadas" width="80" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.igravadas}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Cajas Bonif" width="60" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.cajasBonif}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Unid Bonif" width="60" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.unidBonif}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro Promocion" width="80" style="text-align: right;">
+                                                                    <h:outputText value="#{itemd.nroPromo}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                    <p:spacer></p:spacer>
+                                    
+                                    <center>
+                                        <h:panelGrid columns="2">
+
+                                            <p:commandButton value="Cerrar" 
+                                                            oncomplete="PF('dlgDetalleCompra').hide()"  
+                                                            styleClass="red-btn raised-btn" 
+                                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                            icon="fa fa-times"/>
+
+                                        </h:panelGrid>
+                                    </center>
+
+                                </p:panel>
+
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        <h:form id="formSinGuardarReciboCompra" prependId="false">
+                            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                                      height="500px" width="700px">
+                                Message: #{notasCreditoMercBean.tituloError} <br/>
+                                StackTrace: <h:outputText value="#{notasCreditoMercBean.contenidoError}" escape="false" /> <br />
+                            </p:dialog>
+                        </h:form>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

@@ -193,5 +193,27 @@ public class PromocionesFacade extends AbstractFacade<Promociones> {
         }
         return listado;
     }
-
+    
+    public List<Promociones> findByNroPromoYFechaFacturaDos(Long nroPromo, String lFFactura) {
+        Query q = getEntityManager().createNativeQuery("SELECT distinct d.cod_merca, d.pdesc, D.ctipo_vta "
+                + "FROM promociones p, promociones_det d"
+                + "WHERE p.frige_desde <= '"+lFFactura+"' "
+                + "AND p.frige_hasta >= '"+lFFactura+"' "
+                + "AND p.COD_EMPR = 2 "
+                + "AND p.COD_EMPR = d.cod_empr "
+                + "AND p.nro_promo = d.nro_promo "
+                + "AND nro_promo = " + nroPromo, Promociones.class);
+        System.out.println(q.toString());
+        List<Object[]> resultados = q.getResultList();
+        List<Promociones> list = new ArrayList<>();
+        for(Object[] resultado: resultados){
+            Promociones nuevo = new Promociones();
+            nuevo.setCodMerca(resultado[0].toString());
+            nuevo.setPdesc(resultado[1].toString());
+            nuevo.setCtipoVta(resultado[2].toString());
+            list.add(nuevo);
+        }
+        return list;
+    }
+    
 }

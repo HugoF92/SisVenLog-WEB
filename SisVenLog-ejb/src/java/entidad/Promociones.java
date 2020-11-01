@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -115,6 +116,15 @@ public class Promociones implements Serializable {
     private String ccategCliente;
     @Column(name = "mcalculo")
     private Character mcalculo;
+    
+    @Transient
+    private String codMerca;
+    
+    @Transient
+    private String pdesc;
+    
+    @Transient
+    private String ctipoVta;
 
     public Promociones() {
     }
@@ -296,6 +306,30 @@ public class Promociones implements Serializable {
         this.mcalculo = mcalculo;
     }
 
+    public String getCodMerca() {
+        return codMerca;
+    }
+
+    public void setCodMerca(String codMerca) {
+        this.codMerca = codMerca;
+    }
+
+    public String getPdesc() {
+        return pdesc;
+    }
+
+    public void setPdesc(String pdesc) {
+        this.pdesc = pdesc;
+    }
+
+    public String getCtipoVta() {
+        return ctipoVta;
+    }
+
+    public void setCtipoVta(String ctipoVta) {
+        this.ctipoVta = ctipoVta;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

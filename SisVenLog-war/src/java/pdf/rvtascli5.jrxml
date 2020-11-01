@@ -32,17 +32,15 @@
 	<field name="tot_fcr" class="java.lang.Double"/>
 	<field name="tot_che_1" class="java.lang.Double"/>
 	<field name="tot_che_2" class="java.lang.Double"/>
-	<variable name="tot_cli_1" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{tot_cli}]]></variableExpression>
+	<field name="ttot_cli" class="java.lang.Double"/>
+	<variable name="itotal_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_cajas}]]></variableExpression>
 	</variable>
 	<variable name="cant_unid_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_unid}]]></variableExpression>
-	</variable>
-	<variable name="itotal_1" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{itotal}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -80,7 +78,7 @@
 				<text><![CDATA[Precio Vta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="106" width="60" height="14" uuid="fe64b393-ec8d-4a4a-90d6-6cb94afc8428"/>
+				<reportElement x="356" y="92" width="60" height="14" uuid="fe64b393-ec8d-4a4a-90d6-6cb94afc8428"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -123,7 +121,7 @@
 				<text><![CDATA[Tipo Cliente:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="246" y="106" width="110" height="14" uuid="169c0dc3-4ee1-4ceb-8fa8-ca8620c30742"/>
+				<reportElement x="191" y="106" width="110" height="14" uuid="169c0dc3-4ee1-4ceb-8fa8-ca8620c30742"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -167,7 +165,7 @@
 				<textFieldExpression><![CDATA[$P{zona}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="136" y="106" width="110" height="14" uuid="bf0f024b-58bf-44b6-9d1d-524f0bc128cb"/>
+				<reportElement x="416" y="92" width="110" height="14" uuid="bf0f024b-58bf-44b6-9d1d-524f0bc128cb"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -189,14 +187,6 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fdesde}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="416" y="92" width="110" height="14" uuid="93221b87-a90d-4053-9dd4-c6b7a60b6772"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="76" y="78" width="110" height="14" uuid="1ea48486-06aa-4559-a3ca-e9534123a768"/>
@@ -243,13 +233,6 @@
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Canal de Venta:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="356" y="92" width="60" height="14" uuid="5c662d21-1ed1-4152-80c1-1fd17b28d51a"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="186" y="64" width="60" height="14" uuid="bcab0f3b-69a4-40c4-95dc-7a2234963c33"/>
@@ -482,16 +465,6 @@
 				<text><![CDATA[TOTAL FACTURAS CONTADO]]></text>
 			</staticText>
 			<textField pattern="#,##0">
-				<reportElement x="269" y="0" width="60" height="14" uuid="96a9db4e-4145-49dd-926f-bdd436139540"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{tot_cli_1}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0">
 				<reportElement x="329" y="0" width="60" height="14" uuid="63e1ea4f-409c-4e81-a397-5c410cc44bfb"/>
 				<box>
 					<topPen lineWidth="0.5"/>
@@ -555,6 +528,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tot_che_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="269" y="0" width="60" height="14" uuid="fc25dc57-bf99-428e-88dc-e203d2c944bd"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ttot_cli}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

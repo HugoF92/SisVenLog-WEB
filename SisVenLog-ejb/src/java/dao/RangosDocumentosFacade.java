@@ -43,4 +43,20 @@ public class RangosDocumentosFacade extends AbstractFacade<RangosDocumentos> {
         resultados = q.getResultList();
         return resultados;
     }
+    
+    public List<RangosDocumentos> obtenerCursorImpuestos(String lCtipoDocum, long lNroDocum, Character tipoPapel, int anhoFechaDocumento){
+        String sql =    "SELECT * " +
+                        "FROM rangos_documentos " +
+                        "WHERE cod_empr = 2 " +
+                        "AND ctipo_docum = '"+lCtipoDocum+"' "+
+                        "AND "+lNroDocum+" BETWEEN nro_docum_ini AND nro_docum_fin " +
+                        "AND mtipo_papel = '"+tipoPapel+"' "+
+                        "AND "+anhoFechaDocumento+" BETWEEN nano_inicial AND nano_final";
+        Query q = em.createNativeQuery(sql, RangosDocumentos.class);
+        System.out.println(q.toString());
+        List<RangosDocumentos> resultados = new ArrayList<>();
+        resultados = q.getResultList();
+        return resultados;
+    }
+    
 }

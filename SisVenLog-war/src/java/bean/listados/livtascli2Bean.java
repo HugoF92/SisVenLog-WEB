@@ -9,7 +9,6 @@ import bean.selectormercaderias.SelectorDatosBean;
 import dao.CanalesVentaFacade;
 import dao.TiposClientesFacade;
 import dao.EmpleadosFacade;
-import dao.ExcelFacade;
 import dao.GenericFacadeSQL;
 import dao.LineasFacade;
 import dao.MercaderiasFacade;
@@ -109,10 +108,8 @@ public class livtascli2Bean {
     @EJB
     private GenericFacadeSQL sqlFacade;
     @Inject
-    private XLSUtils xlsUtil;
+    private XLSUtils xlsUtil;    
     
-   @EJB
-    private ExcelFacade excelFacade;
     
     @PostConstruct
     public void init() {
@@ -142,7 +139,7 @@ public class livtascli2Bean {
     
     public void ejecutarListado(String tipo){
         try{      
-            System.out.println("iniciando " + System.currentTimeMillis());
+            Long inicio = System.nanoTime();
             LlamarReportes rep = new LlamarReportes();                      
             String sql = null;
             String sqlReport = null;
@@ -160,7 +157,8 @@ public class livtascli2Bean {
             }
             
             this.preEjecutarSQL();
-            System.out.println("fin sql 1 " + System.currentTimeMillis());
+            Long fin = System.nanoTime();
+            System.out.println("exel total sql " + (fin-inicio)/1000000 + "msegundos" );
             switch ( this.seleccion2 ) {
                 case "1":
                     switch ( this.seleccion ) {
@@ -247,23 +245,25 @@ public class livtascli2Bean {
                     reporte = "RVTASCLI5";
                     titulo = "LISTADO DE VENTAS POR CLIENTE";
                     sql = " select "
-                        + " ( SELECT SUM(itotal)  "
+                        + " ISNULL(( SELECT SUM(itotal)  "
                         + " FROM mostrar "
                         + " WHERE (nplazo_cheque = 0 "
                         + " OR  nplazo_cheque is null ) "
-                        + "     AND ctipo_docum = 'FCO' ) as tot_fco, "
-                        + " ( SELECT SUM(itotal) "
+                        + "     AND ctipo_docum = 'FCO' ), 0) as tot_fco, "
+                        + " ISNULL(( SELECT SUM(itotal) "
                         + "    FROM mostrar "
                         + "     WHERE (nplazo_cheque = 0 "
                         + "     OR  nplazo_cheque is null ) "
-                        + "     AND ctipo_docum = 'FCR' ) as tot_fcr, "
-                        + " ( SELECT SUM(itotal)  "
+                        + "     AND ctipo_docum = 'FCR' ),0) as tot_fcr, "
+                        + " ISNULL(( SELECT SUM(itotal)  "
                         + "     FROM mostrar "
                         + "     WHERE nplazo_cheque > 0 "
-                        + "     AND nplazo_cheque <= 15 ) as tot_che_1, "
-                        + " ( SELECT SUM(itotal) tot_che  "
+                        + "     AND nplazo_cheque <= 15 ),0) as tot_che_1, "
+                        + " ISNULL(( SELECT SUM(itotal) tot_che  "
                         + "     FROM mostrar "
-                        + "     WHERE  nplazo_cheque > 15) as tot_che_2 "
+                        + "     WHERE  nplazo_cheque > 15),0) as tot_che_2, "
+                        + " ISNULL(( SELECT count(distinct cod_cliente) ttot_cli  "
+                        + "     FROM mostrar ),0) as ttot_cli "
                         + " into totales ";
                     
                     sqlFacade.executeQuery(sql);
@@ -312,32 +312,31 @@ public class livtascli2Bean {
                 if (this.tipoCliente != null) param.put("tipo_cliente", tiposClientesFacade.getTiposClientesFromList(this.tipoCliente, this.listaTiposClientes).getXdesc()); 
                 else param.put("tipo_cliente", "TODOS");
                 
-                if (this.tipoVentas != null) param.put("tipoVentas", tiposVentasFacade.getTiposVentasFromList(this.tipoVentas, this.listaTiposVentas).getXdesc()); 
+                if (this.tipoVentas != null) param.put("tipoVentas", tiposVentasFacade.getTipoVentaFromList(this.tipoVentas, this.listaTiposVentas).getXdesc()); 
                 else param.put("tipoVentas", "TODOS");
                 
                 /*if (1 != 2) param.put("precio_vta", tiposVentasFacade.getTiposVentasFromList(this.tipoVentas, this.listaTiposVentas).getXdesc()); 
                 else */param.put("precio_vta", "TODOS");
-                        
-               /*if (1 != 2) param.put("cliente", tiposVentasFacade.getTiposVentasFromList(this.tipoVentas, this.listaTiposVentas).getXdesc()); 
-                else */param.put("cliente", "TODOS");
                 
-                param.put("sinIVA", this.sinIVA);
+                if(!listadoClientesSeleccionados.isEmpty()) param.put("cliente", "(" + StringUtil.convertirListaAString(listadoClientesSeleccionados) + ")");
+                else param.put("cliente", "TODOS");
+                
+                param.put("sinIva", this.sinIVA);
             
                 rep.reporteLiContClientes(param, tipo, reporte);
                 
             } else {
                 //ResultSet r = excelFacade.ejecutarSQLQueryParaExcelGenerico(sqlReport);
-                //xlsUtil.exportarExcelGenerico(sqlReport, reporte);
-                
-                
-                
-                System.out.println("antes de sql " + System.currentTimeMillis());
+                xlsUtil.exportarExcelGenerico(sqlReport, reporte);
+                                
+                /*inicio = System.nanoTime();
                 List<Object[]> lista = new ArrayList<Object[]>();
                 String[] columnas = new String[40];
                 lista = excelFacade.listarParaExcel(sqlReport);
-                System.out.println("post sql " + System.currentTimeMillis());
+                fin = System.nanoTime();
+                System.out.println("exel total sql " + (fin-inicio)/1000000 + "msegundos" );
                 rep.exportarExcel(columnas, lista, reporte);  
-                
+                */
             }
             
         } catch (Exception e) {
@@ -357,10 +356,12 @@ public class livtascli2Bean {
                 + " IF Object_id('mostrarh') IS NOT NULL DROP TABLE mostrarh\n "
                 + " IF Object_id('mostrar1') IS NOT NULL DROP TABLE mostrar1\n "
                 + " IF Object_id('curnotas') IS NOT NULL DROP TABLE curnotas\n "
-                + " IF Object_id('curnotas1') IS NOT NULL DROP TABLE curnotas1\n "
+                //+ " IF Object_id('curnotas1') IS NOT NULL DROP TABLE curnotas1\n "
                 + " IF Object_id('totales') IS NOT NULL DROP TABLE totales\n ";
+        String sql4 = null;
+        String sql5 = null;
         
-        sql1 += "SELECT a.cod_zona, z.xdesc AS xdesc_zona, a.cod_cliente, a.xrazon_social as xnombre, "
+        sql1 = "SELECT a.cod_zona, z.xdesc AS xdesc_zona, a.cod_cliente, a.xrazon_social as xnombre, "
                 + " s.cod_sublinea, s.xdesc AS xdesc_sublinea, r.xdesc AS xdesc_ruta, a.ctipo_docum,   "
                 + " a.nrofact AS nrofact, a.ffactur, f.cod_merca, m.xdesc AS xdesc_merca, f.cant_cajas AS cant_cajas, "
                 + " f.cant_unid AS cant_unid,   f.impuestos AS timpuestos, f.igravadas AS tgravadas, "
@@ -368,18 +369,18 @@ public class livtascli2Bean {
                 + " a.ttotal, a.nplazo_cheque,  a.tgravadas_10, a.tgravadas_5, a.timpuestos_10, a.timpuestos_5, "
                 + " f.itotal  as itotal, a.cod_vendedor, e.xnombre as xvendedor,   a.ctipo_vta , A.ffactur as fventa, "
                 + " a.ttotal + a.timpuestos as itot_sin, f.itotal + f.impuestos as det_sin, f.iprecio_caja, "
-                + " f.iprecio_unidad INTO Mostrarx "
-                + " FROM  facturas_det f INNER JOIN  facturas a ON f.ctipo_docum = a.ctipo_docum "
+                + " f.iprecio_unidad "
+                + " FROM  facturas_det f INNER JOIN facturas a ON f.cod_empr = a.cod_empr "
                 + " AND f.nrofact = a.nrofact "
-                + " AND f.cod_empr = a.cod_empr AND f.ffactur = a.ffactur INNER JOIN "
-                + " mercaderias m ON f.cod_merca = m.cod_merca INNER JOIN "
-                + " clientes c ON a.cod_cliente = c.cod_cliente INNER JOIN " 
+                + " AND f.ctipo_docum = a.ctipo_docum AND f.ffactur = a.ffactur INNER JOIN "
+                + " mercaderias m ON f.cod_empr = m.cod_empr AND f.cod_merca = m.cod_merca INNER JOIN "
+                + " clientes c ON a.cod_cliente = c.cod_cliente AND a.cod_empr = c.cod_empr INNER JOIN " 
                 + " sublineas s ON m.cod_sublinea = s.cod_sublinea INNER JOIN " 
                 + " rutas r ON a.cod_ruta = r.cod_ruta AND a.cod_empr = r.cod_empr INNER JOIN   "
                 + " zonas z ON a.cod_zona = z.cod_zona AND a.cod_empr = z.cod_empr  "
                 + " LEFT OUTER JOIN   "
-                + " pedidos p ON a.nro_pedido = p.nro_pedido AND p.cod_empr = 2 INNER JOIN "
-                + " empleados e ON a.cod_vendedor = e.cod_empleado  "
+                + " pedidos p ON a.nro_pedido = p.nro_pedido AND a.cod_empr = p.cod_empr INNER JOIN "
+                + " empleados e ON a.cod_vendedor = e.cod_empleado AND a.cod_empr = e.cod_empr  "
                 + " WHERE (f.cod_empr = 2) AND a.cod_empr = 2 "
                 + " AND (a.mestado = 'A') "
                 + " AND (a.ffactur BETWEEN '"+fdesde+"' AND '"+fhasta+"') " ;
@@ -432,9 +433,9 @@ public class livtascli2Bean {
         //q.executeUpdate();
         //q.getResultList();        
         //em.clear();
-        sqlFacade.executeQuery(sql1);
+        //sqlFacade.executeQuery(sql1);
         // Mostrarx cursor con las mercaderias vendidas         
-        sql2 += " SELECT t.* INTO Mostrarc FROM \n ( "
+        sql2 = " SELECT t.* FROM \n ( "
                 + " SELECT  f.cod_zona, z.xdesc AS xdesc_zona, n.cod_cliente, f.xrazon_social as xnombre, "
                 + " s.cod_sublinea,    s.xdesc AS xdesc_sublinea, r.xdesc AS xdesc_ruta, f.ctipo_docum,  "
                 + " N.nro_nota AS nrofact, N.CCONC, n.fdocum, d.cod_merca, m.xdesc AS xdesc_merca, " 
@@ -448,58 +449,65 @@ public class livtascli2Bean {
                 + " FROM notas_ventas N, facturas f, notas_ventas_det d, zonas z, sublineas s, mercaderias m, "
                 + " rutas r, clientes c, empleados e "
                 + " WHERE n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"' "
-                + " AND f.cod_vendedor = e.cod_empleado "
-                + " AND n.mestado = 'A' "
-                + " AND n.fdocum = d.fdocum " 
-                + " AND n.nrofact = f.nrofact "
-                + " AND n.ffactur = f.ffactur "
-                + " and n.fac_ctipo_docum = F.CTIPO_DOCUM " 
-                + " and f.cod_zona = z.cod_zona " 
-                + " AND n.nro_nota = d.nro_nota " 
-                + " AND n.cod_cliente = c.cod_cliente " 
-                + " AND c.cod_ruta = r.cod_ruta " 
-                + " AND n.cod_empr = 2 " 
-                + " AND n.ctipo_docum in ('NDV', 'NCV') " 
-                + " AND d.cod_empr = 2 "
-                + " AND (d.pimpues = 10) " 
-                + " AND d.cod_merca = m.cod_merca " 
-                + " AND m.cod_sublinea = s.cod_sublinea ";
+                + "      AND  n.cod_empr = f.cod_empr "
+                + "      AND n.nrofact = f.nrofact  "
+                + "      AND n.ffactur = f.ffactur "
+                + "                   AND n.fac_ctipo_docum = f.ctipo_docum  "
+                + "                   AND n.cod_empr = d.cod_empr  "
+                + "                   AND n.fdocum = d.fdocum  "
+                + "                   AND n.nro_nota = d.nro_nota  "
+                + "                   AND n.ctipo_docum = d.ctipo_docum  "
+                + "                   AND f.cod_zona = z.cod_zona  "
+                + "                   AND f.cod_empr = z.cod_empr  "
+                + "                   AND d.cod_merca = m.cod_merca  "
+                + "                   AND d.cod_empr = m.cod_empr  "
+                + "                   AND m.cod_sublinea = s.cod_sublinea  "
+                + "                   AND n.cod_cliente = c.cod_cliente   "
+                + "                   AND n.cod_empr = c.cod_empr  "
+                + "                   AND c.cod_ruta = r.cod_ruta  "
+                + "                   AND c.cod_empr = r.cod_empr  "
+                + "                   AND f.cod_vendedor = e.cod_empleado  "
+                + "                   AND f.cod_empr = e.cod_empr   "
+                + "                     AND n.cod_empr = 2  "
+                + "                     AND d.pimpues = 10   "
+                + "                     AND n.mestado = 'A' "
+                + "                     AND n.ctipo_docum IN ( 'NDV', 'NCV' ) ";
         
         if(!listadoClientesSeleccionados.isEmpty()){
-            sql1 += " AND c.cod_cliente in (" + StringUtil.convertirListaAString(listadoClientesSeleccionados) + ")";
+            sql2 += " AND c.cod_cliente in (" + StringUtil.convertirListaAString(listadoClientesSeleccionados) + ")";
         }
         if (mercaderias.getTarget().size() > 0) {
             listaMercaderiasSeleccionadas = mercaderias.getTarget();
-            sql1 += " AND m.cod_merca IN (";
+            sql2 += " AND m.cod_merca IN (";
             for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
                 MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                sql1 += " '" + pk.getCodMerca() + "',";
+                sql2 += " '" + pk.getCodMerca() + "',";
             }
-            sql1 = sql1.substring(0, sql1.length()-1) + " ) ";
+            sql2 = sql2.substring(0, sql2.length()-1) + " ) ";
         }        
         if (this.zona != null){ 
-            sql1 += " AND r.cod_zona = '" + this.zona.getZonasPK().getCodZona() +"' ";
+            sql2 += " AND r.cod_zona = '" + this.zona.getZonasPK().getCodZona() +"' ";
         }
         if (this.subLinea != null){ 
-            sql1 += " AND m.cod_sublinea = '"+this.subLinea.getCodSublinea() +"' ";
+            sql2 += " AND m.cod_sublinea = '"+this.subLinea.getCodSublinea() +"' ";
         }
         if (this.linea != null){ 
-            sql1 += " AND s.cod_linea = '"+this.linea.getCodLinea() +"' ";
+            sql2 += " AND s.cod_linea = '"+this.linea.getCodLinea() +"' ";
         }
         if (this.vendedor != null){ 
-            sql1 += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
+            sql2 += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
         }        
         if (this.canal != null){ 
-            sql1 += " AND f.cod_canal  = '" + this.canal.getCodCanal()  +"' ";
+            sql2 += " AND f.cod_canal  = '" + this.canal.getCodCanal()  +"' ";
         }
         if (this.proveedor != null){ 
-            sql1 += " AND m.cod_proveed = '" + this.proveedor.getCodProveed() +"' ";
+            sql2 += " AND m.cod_proveed = '" + this.proveedor.getCodProveed() +"' ";
         }
         if (this.tipoCliente != null){ 
-            sql1 += " AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente() +"' ";
+            sql2 += " AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente() +"' ";
         }
         if (this.tipoVentas != null){ 
-            sql1 += " AND f.ctipo_vta  = '" + this.tipoVentas.getTiposVentasPK().getCtipoVta() +"' ";
+            sql2 += " AND f.ctipo_vta  = '" + this.tipoVentas.getTiposVentasPK().getCtipoVta() +"' ";
         }
         
         if (this.canal != null){
@@ -529,58 +537,65 @@ public class livtascli2Bean {
                 + " FROM notas_ventas N, facturas f, notas_ventas_det d, zonas z, sublineas s, "
                 + " mercaderias m, clientes c, rutas r, empleados e "
                 + " WHERE n.fdocum BETWEEN '"+fdesde+"' AND '"+fhasta+"' "
-                + " AND n.mestado = 'A' "
-                + " AND f.cod_vendedor = e.cod_empleado "
-                + " AND n.fdocum = d.fdocum " 
-                + " AND n.nrofact = f.nrofact " 
-                + " AND n.ffactur = f.ffactur " 
-                + " and n.fac_ctipo_docum = F.CTIPO_DOCUM " 
-                + " and f.cod_zona = z.cod_zona " 
-                + " AND n.nro_nota = d.nro_nota " 
-                + " AND n.ctipo_docum IN ( 'NCV', 'NDV') " 
-                + " AND n.cod_cliente = c.cod_cliente " 
-                + " AND c.cod_ruta = r.cod_ruta " 
-                + " AND n.cod_empr = 2 " 
-                + " AND d.cod_empr = 2 " 
-                + " AND d.pimpues = 5 " 
-                + " AND d.cod_merca = m.cod_merca " 
-                + " AND m.cod_sublinea = s.cod_sublinea ";
+                + "         AND n.cod_empr = f.cod_empr	 "
+                + "         AND n.nrofact = f.nrofact  "
+                + "         AND n.ffactur = f.ffactur  "
+                + "                   AND n.fac_ctipo_docum = f.ctipo_docum   "
+                + "                   AND n.cod_empr = d.cod_empr  "
+                + "                   AND n.fdocum = d.fdocum  "
+                + "                   AND n.nro_nota = d.nro_nota  "
+                + "                   AND n.ctipo_docum = d.ctipo_docum  "
+                + "                   AND f.cod_zona = z.cod_zona  "
+                + "                   AND f.cod_empr = z.cod_empr "
+                + "                   AND d.cod_merca = m.cod_merca "
+                + "                   AND d.cod_empr = m.cod_empr "
+                + "         AND m.cod_sublinea = s.cod_sublinea  "
+                + "                   AND n.cod_cliente = c.cod_cliente  "
+                + "                   AND n.cod_empr = c.cod_empr  "
+                + "                   AND c.cod_ruta = r.cod_ruta  "
+                + "                   AND c.cod_empr = r.cod_empr  "
+                + "                   AND f.cod_vendedor = e.cod_empleado  "
+                + "                   AND f.cod_empr = e.cod_empr   "
+                + "                 AND n.cod_empr = 2  "
+                + "                 AND d.pimpues = 5   "
+                + "                 AND n.mestado = 'A' "
+                + "                 AND n.ctipo_docum IN ( 'NDV', 'NCV' )  ";
  
         if(!listadoClientesSeleccionados.isEmpty()){
-            sql1 += " AND c.cod_cliente in (" + StringUtil.convertirListaAString(listadoClientesSeleccionados) + ")";
+            sql2 += " AND c.cod_cliente in (" + StringUtil.convertirListaAString(listadoClientesSeleccionados) + ")";
         }
         if (mercaderias.getTarget().size() > 0) {
             listaMercaderiasSeleccionadas = mercaderias.getTarget();
-            sql1 += " AND m.cod_merca IN (";
+            sql2 += " AND m.cod_merca IN (";
             for (int i = 0; i < listaMercaderiasSeleccionadas.size(); i++) {
                 MercaderiasPK pk = listaMercaderiasSeleccionadas.get(i).getMercaderiasPK();
-                sql1 += " '" + pk.getCodMerca() + "',";
+                sql2 += " '" + pk.getCodMerca() + "',";
             }
-            sql1 = sql1.substring(0, sql1.length()-1) + " ) ";
+            sql2 = sql2.substring(0, sql2.length()-1) + " ) ";
         }        
         if (this.zona != null){ 
-            sql1 += " AND r.cod_zona = '" + this.zona.getZonasPK().getCodZona() +"' ";
+            sql2 += " AND r.cod_zona = '" + this.zona.getZonasPK().getCodZona() +"' ";
         }
         if (this.subLinea != null){ 
-            sql1 += " AND m.cod_sublinea = '"+this.subLinea.getCodSublinea() +"' ";
+            sql2 += " AND m.cod_sublinea = '"+this.subLinea.getCodSublinea() +"' ";
         }
         if (this.linea != null){ 
-            sql1 += " AND s.cod_linea = '"+this.linea.getCodLinea() +"' ";
+            sql2 += " AND s.cod_linea = '"+this.linea.getCodLinea() +"' ";
         }
         if (this.vendedor != null){ 
-            sql1 += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
+            sql2 += " AND f.cod_vendedor = "+this.vendedor.getEmpleadosPK().getCodEmpleado()+" ";
         }        
         if (this.canal != null){ 
-            sql1 += " AND f.cod_canal  = '" + this.canal.getCodCanal()  +"' ";
+            sql2 += " AND f.cod_canal  = '" + this.canal.getCodCanal()  +"' ";
         }
         if (this.proveedor != null){ 
-            sql1 += " AND m.cod_proveed = '" + this.proveedor.getCodProveed() +"' ";
+            sql2 += " AND m.cod_proveed = '" + this.proveedor.getCodProveed() +"' ";
         }
         if (this.tipoCliente != null){ 
-            sql1 += " AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente() +"' ";
+            sql2 += " AND c.ctipo_cliente = '" + this.tipoCliente.getCtipoCliente() +"' ";
         }
         if (this.tipoVentas != null){ 
-            sql1 += " AND f.ctipo_vta  = '" + this.tipoVentas.getTiposVentasPK().getCtipoVta() +"' ";
+            sql2 += " AND f.ctipo_vta  = '" + this.tipoVentas.getTiposVentasPK().getCtipoVta() +"' ";
         }
         
         if (this.canal != null){
@@ -603,15 +618,15 @@ public class livtascli2Bean {
         //q.getResultList();
         //q.executeUpdate();
         //em.clear();
-        System.err.println("query1: " + sql1);
-        System.err.println("query2: " + sql2);
-        sqlFacade.executeQuery(sql2);
+        //System.err.println("query1: " + sql1);
+        //System.err.println("query2: " + sql2);
+        //sqlFacade.executeQuery(sql2);
         sqlFacade.executeQuery(sql3);
         //q = em.createNativeQuery("select * from Mostrarc");
         // ejecutar sql2 y ver si trae resultados
-        List<Object> objectList = sqlFacade.executeQueryList("select * from Mostrarc");
-        System.err.println("objectList: "+objectList.isEmpty());
-        if (!objectList.isEmpty()){
+        Integer count = (Integer) sqlFacade.executeQueryObject("select count(1) from ("+sql2+") t ");
+        System.out.println("objectList: "+count);
+        if (count==null | new Integer("0").equals(count)){
             if (this.seleccion.equals("4")){
                 if (this.sinIVA) { // sin iva
                     sql3 += " SELECT t.* INTO mostrar FROM ( select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
@@ -625,7 +640,7 @@ public class livtascli2Bean {
                         + " 0 as timpuestos_10, 0 as timpuestos_5, cod_vendedor, "
                         + " xvendedor, nplazo_cheque, " 
                         + " cant_cajas, cant_unid, det_sin as itotal "
-			+ " FROM mostrarx ) t ";
+			+ " FROM ( "+sql1+" ) x ) t ";
                 } else { // con iva		      
                     sql3 += " SELECT t.* INTO mostrar FROM (select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum,  nrofact, '   ' as cconc, ffactur,  "
@@ -634,11 +649,11 @@ public class livtascli2Bean {
 			+ " tgravadas_10 , tgravadas_5, "
 			+ " timpuestos_10, timpuestos_5, cod_vendedor, xvendedor, nplazo_cheque, "
                         + " cant_cajas, cant_unid, det_sin as itotal "
-			+ " FROM mostrarx ) t ";
+			+ " FROM ( "+sql1+" ) x ) t ";
                 }
             } else {
                 if (this.sinIVA) { // sin iva 
-                    sql3 += " SELECT t.* INTO mostrar FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente,  xnombre, "
+                    sql3 += " SELECT t.* INTO mostrar1 FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente,  xnombre, "
                         + " cod_sublinea,  xdesc_sublinea, "
                         + " xdesc_ruta, ctipo_docum, "
 			+ " nrofact, ffactur, cod_merca, xdesc_merca, cant_cajas, cant_unid, "
@@ -649,26 +664,34 @@ public class livtascli2Bean {
                         + " tgravadas_5 - ABS(timpuestos_5) as tgravadas_5, "
 			+ " 0 as timpuestos_10, timpuestos_5, det_sin as itotal, cod_vendedor, "
 			+ " xvendedor, ctipo_vta ,  fventa, iprecio_caja, iprecio_unidad "
-			+ " FROM mostrarx ) t "
+			+ " FROM ( "+sql1+" ) x ) t "
 			+ "ORDER BY cod_cliente, cod_sublinea, cod_merca ";
                 } else {
-                    sql3 += " SELECT t.* INTO mostrar FROM ( SELECT * "
-			+ " FROM mostrarx ) t "
+                    sql3 += " SELECT t.* INTO mostrar1 FROM ( SELECT * "
+			+ " FROM ( "+sql1+" ) x ) t "
 			+ " ORDER BY cod_cliente, cod_sublinea, cod_merca ";
                 }
             }
         } else {
             if (this.seleccion.equals("4")){
                 if (this.sinIVA) {
-                    sql3 += " SELECT t.* INTO curnotas1 FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
+                    sql4 = " SELECT t.* FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum,  "
                         + " nrofact, cconc,  fdocum as ffactur,  "
                         + " timpuestos, tgravadas + timpuestos as tgravadas, texentas, total_fac, nplazo_cheque, "
                         + " nro_pedido, cod_depo, fpedido, sum(itot_sin) * -1 as ttotal, cod_vendedor, xvendedor,  "
                         + " SUM(ABS(tgravadas_10) - ABS(timpuestos_10)) * -1 as tgravadas_10 , "
                         + " SUM(ABS(tgravadas_5) - ABS(timpuestos_5)) * -1 as tgravadas_5,  "
-                        + " 0 as timpuestos_10,  0 as timpuestos_5 "
-                        + " FROM mostrarc "
+                        + " 0 as timpuestos_10,  0 as timpuestos_5, "
+                        + " sum( CASE CCONC " 
+                        + "    WHEN 'DEV' THEN cant_cajas * -1" 
+                        + "    ELSE 0 " 
+                        + " END ) as cant_cajas, sum( CASE CCONC " 
+                        + "    WHEN 'DEV' THEN cant_unid * -1 " 
+                        + "    ELSE 0  " 
+                        + " END) as cant_unid, "
+                        + " sum(det_sin) *-1 as itotal  "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE not_ctipo_docum = 'NCV' "
                         + " \nGROUP BY cod_zona,  xdesc_zona, cod_cliente, xnombre,  "
                         + " xdesc_ruta, ctipo_docum,  "
@@ -683,8 +706,10 @@ public class livtascli2Bean {
                         + " nro_pedido, cod_depo, fpedido, sum(itot_sin)  as ttotal, cod_vendedor, xvendedor,  "
                         + " SUM(ABS(tgravadas_10) - ABS(timpuestos_10))  as tgravadas_10 , "
                         + " SUM(ABS(tgravadas_5) - ABS(timpuestos_5))  as tgravadas_5,  "
-                        + " 0 as timpuestos_10,  0 as timpuestos_5 "
-                        + " FROM mostrarc "
+                        + " 0 as timpuestos_10,  0 as timpuestos_5, "
+                        + " 0 as cant_cajas, 0 as cant_unid, "
+                        + " sum(det_sin) *-1  as itotal "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE not_ctipo_docum = 'NDV' "
                         + " \nGROUP BY cod_zona,  xdesc_zona, cod_cliente, xnombre,  "
                         + " xdesc_ruta, ctipo_docum,  "
@@ -692,15 +717,23 @@ public class livtascli2Bean {
                         + " timpuestos, tgravadas, texentas, total_fac, "
                         + " nro_pedido, cod_depo, fpedido,  cod_vendedor, xvendedor, nplazo_cheque) t ";
                 } else {
-                    sql3 += " SELECT t.* INTO curnotas1 FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
+                    sql4 = " SELECT t.* FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum,  "
                         + " nrofact, cconc,  fdocum as ffactur,  "
                         + " timpuestos, tgravadas, texentas, total_fac, nplazo_cheque, " 
                         + " nro_pedido, cod_depo, fpedido, ttotal * -1 as ttotal, cod_vendedor, xvendedor, "
                         + " SUM(tgravadas_10) * -1 as tgravadas_10 , SUM(tgravadas_5) * -1 as tgravadas_5, "
-                        + " ABS(SUM(timpuestos_10)) * -1 as timpuestos_10,  ABS(SUM(timpuestos_5)) * -1 as timpuestos_5 "
-                        + " FROM mostrarc "
-                        + " WHERE not_ctipo_docum ='NCV' "
+                        + " ABS(SUM(timpuestos_10)) * -1 as timpuestos_10,  ABS(SUM(timpuestos_5)) * -1 as timpuestos_5, "
+                        + " sum( CASE CCONC " 
+                        + "    WHEN 'DEV' THEN cant_cajas * -1" 
+                        + "    ELSE 0 " 
+                        + " END ) as cant_cajas, sum( CASE CCONC " 
+                        + "    WHEN 'DEV' THEN cant_unid * -1 " 
+                        + "    ELSE 0  " 
+                        + " END) as cant_unid, "
+                        + " sum(tgravadas_10+texentas+tgravadas_5+ timpuestos) * -1 as itotal  "
+                        + " FROM ( "+sql2+" ) c "
+                        + " WHERE not_ctipo_docum ='NCV'  "
                         + " \nGROUP BY cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum, "
                         + " nrofact, cconc, fdocum, "
@@ -713,9 +746,11 @@ public class livtascli2Bean {
                         + " timpuestos, tgravadas, texentas, total_fac, nplazo_cheque, "
                         + " nro_pedido, cod_depo, fpedido, ttotal  as ttotal, cod_vendedor, xvendedor,    "
                         + " SUM(tgravadas_10) as tgravadas_10 , SUM(tgravadas_5)  as tgravadas_5,  "
-                        + " ABS(SUM(timpuestos_10))  as timpuestos_10,  ABS(SUM(timpuestos_5))  as timpuestos_5 "
-                        + " FROM mostrarc "
-                        + " WHERE not_ctipo_docum ='NDV' "
+                        + " ABS(SUM(timpuestos_10))  as timpuestos_10,  ABS(SUM(timpuestos_5))  as timpuestos_5, "
+                        + " 0 as cant_cajas, 0 as cant_unid, "
+                        + " sum(tgravadas_10+texentas+tgravadas_5+ timpuestos)  as itotal "
+                        + " FROM ( "+sql2+" ) c "
+                        + " WHERE not_ctipo_docum ='NDV'  "
                         + " \nGROUP BY cod_zona,  xdesc_zona, cod_cliente, xnombre,  "
                         + "     xdesc_ruta, ctipo_docum,  "
                         + "     nrofact, cconc, fdocum,  "
@@ -723,57 +758,58 @@ public class livtascli2Bean {
                         + "     nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor, nplazo_cheque) t ";
                 }
             
-                sql3 += " SELECT t.* INTO curnotas FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
+                sql5 = " SELECT tn.* FROM ( SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
 		+ " xdesc_ruta, ctipo_docum,  "
  		+ " nrofact, cconc,  ffactur,  "
 		+ " timpuestos, tgravadas, texentas, total_fac, nplazo_cheque, "
 		+ " nro_pedido, cod_depo, fpedido, ttotal  as ttotal, cod_vendedor, xvendedor,  "
 		+ " SUM(tgravadas_10) as tgravadas_10 , SUM(tgravadas_5)  as tgravadas_5, "
-		+ " ABS(SUM(timpuestos_10))  as timpuestos_10,  ABS(SUM(timpuestos_5))  as timpuestos_5 "
-		+ " FROM curnotas1 "
+		+ " ABS(SUM(timpuestos_10))  as timpuestos_10,  ABS(SUM(timpuestos_5))  as timpuestos_5, "
+                + " sum(cant_cajas) as cant_cajas, sum(cant_unid) as cant_unid, sum(itotal) as itotal  "
+		+ " FROM ( "+sql4+" ) te "
 		+ " \nGROUP BY cod_zona,  xdesc_zona, cod_cliente, xnombre,  "
 		+ " xdesc_ruta, ctipo_docum,  "
 		+ " nrofact, cconc, ffactur,  "
 		+ " timpuestos, tgravadas, texentas, total_fac, "
-		+ " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor, nplazo_cheque ) t ";
+		+ " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor, nplazo_cheque ) tn ";
             
                 if (this.sinIVA) {
-                    sql3 += " SELECT t.* INTO mostrar FROM (  select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
+                    sql3 += " SELECT tt.* INTO mostrar FROM (  select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                     + " xdesc_ruta, ctipo_docum,  nrofact, '   ' as cconc, ffactur,  "
                     + " timpuestos, tgravadas, texentas, total_fac - ABS(timpuestos) as total_fac,  "
                     + " nro_pedido, cod_depo, fpedido, itot_sin as ttotal, "
                     + " tgravadas_10 - ABS(timpuestos_10) as tgravadas_10, tgravadas_5 - ABS(timpuestos_5) as tgravadas_5,  "
-                    + " 0 as timpuestos_10, 0 as timpuestos_5, cod_vendedor, xvendedor, nplazo_cheque "
-                    + " FROM mostrarx "
+                    + " 0 as timpuestos_10, 0 as timpuestos_5, cod_vendedor, xvendedor, nplazo_cheque, cant_cajas, cant_unid, det_sin as itotal "
+                    + " FROM ( "+sql1+" ) x "
                     + " \nUNION ALL\n "
                     + " SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                     + " xdesc_ruta, ctipo_docum,  nrofact, cconc, ffactur,  "
                     + " 0 as timpuestos , tgravadas - ABS(timpuestos) as  tgravadas, texentas, total_fac - ABS(timpuestos) as total_fac,  "
                     + " nro_pedido, cod_depo, fpedido, ttotal,  "
                     + " tgravadas_10  , tgravadas_5 , "
-                    + " 0 as timpuestos_10, 0 as timpuestos_5 , cod_vendedor, xvendedor, nplazo_cheque "
-                    + " FROM curnotas ) t ";
+                    + " 0 as timpuestos_10, 0 as timpuestos_5 , cod_vendedor, xvendedor, nplazo_cheque, cant_cajas, cant_unid, itotal "
+                    + " FROM ( "+sql5+" ) y ) tt ";
                 } else {
-                    sql3 += " SELECT t.* INTO mostrar FROM ( select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
+                    sql3 += " SELECT tt.* INTO mostrar FROM ( select cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum,  nrofact, '   ' as cconc, ffactur, "
                         + " timpuestos, tgravadas, texentas, total_fac,  "
                         + " nro_pedido, cod_depo, fpedido, ttotal,  "
                         + " tgravadas_10 , tgravadas_5, "
-                        + " timpuestos_10, timpuestos_5, cod_vendedor, xvendedor, nplazo_cheque "
-                        + " FROM mostrarx "
+                        + " timpuestos_10, timpuestos_5, cod_vendedor, xvendedor, nplazo_cheque, cant_cajas, cant_unid, itotal "
+                        + " FROM ( "+sql1+" ) x "
                         + " \nUNION ALL\n "
                         + " SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, "
                         + " xdesc_ruta, ctipo_docum,  nrofact, cconc, ffactur,  "
                         + " timpuestos, tgravadas, texentas, total_fac,  "
                         + " nro_pedido, cod_depo, fpedido, ttotal,  "
                         + " tgravadas_10 , tgravadas_5, "
-                        + " timpuestos_10, timpuestos_5 , cod_vendedor, xvendedor, nplazo_cheque "
-                        + " FROM curnotas ) t " ;
+                        + " timpuestos_10, timpuestos_5 , cod_vendedor, xvendedor, nplazo_cheque, cant_cajas, cant_unid, itotal "
+                        + " FROM ( "+sql5+" ) y ) tt " ;
                 }
             
             } else {
                 if (this.sinIVA) {
-                    sql3 += " SELECT t.* INTO mostrarh FROM ( SELECT  cod_zona,  xdesc_zona, "
+                    sql3 += " SELECT t.* INTO mostrar1 FROM ( SELECT  cod_zona,  xdesc_zona, "
                         + " cod_cliente, xnombre,     cod_sublinea, xdesc_sublinea, "
                         + " xdesc_ruta, ctipo_docum, "
                         + " nrofact, '   ' as cconc, ffactur, cod_merca,  xdesc_merca,  cant_cajas,  cant_unid, "
@@ -782,7 +818,7 @@ public class livtascli2Bean {
                         + " nro_pedido, cod_depo, fpedido,  ttotal - ABS(timpuestos_10) - ABS(timpuestos_5) as ttotal, "
                         + " cod_vendedor, xvendedor , nplazo_cheque , CTIPO_VTA, fventa, "
                         + " iprecio_caja, iprecio_unidad "
-                        + " FROM mostrarx "
+                        + " FROM ( "+sql1+" ) x "
                         + " \nUNION ALL\n "
                         + " SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, cod_sublinea, xdesc_sublinea, "
                         + " xdesc_ruta, ctipo_docum,  nrofact, cconc, fdocum as ffactur,  "
@@ -791,7 +827,7 @@ public class livtascli2Bean {
                         + " det_sin * -1 as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor  , nplazo_cheque, CTIPO_VTA, fventa,  "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE CCONC = 'DEV' "
                         + " AND Not_CTIPO_DOCUM = 'NCV' "
                         + " \nUNION ALL\n "
@@ -802,7 +838,7 @@ public class livtascli2Bean {
                         + " det_sin * -1 as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor   , nplazo_cheque, CTIPO_VTA, fventa,  "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE CCONC != 'DEV' "
                         + " AND not_CTIPO_DOCUM = 'NCV' "
                         + " \nUNION ALL\n "
@@ -813,17 +849,17 @@ public class livtascli2Bean {
                         + " det_sin  as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor   , nplazo_cheque, CTIPO_VTA, fventa, "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
-                        + " WHERE not_CTIPO_DOCUM = 'NDV' ) t ";
+                        + " FROM ( "+sql2+" ) c "
+                        + " WHERE not_CTIPO_DOCUM = 'NDV' ) t ORDER BY cod_cliente, cod_sublinea, cod_merca ";
                 } else {
-                    sql3 += " SELECT t.* INTO mostrarh FROM ( SELECT  cod_zona,  xdesc_zona, "
+                    sql3 += " SELECT t.* INTO mostrar1 FROM ( SELECT  cod_zona,  xdesc_zona, "
                         + " cod_cliente, xnombre, cod_sublinea, xdesc_sublinea, "
                         + " xdesc_ruta, ctipo_docum,  "
                         + " nrofact, '   ' as cconc, ffactur, cod_merca,  xdesc_merca,  cant_cajas,  cant_unid, "
                         + " timpuestos, tgravadas, texentas, total_fac, itotal, "
                         + " nro_pedido, cod_depo, fpedido,  ttotal, cod_vendedor, "
                         + " xvendedor , nplazo_cheque , CTIPO_VTA, fventa ,  iprecio_caja, iprecio_unidad "
-                        + " FROM mostrarx "
+                        + " FROM ( " +sql1+ " ) x "
                         + " \nUNION ALL\n "
                         + " SELECT  cod_zona,  xdesc_zona, cod_cliente, xnombre, cod_sublinea, xdesc_sublinea, "
                         + " xdesc_ruta, ctipo_docum,  nrofact, cconc, fdocum as ffactur,  "
@@ -831,7 +867,7 @@ public class livtascli2Bean {
                         + " timpuestos, tgravadas, texentas, total_fac, (tgravadas_10+texentas+tgravadas_5+ timpuestos) * -1 as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor  , nplazo_cheque, CTIPO_VTA, fventa,   "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE CCONC = 'DEV' "
                         + " AND not_CTIPO_DOCUM = 'NCV' "
                         + " \nUNION ALL\n "
@@ -841,7 +877,7 @@ public class livtascli2Bean {
                         + " timpuestos, tgravadas, texentas, total_fac, (tgravadas_10+texentas+tgravadas_5+ timpuestos) * -1 as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor   , nplazo_cheque, CTIPO_VTA, fventa,  "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
+                        + " FROM ( "+sql2+" ) c "
                         + " WHERE CCONC != 'DEV' "
                         + " AND not_CTIPO_DOCUM = 'NCV' "
                         + " \nUNION ALL\n "
@@ -851,28 +887,28 @@ public class livtascli2Bean {
                         + " timpuestos, tgravadas, texentas, total_fac, (tgravadas_10+texentas+tgravadas_5+ timpuestos)  as itotal, "
                         + " nro_pedido, cod_depo, fpedido, ttotal, cod_vendedor, xvendedor   , nplazo_cheque, CTIPO_VTA, fventa,  "
                         + " iprecio_caja, iprecio_unid as iprecio_unidad "
-                        + " FROM Mostrarc "
-                        + " WHERE not_CTIPO_DOCUM = 'NDV' ) t ";
+                        + " FROM ( "+sql2+" ) c "
+                        + " WHERE not_CTIPO_DOCUM = 'NDV' ) t ORDER BY cod_cliente, cod_sublinea, cod_merca ";
                 }
                 
-                sql3 += " SELECT  * "
-		+ " INTO mostrar "
-                + " FROM mostrarh "		
-		+ " ORDER BY cod_cliente, cod_sublinea, cod_merca ";
+                //sql3 += " SELECT  * "
+		//+ " INTO mostrar1 "
+                //+ " FROM mostrarh "		
+		//+ " ORDER BY cod_cliente, cod_sublinea, cod_merca ";
                 
             }
             
         }
         
         if (!this.seleccion.equals("4")){
-            sql3 +=" SELECT mostrar.*, 0 as iret_caja,0 as iret_unidad, "
-                + " 0 AS idev_caja,0 as idev_unidad "
-                + " INTO mostrar1 FROM mostrar ";
-            sql3 += " \nIF Object_id('mostrar') IS NOT NULL DROP TABLE mostrar\n " ;
+            //sql3 +=" SELECT mostrar1.*, 0 as iret_caja,0 as iret_unidad, "
+            //    + " 0 AS idev_caja,0 as idev_unidad "
+            //    + " INTO mostrar1 FROM mostrar ";
+            //sql3 += " \nIF Object_id('mostrar') IS NOT NULL DROP TABLE mostrar\n " ;
             sql3 +=" SELECT * "
                 + " INTO mostrar  "
-                + " FROM mostrar1 "
-                + " \nupdate m "
+                + " FROM (SELECT mostrar1.*, 0 as iret_caja,0 as iret_unidad, 0 AS idev_caja,0 as idev_unidad FROM mostrar1 ) t "
+                + " \n update m "
                 + " set m.iret_caja = r.iretorno_caja, "
                 + "         m.iret_unidad = r.iretorno_unidad, "
                 + "         m.idev_caja = r.idevol_caja, "
@@ -885,7 +921,9 @@ public class livtascli2Bean {
             
         }
         
-        System.err.println("query: " + sql3);
+        System.out.println("query3: " + sql3);
+        //System.out.println("query4: " + sql4);
+        //System.out.println("query5: " + sql5);
         //q = em.createNativeQuery(sql3);
         //q.getResultList();
         //q.executeUpdate();
@@ -894,7 +932,6 @@ public class livtascli2Bean {
     }
     
     public void marcarTodos() {
-
         SelectorDatosBean.datosFiltrados = false;
         this.checkCliente = true;
         this.seleccionarClientes = false;

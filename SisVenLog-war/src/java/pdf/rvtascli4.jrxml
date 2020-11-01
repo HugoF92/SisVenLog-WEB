@@ -28,6 +28,7 @@
 	<field name="ttotal" class="java.lang.Double"/>
 	<field name="nplazo_cheque" class="java.lang.Short"/>
 	<field name="itotal" class="java.lang.Double"/>
+	<field name="cod_cliente" class="java.lang.Integer"/>
 	<variable name="cant_cajas_1" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{cant_cajas}]]></variableExpression>
 	</variable>
@@ -56,6 +57,13 @@
     $F{ctipo_docum}.equals( "FCO" ) )
 ? $F{itotal} : new Long(0)]]></variableExpression>
 	</variable>
+	<variable name="cod_cliente_1" class="java.lang.Integer" incrementType="Group" incrementGroup="group_cliente" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{cod_cliente}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="group_cliente">
+		<groupExpression><![CDATA[$F{cod_cliente}]]></groupExpression>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -100,7 +108,7 @@
 				<textFieldExpression><![CDATA[$P{fdesde}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="246" y="106" width="110" height="14" uuid="479e4567-5f5d-447b-ac55-a0a256a851c6"/>
+				<reportElement x="200" y="106" width="110" height="14" uuid="479e4567-5f5d-447b-ac55-a0a256a851c6"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -147,7 +155,7 @@
 				<textFieldExpression><![CDATA[$P{linea}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="136" y="106" width="110" height="14" uuid="139b080c-d14c-45ee-970c-aca183b0ff55"/>
+				<reportElement x="416" y="92" width="110" height="14" uuid="139b080c-d14c-45ee-970c-aca183b0ff55"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 					<paragraph leftIndent="5"/>
@@ -183,27 +191,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nombreRepo}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="416" y="92" width="110" height="14" uuid="55a77890-0f32-41b6-9805-990b376a736c"/>
-				<textElement verticalAlignment="Middle">
-					<font size="9"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="75" y="50" width="91" height="14" uuid="985a16a7-8083-4b5a-809a-96b5a1d15e64"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Fecha Desde:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="356" y="92" width="60" height="14" uuid="cb85342f-39f8-46b0-b4bb-7409dcf07301"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Vendedor:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="246" y="92" width="110" height="14" uuid="6546cea5-c2cc-40be-99cf-4eb914b432d9"/>
@@ -242,7 +235,7 @@
 				<text><![CDATA[Canal de Venta:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="106" width="60" height="14" uuid="68d0e20b-10bb-43b3-ad0b-d83f8a011edb"/>
+				<reportElement x="356" y="92" width="60" height="14" uuid="68d0e20b-10bb-43b3-ad0b-d83f8a011edb"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -436,7 +429,7 @@
 				<text><![CDATA[TOTAL FACTURAS CREDITO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="93" y="0" width="60" height="14" uuid="0f635533-648a-45b9-aa11-7e999f0e86e6"/>
+				<reportElement x="113" y="0" width="60" height="14" uuid="0f635533-648a-45b9-aa11-7e999f0e86e6"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
@@ -507,6 +500,17 @@
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{itotal_che2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="52" y="0" width="61" height="14" uuid="56a8c866-2cec-49d9-805b-c5d9273abb50"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cod_cliente_1}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
