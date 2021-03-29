@@ -116,11 +116,11 @@ public class EnviosBean extends LazyDataModel<Envios> implements Serializable {
     @PostConstruct
     public void instanciar() {
 
-        listaEnvios = new ArrayList<Envios>();
+        this.listaEnvios = new ArrayList<Envios>();
         this.enviosPkk = new EnviosPK();
         this.envios = new Envios();
         BigDecimal respuesta = this.enviosFacade.getMaxNroEnvio();
-        this.enviosPkk.setNroEnvio(respuesta.longValue());
+        this.enviosPkk.setNroEnvio(new Long(0));
         this.envios.setEnviosPK(enviosPkk);
         this.listaEnviosDet = new ArrayList<EnviosDet>();
         this.empleados = new Empleados();
