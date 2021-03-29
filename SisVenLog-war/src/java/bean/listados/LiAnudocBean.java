@@ -401,7 +401,7 @@ public class LiAnudocBean {
         System.out.println("SQL lianudoc: " + sql.toString());
 
         if (tipo.equals("VIST")) {
-            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), tipoDoc, "admin", this.operacion, tipo);
+            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), tipoDoc, FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), this.operacion, tipo);
         } else {
 
             List<Object[]> lista = new ArrayList<Object[]>();
