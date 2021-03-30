@@ -1,6 +1,7 @@
 package bean.listados;
 
 import dao.ExcelFacade;
+import bean.LoginBean;
 import dao.TiposDocumentosFacade;
 import entidad.TiposDocumentos;
 import java.io.IOException;
@@ -400,8 +401,8 @@ public class LiAnudocBean {
         }*/
         System.out.println("SQL lianudoc: " + sql.toString());
 
-        if (tipo.equals("VIST")) {
-            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), tipoDoc, FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString(), this.operacion, tipo);
+        if (tipo.equals("VIST")) { 
+            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), tipoDoc, LoginBean.user,  this.operacion, tipo);
         } else {
 
             List<Object[]> lista = new ArrayList<Object[]>();
