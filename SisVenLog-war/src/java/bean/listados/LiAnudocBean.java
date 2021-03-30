@@ -325,11 +325,12 @@ public class LiAnudocBean {
             }
             sql.append("SELECT   'REC' as ctipo_docum, r.nrecibo as ndocum, r.frecibo as fdocum ,\n"
                     + "r.cod_cliente as cod_persona, \n"
-                    + "c.xnombre, r.irecibo as ttotal , fanul as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc\n");
+                    + "c.xnombre, r.irecibo as ttotal,\n");
 
             if (this.operacion.equals("A")) {
 
-                sql.append("from recibos r, clientes c\n"
+                sql.append(" fanul as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc \n"
+                        + "from recibos r, clientes c\n"
                         + "where r.cod_cliente = c.cod_cliente\n"
                         + "and r.cod_empr = 2\n"
                         + "and r.mestado = 'X'\n"
@@ -339,7 +340,8 @@ public class LiAnudocBean {
 
             if (this.operacion.equals("E")) {
 
-                sql.append("from hrecibos r, clientes c\n"
+                sql.append(" felim as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc\n "
+                        + "from hrecibos r, clientes c\n"
                         + "where r.cod_cliente = c.cod_cliente\n"
                         + "and r.cod_empr = 2\n"
                         + "and r.frecibo between '" + fdesde + "' and '" + fhasta + "'");
@@ -356,11 +358,12 @@ public class LiAnudocBean {
             }
             sql.append("SELECT   'REP' as ctipo_docum, r.nrecibo as ndocum, r.frecibo as fdocum , \n"
                     + " r.cod_proveed as cod_persona,  \n"
-                    + "p.xnombre, r.irecibo as ttotal , fanul as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc\n");
+                    + "p.xnombre, r.irecibo as ttotal ,");
 
             if (this.operacion.equals("A")) {
 
-                sql.append("from recibos_prov r, proveedores p\n"
+                sql.append("fanul as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc\n"
+                        + "from recibos_prov r, proveedores p\n"
                         + "where r.cod_proveed = p.cod_proveed\n"
                         + "and r.cod_empr = 2\n"
                         + "and r.mestado = 'X'\n"
@@ -370,7 +373,8 @@ public class LiAnudocBean {
 
             if (this.operacion.equals("E")) {
 
-                sql.append("from hrecibos_prov r, proveedores p\n"
+                sql.append("felim as fanul, r.cusuario as cusuario_anul, '' as origen, '' as destino, '' as cconc\n"
+                        + "from hrecibos_prov r, proveedores p\n"
                         + "where r.cod_proveed = p.cod_proveed\n"
                         + "and r.cod_empr = 2\n"
                         + "and r.frecibo between '" + fdesde + "' and '" + fhasta + "'");
