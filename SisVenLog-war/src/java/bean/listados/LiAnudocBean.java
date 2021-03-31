@@ -65,12 +65,16 @@ public class LiAnudocBean {
         String fdesde = dateToString(desde);
         String fhasta = dateToString(hasta);
         String tipoDoc = "";
+        String desTipoDoc = "";
 
         StringBuilder sql = new StringBuilder();
         if (this.tiposDocumentos == null) {
             tipoDoc = "TODOS";
+            desTipoDoc = "TODOS";
         } else {
+            tiposDocumentos = tiposDocumentosFacade.find(this.tiposDocumentos.getCtipoDocum());
             tipoDoc = this.tiposDocumentos.getCtipoDocum();
+            desTipoDoc = this.tiposDocumentos.getXdesc();
         }
 
         if (this.tiposDocumentos == null
@@ -406,7 +410,7 @@ public class LiAnudocBean {
         System.out.println("SQL lianudoc: " + sql.toString());
 
         if (tipo.equals("VIST")) { 
-            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), tipoDoc, LoginBean.user,  this.operacion, tipo);
+            rep.reporteLiAnudoc(sql.toString(), dateToString2(desde), dateToString2(hasta), desTipoDoc, LoginBean.user,  this.operacion, tipo);
         } else {
 
             List<Object[]> lista = new ArrayList<Object[]>();
