@@ -106,7 +106,7 @@
 				<textFieldExpression><![CDATA[$P{hasta}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="262" y="68" width="100" height="14" uuid="316331ef-7df6-47d7-b60f-d28b4ada8945"/>
+				<reportElement x="262" y="68" width="203" height="14" uuid="316331ef-7df6-47d7-b60f-d28b4ada8945"/>
 				<textFieldExpression><![CDATA[$P{tipoDoc}]]></textFieldExpression>
 			</textField>
 			<staticText>
