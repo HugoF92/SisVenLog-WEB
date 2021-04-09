@@ -11,6 +11,7 @@ import entidad.Clientes;
 import entidad.Zonas;
 import entidad.ZonasPK;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -184,10 +185,10 @@ public class LiChequesBean {
                     nomCli = getCliente().getXnombre();
                 }
                 
-                rep.reporteLiCheques(sql, dateToString(getChequeDesde()), dateToString(getChequeHasta()), banco,LoginBean.user ,nomCli, operacion,
-                                     dateToString(getEmisionDesde()), dateToString(getEmisionHasta()), 
-                                     dateToString(getCobroDesde()), dateToString(getCobroHasta()),
-                                     zona,this.tipo);
+                rep.reporteLiCheques(sql,new SimpleDateFormat("dd/MM/yyyy").format(getChequeDesde()),new SimpleDateFormat("dd/MM/yyyy").format(getChequeHasta()), banco,LoginBean.user ,nomCli, operacion,
+                                     new SimpleDateFormat("dd/MM/yyyy").format(getEmisionDesde()),new SimpleDateFormat("dd/MM/yyyy").format(getEmisionHasta()), 
+                                     new SimpleDateFormat("dd/MM/yyyy").format(getCobroDesde()),  new SimpleDateFormat("dd/MM/yyyy").format(getCobroHasta()),
+                                     zona,this.cobrado);
                 //rep.reporteLiCheques2(sql, dateToString(getChequeDesde()), dateToString(getChequeHasta()), getBancos().getXdesc(), nomCli, operacion);
             }
         } catch (Exception e) {

@@ -200,12 +200,10 @@ public class LlamarReportes {
             String emisionDesde, String emisionHasta, String cobroDesde, String cobroHasta, Zonas zona, String tipoCheque) {
         try {
             String tCheque = "TODOS"; 
-             if(tipoCheque.equals("D")){
-                 tCheque = "Diferidos";
-             }else if(tipoCheque.equals("C")){
-                 tCheque = "Cobro Crédito";
-             }else if(tipoCheque.equals("A")){
-                 tCheque = "Al Día";
+             if(tipoCheque.equals("C")){
+                 tCheque = "Cobrados";
+             }else if(tipoCheque.equals("N")){
+                 tCheque = "No Cobrados";
              }
             String nombre_banco = banco != null ? banco.getXdesc() : "TODOS";
             String nombre_zona = zona != null ? zona.getXdesc() : "TODOS";
