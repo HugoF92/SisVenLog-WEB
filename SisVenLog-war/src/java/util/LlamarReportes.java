@@ -6,6 +6,7 @@
 package util;
 
 import dto.LiMercaSinDto;
+import entidad.Bancos;
 import entidad.CanalesVenta;
 import entidad.Empleados;
 import entidad.Lineas;
@@ -69,7 +70,7 @@ public class LlamarReportes {
     public LlamarReportes() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "venlog2018CC");
+            conexion = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=VenlogDB", "sa", "mamateamO97");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -195,7 +196,58 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
+    public void reporteLiCheques(String sql, String desde, String hasta, Bancos banco, String nombre_cliente, String tipo,
+            String emisionDesde, String emisionHasta, String cobroDesde, String cobroHasta, Zonas zona, String tipoCheque) {
+        try {
 
+            String nombre_banco = banco != null ? banco.getXdesc() : "TODOS";
+            String nombre_zona = zona != null ? zona.getXdesc() : "TODOS";
+            System.out.println("SQL reporte: " + sql);
+
+            Map param = new HashMap();
+            param.put("sql", sql);
+            param.put("desde", desde);
+            param.put("hasta", hasta);
+            param.put("emision_desde", emisionDesde);
+            param.put("emision_hasta", emisionHasta);
+            param.put("cobro_desde", cobroDesde);
+            param.put("cobro_hasta", cobroHasta);
+            param.put("nombre_banco", nombre_banco);
+            param.put("nombre_cliente", nombre_cliente);
+            param.put("nombre_zona", nombre_zona);
+            param.put("tipo_cheque", tipo);
+
+            String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques.jasper");
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, param, conexion);
+
+            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+            if (tipo.equals("IMPR")) {
+                JasperPrintManager.printReport(jasperPrint, false);
+            } else {
+                String disposition = "";
+                if (tipo.equals("VIST")) {
+                    disposition = "inline";
+
+                    httpServletResponse.addHeader("Content-disposition", disposition + "; filename=licheques.pdf");
+                    httpServletResponse.addHeader("Content-type", "application/pdf");
+
+                    ServletOutputStream servletStream = httpServletResponse.getOutputStream();
+
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, servletStream);
+
+                    FacesContext.getCurrentInstance().responseComplete();
+                }
+
+            }
+
+        } catch (IOException | JRException e) {
+            System.out.println(e);
+        }
+    }
+    
+    
     public void vistaPreviaRemision(int fInicial, int fFinal) {
         try {
 
