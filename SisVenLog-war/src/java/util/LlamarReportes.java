@@ -196,16 +196,24 @@ public class LlamarReportes {
             System.out.println(e);
         }
     }
-    public void reporteLiCheques(String sql, String desde, String hasta, Bancos banco, String nombre_cliente, String tipo,
+    public void reporteLiCheques(String sql, String desde, String hasta, Bancos banco, String usuImprime,String nombre_cliente, String tipo,
             String emisionDesde, String emisionHasta, String cobroDesde, String cobroHasta, Zonas zona, String tipoCheque) {
         try {
-
+            String tCheque = "TODOS"; 
+             if(tipoCheque.equals("D")){
+                 tCheque = "Diferidos";
+             }else if(tipoCheque.equals("C")){
+                 tCheque = "Cobro Crédito";
+             }else if(tipoCheque.equals("A")){
+                 tCheque = "Al Día";
+             }
             String nombre_banco = banco != null ? banco.getXdesc() : "TODOS";
             String nombre_zona = zona != null ? zona.getXdesc() : "TODOS";
             System.out.println("SQL reporte: " + sql);
 
             Map param = new HashMap();
             param.put("sql", sql);
+            param.put("usuImprime", usuImprime);
             param.put("desde", desde);
             param.put("hasta", hasta);
             param.put("emision_desde", emisionDesde);
@@ -215,7 +223,7 @@ public class LlamarReportes {
             param.put("nombre_banco", nombre_banco);
             param.put("nombre_cliente", nombre_cliente);
             param.put("nombre_zona", nombre_zona);
-            param.put("tipo_cheque", tipo);
+            param.put("tipo_cheque", tCheque);
 
             String report = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/pdf/liCheques.jasper");
 

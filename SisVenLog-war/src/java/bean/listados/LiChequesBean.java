@@ -3,7 +3,9 @@ package bean.listados;
 import bean.LoginBean;
 import dao.ExcelFacade;
 import dao.ClientesFacade;
+import dao.BancosFacade;
 import dao.LiChequesFacade;
+import dao.ZonasFacade;
 import entidad.Bancos;
 import entidad.Clientes;
 import entidad.Zonas;
@@ -32,6 +34,12 @@ public class LiChequesBean {
 
     @EJB
     private ClientesFacade clientesFacade;
+    
+    @EJB
+    private BancosFacade bancoFacade;
+    
+    @EJB
+    private ZonasFacade zonaFacade;
     
     @EJB
     private LiChequesFacade liChequesFacade;
@@ -143,6 +151,18 @@ public class LiChequesBean {
     
     public void ejecutar(String operacion){
         try {
+            Zonas zona;
+            if(this.zona != null){
+                zona = zonaFacade.buscarPorCodigo(this.zona.getZonasPK().getCodZona());
+            }else{
+                zona = null;
+            }
+            Bancos banco;
+            if(this.bancos != null){
+                banco = bancoFacade.find(this.bancos.getCodBanco());
+            }else{
+                banco = null;
+            }
             LlamarReportes rep = new LlamarReportes();
 
             String sql = liChequesFacade.crearSQL(getDiscriminado(), getTipo(), getCobrado(), getBancos(), dateToString(getCobroDesde()),
@@ -164,10 +184,10 @@ public class LiChequesBean {
                     nomCli = getCliente().getXnombre();
                 }
                 
-                rep.reporteLiCheques(sql, dateToString(getChequeDesde()), dateToString(getChequeHasta()), getBancos(),LoginBean.user ,nomCli, operacion,
+                rep.reporteLiCheques(sql, dateToString(getChequeDesde()), dateToString(getChequeHasta()), banco,LoginBean.user ,nomCli, operacion,
                                      dateToString(getEmisionDesde()), dateToString(getEmisionHasta()), 
                                      dateToString(getCobroDesde()), dateToString(getCobroHasta()),
-                                     getZona(),getTipo());
+                                     zona,this.tipo);
                 //rep.reporteLiCheques2(sql, dateToString(getChequeDesde()), dateToString(getChequeHasta()), getBancos().getXdesc(), nomCli, operacion);
             }
         } catch (Exception e) {
