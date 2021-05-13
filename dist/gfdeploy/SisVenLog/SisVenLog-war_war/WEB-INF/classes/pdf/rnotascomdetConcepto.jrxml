@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotascomdetConcepto" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="92139069-dc5c-4d52-abb5-a310372352ec">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="sqlConcepto" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="xdescDocParam" class="java.lang.String"/>
+	<parameter name="fdocumParam" class="java.sql.Timestamp"/>
+	<queryString>
+		<![CDATA[$P!{sqlConcepto}]]>
+	</queryString>
+	<field name="xdesc_conc" class="java.lang.String"/>
+	<variable name="DTOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="totalPorConc" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="63" splitType="Stretch">
+			<staticText>
+				<reportElement x="38" y="5" width="64" height="14" uuid="23228c4e-926b-49b4-a6ce-0132af96e0c1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="106" y="5" width="300" height="14" uuid="8f80fee8-0980-4ed8-8540-df8a54b4755e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc_conc}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="22" width="802" height="40" uuid="b8d87b4d-5d1f-4183-b90d-e10ba490c69f"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="sqlDetalle">
+					<subreportParameterExpression><![CDATA["select * from CurFin2 where xdesc_docum = '" + $P{xdescDocParam} + "' and fdocum = '" + $P{fdocumParam} + "' and xdesc_conc = '" + $F{xdesc_conc} + "'"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="xdescConcParam">
+					<subreportParameterExpression><![CDATA[$F{xdesc_conc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="CTOTAL" toVariable="DTOTAL" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rnotascomdetNotas.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="25">
+			<textField>
+				<reportElement x="295" y="6" width="180" height="14" uuid="60070969-c126-4cd0-922d-221eca3e2c87"/>
+				<textFieldExpression><![CDATA[$P{xdescDocParam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="188" y="6" width="100" height="14" uuid="1a8731be-22f6-4430-9808-573d2806f15f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL NOTAS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="480" y="3" width="100" height="1" uuid="9b0d620d-3b0c-423b-9638-dc42f602d406"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="480" y="7" width="96" height="14" uuid="6247021f-85c7-4256-8b07-8232f7c2daa2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

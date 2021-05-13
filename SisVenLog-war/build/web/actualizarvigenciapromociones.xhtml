@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" onkeypress="if (event.keyCode == 13) {
+                                    return false;
+                                }">
+                            <center>
+                                <p:panel id="pnlActualizarPromocion" header="ACTUALIZAR VIGENCIA DE PROMOCIONES"
+                                         style="width: 70%;">
+                                    <p:growl id="idGrowl" showDetail="true"/>
+
+                                    <style>
+                                        .c1{width: 80px}
+                                        .c2{width: 100px}
+                                        .c3{width: 230px}
+                                        .c4{width: 330px}
+                                    </style>
+
+                                    <p:remoteCommand name="leer" update="idXNroPromo,idLPromos,idfechadesde" process="@this,idNroPromo"
+                                                     actionListener="#{actualizarvigenciapromocionesBean.visualizarPromo}"/>
+                                    <h:panelGrid columns="5" columnClasses="c1">
+                                        <p:outputLabel style="float: right; font-weight: bold;" value="Promoción:"/>
+                                        <p:inputText onkeypress="if (event.keyCode == 13) {
+                                                    leer()
+                                                }" style="width: 150px" id="idNroPromo" placeholder="nro_promo" 
+                                                     value="#{actualizarvigenciapromocionesBean.nro_promo}"/>
+                                        <p:commandButton 
+                                            oncomplete="PF('dlgPromocion').show()"
+                                            update="formBusZona"
+                                            icon="fa fa-search"
+                                            styleClass="blue-btn raised-btn" 
+                                            style="width: 30px;"
+                                            process="@this"
+                                            ajax="true"/>
+                                        <p:inputText id="idXNroPromo" style="width: 200px" readonly="true" placeholder="x_nro_promo"
+                                                     value="#{actualizarvigenciapromocionesBean.promocion.xdesc}" />
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" columnClasses="c1,c4">
+                                        <p:outputLabel value=""/>
+                                        <p:inputText id="idLPromos" style="width: 97%" placeholder="lpromos" 
+                                                     value="#{actualizarvigenciapromocionesBean.lpromos}" />
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" >
+                                        <p:outputLabel value="Fecha Final Actual:" style="float: right; font-weight: bold;"/>
+                                        <p:inputText id="idfechadesde" readonly="true" value="#{actualizarvigenciapromocionesBean.promocion.frigeDesde}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:inputText>
+
+                                        <p:outputLabel for="idNuevaFechaInicial" value="Nueva Fecha Final:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="idNuevaFechaInicial" value="#{actualizarvigenciapromocionesBean.l_fnueva}" size="15"
+                                                    required="true" requiredMessage="Nueva Fecha Final es obligatorio."
+                                                    showOn="button" style="width: 60px;" locale="es" mask="true" pattern="dd/MM/yyyy" />
+                                    </h:panelGrid>
+
+                                    <p:commandButton actionListener="#{actualizarvigenciapromocionesBean.actualizarPromocion}"
+                                                     process="@this,idNuevaFechaInicial,idLPromos"
+                                                     update="idGrowl,idNuevaFechaInicial,idLPromos"
+                                                     value="PROCESO" icon="fa fa-check"
+                                                     styleClass="green-btn raised-btn"
+                                                     style="width: 120px;"/>
+
+                                </p:panel>
+                            </center>
+                        </h:form>
+                        <h:form id="formPromocion"  prependId="false">
+
+                            <p:growl id="msgPromocion" showDetail="true"/>
+
+                            <p:dialog header="Buscar Promoción"
+                                      widgetVar="dlgPromocion"
+                                      modal="true"
+                                      closable="true"
+                                      closeOnEscape="true"
+                                      resizable="false"
+                                      width="700">
+
+                                <h:panelGrid id="pnlBusClie_cc" columns="2">
+
+                                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                                    <h:panelGrid columns="2">
+                                        <p:inputText id="idFiltro"
+                                                     value="#{actualizarvigenciapromocionesBean.filtro}"
+                                                     style="width: 200px;">
+                                            <p:tooltip  for="idFiltro" value="Ingrese Código, o Descripción." position="bottom"/>
+
+                                        </p:inputText>
+
+                                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                                         style="width: 100px;" 
+                                                         process="@this,idFiltro"
+                                                         actionListener="#{actualizarvigenciapromocionesBean.listarPromocionBuscador()}"
+                                                         update="idTablaPromociones"/>
+
+
+                                    </h:panelGrid>
+
+
+                                </h:panelGrid>
+
+                                <p:dataTable id="idTablaPromociones"
+                                             var="detalle1"
+                                             value="#{actualizarvigenciapromocionesBean.listaPromociones}"
+                                             paginator="true"
+                                             rows="5"
+                                             rowsPerPageTemplate="5,10"
+                                             emptyMessage="Sin datos para mostrar."
+                                             style="width: 98%;"
+                                             rowKey="#{detalle1.promocionesPK.codEmpr}#{detalle1.promocionesPK.nroPromo}"
+                                             selection="#{actualizarvigenciapromocionesBean.promocion}"
+                                             selectionMode="single"
+                                             paginatorPosition="bottom">
+
+                                    <p:ajax event="rowSelect"
+                                            update=":form:idNuevaFechaInicial,:form:idLPromos,
+                                            :form:idXNroPromo,:form:idfechadesde"
+                                            oncomplete="PF('dlgPromocion').hide()"
+                                            listener="#{actualizarvigenciapromocionesBean.onChangePromocion}"/>
+
+
+                                    <p:column headerText="Coódigo" width="100">
+                                        <h:outputText value="#{detalle1.promocionesPK.nroPromo}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Descripción" width="100">
+                                        <h:outputText value="#{detalle1.xdesc}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>

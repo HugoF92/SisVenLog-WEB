@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboProvPP" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6eb08688-9ead-4365-b242-3d635d911486">
+	<property name="ireport.zoom" value="1.1269722013523686"/>
+	<property name="ireport.x" value="124"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="usu_imprime" class="java.lang.String"/>
+	<parameter name="fechaDesde" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fechaHasta" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sql" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nroReciboDesde" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nroReciboHasta" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="provDesc" class="java.lang.String"/>
+	<parameter name="provCod" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\jvera\\Documents\\Proyectos\\sisVenLog\\reportes\\AT_2\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{sql}]]>
+	</queryString>
+	<field name="cod_proveed" class="java.lang.Short"/>
+	<variable name="icheques_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="iefectivo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="iretencion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="irecibo_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="138" splitType="Stretch">
+			<staticText>
+				<reportElement x="178" y="52" width="101" height="14" uuid="eb89e586-b220-4b75-ba58-bd9a26824a61"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="431" y="52" width="50" height="14" uuid="d77884d0-4946-41d2-8c59-e5cb61e33303"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="105" width="68" height="15" uuid="bac79874-c9db-47d6-851f-fba98f676f17"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NRO. RECIBO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="103" width="799" height="1" uuid="caf6f88c-2649-40e6-a12e-7e180a65f0e7"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="32" width="802" height="14" uuid="326a7998-0f0d-4d4e-8400-d5560a357f47"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBOS DE FACTURAS DE COMPRAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="16" width="101" height="14" uuid="c7ba82dc-a8a4-468e-8b54-0c24059c853a"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stock y Cta. Cte.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="101" height="16" uuid="986423d4-af2a-47f2-951b-c94962ecd4ec"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENLOG S.A.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="725" y="2" width="75" height="14" uuid="6891f4ce-0949-43c7-a921-454b468a2bb8"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="678" y="16" width="121" height="14" uuid="5c8a919a-2a9e-4bf3-88f9-aedcff776451"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[rreciboscom]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="676" y="2" width="44" height="14" uuid="8f32f822-47d9-4e50-b62f-6adc192d9bbe"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="69" width="101" height="14" uuid="71a62a94-ad27-4ef1-a6bd-9d537cb41d9a"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Recibo Inicial:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="69" width="99" height="14" uuid="b2fdd047-b894-49c2-90b8-7e62a1f9104f"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Recibo Final:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="178" y="85" width="101" height="14" uuid="8dae5d02-8047-4d88-aa3d-ed9452aabf59"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="120" width="68" height="15" uuid="e5b8c38a-3a50-4441-8d64-9aa24d7fa144"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVEEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="124" y="105" width="68" height="15" uuid="1befab94-7427-40b2-8f47-ba1bc8dea453"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[F.RECIBO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="105" width="65" height="15" uuid="e42ce344-3132-48e3-8862-7698928966e8"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="487" y="105" width="68" height="15" uuid="26781999-3490-48c6-8f17-bf8dea820256"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHEQUES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="105" width="68" height="15" uuid="24488f24-2e7d-4213-a314-4a52a0019afd"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RETENCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="698" y="105" width="91" height="15" uuid="c9099cce-092c-4fc7-a2e8-19f6a3c063c5"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE RECIBO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="136" width="799" height="1" uuid="5928c32e-63c9-4cfd-9c27-e520f2ffe899"/>
+			</line>
+			<staticText>
+				<reportElement x="368" y="105" width="68" height="15" uuid="5886303d-6e04-42c3-b415-4882e2f6fbac"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EFECTIVO]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="282" y="52" width="100" height="14" uuid="a2881d8d-d353-42c5-8ce0-515381cd973e"/>
+				<textFieldExpression><![CDATA[$P{fechaDesde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="489" y="52" width="100" height="14" uuid="fd43f959-203e-47e2-bb7a-fb0ea6eabc4f"/>
+				<textFieldExpression><![CDATA[$P{fechaHasta}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="282" y="69" width="100" height="14" uuid="1fb65bc9-fd29-4af5-9d1c-cdb92cdc195a"/>
+				<textFieldExpression><![CDATA[$P{nroReciboDesde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="489" y="69" width="100" height="14" uuid="5ac69e5f-39ea-465b-8799-2babec7b7536"/>
+				<textFieldExpression><![CDATA[$P{nroReciboHasta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="85" width="306" height="15" uuid="7bbd9a5c-f3bc-4647-88b8-304851e004b0"/>
+				<textFieldExpression><![CDATA[$P{provDesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="85" width="67" height="15" uuid="fb7f4b45-fd8f-45b5-b2b4-819cf61df774"/>
+				<textFieldExpression><![CDATA[$P{provCod}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="299" y="120" width="99" height="15" uuid="f5c18ca9-b706-4e6f-90dd-85984646b01a"/>
+				<textElement textAlignment="Left">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACIONES]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<subreport>
+				<reportElement x="2" y="2" width="797" height="25" uuid="330331ff-e3bf-4301-b214-8f5b841eac77"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="nroRecHasta">
+					<subreportParameterExpression><![CDATA[$P{nroReciboHasta}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fechaRecHasta">
+					<subreportParameterExpression><![CDATA[$P{fechaHasta}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="nroRecDesde">
+					<subreportParameterExpression><![CDATA[$P{nroReciboDesde}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cod_prov_det">
+					<subreportParameterExpression><![CDATA[$F{cod_proveed}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fechaRecDesde">
+					<subreportParameterExpression><![CDATA[$P{fechaDesde}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="iefectivo_1" toVariable="iefectivo_1" calculation="Sum"/>
+				<returnValue subreportVariable="icheques_1" toVariable="icheques_1" calculation="Sum"/>
+				<returnValue subreportVariable="iretencion_1" toVariable="iretencion_1" calculation="Sum"/>
+				<returnValue subreportVariable="irecibo_1" toVariable="irecibo_1" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reciboProvPPSub.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="8" width="63" height="14" uuid="2f32d0d9-5835-43b0-999d-23a930fcf144"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Impreso el:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="74" y="8" width="111" height="14" uuid="dd04c650-f64e-419a-8c74-c32a8acabd43"/>
+				<textElement>
+					<font size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="3" y="1" width="799" height="1" uuid="642b4c76-c2d8-4f5b-ab24-f0b7fa7db180"/>
+			</line>
+			<textField>
+				<reportElement x="217" y="8" width="100" height="16" uuid="babb5227-57a5-4b63-ae1d-6d0151a40736"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usu_imprime}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="588" y="8" width="80" height="14" uuid="92456382-90d7-4600-9e51-ef0518ffbd3f"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="668" y="8" width="40" height="14" uuid="c69b9369-898f-411a-a855-61007020e929"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="9" y="22" width="149" height="14" uuid="4548e667-8b80-45ca-a42b-860cdfe83bcb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[*FIN DEL INFORME*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="6" width="147" height="15" uuid="77fdce0b-ef69-457f-aa50-4b02cc70ae59"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL RECIBOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" x="185" y="14" width="0" height="0" uuid="40638229-1d05-4555-827a-0a4c8422d4fd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<line>
+				<reportElement x="351" y="3" width="438" height="1" uuid="3a8ba28b-1f0d-41f5-96b0-a4e2f6822a0c"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="461" y="6" width="94" height="14" uuid="716c7752-5b33-4ba5-800b-895d9b9a206f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{icheques_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="348" y="6" width="88" height="14" uuid="73e5b8d2-dffb-4481-b94b-efc982afc25c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iefectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="577" y="6" width="91" height="14" uuid="ead39424-4379-48b6-ab8c-09e1204fb56e"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{iretencion_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="698" y="6" width="91" height="14" uuid="5606c8ff-b826-4190-b4f1-190be1e6fffc"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{irecibo_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

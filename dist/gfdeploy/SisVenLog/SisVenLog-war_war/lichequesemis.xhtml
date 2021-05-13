@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiApli" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiApli" header="LISTADO DE CHEQUES EMITIDOS"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="2" >
+
+                                        <p:outputLabel value="Fecha Cheque Desde:" style="float: right; font-weight: bold; width: 160px"/>
+
+
+                                        <p:calendar id="desde1" value="#{liChequesEmisBean.chequeDesde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                            <p:ajax event="dateSelect" update="hasta1" />
+                                        </p:calendar>
+
+
+                                        <p:outputLabel value="Fecha Cheque Hasta:" style="float: right; font-weight: bold;  width: 160px"/>
+
+                                        <p:calendar id="hasta1" value="#{liChequesEmisBean.chequeHasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es" 
+                                                    mindate="#{liChequesEmisBean.chequeDesde}"/>
+
+                                        <p:outputLabel value="Fecha Emision Desde:" style="float: right; font-weight: bold;  width: 160px"/>
+
+                                        <p:calendar id="desde2" value="#{liChequesEmisBean.emisionDesde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                            <p:ajax event="dateSelect" update="hasta2" />
+                                        </p:calendar>
+
+
+                                        <p:outputLabel value="Fecha Emision Hasta:" style="float: right; font-weight: bold;  width: 160px"/>
+
+                                        <p:calendar id="hasta2" value="#{liChequesEmisBean.emisionHasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es" 
+                                                    mindate="#{liChequesEmisBean.emisionDesde}"/>
+                                        
+                                        <p:outputLabel value="Fecha Cobro Desde:" style="float: right; font-weight: bold;  width: 160px"/>
+
+                                        <p:calendar id="desde3" value="#{liChequesEmisBean.cobroDesde}" 
+                                                    showOn="button" style="width: 60px;" locale="es">
+                                            <p:ajax event="dateSelect" update="hasta3" />
+                                        </p:calendar>
+
+
+                                        <p:outputLabel value="Fecha Cobro Hasta:" style="float: right; font-weight: bold;  width: 160px"/>
+
+                                        <p:calendar id="hasta3" value="#{liChequesEmisBean.cobroHasta}" 
+                                                    showOn="button" style="width: 60px;" locale="es" 
+                                                    mindate="#{liChequesEmisBean.cobroDesde}"/>
+
+                                        <p:outputLabel value="Proveedor:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{liChequesEmisBean.proveedores}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 200px;" converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{proveedoresBean.listar()}" var="prov"
+                                                           itemValue="#{prov}"
+                                                           itemLabel="#{prov.xnombre}"/>
+                                        </p:selectOneMenu>  
+                                        
+                                        <p:outputLabel value="Banco:" style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneMenu value="#{liChequesEmisBean.bancos}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 200px;" converter="#{BancosConverter}">
+                                            <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                            <f:selectItems value="#{bancoBean.listar()}" var="banc"
+                                                           itemValue="#{banc}"
+                                                           itemLabel="#{banc.xdesc}"/>
+                                        </p:selectOneMenu>  
+
+                                        <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneRadio value="#{liChequesEmisBean.estado}" 
+                                                          layout="grid" columns="1" 
+                                                          tabindex="3">
+                                            <f:selectItem itemLabel="Todos" itemValue="T" />
+                                            <f:selectItem itemLabel="Cobrado" itemValue="S" />
+                                            <f:selectItem itemLabel="No Cobrado" itemValue="N" />
+                                        </p:selectOneRadio>
+                                        
+                                        <p:outputLabel value="  " style="float: right; font-weight: bold;"/>
+
+                                        <p:selectOneRadio value="#{liChequesEmisBean.discriminado}" 
+                                                          layout="grid" columns="1" 
+                                                          tabindex="3">
+                                            <f:selectItem itemLabel="No Discriminar" itemValue="D" />
+                                            <f:selectItem itemLabel="Por Banco" itemValue="B" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+
+
+
+                                    <br></br>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liChequesEmisBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{liChequesEmisBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+
+                                    </p:commandLink>
+
+
+
+                                </p:panel>
+
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

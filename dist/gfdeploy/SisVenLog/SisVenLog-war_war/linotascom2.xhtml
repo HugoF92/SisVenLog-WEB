@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <style type="text/css">
+                .ui-datalist .ui-datalist-content {
+                        border:0 none
+                }
+
+                .ui-datalist ul {
+                        padding:0px 0px 10px;
+                        margin: 5px 0;
+                }
+
+                .label, .value {
+                        float: right; 
+                        font-weight: bold;
+                }
+
+                .output {
+                        font-weight: bold;
+                }
+
+                .ui-selectmanymenu {
+                        width: 350px;
+                }
+            </style>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiRetornoRecibo" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiRetornoRecibo" header="LISTADO DE NOTAS DE COMPRAS"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="2" id="panelPrincipal" cellspacing="40">
+                                    <h:panelGrid columns="2">
+
+                                        <p:outputLabel value="Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaDesde" value="#{listadoNotasComprasBean.fechaDesde}" 
+                                                    showOn="button" style="width: 60px;">  
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaHasta" value="#{listadoNotasComprasBean.fechaHasta}" 
+                                                    showOn="button" style="width: 60px;"/>
+                                        
+                                        <p:outputLabel value="Proveedor:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionProveedor" value="#{listadoNotasComprasBean.proveedor}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{ProveedoresConverter}">
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{proveedoresBean.listar()}" var="proveedor" 
+                                                           itemValue="#{proveedor}" 
+                                                           itemLabel="#{proveedor.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Tipo Documento:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionTipoDocumento" value="#{listadoNotasComprasBean.tipoDocumento}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{TiposDocumentosConverter}">
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{tipoDocumentoBean.listarTiposDocumentosLiNotasComp2()}" var="tipoDocumento" 
+                                                           itemValue="#{tipoDocumento}" 
+                                                           itemLabel="#{tipoDocumento.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Concepto:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionConcepto" value="#{listadoNotasComprasBean.concepto}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{ConceptosDocumentosConverter}" >
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{conceptoDocumentoBean.listarTiposDocumentosLiNotasComp2()}" var="concepto" 
+                                                           itemValue="#{concepto}" 
+                                                           itemLabel="#{concepto.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Sublinea:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionSublinea" value="#{listadoNotasComprasBean.sublinea}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{SublineasConverter}" >
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems value="#{sublineasBean.listar()}" var="sublinea" 
+                                                           itemValue="#{sublinea}" 
+                                                           itemLabel="#{sublinea.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        
+                                    </h:panelGrid>
+                                        <h:panelGrid columns="1" cellspacing="0">
+                                            <p:outputLabel value="Tipo Listado " style="float: left; font-weight: bold;"/>                                       
+                                            <h:panelGrid columns="1" style="margin: 0px" cellpadding="0">
+                                                <p:selectOneRadio id="seleccionFecha" value="#{listadoNotasComprasBean.tipoListado}"  
+                                                                  layout="grid" columns="1" 
+                                                                  style="border: #cccccc 1px solid; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; margin: 0px;">
+                                                    <f:selectItem itemLabel="Con Detalles" itemValue="conDetalle" />
+                                                    <f:selectItem itemLabel="Resumen" itemValue="resumen" />
+                                                </p:selectOneRadio>
+                                            </h:panelGrid>
+
+                                        </h:panelGrid>
+                                    </h:panelGrid>  <!-- panelPrincipal -->
+                                    <br></br>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoNotasComprasBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoNotasComprasBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                </p:panel>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

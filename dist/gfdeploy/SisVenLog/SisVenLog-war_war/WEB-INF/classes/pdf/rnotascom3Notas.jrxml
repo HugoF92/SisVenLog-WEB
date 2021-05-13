@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotascomdetNotas" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="aca3f338-e972-43e2-99d4-72bfe26a6e24">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sqlDetalle" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\jvera\\Documents\\Proyectos\\sisVenLog\\reportes\\AT_7 listado de notas de compras\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="xdescConcParam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sqlDetalle}]]>
+	</queryString>
+	<field name="nro_nota" class="java.math.BigDecimal"/>
+	<field name="cconc" class="java.lang.String"/>
+	<field name="fdocum" class="java.sql.Timestamp"/>
+	<field name="nrofact" class="java.math.BigDecimal"/>
+	<field name="nctipo_docum" class="java.lang.String"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="ncod_proveed" class="java.lang.Short"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="xdesc_conc" class="java.lang.String"/>
+	<field name="com_ctipo_docum" class="java.lang.String"/>
+	<field name="fac_ttotal" class="java.math.BigDecimal"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="xdesc_docum" class="java.lang.String"/>
+	<field name="ntimbrado" class="java.math.BigDecimal"/>
+	<field name="tgravadas_10" class="java.math.BigDecimal"/>
+	<field name="tgravadas_5" class="java.math.BigDecimal"/>
+	<field name="timpuestos_10" class="java.math.BigDecimal"/>
+	<field name="timpuestos_5" class="java.math.BigDecimal"/>
+	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.math.BigDecimal"/>
+	<variable name="CTOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ttotal}]]></variableExpression>
+	</variable>
+	<variable name="CTEXENTAS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{texentas}]]></variableExpression>
+	</variable>
+	<variable name="CTGRAVADAS10" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{tgravadas_10}]]></variableExpression>
+	</variable>
+	<variable name="CTGRAVADAS5" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{tgravadas_5}]]></variableExpression>
+	</variable>
+	<variable name="CTIMPUESTOS10" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{timpuestos_10}]]></variableExpression>
+	</variable>
+	<variable name="CTIMPUESTOS5" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{timpuestos_5}]]></variableExpression>
+	</variable>
+	<summary>
+		<band height="20">
+			<textField>
+				<reportElement x="92" y="4" width="168" height="14" uuid="9fad4317-5c96-4216-b445-5b25cbff71ca"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc_conc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="703" y="4" width="78" height="14" uuid="f258bf67-88cc-4fa2-8152-de13050ef181"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="533" y="4" width="77" height="14" uuid="1bd7988d-bd23-4c95-93e7-caee5838e07c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTIMPUESTOS10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="451" y="4" width="77" height="14" uuid="aef5f924-a697-4535-bb6c-ccadb8cd3a20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTGRAVADAS5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="361" y="4" width="77" height="14" uuid="31ae735a-3549-4246-b85a-288f1d36e57c"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTGRAVADAS10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="270" y="4" width="77" height="14" uuid="95e63421-edf2-4a75-a11d-132dbdc071f4"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTEXENTAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="624" y="4" width="77" height="14" uuid="895dba9e-0c83-49fd-be62-c66356aeabd8"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{CTIMPUESTOS5}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

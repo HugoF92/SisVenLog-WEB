@@ -1,0 +1,700 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+            
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+                body .ui-dialog .ui-resizable-handle {
+                    display: block !important;
+                }
+            </style>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formRecibosCompras" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE RECIBOS A CLIENTES</h1>
+
+                            <p:growl id="msgRecibosCom" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{recibosClientesBean.limpiarReciboAClientes}"
+                                    oncomplete="PF('dlgNuevReciboCompra').show()"
+                                    update="formNuevoReciboCompra"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Eliminar"   
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    update="formInacReciboCompra"
+                                    disabled="#{recibosClientesBean.habilitaBotonEliminar}"
+                                    oncomplete="PF('dlgAnularReciboCompra').show()"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formListadoRecibosCompras" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaRecibosCompras" var="itemp"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     selectionMode="single" reflow="true"
+                                                     value="#{recibosClientesBean.listadoRecibos}" 
+                                                     rowKey="#{itemp.recibosPK.nrecibo}"
+                                                     selection="#{recibosClientesBean.reciboSeleccionado}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{recibosClientesBean.onRowSelect(event)}"
+                                                    update="formRecibosCompras"/>
+
+                                            <p:column headerText="NroRecibo" filterBy="#{itemp.recibosPK.nrecibo}"
+                                                      sortBy="#{itemp.recibosPK.nrecibo}">
+                                                <h:outputText value="#{itemp.recibosPK.nrecibo}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="CodigoCliente" filterBy="#{itemp.codCliente}"
+                                                      sortBy="#{itemp.codCliente}" filterMatchMode="contains">
+                                                <h:outputText value="#{itemp.codCliente}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="FechaRecibo" filterBy="#{recibosClientesBean.convertidorFecha(itemp.frecibo)}"
+                                                      sortBy="#{itemp.frecibo}">
+                                                <h:outputText value="#{itemp.frecibo}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Monto" filterBy="#{itemp.irecibo}"
+                                                      sortBy="#{itemp.irecibo}">
+                                                <h:outputText value="#{itemp.irecibo}" >
+                                                    <f:convertNumber type="number"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="Estado" filterBy="#{itemp.mestado}"
+                                                      sortBy="#{itemp.mestado}" filterMatchMode="contains">
+                                                <h:outputText value="#{itemp.mestado == 'A' ? 'ACTIVO' : 'ANULADO'}" />
+                                            </p:column>
+                                            
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevoReciboCompra"  prependId="false">
+                            <p:growl id="msgAgreReciboCompra" showDetail="true"/>
+
+                            <p:dialog header="Agregar Recibo"
+                                      widgetVar="dlgNuevReciboCompra"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid    id="panel_grid_nuevo_recibo_compra" 
+                                                    columns="4" 
+                                                    layout="grid"
+                                                    columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                    styleClass="ui-panelgrid-blank ui-fluid">
+                                        
+                                        <p:outputLabel value="Cliente: " style="font-weight: bold; text-align: left;"/>
+                                        <h:panelGrid id="panel_buscador_cliente" columns="3">
+                                            <p:inputText id="codigo_cliente_id" value="#{recibosClientesBean.clienteSeleccionadoLbl}" style="width: 60px;">
+                                                <p:ajax event="blur" update="cliente_descripcion" listener="#{recibosClientesBean.verificarCliente}"/>
+                                            </p:inputText>
+                                            <p:commandButton 
+                                                oncomplete="PF('dlgBusClieConsultaDocumentoVenta').show()"
+                                                update="formNuevoReciboCompra"
+                                                icon="fa fa-search"
+                                                styleClass="blue-btn raised-btn" 
+                                                style="width: 30px;"
+                                                ajax="true"/>
+                                            <p:outputLabel id="cliente_descripcion" value="#{recibosClientesBean.nombreClienteLbl}" 
+                                                           style="width: 350px;"/>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Fecha Recibo: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_recibo_id" size="8" value="#{recibosClientesBean.fechaReciboLbl}" showOn="button" style="width: 100px;"  />
+                                        
+                                        <p:outputLabel value="Nro. Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nro_recibo_id" value="#{recibosClientesBean.nroReciboLbl}" style="width: 100px;"/>
+                                        
+                                        <p:outputLabel value="Por Concepto de: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputTextarea id="observacion_id" value="#{recibosClientesBean.observacionLbl}" cols="20" rows="3"></p:inputTextarea>
+                                        
+                                        <p:outputLabel value="Total Recibo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_recibo_id" value="#{recibosClientesBean.totalReciboLbl}" style="width: 100px;" disabled="true">
+                                            <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                        
+                                    </p:panelGrid>
+                                </div>
+                                
+                                <p:panel header="Detalle">
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Agregar Documento</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- DOCUMENTOS   -->
+                                                            <div class="ui-fluid">
+                                                                <p:panelGrid id="panel_grid_nuevo_detalle_recibo_compra" 
+                                                                             columns="4" 
+                                                                             layout="grid"
+                                                                             columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                                             styleClass="ui-panelgrid-blank ui-fluid">
+
+                                                                    <p:outputLabel value="Tipo Documento: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu id="tipo_documento_id" value="#{recibosClientesBean.tipoDocumentoSeleccionadoDet}" 
+                                                                                     filterMatchMode="contains" filter="true"
+                                                                                     style="width: 150px;" converter="#{TiposDocumentosConverter}">
+                                                                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                                                        <f:selectItems value="#{recibosClientesBean.listarTiposDocumentos()}" 
+                                                                                       var="tipoDocumento"
+                                                                                       itemValue="#{tipoDocumento}"
+                                                                                       itemLabel="#{tipoDocumento.xdesc}"/>
+                                                                    </p:selectOneMenu>
+
+                                                                    <p:outputLabel value="Fecha: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:calendar id="fecha_documento_id" size="8" value="#{recibosClientesBean.fechaDocumentoDet}" showOn="button" style="width: 100px;"/>
+
+                                                                    <p:outputLabel value="Nº Documento: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputText id="nro_documento_id" value="#{recibosClientesBean.nroDocumentoDet}" style="width: 100px;"/>
+
+                                                                    <p:outputLabel value="Monto A Pagar: " style="font-weight: bold; float: right;"/>
+                                                                    <p:inputNumber id="monto_a_pagar_id" value="#{recibosClientesBean.montoAPagarDet}" 
+                                                                                   thousandSeparator="."
+                                                                                   tabindex="1" style="width: 100px;"
+                                                                                   decimalPlaces="0"/>
+
+                                                                    <p:commandButton
+                                                                        process="formNuevoReciboCompra"
+                                                                        action="#{recibosClientesBean.cargarDetalleMovimiento}"
+                                                                        update="tablaRecibosComprasDet msgAgreReciboCompra total_recibo_id tipo_documento_id fecha_documento_id nro_documento_id"
+                                                                        icon="fa fa-plus"
+                                                                        ajax="true"
+                                                                        styleClass="blue-btn raised-btn"
+                                                                        style="margin-left:10px; width: 40px;"/>
+
+                                                                </p:panelGrid>                                        
+                                                            </div>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Documentos</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE DOCUMENTOS   -->
+                                                            <p:dataTable id="tablaRecibosComprasDet" var="itemd"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaDocumentoVentaDto}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         editable="true" editMode="cell"
+                                                                         reflow="true" selectionMode="single"
+                                                                         rowKey="#{itemd.tipoDocumento.ctipoDocum}"
+                                                                         selection="#{recibosClientesBean.documentoVentaDtoSeleccionadoDet}"
+                                                                         style="width: 600px;">
+
+                                                                <p:ajax event="cellEdit" listener="#{recibosClientesBean.onCellEditDocumento}" update="tablaRecibosComprasDet msgAgreReciboCompra"/>
+
+                                                                <p:column width="30">
+                                                                    <p:commandButton 
+                                                                        process="formNuevoReciboCompra"
+                                                                        action="#{recibosClientesBean.borrarFilaDocumento(itemd)}"
+                                                                        update="tablaRecibosComprasDet total_recibo_id msgAgreReciboCompra"
+                                                                        icon="fa fa-minus"
+                                                                        ajax="true"                                                        
+                                                                        style="width: 30px;"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Tipo Doc." width="80">
+                                                                    <h:outputText value="#{itemd.tipoDocumento.ctipoDocum}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha" width="200">
+                                                                    <h:outputText value="#{itemd.fechaDocumento}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Docum." width="80">
+                                                                    <h:outputText value="#{itemd.nroDcumento}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Total Factura" width="100">
+                                                                    <h:outputText value="#{itemd.montoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Saldo Factura" width="100">
+                                                                    <h:outputText value="#{itemd.saldoDocumento}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Monto a Pagar" width="100">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{itemd.montoAPagarDocumento}">
+                                                                                <f:convertNumber type="number"/>
+                                                                            </h:outputText>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:inputNumber value="#{itemd.montoAPagarDocumento}" 
+                                                                                           style="width: 100px;"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+
+                                    <p:spacer></p:spacer>
+                                    <hr/>
+                                    <p:spacer></p:spacer>
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Agregar Cheque</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- CHEQUES   -->
+                                                            <div class="ui-fluid">
+                                                                <p:panelGrid    id="panel_grid_nuevo_cheque_emitido" 
+                                                                                columns="4" 
+                                                                                layout="grid"
+                                                                                columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                                                styleClass="ui-panelgrid-blank ui-fluid">
+
+                                                                    <p:outputLabel value="Banco: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu id="bancos_id" value="#{recibosClientesBean.bancoSeleccionadoDet}" 
+                                                                                     filterMatchMode="contains" filter="true"
+                                                                                     style="width: 150px;" converter="#{BancosConverter}">
+                                                                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                                                        <f:selectItems value="#{bancoBean.listar()}" 
+                                                                                       var="banco"
+                                                                                       itemValue="#{banco}"
+                                                                                       itemLabel="#{banco.xdesc}"/>
+                                                                    </p:selectOneMenu>
+
+                                                                    <p:outputLabel value="Tipo Cheque: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu id="tipo_cheque_id" value="#{recibosClientesBean.tipoChequeDet}" 
+                                                                                     style="width: 100px;">
+                                                                        <f:selectItem itemLabel="Diferido" itemValue="#{'D'}"/>
+                                                                        <f:selectItem itemLabel="Cobro Crédito" itemValue="#{'R'}"/>
+                                                                        <f:selectItem itemLabel="Del Día" itemValue="#{'I'}"/>
+                                                                    </p:selectOneMenu>
+
+                                                                    <p:outputLabel value="Nro Cheque:  " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputText id="nro_cheque_id" value="#{recibosClientesBean.nroChequeDet}" style="width: 100px;"/>
+
+                                                                    <p:outputLabel value="Cta. Bancaria:  " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputText id="nro_cta_banco_id" value="#{recibosClientesBean.nroCtaBancaria}" style="width: 100px;"/>
+
+                                                                    <p:outputLabel value="Fecha Cheque: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:calendar id="fecha_cheque_id" size="8" value="#{recibosClientesBean.fechaChequeDet}" showOn="button" style="width: 100px;"  />
+
+                                                                    <p:outputLabel value="Fecha Emisión: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:calendar id="fecha_emision_id" size="8" value="#{recibosClientesBean.fechaEmisionDet}" showOn="button" style="width: 100px;"  />
+
+                                                                    <p:outputLabel value="Importe Cheque: " style="font-weight: bold; float: right;"/>
+                                                                    <p:inputNumber id="importe_cheque_id" value="#{recibosClientesBean.importeChequeDet}" 
+                                                                                   thousandSeparator="."
+                                                                                   tabindex="1" style="width: 100px;"
+                                                                                   decimalPlaces="0"/>
+
+                                                                    <p:outputLabel value="Importe A Pagar: " style="font-weight: bold; float: right;"/>
+                                                                    <p:inputNumber id="importe_cheque_a_pagar_id" value="#{recibosClientesBean.importeAPagarChequeDet}" 
+                                                                                   thousandSeparator="."
+                                                                                   tabindex="1" style="width: 100px;"
+                                                                                   decimalPlaces="0"/>
+
+                                                                    <p:commandButton 
+                                                                        process="formNuevoReciboCompra"
+                                                                        action="#{recibosClientesBean.cargarDetalleCheques}"
+                                                                        update="tablaChequesDet bancos_id nro_cheque_id nro_cta_banco_id fecha_cheque_id fecha_emision_id importe_cheque_id importe_cheque_a_pagar_id total_cheques_id msgAgreReciboCompra"
+                                                                        icon="fa fa-plus"
+                                                                        ajax="true"
+                                                                        styleClass="blue-btn raised-btn"
+                                                                        style="margin-left:10px; width: 40px;"/>
+
+                                                                </p:panelGrid>
+                                                            </div>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+                                    
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Listado de Cheques</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+                                                            <!-- LISTADO DE CHEQUES   -->
+                                                            <p:dataTable id="tablaChequesDet" var="itemc"
+                                                                         emptyMessage="Sin datos para mostrar."
+                                                                         value="#{recibosClientesBean.listaChequesDet}"
+                                                                         paginator="true" rows="5" paginatorPosition="bottom"
+                                                                         editable="true" editMode="cell"
+                                                                         reflow="true" selectionMode="single"
+                                                                         rowKey="#{itemc.cheque.chequesPK.nroCheque}"
+                                                                         selection="#{recibosClientesBean.chequeSeleccionadoDet}"
+                                                                         style="width: 600px;">
+                                                                
+                                                                <p:ajax event="cellEdit" listener="#{recibosClientesBean.onCellEditBanco}" update="tablaChequesDet msgAgreReciboCompra"/>
+
+                                                                <p:column width="30">
+                                                                    <p:commandButton 
+                                                                        process="formNuevoReciboCompra"
+                                                                        action="#{recibosClientesBean.borrarFilaCheque(itemc)}"
+                                                                        update="tablaChequesDet total_cheques_id msgAgreReciboCompra"
+                                                                        icon="fa fa-minus"
+                                                                        ajax="true"                                                        
+                                                                        style="width: 30px;"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Descripción" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.bancos.xdesc}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Nro. Cheque" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.nroCheque}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Total Cheque">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber pattern="###,###.##" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Cheque" width="200">
+                                                                    <h:outputText value="#{itemc.cheque.fcheque}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Cta. Bancaria" width="80">
+                                                                    <h:outputText value="#{itemc.cheque.chequesPK.xcuentaBco}" />
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Emisión" width="200">
+                                                                    <h:outputText value="#{itemc.cheque.femision}" >
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Titular" width="300">
+                                                                    <h:outputText value="#{itemc.cheque.xtitular}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="Importe Cheque" width="200">
+                                                                    <h:outputText value="#{itemc.cheque.icheque}">
+                                                                        <f:convertNumber type="number"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+                                                                
+                                                                <p:column headerText="A Pagar" width="100">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{itemc.importePagado}">
+                                                                                <f:convertNumber type="number"/>
+                                                                            </h:outputText>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:inputNumber value="#{itemc.importePagado}" 
+                                                                                           style="width: 100px;"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                </p:panel>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+                                
+                                <center>
+                                    <h:panelGrid columns="8">
+                                        
+                                        <p:outputLabel value="Efectivo:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_efectivo_id" value="#{recibosClientesBean.totalEfectivo}" style="width: 100px;"/>
+                                        
+                                        <p:outputLabel value="Retención:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="total_retencion_id" value="#{recibosClientesBean.totalRetencion}" style="width: 100px;"/>
+                                        
+                                        <p:outputLabel value="Total Cheques:  " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="total_cheques_id" value="#{recibosClientesBean.totalCheques}" style="width: 100px;" disabled="true">
+                                             <f:convertNumber type="number"/>
+                                        </p:inputText>
+                                                                                
+                                    </h:panelGrid>
+                                </center>
+                                
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            process="formNuevoReciboCompra"
+                                            action="#{recibosClientesBean.agregarRecibo}"
+                                            update="msgAgreReciboCompra formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgNuevReciboCompra').hide()"
+                                                         update="formListadoRecibosCompras formNuevoReciboCompra"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                        
+                                    </h:panelGrid>
+                                </center>
+                                
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        <h:form id="formInacReciboCompra" prependId="false">
+
+                            <p:growl id="msgInacReciboCompra" showDetail="true"/>
+
+                            <p:dialog header="Borrar Recibo Venta"
+                                      widgetVar="dlgAnularReciboCompra"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{recibosClientesBean.anularRecibo}"
+                                            update="msgInacReciboCompra formRecibosCompras formListadoRecibosCompras"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgAnularReciboCompra').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        <h:form id="formSinGuardarReciboCompra" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarRecibos">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{recibosClientesBean.cerrarDialogoSinGuardar}" 
+                                        update="formListadoRecibosCompras"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarRecibos').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+                            
+                            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                                      height="500px" width="700px">
+                                Message: #{recibosClientesBean.tituloError} <br/>
+                                StackTrace: <h:outputText value="#{recibosClientesBean.contenidoError}" escape="false" /> <br />
+                            </p:dialog>
+
+                        </h:form>
+                        
+                        <h:form id="formBusClie_cc"  prependId="false">
+
+                            <p:growl id="msgBusCliente_cc" showDetail="true"/>
+
+                            <p:dialog header="Buscar Cliente"
+                                      widgetVar="dlgBusClieConsultaDocumentoVenta"
+                                      modal="true"
+                                      closable="true"
+                                      closeOnEscape="true"
+                                      resizable="false"
+                                      width="700">
+
+                                <p:ajax event="open"
+                                        listener="#{recibosClientesBean.inicializarBuscadorClientes}"
+                                        update="pnlBusClie_cc tablaBusClie_cc"/>
+
+                                <h:panelGrid id="pnlBusClie_cc" columns="2">
+
+                                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                                    <h:panelGrid columns="2">
+                                        <p:inputText id="filtroBusClie_cc"
+                                                     value="#{recibosClientesBean.filtro}"
+                                                     style="width: 200px;">
+                                            <p:tooltip  for="filtroBusClie_cc" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                                        </p:inputText>
+
+                                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                                         style="width: 100px;" actionListener="#{recibosClientesBean.listarClientesBuscador}"
+                                                         update="tablaBusClie_cc msgBusCliente_cc"/>
+
+
+                                    </h:panelGrid>
+
+
+                                </h:panelGrid>
+
+                                <p:dataTable id="tablaBusClie_cc"
+                                             var="detalle1"
+                                             value="#{recibosClientesBean.listaClientes}"
+                                             paginator="true"
+                                             rows="5"
+                                             rowsPerPageTemplate="5,10"
+                                             emptyMessage="Sin datos para mostrar."
+                                             style="width: 98%;"
+                                             rowKey="#{detalle1.codCliente}"
+                                             selection="#{recibosClientesBean.clientes}"
+                                             selectionMode="single"
+                                             paginatorPosition="bottom">
+
+                                    <p:ajax event="rowSelect"
+                                            listener="#{recibosClientesBean.onRowClientesSelect(event)}"/>
+
+
+                                    <p:column headerText="Codigo" width="100">
+                                        <h:outputText value="#{detalle1.codCliente}"/>
+                                    </p:column>
+
+                                    <p:column headerText="RUC" width="100">
+                                        <h:outputText value="#{detalle1.xruc}"/>
+                                    </p:column>
+
+                                    <p:column headerText="CI" width="100">
+                                        <h:outputText value="#{detalle1.xcedula}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nombre" width="200">
+                                        <h:outputText value="#{detalle1.xnombre}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+
+                            </p:dialog>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,320 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+                body .ui-dialog .ui-resizable-handle {
+                    display: block !important;
+                }
+            </style>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h1 align="center">MANTENIMIENTO DE CHEQUES EMITIDOS</h1>
+
+                        <h:form id="formBotones" prependId="false">
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    process="@this"
+                                    actionListener="#{chequesEmitidosBean.prepararDialog('ag')}"
+                                    update="formDialog"
+                                    oncomplete="PF('dlgAgregar').show()"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Modificar"
+                                    actionListener="#{chequesEmitidosBean.prepararDialog('mo')}"
+                                    update="formDialog"
+                                    oncomplete="PF('dlgAgregar').show()"
+                                    icon="fa fa-edit"
+                                    styleClass="orange-btn raised-btn" 
+                                    disabled="#{chequesEmitidosBean.deshabilitarBotonModificar}"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Eliminar"   
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    update="formDatatable"
+                                    action="#{chequesEmitidosBean.eliminarChequeEmitido}"
+                                    disabled="#{chequesEmitidosBean.deshabilitarBotonEliminar}">
+                                    <p:confirm header="Eliminar" message="¿Desea eliminar el cheque emitido
+                                               '#{chequesEmitidosBean.chequesEmitidosSeleccionado.chequesEmitidosPK.nroCheque}' del banco '#{chequesEmitidosBean.chequesEmitidosSeleccionado.bancos.xdesc}'"
+                                               icon="pi pi-info-circle"/>
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                                    <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                    <p:commandButton value="Aceptar" type="button" styleClass="ui-confirmdialog-yes" />
+                                </p:confirmDialog>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formDatatable" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable var="itemp" value="#{chequesEmitidosBean.lazyDataModel}"
+                                                     selection="#{chequesEmitidosBean.chequesEmitidosSeleccionado}"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     sortBy="#{itemp.fcheque}" sortOrder="descending"
+                                                     selectionMode="single" reflow="true" lazy="true">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{chequesEmitidosBean.onRowSelect(event)}"
+                                                    update="formBotones"/>
+
+                                            <p:column headerText="Proveedor" filterBy="#{itemp.codProveed.xnombre}" sortBy="#{itemp.codProveed.xnombre}">
+                                                <h:outputText value="#{itemp.codProveed.xnombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Fecha" filterBy="#{itemp.fcheque}" sortBy="#{itemp.fcheque}">
+                                                <h:outputText value="#{itemp.fcheque}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                            <p:column headerText="Banco" filterBy="#{itemp.bancos.xdesc}" sortBy="#{itemp.bancos.xdesc}">
+                                                <h:outputText value="#{itemp.bancos.xdesc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Monto" filterBy="#{itemp.icheque}">
+                                                <h:outputText style="float: right" value="#{itemp.icheque}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputText>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+
+                        <h:form id="formDialog" prependId="false">
+
+                            <p:dialog header="#{chequesEmitidosBean.titulo}"
+                                      widgetVar="dlgAgregar"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" 
+                                      resizable="false"
+                                      positionType="absolute">
+
+                                <p:growl id="growlCabecera" showDetail="false"/>
+
+                                <div class="ui-fluid">
+
+                                    <p:panelGrid columns="4" 
+                                                 layout="grid"
+                                                 id="cabecera"
+                                                 columnClasses="ui-g-14 ui-md-2, ui-g-10 ui-md-3,ui-g-14 ui-md-2,ui-g-10 ui-md-3" 
+                                                 styleClass="ui-panelgrid-blank ui-fluid">
+
+                                        <p:outputLabel value="Proveedor: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="codProveed" label="Proveedor" value="#{chequesEmitidosBean.chequesEmitidos.codProveed}" 
+                                                         filterMatchMode="contains" filter="true" required="true"
+                                                         converter="#{ProveedoresConverter}" disabled="#{chequesEmitidosBean.visualizar}">
+                                            <f:selectItems value="#{chequesEmitidosBean.selectItemsProveedores}" />
+                                            <p:ajax event="change" listener="#{chequesEmitidosBean.listarCompras()}" update="compras"/>
+                                        </p:selectOneMenu>
+
+                                        <h:panelGroup/>
+                                        <h:panelGroup/>
+
+                                        <p:outputLabel value="Banco: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="codBanco" label="Banco" value="#{chequesEmitidosBean.chequesEmitidos.chequesEmitidosPK.codBanco}" 
+                                                         filterMatchMode="contains" filter="true" required="true"
+                                                         disabled="#{chequesEmitidosBean.visualizar}">
+                                            <f:selectItems value="#{chequesEmitidosBean.selectItemsBancos}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:panelGroup/>
+                                        <h:panelGroup/>
+
+                                        <p:outputLabel value="Nro cheque: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nroCheque" label="Nro cheque" required="true" type="number" maxlength="12" value="#{chequesEmitidosBean.chequesEmitidos.chequesEmitidosPK.nroCheque}"
+                                                     disabled="#{chequesEmitidosBean.modificar || chequesEmitidosBean.visualizar}"/>
+
+                                        <p:outputLabel value="Cuenta del banco: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="xcuentaBco" label="Cuenta del banco" required="true" maxlength="20" value="#{chequesEmitidosBean.chequesEmitidos.xcuentaBco}"
+                                                     disabled="#{chequesEmitidosBean.modificar || chequesEmitidosBean.visualizar}"/>
+
+                                        <p:outputLabel value="Fecha del cheque: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fcheque" label="Fecha del cheque" size="8" required="true" value="#{chequesEmitidosBean.chequesEmitidos.fcheque}" 
+                                                    showOn="button" disabled="#{chequesEmitidosBean.visualizar}">
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Fecha de emisión: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="femision" label="Fecha de emisión" size="8" required="true" value="#{chequesEmitidosBean.chequesEmitidos.femision}" 
+                                                    showOn="button" disabled="#{chequesEmitidosBean.visualizar}">
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Monto: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber id="icheque" label="Monto" required="true" value="#{chequesEmitidosBean.chequesEmitidos.icheque}" disabled="#{chequesEmitidosBean.visualizar}"
+                                                       decimalSeparator="," padControl="false" thousandSeparator="."/>
+
+                                        <p:outputLabel value="Retención: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputNumber value="#{chequesEmitidosBean.chequesEmitidos.iretencion}" disabled="#{chequesEmitidosBean.visualizar}"
+                                                       decimalSeparator="," padControl="false" thousandSeparator="."/>
+
+                                    </p:panelGrid>
+                                </div>
+
+                                <p:panel header="Detalle" rendered="#{!chequesEmitidosBean.modificar}">
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+                                                            <div class="ui-fluid">
+
+                                                                <p:panelGrid id="panelGridDetalles" 
+                                                                             columns="4" 
+                                                                             layout="grid"
+                                                                             columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                                             styleClass="ui-panelgrid-blank ui-fluid">
+
+                                                                    <p:outputLabel value="Tipo documento: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu required="true" value="#{chequesEmitidosBean.chequesEmitidosDet.chequesEmitidosDetPK.ctipoDocum}" 
+                                                                                     filterMatchMode="contains" filter="true"
+                                                                                     disabled="#{chequesEmitidosBean.visualizar}">
+                                                                        <f:selectItems value="#{chequesEmitidosBean.selectItemsTiposDocumentos}"/>
+                                                                        <p:ajax event="change" listener="#{chequesEmitidosBean.listarCompras()}" update="compras"/>
+                                                                    </p:selectOneMenu>
+
+                                                                    <p:outputLabel value="Fecha factura: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:calendar size="8" value="#{chequesEmitidosBean.chequesEmitidosDet.ffactur}" 
+                                                                                showOn="button" disabled="#{chequesEmitidosBean.visualizar}">
+                                                                    </p:calendar>
+
+                                                                    <p:outputLabel value="Factura: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:selectOneMenu id="compras" value="#{chequesEmitidosBean.chequesEmitidosDet.chequesEmitidosDetPK.nrofact}" 
+                                                                                     filterMatchMode="contains" filter="true"
+                                                                                     disabled="#{chequesEmitidosBean.visualizar}">
+                                                                        <f:selectItems value="#{chequesEmitidosBean.selectItemsCompras}"/>
+                                                                    </p:selectOneMenu>
+
+                                                                    <p:outputLabel value="Monto Factura: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputNumber value="#{chequesEmitidosBean.chequesEmitidosDet.isaldo}" disabled="true"
+                                                                                   decimalSeparator="," padControl="false" thousandSeparator="."/>
+
+                                                                    <p:outputLabel value="Monto: " style="font-weight: bold; text-align: left;"/>
+                                                                    <p:inputNumber value="#{chequesEmitidosBean.chequesEmitidosDet.ipagado}" disabled="#{chequesEmitidosBean.visualizar}"
+                                                                                   decimalSeparator="," padControl="false" thousandSeparator="."/>
+
+                                                                    <p:commandButton
+                                                                        process="panelGridDetalles"
+                                                                        resetValues="true"
+                                                                        icon="fa fa-plus"
+                                                                        styleClass="blue-btn raised-btn"
+                                                                        style="margin-left:10px; width: 40px;"/>                   
+
+                                                                </p:panelGrid>
+
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="1">
+                                        <tr bgcolor="#3984b8" align="center">
+                                            <td><b><font color="#FFFFFF">Detalles de cheque emitido</font></b></td>
+                                        </tr>
+                                        <tr bgcolor="#3984b8">
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="4">
+                                                    <tr bgcolor="#FFFFFF">
+                                                        <td>
+
+
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table> 
+
+                                    <p:spacer></p:spacer>
+                                    <p:spacer></p:spacer>
+
+                                </p:panel>
+
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid id="totales" columns="6">
+
+
+
+                                    </h:panelGrid>
+                                </center>
+
+                                <p:spacer></p:spacer>
+                                <p:spacer></p:spacer>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            process="cabecera @this"
+                                            action="#{chequesEmitidosBean.agregarChequeEmitido}"
+                                            oncomplete="PF('dlgAgregar').hide();"
+                                            update="formDatatable growlCabecera cabecera"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn"
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+                                        <p:commandButton value="Cancelar" onclick="PF('dlgAgregar').hide()"
+                                                         styleClass="red-btn raised-btn" icon="fa fa-times" type="button"
+                                                         style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+                                    </h:panelGrid>
+
+                                </center>
+
+                            </p:dialog>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

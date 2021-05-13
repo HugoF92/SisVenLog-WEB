@@ -1,0 +1,336 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnCanales" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE CANALES DE COMPRA</h1>
+
+                            <p:growl id="msgCanales" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{canalesBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevCanales').show()"
+                                    update="formNuevaCanales"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditCanales').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{canalesBean.habBtnEdit}"
+                                    update="pnlEditCanales"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{canalesBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacCanales').show()"
+                                    update="formInacCanales"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formCanales" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaCanales" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{canalesBean.listaCanales}" rowKey="#{itemp.xdesc}"
+                                                     selection="#{canalesBean.canales}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{canalesBean.onRowSelect(event)}"
+                                                    update="formBtnCanales"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.canalesCompraPK.ccanalCompra}"
+                                                      sortBy="#{itemp.canalesCompraPK.ccanalCompra}">
+                                                <h:outputText value="#{itemp.canalesCompraPK.ccanalCompra}" />
+                                            </p:column>
+
+                                            <p:column headerText="Proveedor" filterBy="#{itemp.proveedores.xnombre}"
+                                                      sortBy="#{itemp.proveedores.xnombre}">
+                                                <h:outputText value="#{itemp.proveedores.xnombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaCanales"  prependId="false">
+                            <p:growl id="msgAgreCanales" showDetail="true"/>
+
+                            <p:dialog header="Agregar Canales de Compra"
+                                      widgetVar="dlgNuevCanales"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{canalesBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Codigo" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codCanales" value="#{canalesBean.canales.canalesCompraPK.ccanalCompra}" 
+                                                 tabindex="1" style="width: 50px;" maxlength="2"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descCanales" value="#{canalesBean.canales.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
+
+                                    <h:panelGrid columns="3" id="agreCanalPnlProv">
+                                        <p:inputText id="agreCanalProv" value="#{buscadorBean.resultado.dato1}" 
+                                                     tabindex="2" style="width: 30px;"
+                                                     onkeypress="if (event.keyCode == 13) {
+                                                     onchange();
+                                                     return false;
+                                                 }">
+                                            <p:ajax event="blur" 
+                                                    update="agreCanalPnlProv msgAgreCanales"
+                                                    listener="#{depositosBean.buscadorZonaTab(event)}"/>
+
+                                            <p:ajax event="change" listener="#{depositosBean.buscadorZonaTab(event)}"
+                                                    update="agreCanalPnlProv msgAgreCanales"/>
+
+                                        </p:inputText>
+                                        <p:commandButton 
+                                            actionListener="#{canalesBean.buscarProveedor()}"
+                                            update="formBuscador"
+                                            icon="fa fa-search"
+                                            styleClass="blue-btn raised-btn" 
+                                            style="width: 30px;"
+                                            ajax="true"/>
+                                        <p:outputLabel id="agreCanalDescProv" value="#{buscadorBean.resultado.dato2}" 
+                                                       style="width: 250px;"/>
+
+                                    </h:panelGrid>
+
+
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{canalesBean.insertar()}"
+                                            update="msgAgreCanales formCanales"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{canalesBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacCanales" prependId="false">
+
+                            <p:growl id="msgInacCanales" showDetail="true"/>
+
+                            <p:dialog header="Borrar Canales"
+                                      widgetVar="dlgInacCanales"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{canalesBean.borrar()}"
+                                            update="msgInacCanales formBtnCanales formCanales"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacCanales').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarCanales"  prependId="false">
+                            <p:growl id="msgEditCanales" showDetail="true"/>
+
+                            <p:dialog header="Editar Canales de Compra"
+                                      widgetVar="dlgEditCanales"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{canalesBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditCanales" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codCanalesEdit" value="#{canalesBean.canales.canalesCompraPK.ccanalCompra}" 
+                                                 tabindex="1" style="width: 50px;" disabled="true"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descCanalesEdit" value="#{canalesBean.canales.xdesc}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                    
+                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
+
+                                    <h:panelGrid columns="3" id="EditCanalPnlProv">
+                                        <p:inputText id="editCanalProv" value="#{buscadorBean.resultado.dato1}" 
+                                                     tabindex="2" style="width: 30px;"
+                                                     onkeypress="if (event.keyCode == 13) {
+                                                     onchange();
+                                                     return false;
+                                                 }">
+                                            <p:ajax event="blur" 
+                                                    update="EditCanalPnlProv msgAgreCanales"
+                                                    listener="#{depositosBean.buscadorZonaTab(event)}"/>
+
+                                            <p:ajax event="change" listener="#{depositosBean.buscadorZonaTab(event)}"
+                                                    update="EditCanalPnlProv msgEditCanales"/>
+
+                                        </p:inputText>
+                                        <p:commandButton 
+                                            actionListener="#{canalesBean.buscarProveedor()}"
+                                            update="formBuscador"
+                                            icon="fa fa-search"
+                                            styleClass="blue-btn raised-btn" 
+                                            style="width: 30px;"
+                                            ajax="true"/>
+                                        <p:outputLabel id="editCanalDescProv" value="#{buscadorBean.resultado.dato2}" 
+                                                       style="width: 250px;"/>
+
+                                    </h:panelGrid>
+
+
+                                </h:panelGrid>
+
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{canalesBean.editar()}"
+                                            update="msgEditCanales formBtnCanales formCanales"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditCanales').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarCanales" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarCanales">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{canalesBean.cerrarDialogosAgregar()}" 
+                                        update="formCanales"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarCanales').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

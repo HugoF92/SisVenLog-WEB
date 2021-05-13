@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotascom3Concepto" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="92139069-dc5c-4d52-abb5-a310372352ec">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\jvera\\Documents\\Proyectos\\sisVenLog\\reportes\\AT_7 listado de notas de compras\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sqlConcepto" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="xdescDocParam" class="java.lang.String"/>
+	<parameter name="fdocumParam" class="java.sql.Timestamp"/>
+	<queryString>
+		<![CDATA[$P!{sqlConcepto}]]>
+	</queryString>
+	<field name="xdesc_conc" class="java.lang.String"/>
+	<variable name="DTOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="totalPorConc" class="java.math.BigDecimal"/>
+	<variable name="DTEXENTAS" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="DTGRAVADAS10" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="DTGRAVADAS5" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="DTIMPUESTOS10" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="DTIMPUESTOS5" class="java.math.BigDecimal" calculation="Sum"/>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="4" width="802" height="23" uuid="b8d87b4d-5d1f-4183-b90d-e10ba490c69f"/>
+				<subreportParameter name="sqlDetalle">
+					<subreportParameterExpression><![CDATA["select * from CurFin2 where xdesc_docum = '" + $P{xdescDocParam} + "' and xdesc_conc = '" + $F{xdesc_conc} + "'"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="xdescConcParam">
+					<subreportParameterExpression><![CDATA[$F{xdesc_conc}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="CTOTAL" toVariable="DTOTAL" calculation="Sum"/>
+				<returnValue subreportVariable="CTEXENTAS" toVariable="DTEXENTAS" calculation="Sum"/>
+				<returnValue subreportVariable="CTGRAVADAS10" toVariable="DTGRAVADAS10" calculation="Sum"/>
+				<returnValue subreportVariable="CTGRAVADAS5" toVariable="DTGRAVADAS5" calculation="Sum"/>
+				<returnValue subreportVariable="CTIMPUESTOS10" toVariable="DTIMPUESTOS10" calculation="Sum"/>
+				<returnValue subreportVariable="CTIMPUESTOS5" toVariable="DTIMPUESTOS5" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rnotascom3Notas.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="25">
+			<textField>
+				<reportElement x="90" y="6" width="172" height="14" uuid="60070969-c126-4cd0-922d-221eca3e2c87"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{xdescDocParam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="49" y="6" width="36" height="14" uuid="1a8731be-22f6-4430-9808-573d2806f15f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="270" y="3" width="509" height="1" uuid="9b0d620d-3b0c-423b-9638-dc42f602d406"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="703" y="7" width="76" height="14" uuid="6247021f-85c7-4256-8b07-8232f7c2daa2"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="624" y="7" width="76" height="14" uuid="077c581e-6e5d-4b2a-92da-127a3c58ee43"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTIMPUESTOS5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="533" y="7" width="76" height="14" uuid="82c6c407-cf2e-43ac-b684-297478ce10eb"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTIMPUESTOS10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="451" y="7" width="76" height="14" uuid="da1c0759-c4f7-44c7-bab5-de31ff512c33"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTGRAVADAS5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="361" y="6" width="76" height="14" uuid="3b9382a5-cb77-48db-91b6-80b147ec0c2a"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTGRAVADAS10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="270" y="6" width="76" height="14" uuid="3a3a0d01-1013-4aca-b321-5f8fccdea5c9"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{DTEXENTAS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

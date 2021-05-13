@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="facturaF" language="groovy" pageWidth="594" pageHeight="540" whenNoDataType="BlankPage" columnWidth="554" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9947af2f-69f8-48c3-b22a-f92baafa8237">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="93"/>
+	<parameter name="desde" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hasta" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT f.*,d.pimpues, d.cant_cajas, d.cant_unid, d.cajas_bonif, d.unid_bonif,
+	 d.cod_merca, d.iprecio_caja, d.iprecio_unidad,d.pdesc as pdesc, d.igravadas, d.iexentas, ISNULL(SUBSTRING(d.xdesc,1,40),'') as xdesc,
+	 ISNULL(m.cod_barra,'') as cod_barra,0 as ibonif,
+	  e.xnombre as xnomb_vend, m.mgrav_exe,
+	 p.xdesc as xdepo, z.xdesc as xzona, m.nrelacion, p.xmarca, p.xchapa,
+	 c.xconductor as xconduc, c.xdomicilio as xdirec_c, c.xdocum, t.xtransp, t.xruc as xruc_tr , t.xdomicilio as xdirec_t, m.cod_sublinea
+     ,(select [dbo].[sp_Dinero_a_Texto](f.ttotal)) as totalletra
+     ,case when f.ctipo_docum = 'FCO' then 'CONTADO' when f.ctipo_docum = 'FCR' then 'CREDITO' end AS ctipo_docum1
+     ,case when f.ctipo_docum = 'FCO' then 'X' else '' end AS contado
+     ,case when f.ctipo_docum = 'FCR' then 'X' else '' end AS credito
+     FROM facturas f, facturas_det  d,  empleados e, mercaderias m , zonas z, depositos p left outer join conductores c
+     ON p.cod_conductor = c.cod_conductor LEFT OUTER JOIN  transportistas t
+     ON p.cod_transp = t.cod_transp
+	 WHERE  f.cod_empr = 2
+	  AND d.cod_empr = 2
+	  AND f.ffactur = d.ffactur
+	  AND f.ffactur > (GETDATE() - 360)
+	  AND f.cod_empr = d.cod_empr
+	  AND f.nrofact = d.nrofact
+	  AND d.cod_merca = m.cod_merca
+	  AND m.cod_empr = d.cod_empr
+	  AND f.cod_depo = p.cod_depo
+	  AND f.cod_zona = z.cod_zona
+	  AND f.cod_empr = p.cod_empr
+	  AND f.cod_vendedor = e.cod_empleado
+	  AND f.ctipo_docum = d.ctipo_docum
+	  AND f.cod_empr = e.cod_empr
+	  and f.ctipo_docum in ('FCO','FCR')
+	  AND f.nrofact between $P{desde} and $P{hasta}
+	  AND f.mestado = 'A'
+	  ORDER BY f.nrofact]]>
+	</queryString>
+	<field name="cod_empr" class="java.lang.Short"/>
+	<field name="nrofact" class="java.math.BigDecimal"/>
+	<field name="ctipo_docum" class="java.lang.String"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="cod_zona" class="java.lang.String"/>
+	<field name="cod_ruta" class="java.lang.Short"/>
+	<field name="cod_depo" class="java.lang.Short"/>
+	<field name="ctipo_vta" class="java.lang.String"/>
+	<field name="cod_vendedor" class="java.lang.Short"/>
+	<field name="cod_canal" class="java.lang.String"/>
+	<field name="cod_entregador" class="java.lang.Short"/>
+	<field name="nro_pedido" class="java.math.BigDecimal"/>
+	<field name="cod_cliente" class="java.lang.Integer"/>
+	<field name="mestado" class="java.lang.String"/>
+	<field name="fvenc" class="java.sql.Timestamp"/>
+	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="tgravadas" class="java.math.BigDecimal"/>
+	<field name="timpuestos" class="java.math.BigDecimal"/>
+	<field name="tdescuentos" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="isaldo" class="java.math.BigDecimal"/>
+	<field name="xobs" class="java.lang.String"/>
+	<field name="xdirec" class="java.lang.String"/>
+	<field name="xruc" class="java.lang.String"/>
+	<field name="xrazon_social" class="java.lang.String"/>
+	<field name="pinteres" class="java.math.BigDecimal"/>
+	<field name="falta" class="java.sql.Timestamp"/>
+	<field name="cusuario" class="java.lang.String"/>
+	<field name="fanul" class="java.sql.Timestamp"/>
+	<field name="cusuario_anul" class="java.lang.String"/>
+	<field name="fultim_modif" class="java.sql.Timestamp"/>
+	<field name="cusuario_modif" class="java.lang.String"/>
+	<field name="xtelef" class="java.lang.String"/>
+	<field name="xciudad" class="java.lang.String"/>
+	<field name="tnotas" class="java.math.BigDecimal"/>
+	<field name="interes" class="java.math.BigDecimal"/>
+	<field name="tgravadas_10" class="java.math.BigDecimal"/>
+	<field name="tgravadas_5" class="java.math.BigDecimal"/>
+	<field name="timpuestos_10" class="java.math.BigDecimal"/>
+	<field name="timpuestos_5" class="java.math.BigDecimal"/>
+	<field name="nplazo_cheque" class="java.lang.Short"/>
+	<field name="xfactura" class="java.lang.String"/>
+	<field name="cmotivo" class="java.lang.Short"/>
+	<field name="fvenc_impre" class="java.sql.Timestamp"/>
+	<field name="pimpues" class="java.math.BigDecimal"/>
+	<field name="cant_cajas" class="java.math.BigDecimal"/>
+	<field name="cant_unid" class="java.math.BigDecimal"/>
+	<field name="cajas_bonif" class="java.math.BigDecimal"/>
+	<field name="unid_bonif" class="java.math.BigDecimal"/>
+	<field name="cod_merca" class="java.lang.String"/>
+	<field name="iprecio_caja" class="java.math.BigDecimal"/>
+	<field name="iprecio_unidad" class="java.math.BigDecimal"/>
+	<field name="pdesc" class="java.math.BigDecimal"/>
+	<field name="igravadas" class="java.math.BigDecimal"/>
+	<field name="iexentas" class="java.math.BigDecimal"/>
+	<field name="xdesc" class="java.lang.String"/>
+	<field name="cod_barra" class="java.lang.String"/>
+	<field name="ibonif" class="java.lang.Integer"/>
+	<field name="xnomb_vend" class="java.lang.String"/>
+	<field name="mgrav_exe" class="java.lang.String"/>
+	<field name="xdepo" class="java.lang.String"/>
+	<field name="xzona" class="java.lang.String"/>
+	<field name="nrelacion" class="java.math.BigDecimal"/>
+	<field name="xmarca" class="java.lang.String"/>
+	<field name="xchapa" class="java.lang.String"/>
+	<field name="xconduc" class="java.lang.String"/>
+	<field name="xdirec_c" class="java.lang.String"/>
+	<field name="xdocum" class="java.lang.String"/>
+	<field name="xtransp" class="java.lang.String"/>
+	<field name="xruc_tr" class="java.lang.String"/>
+	<field name="xdirec_t" class="java.lang.String"/>
+	<field name="cod_sublinea" class="java.lang.Short"/>
+	<field name="totalletra" class="java.lang.String"/>
+	<field name="ctipo_docum1" class="java.lang.String"/>
+	<field name="contado" class="java.lang.String"/>
+	<field name="credito" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="159" splitType="Stretch">
+			<textField>
+				<reportElement x="44" y="69" width="185" height="10" uuid="d886bd15-d4d4-4cc4-9c5f-ee086066ab59"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdirec}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="85" width="82" height="10" uuid="dfb8b305-6e5e-494c-9f1c-68781195cf0d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xruc_tr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="253" y="103" width="64" height="10" uuid="f22ed5e3-f972-474a-8ff8-fed764b777ed"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdocum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="143" width="142" height="10" uuid="48077f6c-4133-418a-acfa-90bb5ab0da7a"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnomb_vend}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="472" y="72" width="59" height="10" uuid="4adbb669-eb97-4714-a8b1-cfe9b8dc651c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xtelef}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="84" width="164" height="10" uuid="0d2f468f-ff69-4b95-9894-1e5f6f36974b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xtransp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="104" width="139" height="10" uuid="db450b19-3d58-45ea-994b-82b3d1de08ff"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdirec_c}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="398" y="45" width="46" height="10" uuid="ca7c31e5-c571-42a6-838c-10e4ed23201c"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="143" width="63" height="10" uuid="380e5595-8b87-484d-b237-1afd56f5a6e7"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xzona}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="143" width="51" height="10" uuid="e0e1ed64-6f84-4f93-a779-270f9d1b9cf3"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdepo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="56" width="82" height="10" uuid="cd90404c-ccbb-4b41-b047-79b1f50e07a8"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xruc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="68" y="44" width="146" height="10" uuid="0a590205-f3a7-4a34-b3c6-2add167a6b51"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ffactur}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="51" y="95" width="182" height="10" uuid="df596133-09aa-4bad-b940-95b3466c8877"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdirec_t}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="445" y="45" width="45" height="10" uuid="369bfc30-3698-4820-8c56-6979defd5fbd"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="442" y="86" width="59" height="10" uuid="27bc6d7a-ebfe-467b-a4fc-351dab6897c5"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xchapa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="59" width="66" height="10" uuid="9aada97f-a0fd-4ced-a87b-dc3047a6dec8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ctipo_docum1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="52" y="104" width="169" height="10" uuid="1927ed1c-6035-4eb3-93fa-28cb937e8eab"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xconduc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="373" y="95" width="82" height="10" uuid="152c8280-ba48-43ff-8650-eeb3ba190adc"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xmarca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="438" y="17" width="105" height="13" forecolor="#333333" uuid="943f78a0-7b0a-4c3a-b8d5-25453562ca74"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xfactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="143" width="44" height="10" uuid="383413f9-c352-4344-a2d2-68cccb45f527"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="71" width="99" height="10" uuid="2b41424f-a146-4428-9822-45a3afd7ee78"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xciudad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="506" y="143" width="46" height="10" uuid="072a6fa9-5cac-4272-8076-c2b085acd6a1"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cusuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="57" width="170" height="10" uuid="ccfba0bc-468c-4dad-b662-02ef8537a69b"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xrazon_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="388" y="143" width="69" height="10" uuid="1767c6ab-e499-4bc3-903b-4684591f4088"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_pedido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="338" y="114" width="45" height="11" uuid="2ba67998-cbde-4376-b9ec-2beaff1c544b"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pimpues}.equals(10.00)?$F{igravadas}:"0"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="38" height="11" uuid="0fb4f873-2e28-40bf-8b3b-57f66a75d1e7"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="361" y="0" width="60" height="11" uuid="74c88f9e-5cd7-4db0-9277-cf4e7a2c8368"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iexentas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="0" width="28" height="11" uuid="4dadfc34-b958-4f3b-9820-61190e1ca8a7"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="0" width="125" height="11" uuid="c23a921e-c8d6-46bb-b64c-0df7e8117347"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="293" y="0" width="41" height="11" uuid="4b3da065-9786-4637-a69d-b89bb0a96629"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iprecio_unidad}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="489" y="0" width="60" height="11" uuid="dc8c03a9-b6e1-4a7e-bbc5-b62acc05049a"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pimpues}.equals(5.00)?$F{igravadas}:"0"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="39" y="0" width="20" height="11" uuid="2818983e-e3f1-4699-befb-4bfa4fac839d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cant_cajas} > 0) || ($F{cant_unid} > 0)?$F{cant_cajas}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="59" y="0" width="10" height="11" uuid="4be49830-047f-4886-9b04-8c63c65ec7e7"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cant_cajas} > 0) || ($F{cant_unid} > 0)?"/":""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="69" y="0" width="20" height="11" uuid="90d57c70-2a42-455b-a846-273a44527905"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cant_unid} > 0) || ($F{cant_cajas} > 0)?$F{cant_unid}:0]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="221" y="0" width="55" height="11" uuid="a85018cf-5778-46fa-a1f1-8881e6a44407"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="48" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="370" y="1" width="65" height="13" uuid="0fec3e17-6e87-41af-87c0-c19b958f589e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{texentas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="498" y="1" width="53" height="13" uuid="1fbda2d6-d94e-4ba1-abc2-3aaabb2484e4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgravadas_10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="16" width="345" height="13" uuid="7d11fe18-c17d-4e73-910f-bae53cc5a3aa"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalletra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="435" y="1" width="63" height="13" uuid="97cdcb03-4331-4d47-a39c-35699688658f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgravadas_5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="446" y="16" width="100" height="13" uuid="7d684cd0-47fe-41df-ac21-e21ea63ddd52"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ttotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="253" y="31" width="63" height="13" uuid="88486acb-beec-4268-8298-ed56e2e442cf"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{timpuestos_10}*-1]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="370" y="31" width="75" height="13" uuid="c76c3e0c-ad8e-466a-a386-ffee251e2447"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{timpuestos_5}+$F{timpuestos_10})*-1]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="111" y="31" width="73" height="13" uuid="ac5d4a6e-4af8-429a-ba9e-3667dd41377c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{timpuestos_5}*-1]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="45" width="554" height="1" uuid="f8cfda07-7555-4f06-bad2-1b43f0ef46dd"/>
+			</break>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

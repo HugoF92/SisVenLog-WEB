@@ -1,0 +1,373 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnFactSer" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE FACTURA DE SERVICIO</h1>
+
+                            <p:growl id="msgFactSer" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{facturasSerBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevFactSer').show()"
+                                    update="formNuevaFactSer"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditFactSer').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{facturasSerBean.habBtnEdit}"
+                                    update="pnlEditFactSer"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{facturasSerBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacFactSer').show()"
+                                    update="formInacFactSer"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formFactSer" prependId="false">  
+
+                                <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaFactSer" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{facturasSerBean.listaFacturasSer}" rowKey="#{itemp.facturasSerPK}"
+                                                     selection="#{facturasSerBean.facturasSer.facturasSerPK}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{facturasSerBean.onRowSelect(event)}"
+                                                    update="formBtnFactSer"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.facturasSerPK.nrofact}"
+                                                      sortBy="#{itemp.facturasSerPK.nrofact}">
+                                                <h:outputText value="#{itemp.facturasSerPK.nrofact}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.facturasSerPK.ctipoDocum}"
+                                                      sortBy="#{itemp.facturasSerPK.ctipoDocum}">
+                                                <h:outputText value="#{itemp.facturasSerPK.ctipoDocum}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaFactSer"  prependId="false">
+                            <p:growl id="msgAgreFactSer" showDetail="true"/>
+
+                            <p:dialog header="Agregar FactSer"
+                                      widgetVar="dlgNuevFactSer"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{facturasSerBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Numero de Factura" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="ntaenvio" value="#{facturasSerBean.facturasSer.facturasSerPK.nrofact}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="fechaen" value="#{facturasSerBean.facturasSer.facturasSerPK.ffactur}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Fecha de Vto" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="deldep" value="#{facturasSerBean.facturas.fvenc}" 
+                                                 tabindex="5" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Cliente:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasSerBean.clientes.xnombre}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    
+                                    <p:dataTable id="tablaFact" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{facturasSerBean.listaFacturasSer}" rowKey="#{itemp.facturasSerPK}"
+                                                     selection="#{facturasSerBean.facturasSer.facturasSerPK}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{facturasSerBean.onRowSelect(event)}"
+                                                    update="formBtnFactSer"/>
+
+                                            <p:column headerText="Descripcion" filterBy="#{itemp.facturasSerPK.ctipoDocum}"
+                                                      sortBy="#{itemp.facturasSerPK.ctipoDocum}">
+                                                <h:outputText value="#{itemp.facturasSerPK.ctipoDocum}" />
+                                            </p:column>
+
+                                            <p:column headerText="Exentas:" filterBy="#{itemp.facturas.texentas}"
+                                                      sortBy="#{itemp.facturas.texentas}">
+                                                <h:outputText value="#{itemp.facturas.texentas}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Gravadas" filterBy="#{itemp.facturas.tgravadas}"
+                                                      sortBy="#{itemp.facturas.tgravadas}">
+                                                <h:outputText value="#{itemp.facturas.tgravadas}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasSerBean.facturas.pedidos.pedidosPK.nroPedido}" 
+                                                 tabindex="7" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Exentas:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmes" value="#{facturasSerBean.facturasSer.iexentas}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Gravadas:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasSerBean.facturasSer.igravadas}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="IVA:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasSerBean.facturasSer}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Total:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasSerBean.facturasSer.itotal}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                                                      
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{facturasSerBean.insertar()}"
+                                            update="msgAgreFactSer formFactSer"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{facturasSerBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacFactSer" prependId="false">
+
+                            <p:growl id="msgInacFactSer" showDetail="true"/>
+
+                            <p:dialog header="Borrar FactSer"
+                                      widgetVar="dlgInacFactSer"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{facturasSerBean.borrar()}"
+                                            update="msgInacFactSer formBtnFactSer formFactSer"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacFactSer').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarFactSer"  prependId="false">
+                            <p:growl id="msgEditFactSer" showDetail="true"/>
+
+                            <p:dialog header="Editar FactSer"
+                                      widgetVar="dlgEditFactSer"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{facturasSerBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditFactSer" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="coEdit" value="#{facturasSerBean.envios.enviosPK}" 
+                                                     tabindex="1" style="width: 50px;" disabled="true"
+                                                     onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                   <p:outputLabel value="Nota de Envio:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="ntaenvioEdit" value="#{facturasSerBean.envios.enviosPK.nroEnvio}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Fecha:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="fechaenEdit" value="#{facturasSerBean.envios.fenvio}" 
+                                                 tabindex="3" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Canal de Venta:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="canvtaEdit" value="#{facturasSerBean.enviosDet.codCanal}" 
+                                                 tabindex="4" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Receptor:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="recpEdit" value="#{facturasSerBean.movimientosMerca.codEntregador}" 
+                                                 tabindex="5" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Del Deposito:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="deldepEdit" value="#{facturasSerBean.envios.depoOrigen}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Al Deposito:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldepEdit" value="#{facturasSerBean.envios.depoDestino}" 
+                                                 tabindex="7" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Peso Acumulado:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldepEdit" value="#{facturasSerBean.envios.totPeso}" 
+                                                 tabindex="8" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Cant. Item:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmesEdit" value="#{facturasSerBean.enviosDet.cantCajas}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenEdit" value="#{facturasSerBean.envios.xobs}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:selectManyCheckbox id="basicEdit" value="#{checkboxView.selectedConsoles}"><font></font>
+                                        <f:selectItem itemLabel="Vaciar Camion" itemValue="Vaciar Camion" /><font></font>
+                                    </p:selectManyCheckbox><font></font>
+                                    
+                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{facturasSerBean.editar()}"
+                                            update="msgEditFactSer formBtnFactSer formFactSer"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditFactSer').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarFactSer" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarFactSer">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{facturasSerBean.cerrarDialogosAgregar()}" 
+                                        update="formFactSer"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarFactSer').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rnotascomdetFchaDoc" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c3ffa2d0-9a72-4680-bf17-9513d4aa6896">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="fdocumParam" class="java.sql.Timestamp"/>
+	<parameter name="sqlDocumento" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sqlDocumento}]]>
+	</queryString>
+	<field name="xdesc_docum" class="java.lang.String"/>
+	<variable name="DTOTAL" class="java.math.BigDecimal" calculation="Sum"/>
+	<detail>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement x="6" y="2" width="307" height="14" uuid="d8c445fc-64d5-4412-ad61-2ef900a0acbc"/>
+				<textFieldExpression><![CDATA[$F{xdesc_docum}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="3" y="18" width="796" height="47" uuid="857709cd-6daf-42bd-a8b1-89595fc5d4da"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fdocumParam">
+					<subreportParameterExpression><![CDATA[$P{fdocumParam}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="xdescDocParam">
+					<subreportParameterExpression><![CDATA[$F{xdesc_docum}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="sqlConcepto">
+					<subreportParameterExpression><![CDATA["select distinct xdesc_conc from CurFin2 where xdesc_docum = '" + $F{xdesc_docum} + "' and fdocum = '" + $P{fdocumParam} + "'"]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="DTOTAL" toVariable="DTOTAL"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rnotascomdetConcepto.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

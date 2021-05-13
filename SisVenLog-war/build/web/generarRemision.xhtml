@@ -1,0 +1,171 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h:form id="form" onkeypress="if (event.keyCode == 13) {
+                                    return false;
+                                }">
+                            <center>
+                                <p:panel id="pnlActualizarPromocion" header="GENERAR REMISION"
+                                         style="width: 70%;">
+                                    <p:growl id="idGrowl" showDetail="true"/>
+
+                                    <style>
+                                        .c1{width: 80px}
+                                        .ui-fieldset .ui-fieldset-legend {
+                                            padding: 5px 5px !important;
+                                            border: none !important;
+                                        }
+                                    </style>
+                                    <p:fieldset style="width:100%">
+                                        <h:panelGrid columns="3">
+                                            <p:outputLabel value="Fecha Emision:"/>
+                                            <h:panelGrid columns="2">
+                                                <p:calendar id="idFechaEmision" value="#{generarRemisionBean.fechaRemision}" size="8"
+                                                            showOn="button" locale="es" mask="true" pattern="dd/MM/yyyy" />
+                                                <p:outputLabel value="Nro. Remision Inicial:"/>
+                                            </h:panelGrid>
+                                            <h:panelGrid columns="5" >
+                                                <p:inputText id="FactFinaImprFact1" value="#{generarRemisionBean.estabInicial}" 
+                                                             style="width: 35px;" />
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprFact2" value="#{generarRemisionBean.expedInicial}" 
+                                                             style="width: 35px;" />
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprFact3" value="#{generarRemisionBean.secueInicial}" 
+                                                             style="width: 55px;"/>
+                                            </h:panelGrid>
+
+                                            <p:outputLabel value="Deposito Destino:"/>
+                                            <p:selectOneMenu value="#{generarRemisionBean.depoDestino}" 
+                                                             filterMatchMode="contains" filter="true"
+                                                             panelStyle="width:170px"
+                                                             style=" width:180px" converter="#{depositosConverter}">
+                                                <f:selectItem itemLabel="SELECCIONE" noSelectionOption="true" />
+                                                <f:selectItems value="#{generarRemisionBean.listaDepoDestino}" var="item"
+                                                               itemValue="#{item}"
+                                                               itemLabel="#{item.xdesc}"/>
+                                                <p:ajax event="itemSelect" process="@this" listener="#{generarRemisionBean.onChangeDeposito}"
+                                                        update="idConductor,idTransportistas,idEntregadorLista,idGrowl"/>
+                                            </p:selectOneMenu>
+
+                                            <p:fieldset style="width:190px">
+                                                <p:selectOneRadio id="radioButton" value="#{generarRemisionBean.radioButton}"
+                                                                  layout="grid" columns="1" >
+                                                    <f:selectItem itemLabel="Original" itemValue="O" />
+                                                    <f:selectItem itemLabel="Complementaria" itemValue="C" />
+                                                </p:selectOneRadio>
+                                            </p:fieldset>
+                                        </h:panelGrid>
+                                    </p:fieldset>
+                                    <br/>
+                                    <h:panelGrid columns="4">
+                                        <p:outputLabel value="Conductor:"/>
+                                        <p:selectOneMenu id="idConductor" value="#{generarRemisionBean.conductor}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         panelStyle="width:170px"
+                                                         style=" width:180px" converter="#{ConductoresConverter}">
+                                            <f:selectItems value="#{generarRemisionBean.listaConductor}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xconductor}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Nro. Envío Inicial:" for="idNroEnvioInicial"/>
+                                        <p:inputNumber id="idNroEnvioInicial" value="#{generarRemisionBean.nroEnvioInicia}"
+                                                       required="true" requiredMessage="El Nro. Envío Inicial es obligatorio"
+                                                       thousandSeparator="." padControl="false"
+                                                       decimalSeparator="," size="7"/>
+
+                                        <p:outputLabel value="Transportista:"/>
+                                        <p:selectOneMenu id="idTransportistas" value="#{generarRemisionBean.transportista}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         panelStyle="width:170px"
+                                                         style=" width:180px" converter="#{TransportistasConverter}">
+                                            <f:selectItems value="#{generarRemisionBean.listaTransportista}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xtransp}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Nro. Envío Final:" for="idNroEnvioFinal"/>
+                                        <p:inputNumber id="idNroEnvioFinal" value="#{generarRemisionBean.nroEnvioFinal}" 
+                                                       required="true" requiredMessage="El Nro. Envío Final es obligatorio"
+                                                       thousandSeparator="." padControl="false"
+                                                       decimalSeparator="," size="7"/>
+
+                                        <p:outputLabel value="Entregador:"/>
+                                        <p:selectOneMenu id="idEntregadorLista" value="#{generarRemisionBean.empleado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         panelStyle="width:170px"
+                                                         style=" width:180px" converter="#{empleadosConverter}">
+                                            <f:selectItems value="#{generarRemisionBean.listaEmpleados}" var="item"
+                                                           itemValue="#{item}"
+                                                           itemLabel="#{item.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                    </h:panelGrid>
+
+                                    <p:commandButton actionListener="#{generarRemisionBean.procesar}"
+                                                     process="form"
+                                                     update="idGrowl"
+                                                     value="PROCESO" icon="fa fa-check"
+                                                     styleClass="green-btn raised-btn"
+                                                     style="width: 120px;" id="idProcesar"/>
+                                    <p:blockUI block="idProcesar" trigger="idProcesar" />
+                                    <p:spacer width="5"/>
+
+                                    <p:commandButton
+                                        process="@this"
+                                        value="imprimir" oncomplete="document.getElementById('form:idLink').click()" icon="fa fa-print" styleClass="orange-btn raised-btn"/>
+                                    
+                                    <p:link id="idLink"  outcome="/impresionRemision.xhtml" style="visibility: hidden;" value="Imprimirrr">
+                                    </p:link>
+
+
+                                </p:panel>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+    </ui:define>
+</ui:composition>

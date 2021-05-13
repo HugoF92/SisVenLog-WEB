@@ -1,0 +1,299 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnLineas" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE LINEAS</h1>
+
+                            <p:growl id="msgLineas" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{lineasBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevLineas').show()"
+                                    update=""
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditLineas').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{lineasBean.habBtnEdit}"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{lineasBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacLineas').show()"
+                                    update="formInacLineas"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formLineas" prependId="false">  
+
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaLineas" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{lineasBean.listar()}" rowKey="#{itemp.codLinea}"
+                                                     selection="#{lineasBean.lineas}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{lineasBean.onRowSelect(event)}"
+                                                    update="formBtnLineas"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.codLinea}"
+                                                      sortBy="#{itemp.codLinea}">
+                                                <h:outputText value="#{itemp.codLinea}"/>
+                                            </p:column>
+
+                                            <p:column headerText="Descripcion" filterBy="#{itemp.xdesc}"
+                                                      sortBy="#{itemp.xdesc}">
+                                                <h:outputText value="#{itemp.xdesc}" />
+                                            </p:column>
+                                            
+                                            <p:column headerText="Categoria" filterBy="#{itemp.codCATEGORIA.xdesc}"
+                                                      sortBy="#{itemp.codCATEGORIA.xdesc}">
+                                                <h:outputText value="#{itemp.codCATEGORIA.xdesc}" />
+                                            </p:column>
+
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevLineas"  prependId="false">
+                            <p:growl id="msgAgreLineas" showDetail="true"/>
+
+                            <p:dialog header="Agregar Lineas"
+                                      widgetVar="dlgNuevLineas"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{lineasBean.instanciar()}" update="pnlagrelinea"/>
+                                <h:panelGrid id="pnlagrelinea" columns="2">
+
+                                    <p:outputLabel value="Descripcion" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descLineas" value="#{lineasBean.lineas.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Categoria:" style="float: right; font-weight: bold;"/>
+
+                                    <p:selectOneMenu value="#{lineasBean.categorias}" 
+                                                     filterMatchMode="contains" filter="true"
+                                                     style=" width: 300px;" converter="#{CategoriasConverter}">
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                        <f:selectItems value="#{lineasBean.listarCategorias()}" var="cate"
+                                                       itemValue="#{cate}"
+                                                       itemLabel="#{cate.xdesc}"/>
+                                    </p:selectOneMenu> 
+
+                                </h:panelGrid>
+
+
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{lineasBean.insertar()}"
+                                            update="msgAgreLineas formLineas"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{lineasBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditLineas"  prependId="false">
+                            <p:growl id="msgEditLineas" showDetail="true"/>
+
+                            <p:dialog header="Editar Lineas"
+                                      widgetVar="dlgEditLineas"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" update="pnlEditLineas"/>
+                                <p:ajax event="close" listener="#{lineasBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditLineas" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="codLineasEdit" value="#{lineasBean.lineas.codLinea}" 
+                                                 tabindex="1" style="width: 50px;" disabled="true"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Descripcion" style="font-weight: bold; float: right;"/>
+
+                                    <p:inputText id="descEditLineas" value="#{lineasBean.lineas.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Categoria:" style="float: right; font-weight: bold;"/>
+
+                                    <p:selectOneMenu value="#{lineasBean.categorias}" 
+                                                     filterMatchMode="contains" filter="true"
+                                                     style=" width: 300px;" converter="#{CategoriasConverter}">
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                        
+                                        <f:selectItems value="#{lineasBean.listarCategorias()}" var="cate"
+                                                       itemValue="#{cate}"
+                                                       itemLabel="#{cate.xdesc}"/>
+                                    </p:selectOneMenu> 
+
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{lineasBean.editar()}"
+                                            update="msgEditLineas formLineas"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" onclick="PF('dlgEditLineas').hide();"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formInacLineas" prependId="false">
+
+                            <p:growl id="msgInacLineas" showDetail="true"/>
+
+                            <p:dialog header="Borrar Lineas"
+                                      widgetVar="dlgInacLineas"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+                                <p:ajax event="close" update="formLineas formBtnLineas"/>
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{lineasBean.borrar()}"
+                                            update="msgInacLineas"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacLineas').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+
+                        <h:form id="formSinGuardarLineas" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarLineas">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{lineasBean.cerrarDialogosAgregar()}" 
+                                        update="formLineas"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarLineas').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

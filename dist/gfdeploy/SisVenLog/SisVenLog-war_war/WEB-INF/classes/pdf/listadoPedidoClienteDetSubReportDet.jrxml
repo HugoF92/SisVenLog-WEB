@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadoPedidoClienteDetSubReportDet" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0dc1953f-a79c-4d3f-86b8-71a8d396e0b3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sqlDetalleDetSub" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{sqlDetalleDetSub}]]>
+	</queryString>
+	<field name="cod_empr" class="java.lang.Short"/>
+	<field name="nro_pedido" class="java.math.BigDecimal"/>
+	<field name="ctipo_docum" class="java.lang.String"/>
+	<field name="ctipo_vta" class="java.lang.String"/>
+	<field name="cod_vendedor" class="java.lang.Short"/>
+	<field name="cod_depo_envio" class="java.lang.Short"/>
+	<field name="cod_entregador" class="java.lang.Short"/>
+	<field name="cod_canal" class="java.lang.String"/>
+	<field name="cod_ruta" class="java.lang.Short"/>
+	<field name="cod_cliente" class="java.lang.Integer"/>
+	<field name="cod_depo" class="java.lang.Short"/>
+	<field name="fpedido" class="java.sql.Timestamp"/>
+	<field name="npeso_acum" class="java.math.BigDecimal"/>
+	<field name="fanul" class="java.sql.Timestamp"/>
+	<field name="ffactur" class="java.sql.Timestamp"/>
+	<field name="fenvio" class="java.sql.Timestamp"/>
+	<field name="tgravadas" class="java.math.BigDecimal"/>
+	<field name="texentas" class="java.math.BigDecimal"/>
+	<field name="timpuestos" class="java.math.BigDecimal"/>
+	<field name="tdescuentos" class="java.math.BigDecimal"/>
+	<field name="ttotal" class="java.math.BigDecimal"/>
+	<field name="mestado" class="java.lang.String"/>
+	<field name="cusuario" class="java.lang.String"/>
+	<field name="falta" class="java.sql.Timestamp"/>
+	<field name="cusuario_modif" class="java.lang.String"/>
+	<field name="fultim_modif" class="java.sql.Timestamp"/>
+	<field name="finicio_alta" class="java.sql.Timestamp"/>
+	<field name="morigen" class="java.lang.String"/>
+	<field name="nplazo_cheque" class="java.lang.Short"/>
+	<field name="ffinal_alta" class="java.sql.Timestamp"/>
+	<field name="xnombre" class="java.lang.String"/>
+	<field name="cod_zona" class="java.lang.String"/>
+	<field name="xdesc_zona" class="java.lang.String"/>
+	<field name="codigo_empleado" class="java.lang.Short"/>
+	<field name="xnomb_vendedor" class="java.lang.String"/>
+	<field name="xdesc_canal" class="java.lang.String"/>
+	<field name="xdesc_ruta" class="java.lang.String"/>
+	<field name="cod_merca" class="java.lang.String"/>
+	<field name="xdesc_merca" class="java.lang.String"/>
+	<field name="cant_cajas" class="java.math.BigDecimal"/>
+	<field name="cant_unid" class="java.math.BigDecimal"/>
+	<field name="cajas_bonif" class="java.math.BigDecimal"/>
+	<field name="unid_bonif" class="java.math.BigDecimal"/>
+	<field name="iexentas" class="java.math.BigDecimal"/>
+	<field name="igravadas" class="java.math.BigDecimal"/>
+	<field name="impuestos" class="java.math.BigDecimal"/>
+	<field name="pdesc" class="java.math.BigDecimal"/>
+	<field name="xdesc" class="java.lang.String"/>
+	<variable name="total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{iexentas}+$F{igravadas}]]></variableExpression>
+	</variable>
+	<variable name="totalDetalle" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{total}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="8" y="6" width="61" height="14" uuid="2b090850-558f-4ea6-baf8-c1782afda0e6"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="73" y="6" width="282" height="14" uuid="e5d9fd3f-db2c-48ec-8fb1-5ee259bf2f7f"/>
+				<textFieldExpression><![CDATA[$F{xdesc_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="6" width="39" height="14" uuid="debf1862-c0c0-42a3-aaee-f4b4b6a8a7a8"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{pdesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="416" y="6" width="40" height="14" uuid="60321a6a-5686-4770-acc5-3c2838ee3d23"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{cant_cajas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="469" y="6" width="40" height="14" uuid="4e1bf95e-ebe1-4c92-9592-0a3e7cc699e0"/>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="611" y="6" width="41" height="14" uuid="82d53057-3d52-47cc-a9a1-4bf6b9ef7699"/>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="556" y="6" width="40" height="14" uuid="59848173-66da-4fa1-9aa8-00fd3e2ed073"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{cajas_bonif}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="705" y="6" width="86" height="14" uuid="1bf5d46f-d25f-4455-ae6a-aa5efd5e42b7"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="402" y="6" width="10" height="14" uuid="96f2324d-fbca-4c8c-8af1-8e33a46169e0"/>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="6" width="10" height="14" uuid="1bf44d0b-0cea-4951-baf2-93f68b26d40f"/>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="511" y="6" width="43" height="14" uuid="41eedf95-50e8-4163-94b2-36925b168231"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Caj/Und.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="599" y="6" width="10" height="14" uuid="99699230-292d-4c81-8055-67ab4e5ebe12"/>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="6" width="43" height="14" uuid="49001399-03f5-40dd-af84-75f2ee5316ce"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bonif.]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band height="27">
+			<staticText>
+				<reportElement x="569" y="7" width="114" height="14" uuid="74ea1356-e576-4332-8b54-2b62e1094275"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL DETALLES]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="691" y="7" width="100" height="14" uuid="fd369425-d854-48f6-9320-a6fa19a2dd83"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{totalDetalle}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="691" y="3" width="102" height="1" uuid="7b6f7b35-8a92-4cd6-945d-e7e660692103"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

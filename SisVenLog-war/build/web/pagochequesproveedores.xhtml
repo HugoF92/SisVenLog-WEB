@@ -1,0 +1,179 @@
+     <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h1 style="color: brown;">PAGO DE CHEQUES DE PROVEEDORES</h1>
+
+
+                        <h:form id="form_cobro_rechazo" prependId="false">
+
+                            <p:growl id="messageImpreOrdCarg" showDetail="true"/>
+                                                           
+                            <h:form id="form_buscador" prependId="false">
+                                <div class="ui-fluid">
+                                    <p:panelGrid id="panel_buscador_cheques" 
+                                                 columns="4" 
+                                                 layout="grid"
+                                                 columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                 styleClass="ui-panelgrid-blank ui-fluid">
+
+
+                                        <p:outputLabel value="Banco: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="bancos_id" value="#{pagoProveedoresBean.bancoSeleccionado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;" converter="#{BancosConverter}">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{bancoBean.listar()}" 
+                                                           var="banco"
+                                                           itemValue="#{banco}"
+                                                           itemLabel="#{banco.xdesc}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Monto: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="monto_id" value="#{pagoProveedoresBean.montoCheque}" style="width: 100px;"/>
+
+                                        <p:outputLabel value="Nro. Cheque: " style="font-weight: bold; text-align: left;"/>
+                                        <p:inputText id="nro_cheque_id" value="#{pagoProveedoresBean.numeroCheque}" style="width: 100px;"/>
+
+                                        <p:outputLabel value="Fecha Cobro: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_cobro_id" size="8" value="#{pagoProveedoresBean.fechaCobro}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel value="Fecha Vto. Inicial: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_inicial_id" size="8" value="#{pagoProveedoresBean.fechaInicio}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel value="Fecha Vto. Final: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_final_id" size="8" value="#{pagoProveedoresBean.fechaFin}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel value="Proveedor: " style="font-weight: bold; text-align: left;"/>
+                                        <p:selectOneMenu id="proveedor_id" value="#{pagoProveedoresBean.proveedorSeleccionado}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 100px;" converter="#{ProveedoresConverter}">
+                                            <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                            <f:selectItems value="#{proveedoresBean.listar()}" 
+                                                           var="proveedor"
+                                                           itemValue="#{proveedor}"
+                                                           itemLabel="#{proveedor.xnombre}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:panelGrid id="grid_botones" columns="3">
+                                            <p:commandButton value="Buscar" ajax="true" actionListener="#{pagoProveedoresBean.listarChequesProveedoresNoCobrados}" update="form_cheques messageImpreOrdCarg"/>
+                                            <p:commandButton value="Guardar" ajax="true" actionListener="#{pagoProveedoresBean.guardarChequesNoCobradosDeProveedores()}" update="messageImpreOrdCarg"/>
+                                            <p:commandButton value="Limpiar" ajax="true" actionListener="#{pagoProveedoresBean.limpiarFormulario}" update="panel_buscador_cheques form_cheques"/>
+                                        </h:panelGrid>
+
+                                    </p:panelGrid>
+                                </div>    
+                                
+                               
+                            </h:form>
+                            
+                            <h:form id="form_cheques" prependId="false">
+
+                                <div class="ui-fluid">
+                                    <p:dataTable    id="cheques_no_cobrados_id" 
+                                                    var="itemp" 
+                                                    selectionMode="single"
+                                                    paginator="true" 
+                                                    rows="20" 
+                                                    paginatorPosition="bottom" 
+                                                    resizableColumns="true"  
+                                                    tableStyle="width:auto"
+                                                    emptyMessage="Sin datos para mostrar."
+                                                    reflow="true" style="margin-top:20px"
+                                                    value="#{pagoProveedoresBean.listadoChequesProvedores}"
+                                                    rowKey="#{itemp.nombreBanco}"
+                                                    selection="#{pagoProveedoresBean.chequeProveedorDto}">
+
+                                        <p:column headerText="Banco" 
+                                                  sortBy="#{itemp.nombreBanco}">
+                                            <h:outputText value="#{itemp.nombreBanco}" />
+                                        </p:column>
+
+                                        <p:column headerText="Nro. Cheque" 
+                                                  sortBy="#{itemp.chequeEmitido.chequesEmitidosPK.nroCheque}">
+                                            <h:outputText value="#{itemp.chequeEmitido.chequesEmitidosPK.nroCheque}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cta. Bancaria" 
+                                                  sortBy="#{itemp.chequeEmitido.xcuentaBco}">
+                                            <h:outputText value="#{itemp.chequeEmitido.xcuentaBco}" />
+                                        </p:column>
+
+                                        <p:column headerText="Fecha Vto." 
+                                                  sortBy="#{itemp.chequeEmitido.fcheque}">
+                                            <h:outputText value="#{itemp.chequeEmitido.fcheque}">
+                                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Monto" 
+                                                  sortBy="#{itemp.chequeEmitido.icheque}">
+                                            <h:outputText value="#{itemp.chequeEmitido.icheque}">
+                                                <f:convertNumber pattern = "#000,000" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="F.Cobro" 
+                                                  sortBy="#{itemp.chequeEmitido.fcobro}">
+                                            <h:outputText value="#{itemp.chequeEmitido.fcobro}">
+                                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="COBR.">
+                                            <p:selectBooleanCheckbox value="#{itemp.chequeEmitidoSeleccionado}">
+                                                <p:ajax listener="#{pagoProveedoresBean.seleccionarChequeNoCobrado}"/>
+                                            </p:selectBooleanCheckbox>
+                                        </p:column>
+
+                                        <p:column headerText="Proveedor" 
+                                                  sortBy="#{itemp.nombreProveedor}">
+                                            <h:outputText value="#{itemp.nombreProveedor}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Código" 
+                                                  sortBy="#{itemp.chequeEmitido.codProveed.codProveed}">
+                                            <h:outputText value="#{itemp.chequeEmitido.codProveed.codProveed}" />
+                                        </p:column> 
+
+                                        <p:column headerText="F.Emisión" 
+                                                  sortBy="#{itemp.chequeEmitido.femision}">
+                                            <h:outputText value="#{itemp.chequeEmitido.femision}" >
+                                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                                            </h:outputText>
+                                        </p:column> 
+
+                                    </p:dataTable>
+                                </div>
+
+                            </h:form>
+                                
+                        </h:form>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                      height="500px" width="700px">
+                Message: #{pagoProveedoresBean.tituloError} <br/>
+                StackTrace: <h:outputText value="#{pagoProveedoresBean.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

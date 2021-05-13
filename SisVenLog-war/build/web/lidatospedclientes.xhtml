@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body style="font-size: medium;">
+            <style type="text/css">
+                .ui-datalist .ui-datalist-content {
+                        border:0 none
+                }
+
+                .ui-datalist ul {
+                        padding:0px 0px 10px;
+                        margin: 5px 0;
+                }
+
+                .label, .value {
+                        float: right; 
+                        font-weight: bold;
+                }
+
+                .output {
+                        font-weight: bold;
+                }
+
+                .ui-selectmanymenu {
+                        width: 350px;
+                }
+            </style>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl id="messageLiRetornoRecibo" showDetail="true"/>
+
+                            <center>
+
+                                <p:panel id="pnlParamLiRetornoRecibo" header="LISTADO DE PEDIDOS POR CLIENTES"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="2" id="panelPrincipal" cellspacing="40">
+                                    <h:panelGrid columns="2">
+
+                                        <p:outputLabel value="Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaPedidoDesde" value="#{listadoPedidosClientesBean.fechaPedidoDesde}" 
+                                                    showOn="button" style="width: 60px;">  
+                                        </p:calendar>
+
+                                        <p:outputLabel value="Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:calendar id="fechaPedidoHasta" value="#{listadoPedidosClientesBean.fechaPedidoHasta}" 
+                                                    showOn="button" style="width: 60px;"/>
+                                        
+                                        <p:outputLabel value="Vendedor:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionVendedor" value="#{listadoPedidosClientesBean.vendedor}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{empleadosConverter}">
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{empleadosBean.listar()}" var="vendedor" 
+                                                           itemValue="#{vendedor}" 
+                                                           itemLabel="#{vendedor.xnombre}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Canal:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionCanal" value="#{listadoPedidosClientesBean.canal}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{CanalesVentaConverter}">
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODOS"/>
+                                            <f:selectItems value="#{canalesVenBean.listar()}" var="canal" 
+                                                           itemValue="#{canal}" 
+                                                           itemLabel="#{canal.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Zona:" style="float: right; font-weight: bold;"/>
+                                        
+                                        <p:selectOneMenu id="seleccionZonas" value="#{listadoPedidosClientesBean.zona}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style="width: 200px;" converter="#{ZonasConverter}" >
+                                        
+                                            <f:selectItem itemValue="#{null}" itemLabel="TODAS"/>
+                                            <f:selectItems value="#{zonasBean.listar()}" var="zona" 
+                                                           itemValue="#{zona}" 
+                                                           itemLabel="#{zona.xdesc}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:outputLabel value="Nro. Pedido Desde:" style="float: right; font-weight: bold;"/>
+                                        <p:inputNumber id="numeroReciboDesde" decimalPlaces="0" value="#{listadoPedidosClientesBean.nroPedidoDesde}"/>
+                                        
+                                        <p:outputLabel value="Nro. Pedido Hasta:" style="float: right; font-weight: bold;"/>
+                                        <p:inputNumber id="numeroReciboHasta" decimalPlaces="0" value="#{listadoPedidosClientesBean.nroPedidoHasta}"/>
+
+                                        <p:outputLabel value="Clientes:" style="float: right; font-weight: bold;"/>
+                                        <p:selectManyMenu id="clientesId" value="#{listadoPedidosClientesBean.clientesSeleccionados}" converter="#{ClientesConverter}"
+                                                         var="t" filter="true" filterMatchMode="contains" showCheckbox="true">
+                                           <f:selectItems id="selectItemsCodCliente" value="#{listadoPedidosClientesBean.listadoClientes}" var="codigo" itemLabel="#{codigo.codCliente}" itemValue="#{cliente}" />
+                                           <f:selectItems id="selectItemsClientes" value="#{listadoPedidosClientesBean.listadoClientes}" var="cliente" itemLabel="#{cliente.xnombre}" itemValue="#{cliente}" />
+                                           <p:column>
+                                               <h:outputText value="#{t.codCliente}" />
+                                           </p:column>
+                                           <p:column>
+                                               <h:outputText value="#{t.xnombre}" />
+                                           </p:column>
+                                        </p:selectManyMenu>
+                                         
+                                    </h:panelGrid>
+                                        <h:panelGrid columns="1" cellspacing="0">
+                                        <p:outputLabel value="Filtrar por " style="float: left; font-weight: bold;"/>                                       
+                                        <h:panelGrid columns="1" style="margin: 0px" cellpadding="0">
+                                            <p:selectOneRadio id="seleccionFecha" value="#{listadoPedidosClientesBean.seleccionFecha}"  
+                                                              layout="grid" columns="1" 
+                                                              style="border: #cccccc 1px solid; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; margin: 0px;">
+                                                <f:selectItem itemLabel="Fecha Pedido" itemValue="FP" />
+                                                <f:selectItem itemLabel="Fecha de Carga" itemValue="FC" />
+                                            </p:selectOneRadio>
+                                        </h:panelGrid>
+                                        
+                                        <p:outputLabel value="Tipo de Origen " style="float: left; font-weight: bold;"/>
+                                        <h:panelGrid columns="1" style="margin: 0px" cellpadding="0">
+                                            <p:selectOneRadio id="seleccionTipo" value="#{listadoPedidosClientesBean.seleccionTipo}"  
+                                                              layout="grid" columns="1" 
+                                                              style="border: #cccccc 1px solid; padding-left: 10px; padding-bottom: 10px; padding-top: 10px; margin: 0px;">
+                                                <f:selectItem itemLabel="Todos" itemValue="TD" />
+                                                <f:selectItem itemLabel="Automaticos" itemValue="AU" />
+                                                <f:selectItem itemLabel="Manuales" itemValue="MA" />
+                                            </p:selectOneRadio>
+                                        </h:panelGrid>                                        
+                                        
+                                        <h:panelGrid columns="2">
+                                            <h:outputText value="Con detalles: " style="float: right; font-weight: bold;"/>   
+                                            <p:selectBooleanCheckbox id="detallesId" value="#{listadoPedidosClientesBean.conDetalle}" 
+                                                             itemLabel="" style="padding-left: 3px"/>
+                                        </h:panelGrid>
+                                        
+                                        </h:panelGrid>
+                                    </h:panelGrid>  <!-- panelPrincipal -->
+                                    <br></br>
+
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoPedidosClientesBean.ejecutar('VIST')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Vista Previa" icon="fa fa-file-pdf-o" styleClass="orange-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                    <p:commandLink title="report" target="_blank"
+                                                   action="#{listadoPedidosClientesBean.ejecutar('ARCH')}"
+                                                   ajax="false" immediate="false" update="messageImpreFact">
+                                        <p:commandButton 
+                                            value="Archivo" icon="fa fa-file-pdf-o" styleClass="green-btn raised-btn"
+                                            style="width: 120px;"/>
+                                    </p:commandLink>
+                                </p:panel>
+                            </center>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

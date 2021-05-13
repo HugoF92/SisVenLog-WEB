@@ -1,0 +1,98 @@
+     <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+            
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+            </style>
+            
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        
+                        <h1 style="color: brown;">CAMBIO PRECIOS</h1>
+                        
+                        <h:form id="form_consulta_clientes" prependId="false">
+
+                            <p:growl id="messageImpreOrdCarg" showDetail="true"/>
+                                                           
+                            <h:form id="form_buscador" enctype="multipart/form-data">
+                                
+                                <div class="ui-fluid">
+                                    <p:panelGrid id="panel_buscador_cheques" 
+                                                 columns="4" 
+                                                 layout="grid"
+                                                 columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                                 styleClass="ui-panelgrid-blank ui-fluid">
+
+                                        <p:outputLabel value="Fecha Vigencia Inicial: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_inicial_id" size="8" value="#{cambioPreciosBean.fechaInicioVigenciaLab}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel value="Fecha Vigencia Final: " style="font-weight: bold; text-align: left;"/>
+                                        <p:calendar id="fecha_vto_final_id" size="8" value="#{cambioPreciosBean.fechaFinVigenciaLab}" showOn="button" style="width: 100px;"  />
+
+                                        <p:outputLabel for="file_up_id" value="Archivo de Precios"/>
+                                        <h:panelGrid id="grid_subir_archivo" columns="3">
+                                            <p:fileUpload id="file_up_id"
+                                                          fileUploadListener="#{cambioPreciosBean.subirArchivo}" 
+                                                          cancelLabel="Cancelar"
+                                                          uploadLabel="Adjuntar"
+                                                          mode="advanced"
+                                                          skinSimple="true"
+                                                          fileLimit="1"
+                                                          auto="false"
+                                                          fileLimitMessage="Un solo archivo a la vez"
+                                                          update="messageImpreOrdCarg label_nombre_archivo"
+                                                          dragDropSupport="false"/>
+                                            
+                                        </h:panelGrid>
+                                        
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        <p:spacer></p:spacer>
+                                        
+                                        <p:outputLabel id="label_nombre_archivo" value="#{cambioPreciosBean.nombreArchivoSubido}"/>
+                                        <h:panelGrid id="grid_botones" columns="2">
+                                            <p:commandButton value="Procesar" ajax="true" actionListener="#{cambioPreciosBean.procesarArchivo}" update="messageImpreOrdCarg grid_subir_archivo"/>
+                                            <p:commandButton value="Limpiar" ajax="true" actionListener="#{cambioPreciosBean.limpiarFormulario}" update="panel_buscador_cheques"/>
+                                        </h:panelGrid>
+
+                                    </p:panelGrid>
+                                    
+                                    <br/>
+                                    <p:outputLabel value="Estructura: COD. MERCADERIA - TIPO VENTA - PRECIO CAJA - PRECIO UNIDAD"/>
+                                    <br/>
+                                    <p:outputLabel value="Tipo de Archivo Soportado: XLS Excel 97/2003 - XLSX "/>    
+                                    
+                                </div>
+                                
+                            </h:form>
+                            
+                        </h:form>
+                        
+                        <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                                height="500px" width="700px">
+                            Message: #{cambioPreciosBean.tituloError} <br/>
+                          StackTrace: <h:outputText value="#{cambioPreciosBean.contenidoError}" escape="false" /> <br />
+                        </p:dialog>
+
+                    </div>
+                </div>
+            </div>
+            
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

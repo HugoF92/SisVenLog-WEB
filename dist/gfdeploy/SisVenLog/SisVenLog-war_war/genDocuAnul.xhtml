@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <script>
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día'
+                };
+            </script>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="form" prependId="false">
+
+                            <p:growl showDetail="true"/>
+
+                            <center>
+
+                                <p:panel header="Generacion de Documentos Anulados"
+                                         style="width: 70%;">
+                                    <h:panelGrid columns="1" >
+                                        <h:panelGrid columns="4" >
+                                            <p:outputLabel value="Fecha Documento: " style="float: right; font-weight: bold;"/>
+                                            <p:calendar id="liAnudocDesde" value="#{genDocuAnul.fechaDocumento}" 
+                                                        showOn="button" style="width: 60px;" locale="es">
+                                                <p:ajax event="dateSelect" update="genDatosContablesHasta" />
+                                            </p:calendar>
+
+                                            <p:outputLabel value="Fecha Factura: " style="float: right; font-weight: bold;"/>
+                                            <p:calendar id="genDatosContablesHasta" value="#{genDocuAnul.fechaFactura}" 
+                                                        showOn="button" style="width: 60px;" locale="es" mindate="#{genDocuAnul.fechaDocumento}">
+                                            </p:calendar>
+                                        </h:panelGrid>
+
+                                        <h:panelGrid columns="2" >
+
+                                            <p:outputLabel value="Tipo Documento:" styleClass="element-label"/>
+                                            <h:panelGrid columns="1" >
+                                                <p:selectOneMenu value="#{genDocuAnul.tiposDocumentos}" 
+                                                                 filterMatchMode="contains" filter="true"
+                                                                 style=" width: 400px;" converter="#{TiposDocumentosConverter}">
+                                                    <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{genDocuAnul.listarTipoDocumentoGenDocuAnul()}" var="tdocu"
+                                                                   itemValue="#{tdocu}"
+                                                                   itemLabel="#{tdocu.xdesc}"/>
+                                                </p:selectOneMenu>
+                                            </h:panelGrid>
+
+                                            <p:outputLabel value="Fact.Relacionadas:" styleClass="element-label"/>
+                                            <h:panelGrid columns="5" >
+                                                <p:inputText id="FactFinaImprFact1" value="#{genDocuAnul.estabFactInicial}" 
+                                                             style="width: 40px;"/>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprFact2" value="#{genDocuAnul.expedFactInicial}" 
+                                                             style="width: 40px;"/>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprFact3" value="#{genDocuAnul.secueFactFinal}" 
+                                                             style="width: 90px;"/>
+                                            </h:panelGrid>
+                                        </h:panelGrid>
+
+                                        <h:panelGrid columns="2" >
+
+                                            <p:outputLabel value="Doc.Inicial:" styleClass="element-label"/>
+
+                                            <h:panelGrid columns="5" >
+                                                <p:inputText id="FactInicImprNocr1" value="#{genDocuAnul.estabInicial}"
+                                                             style="width: 40px;">
+                                                    <p:ajax update="FactFinaImprNocr1"/>
+                                                </p:inputText>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactInicImprNocr2" value="#{genDocuAnul.expedInicial}" 
+                                                             style="width: 40px;">
+                                                    <p:ajax update="FactFinaImprNocr2"/>
+                                                </p:inputText>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactInicImprNocr3" value="#{genDocuAnul.secueInicial}" 
+                                                             style="width: 90px;"/>
+                                            </h:panelGrid>
+
+                                            <p:outputLabel value="Doc.Final:" styleClass="element-label"/>
+
+                                            <h:panelGrid columns="5" >
+                                                <p:inputText id="FactFinaImprNocr1" value="#{genDocuAnul.estabInicial}" 
+                                                             style="width: 40px;" disabled="true"/>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprNocr2" value="#{genDocuAnul.expedInicial}" 
+                                                             style="width: 40px;" disabled="true"/>
+                                                <p:outputLabel value=" - " style="font-weight: bold;"/>
+                                                <p:inputText id="FactFinaImprNocr3" value="#{genDocuAnul.secueFinal}" 
+                                                             style="width: 90px;"/>
+                                            </h:panelGrid>
+
+                                        </h:panelGrid>
+
+                                    </h:panelGrid>
+
+                                    <p:commandLink title="report"
+                                                   action="#{genDocuAnul.ejecutar()}"
+                                                   ajax="false" immediate="false" update="messageImpreOrdCarg">
+
+                                        <p:commandButton 
+                                            value="Generar Documento" icon="fa fa-print" styleClass="green-btn raised-btn"/>
+
+                                    </p:commandLink>
+
+                                </p:panel>
+
+                            </center>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+
+            <p:dialog id="exceptionDialog" header="Ocurrió un error grave!" widgetVar="exceptionDialog"
+                      height="500px" width="700px">
+                Message: #{genDocuAnul.tituloError} <br/>
+                <h:outputText value="#{genDocuAnul.contenidoError}" escape="false" /> <br />
+            </p:dialog>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

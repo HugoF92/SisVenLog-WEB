@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="en">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">SisVenLog</ui:insert></title>
+        <h:outputScript name="js/nanoscroller.js" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout" />
+        <ui:insert name="head"/>
+    </h:head>
+
+    <h:body style="font-size: medium;">
+
+        <div class="layout-wrapper #{guestPreferences.slimMenu ? 'layout-menu-slim' : (guestPreferences.overlayMenu ? 'layout-menu-overlay' : 'layout-menu-static')}">
+            <ui:include src="./topbar.xhtml" />
+
+            <div class="layout-main">
+                <ui:include src="./menu.xhtml" />
+
+                <div class="layout-content">
+                    <ui:insert name="content"/>
+                </div>
+
+            </div>        
+        </div>
+
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+            <f:facet name="start">
+                <i class="fa fa-circle-o-notch fa-spin ajax-loader" aria-hidden="true"></i>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value="" />
+            </f:facet>
+        </p:ajaxStatus>
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/animate.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout" />
+
+        <h:form id="formNuevoDepositos"  prependId="false">
+            <p:growl id="msgAgreDepo" showDetail="true"/>
+
+            <p:dialog header="Agregar Deposito"
+                      widgetVar="dlgNuevDepo"
+                      modal="true"
+                      responsive="true"
+                      closeOnEscape="false"
+                      closable="false" resizable="true">
+
+                <p:ajax event="open" listener="#{depositosBean.instanciar()}"/>
+
+                <p:focus id="focusTipoDepo" for="depotipo"/>
+                <p:focus id="focusCondDepo" for="agreDepoCodiCond"/>
+                <p:focus id="focusGuardarDepo" for="btnGuardarDepo"/>
+                <h:panelGrid columns="2">
+                    <h:panelGrid columns="2">
+
+                        <p:outputLabel value="Descripción:" style="font-weight: bold; float: right;"/>
+
+                        <p:inputText id="descDepo" value="#{depositosBean.depositos.xdesc}" 
+                                     tabindex="1" style="width: 200px;"
+                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+
+                        <p:outputLabel value="Zona:" style="font-weight: bold; float: right;"/>
+
+                        <h:panelGrid columns="3" id="agreDepoPnlZona">
+                            <p:inputText id="agreDepoCodiZona" value="#{depositosBean.zonas.zonasPK.codZona}" 
+                                         tabindex="2" style="width: 30px;"
+                                         onkeypress="if (event.keyCode == 13) {
+                                                     onchange();
+                                                     return false;
+                                                 }">
+                                <p:ajax event="blur" 
+                                        update="agreDepoCodiZona agreDepoDescZona msgAgreDepo"
+                                        listener="#{depositosBean.buscadorZonaTab(event)}"/>
+
+                                <p:ajax event="change" listener="#{depositosBean.buscadorZonaTab(event)}"
+                                        update="agreDepoCodiZona agreDepoDescZona msgAgreDepo focusTipoDepo"/>
+
+                            </p:inputText>
+                            <p:commandButton 
+                                oncomplete="PF('dlgBusZona').show()"
+                                update="formBusZona"
+                                icon="fa fa-search"
+                                styleClass="blue-btn raised-btn" 
+                                style="width: 30px;"
+                                ajax="true"/>
+                            <p:outputLabel id="agreDepoDescZona" value="#{depositosBean.zonas.xdesc}" 
+                                           style="width: 250px;"/>
+
+                        </h:panelGrid>
+
+                        <p:outputLabel value="Tipo: " style="font-weight: bold; float: right;"/>
+
+                        <p:selectOneRadio id="depotipo" value="#{depositosBean.depositos.mtipo}" layout="grid" columns="1" 
+                                          tabindex="3">
+                            <f:selectItem itemLabel="Fijo" itemValue="F" />
+                            <f:selectItem itemLabel="Movil" itemValue="M" />
+                            <f:selectItem itemLabel="Salida Gratuita" itemValue="G" />
+                            <f:selectItem itemLabel="Externo" itemValue="E" />
+                        </p:selectOneRadio>
+
+                        <p:outputLabel value="Peso Máx: " style="font-weight: bold; float: right;"/>
+                        <h:panelGrid columns="2">
+                            <p:inputText id="chapDepo" value="#{depositosBean.depositos.npesoMax}" 
+                                         tabindex="4" style="width: 80px;">
+                                <f:convertNumber pattern="###,###,###.##" type="number" />
+                            </p:inputText>
+                            <p:outputLabel value="Kg."/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Nro Establecimiento: " style="font-weight: bold; float: right;"/>
+
+
+                        <p:inputText id="depoNroEst" value="#{depositosBean.depositos.npuntoEst}" 
+                                     tabindex="5" style="width: 50px;"/>
+
+                        <p:outputLabel value="Nro Expedicion: " style="font-weight: bold; float: right;"/>
+
+                        <p:inputText id="depoNroExp" value="#{depositosBean.depositos.npuntoExp}" 
+                                     tabindex="6" style="width: 50px;"/>
+
+                        <p:outputLabel value="Marca:" style="font-weight: bold; float: right;"/>
+
+                        <p:inputText id="marcDepo" value="#{depositosBean.depositos.xmarca}" 
+                                     tabindex="7" style="width: 200px;"
+                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+                        <p:outputLabel value="Chapa:" style="font-weight: bold; float: right;"/>
+
+                        <p:inputText id="depoPesoMax" value="#{depositosBean.depositos.xchapa}" 
+                                     tabindex="8" style="width: 50px;"
+                                     onkeyup="this.value = this.value.toUpperCase()"/>
+
+                        <p:outputLabel value="Transportista:" style="font-weight: bold; float: right;"/>
+
+                        <h:panelGrid columns="3" id="agreDepoPnlTrans">
+                            <p:inputText id="agreDepoCodiTrans" value="#{depositosBean.transportistas.codTransp}" 
+                                         tabindex="9" style="width: 30px;"
+                                         onkeypress="if (event.keyCode == 13) {
+                                                     onchange();
+                                                     return false;
+                                                 }">
+                                <p:ajax event="blur" 
+                                        update="agreDepoCodiTrans agreDepoDescTrans msgAgreDepo"
+                                        listener="#{depositosBean.buscadorTransoprtistaTab(event)}"/>
+
+                                <p:ajax event="change" 
+                                        update="agreDepoCodiTrans agreDepoDescTrans msgAgreDepo focusCondDepo"
+                                        listener="#{depositosBean.buscadorTransoprtistaTab(event)}"/>
+                            </p:inputText>
+                            <p:commandButton 
+                                oncomplete="PF('dlgBusTrans').show()"
+                                update="formBusTrans"
+                                icon="fa fa-search"
+                                styleClass="blue-btn raised-btn" 
+                                style="width: 30px;"
+                                ajax="true"/>
+                            <p:outputLabel id="agreDepoDescTrans" value="#{depositosBean.transportistas.xtransp}" 
+                                           style="width: 250px;"/>
+
+                        </h:panelGrid>
+
+                        <p:outputLabel value="Conductor:" style="font-weight: bold; float: right;"/>
+
+                        <h:panelGrid columns="3" id="agreDepoPnlCond">
+                            <p:inputText id="agreDepoCodiCond" value="#{depositosBean.conductores.codConductor}" 
+                                         tabindex="10" style="width: 30px;"
+                                         onkeypress="if (event.keyCode == 13) {
+                                                     onchange();
+                                                     return false;
+                                                 }">
+                                <p:ajax event="blur" 
+                                        update="agreDepoPnlCond msgAgreDepo"
+                                        listener="#{depositosBean.buscadorConductorTab(event)}"/>
+
+                                <p:ajax event="change" 
+                                        update="agreDepoPnlCond msgAgreDepo focusGuardarDepo"
+                                        listener="#{depositosBean.buscadorConductorTab(event)}"/>
+
+                            </p:inputText>
+                            <p:commandButton 
+                                oncomplete="PF('dlgBusMerca').show()"
+                                update="formBusMerca"
+                                icon="fa fa-search"
+                                styleClass="blue-btn raised-btn" 
+                                style="width: 30px;"
+                                ajax="true"/>
+                            <p:outputLabel id="agreDepoDescCond" value="#{depositosBean.conductores.xconductor}" 
+                                           style="width: 250px;"/>
+
+                        </h:panelGrid>
+
+                        <br></br>
+                        <br></br>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <br></br>
+
+                <center>
+                    <h:panelGrid columns="2">
+
+                        <p:commandButton
+                            id="btnGuardarDepo"
+                            value="Guardar"
+                            actionListener="#{depositosBean.insertar()}"
+                            update="msgAgreDepo"
+                            icon="fa fa-check"
+                            styleClass="green-btn raised-btn" 
+                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                        <p:commandButton value="Cancelar" actionListener="#{depositosBean.verificarCargaDatos()}"
+                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                         icon="fa fa-times"/>
+                    </h:panelGrid>
+                </center>
+            </p:dialog>
+
+        </h:form>
+
+        <h:form id="formBusZona"  prependId="false">
+            <p:growl id="msgBusZona" showDetail="true"/>
+
+            <p:dialog header="Buscar Zonas"
+                      widgetVar="dlgBusZona"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="700">
+
+                <p:ajax event="open"
+                        listener="#{buscadorZonasBean.instanciar()}"
+                        update="pnlBusZona tablaBusZona"/>
+
+                <h:panelGrid id="pnlBusZona" columns="2">
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <h:panelGrid columns="2">
+                        <p:inputText id="filtroBusZona"
+                                     value="#{buscadorZonasBean.filtro}"
+                                     style="width: 200px;">
+                            <p:tooltip  for="filtroBusZona" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                        </p:inputText>
+
+                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                         style="width: 100px;" actionListener="#{buscadorZonasBean.listarZonasBuscador()}"
+                                         update="tablaBusZona msgBusZona"/>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tablaBusZona"
+                             var="detalle1"
+                             value="#{buscadorZonasBean.listaZonas}"
+                             paginator="true"
+                             rows="5"
+                             rowsPerPageTemplate="5,10"
+                             emptyMessage="Sin datos para mostrar."
+                             style="width: 98%;"
+                             rowKey="#{detalle1.zonasPK.codZona}"
+                             selection="#{buscadorZonasBean.zonas}"
+                             selectionMode="single"
+                             paginatorPosition="bottom">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{buscadorZonasBean.onRowSelect(event)}"/>
+
+
+                    <p:column headerText="codigo" width="100">
+                        <h:outputText value="#{detalle1.zonasPK.codZona}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" width="300">
+                        <h:outputText value="#{detalle1.xdesc}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:dialog>
+
+
+
+        </h:form>
+
+        <h:form id="formBusTrans"  prependId="false">
+            <p:growl id="msgBusTransportista" showDetail="true"/>
+
+            <p:dialog header="Buscar Transportistas"
+                      widgetVar="dlgBusTrans"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="700">
+
+                <p:ajax event="open"
+                        listener="#{buscadorTtransportistasBean.instanciar()}"
+                        update="pnlBusTrans tablaBusTrans"/>
+
+                <h:panelGrid id="pnlBusTrans" columns="2">
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <h:panelGrid columns="2">
+                        <p:inputText id="filtroBusTrans"
+                                     value="#{buscadorTtransportistasBean.filtro}"
+                                     style="width: 200px;">
+                            <p:tooltip  for="filtroBusTrans" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                        </p:inputText>
+
+                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                         style="width: 100px;" actionListener="#{buscadorTtransportistasBean.listarTransportistasBuscador()}"
+                                         update="tablaBusTrans msgBusMerca"/>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tablaBusTrans"
+                             var="detalle1"
+                             value="#{buscadorTtransportistasBean.listaTransportistas}"
+                             paginator="true"
+                             rows="5"
+                             rowsPerPageTemplate="5,10"
+                             emptyMessage="Sin datos para mostrar."
+                             style="width: 98%;"
+                             rowKey="#{detalle1.codTransp}"
+                             selection="#{buscadorTtransportistasBean.transportistas}"
+                             selectionMode="single"
+                             paginatorPosition="bottom">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{buscadorTtransportistasBean.onRowSelect(event)}"/>
+
+
+                    <p:column headerText="Codigo" width="100">
+                        <h:outputText value="#{detalle1.codTransp}"/>
+                    </p:column>
+
+                    <p:column headerText="RUC" width="100">
+                        <h:outputText value="#{detalle1.xruc}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" width="200">
+                        <h:outputText value="#{detalle1.xtransp}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:dialog>
+
+
+
+        </h:form>
+
+        <h:form id="formBusCond"  prependId="false">
+            <p:growl id="msgBusConductor" showDetail="true"/>
+
+            <p:dialog header="Buscar Conductor"
+                      widgetVar="dlgBusCond"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="700">
+
+                <p:ajax event="open"
+                        listener="#{buscadorConductoresBean.instanciar()}"
+                        update="pnlBusCond tablaBusCond"/>
+
+                <h:panelGrid id="pnlBusCond" columns="2">
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <h:panelGrid columns="2">
+                        <p:inputText id="filtroBusCond"
+                                     value="#{buscadorConductoresBean.filtro}"
+                                     style="width: 200px;">
+                            <p:tooltip  for="filtroBusCond" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                        </p:inputText>
+
+                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                         style="width: 100px;" actionListener="#{buscadorConductoresBean.listarConductoresBuscador()}"
+                                         update="tablaBusCond msgBusConductor"/>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tablaBusCond"
+                             var="detalle1"
+                             value="#{buscadorConductoresBean.listaConductores}"
+                             paginator="true"
+                             rows="5"
+                             rowsPerPageTemplate="5,10"
+                             emptyMessage="Sin datos para mostrar."
+                             style="width: 98%;"
+                             rowKey="#{detalle1.codConductor}"
+                             selection="#{buscadorConductoresBean.conductores}"
+                             selectionMode="single"
+                             paginatorPosition="bottom">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{buscadorConductoresBean.onRowSelect(event)}"/>
+
+
+                    <p:column headerText="Codigo" width="100">
+                        <h:outputText value="#{detalle1.codConductor}"/>
+                    </p:column>
+
+                    <p:column headerText="RUC" width="100">
+                        <h:outputText value="#{detalle1.xdocum}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" width="200">
+                        <h:outputText value="#{detalle1.xconductor}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </p:dialog>
+
+
+
+        </h:form>
+
+
+        <h:form id="formBuscador"  prependId="false">
+            <p:growl id="msgBuscador" showDetail="true"/>
+
+            <p:dialog header="Buscar #{buscadorBean.titulo}" 
+                      widgetVar="dlgBuscador"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="700">
+
+                <p:ajax event="open"
+                        listener="#{buscadorBean.buscar()}"
+                        update="pnlBuscador tablaBuscador"/>
+
+                <h:panelGrid id="pnlBuscador" columns="2">
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <h:panelGrid columns="2">
+                        <p:inputText id="filtroBuscador"
+                                     value="#{buscadorBean.filtro}"
+                                     style="width: 200px;">
+                            <p:tooltip  for="filtroBusZona" value="Ingrese filtro de busqueda." position="bottom"/>
+
+                        </p:inputText>
+
+                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                         style="width: 100px;" actionListener="#{buscadorBean.buscar()}"
+                                         update="tablaBuscador msgBuscador"/>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tablaBuscador" var="datos" 
+                             value="#{buscadorBean.listaResultado}" 
+                             widgetVar="vtablaBuscador" 
+                             paginator="true"
+                             rows="10"
+                             rowsPerPageTemplate="10,20"
+                             emptyMessage="Sin datos para mostrar."
+                             style="width: 98%;"
+                             rowKey="#{datos.dato1}"
+                             selection="#{buscadorBean.resultado}"
+                             selectionMode="single"
+                             paginatorPosition="bottom"> 
+
+                    <p:ajax event="rowSelect"
+                            listener="#{buscadorBean.onRowSelect(event)}"/>
+
+
+                    <p:column headerText="Código">
+                        <h:outputText value="#{datos.dato1}" />
+                    </p:column>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{datos.dato2}" />
+                    </p:column>
+
+                    <p:column headerText="Dato extra">
+                        <h:outputText value="#{datos.dato3}" />
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:dialog>
+
+        </h:form>
+
+        <h:form id="formBusMerca"  prependId="false">
+            <p:growl id="msgBusMerca" showDetail="true"/>
+
+            <p:dialog header="Buscar Mercaderia"
+                      widgetVar="dlgBusMerca"
+                      modal="true"
+                      closable="true"
+                      closeOnEscape="true"
+                      resizable="false"
+                      width="700">
+
+                <p:ajax event="open"
+                        listener="#{buscadorMercaderiaBean.instanciar()}"
+                        update="pnlBusMerca tablaBusMerca"/>
+
+                <h:panelGrid id="pnlBusMerca" columns="2">
+
+                    <h:outputText value="Filtro: " style="font-weight: bold;"/>
+
+                    <h:panelGrid columns="2">
+                        <p:inputText id="filtroBusMerca"
+                                     value="#{buscadorMercaderiaBean.filtro}"
+                                     style="width: 200px;">
+                            <p:tooltip  for="filtroBusMerca" value="Ingrese codigo, o nombre." position="bottom"/>
+
+                        </p:inputText>
+
+                        <p:commandButton icon="fa fa-search" value="Buscar" styleClass="blue-btn raised-btn"
+                                         style="width: 100px;" actionListener="#{buscadorMercaderiaBean.listarMercaderiasBuscador()}"
+                                         update="tablaBusMerca msgBusMerca"/>
+
+
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+
+                <p:dataTable id="tablaBusMerca"
+                             var="detalle1"
+                             value="#{buscadorMercaderiaBean.listaMercaderias}"
+                             paginator="true"
+                             rows="5"
+                             rowsPerPageTemplate="5,10"
+                             emptyMessage="Sin datos para mostrar."
+                             style="width: 98%;"
+                             rowKey="#{detalle1.mercaderiasPK.codMerca}"
+                             selection="#{buscadorMercaderiaBean.mercaderias}"
+                             selectionMode="single"
+                             paginatorPosition="bottom">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{buscadorMercaderiaBean.onRowSelect(event)}"/>
+
+
+                    <p:column headerText="Codigo" width="100">
+                        <h:outputText value="#{detalle1.mercaderiasPK.codMerca}"/>
+                    </p:column>
+
+                    <p:column headerText="Cod Barra" width="100">
+                        <h:outputText value="#{detalle1.codBarra}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" width="200">
+                        <h:outputText value="#{detalle1.xdesc}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </p:dialog>
+
+
+
+        </h:form>
+
+
+    </h:body>
+
+</html>

@@ -1,0 +1,364 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">VenLog S.A.</ui:define>
+
+    <ui:define name="content">
+
+        <h:body>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+
+                        <h:form id="formBtnFactVta" prependId="false">  
+
+                            <h1 align="center">MANTENIMIENTO DE FACTURA DE VENTA</h1>
+
+                            <p:growl id="msgFactVenta" showDetail="true"/>
+
+                            <center>
+
+                                <p:commandButton 
+                                    value="Agregar"
+                                    actionListener="#{facturasVtaBean.instanciar()}"
+                                    oncomplete="PF('dlgNuevFactVta').show()"
+                                    update="formNuevaFactVta"
+                                    icon="fa fa-plus"
+                                    styleClass="green-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    ajax="true"/>
+
+                                <p:commandButton 
+                                    value="Editar"   
+                                    styleClass="orange-btn raised-btn" 
+                                    oncomplete="PF('dlgEditFactVta').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-pencil"
+                                    disabled="#{facturasVtaBean.habBtnEdit}"
+                                    update="pnlEditFactVta"/>
+
+                                <p:commandButton 
+                                    value="Borrar" 
+                                    styleClass="red-btn raised-btn" 
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-ban"
+                                    disabled="#{facturasVtaBean.habBtnEdit}"
+                                    oncomplete="PF('dlgInacFactVta').show()"
+                                    update="formInacFactVta"/>
+
+                            </center>
+
+                        </h:form>
+
+                        <h:form id="formFactVta" prependId="false">  
+
+                                <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <div class="card card-w-title">
+                                        <p:dataTable id="tablaFactVta" var="itemp" selectionMode="single" reflow="true"
+                                                     paginator="true" rows="20" paginatorPosition="bottom"
+                                                     emptyMessage="Sin datos para mostrar."
+                                                     value="#{facturasVtaBean.listaFacturas}" rowKey="#{itemp.facturasPK}"
+                                                     selection="#{facturasVtaBean.facturas.facturasPK}">
+
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{facturasVtaBean.onRowSelect(event)}"
+                                                    update="formBtnFactVta"/>
+
+                                            <p:column headerText="Código" filterBy="#{itemp.facturasPK.nrofact}"
+                                                      sortBy="#{itemp.facturasPK.nrofact}">
+                                                <h:outputText value="#{itemp.facturasPK.nrofact}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción" filterBy="#{itemp.facturasPK.ctipoDocum}"
+                                                      sortBy="#{itemp.facturasPK.ctipoDocum}">
+                                                <h:outputText value="#{itemp.facturasPK.ctipoDocum}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                        <h:form id="formNuevaFactVta"  prependId="false">
+                            <p:growl id="msgAgreFactVta" showDetail="true"/>
+
+                            <p:dialog header="Agregar FactVta"
+                                      widgetVar="dlgNuevFactVta"
+                                      modal="true"
+                                      responsive="true"
+                                      closeOnEscape="false"
+                                      closable="false" resizable="true">
+
+                                <p:ajax event="open" listener="#{facturasVtaBean.instanciar()}"/>
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="fechaen" value="#{facturasVtaBean.facturas.facturasPK.ffactur}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Cliente:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.clientes.xnombre}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Tipo Vta:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.facturas.ctipoVta}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Vendedor:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="ntaenvio" value="#{facturasVtaBean.facturas.empleados1}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                                                       
+                                    <p:outputLabel value="Deposito:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.facturas.depositos.depositosPK}" 
+                                                 tabindex="7" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="FEcha de Vto:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmes" value="#{facturasVtaBean.facturas.fvenc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="FEcha de Vto  Imp.:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmes" value="#{facturasVtaBean.facturas.fvencImpre}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Canal:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.facturas.codCanal.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Nro. de Pedido:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.facturas.pedidos.pedidosPK.nroPedido}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Plazo cheque:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.cuentasCorrientes.ndocumCheq}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                     
+                                    <p:outputLabel value="Entregador:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.movimientosMerca.codEntregador}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                   
+                                    
+                                </h:panelGrid>
+
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{facturasVtaBean.insertar()}"
+                                            update="msgAgreFactVta formFactVta"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton value="Cancelar" actionListener="#{facturasVtaBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formInacFactVta" prependId="false">
+
+                            <p:growl id="msgInacFactVta" showDetail="true"/>
+
+                            <p:dialog header="Borrar FactVta"
+                                      widgetVar="dlgInacFactVta"
+                                      modal="true"
+                                      responsive="true"
+                                      width="320">
+
+
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+
+                                <br></br>
+                                <br></br>
+                                <br></br>
+                                <br></br>
+
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Borrar"
+                                            actionListener="#{facturasVtaBean.borrar()}"
+                                            update="msgInacFactVta formBtnFactVta formFactVta"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgInacFactVta').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+
+                        <h:form id="formEditarFactVta"  prependId="false">
+                            <p:growl id="msgEditFactVta" showDetail="true"/>
+
+                            <p:dialog header="Editar FactVta"
+                                      widgetVar="dlgEditFactVta"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{facturasVtaBean.instanciar()}"/>
+
+                                <h:panelGrid id="pnlEditFactVta" columns="2">
+
+                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="coEdit" value="#{facturasVtaBean.facturas.facturasPK.nrofact}" 
+                                                     tabindex="1" style="width: 50px;" disabled="true"
+                                                     onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                   <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="fechaen" value="#{facturasVtaBean.facturas.facturasPK.ffactur}" 
+                                                 tabindex="2" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Cliente:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.clientes.xnombre}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Tipo Vta:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.facturas.ctipoVta}" 
+                                                 tabindex="6" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Vendedor:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="ntaenvio" value="#{facturasVtaBean.facturas.empleados1}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                                                       
+                                    <p:outputLabel value="Deposito:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="aldep" value="#{facturasVtaBean.facturas.depositos.depositosPK}" 
+                                                 tabindex="7" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="FEcha de Vto:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmes" value="#{facturasVtaBean.facturas.fvenc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="FEcha de Vto  Imp.:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="itmes" value="#{facturasVtaBean.facturas.fvencImpre}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+
+                                    <p:outputLabel value="Canal:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.facturas.codCanal.xdesc}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Nro. de Pedido:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.facturas.pedidos.pedidosPK.nroPedido}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    
+                                    <p:outputLabel value="Plazo cheque:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.cuentasCorrientes.ndocumCheq}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                     
+                                    <p:outputLabel value="Entregador:" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="obsenv" value="#{facturasVtaBean.movimientosMerca.codEntregador}" 
+                                                 tabindex="1" style="width: 200px;"
+                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                   
+                                    
+                                </h:panelGrid>
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton
+                                            value="Guardar"
+                                            actionListener="#{facturasVtaBean.editar()}"
+                                            update="msgEditFactVta formBtnFactVta formFactVta"
+                                            icon="fa fa-check"
+                                            styleClass="green-btn raised-btn" 
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                        <p:commandButton type="button" value="Cancelar" onclick="PF('dlgEditFactVta').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>
+                        <h:form id="formSinGuardarFactVta" prependId="false">
+                            <p:dialog modal="true" closable="false" closeOnEscape="false"
+                                      header="Aviso" width="250" widgetVar="dlgSinGuardarFactVta">
+
+                                <p:outputLabel value="Desea salir sin guardar datos?" style="font-weight: bold;"/>  
+
+                                <br></br>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton
+                                        value="Si"
+                                        actionListener="#{facturasVtaBean.cerrarDialogosAgregar()}" 
+                                        update="formFactVta"
+                                        icon="fa fa-check"
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+
+
+                                    <p:commandButton 
+                                        type="button" 
+                                        value="No" 
+                                        onclick="PF('dlgSinGuardarFactVta').hide();" 
+                                        styleClass="blue-btn raised-btn" 
+                                        style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                        icon="fa fa-times"/>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
+
+                        </h:form>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </h:body>
+
+    </ui:define>
+
+</ui:composition>

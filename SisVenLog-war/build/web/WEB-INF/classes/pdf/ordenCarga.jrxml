@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ordenCarga" language="groovy" pageWidth="595" pageHeight="625" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6343dcb8-30a4-49ed-8537-fbf39ec23817">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="desde" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hasta" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT d.cod_merca, d.xdesc,
+ROUND((d.cant_cajas * m.nrelacion + d.cant_unid) / m.nrela_provee, 0, 1) AS CANT_CAJAS,
+(d.cant_cajas * m.nrelacion + d.cant_unid) - ROUND((d.cant_cajas * m.nrelacion + d.cant_unid) / m.nrela_provee, 0, 1) * m.nrela_provee AS cant_unid,
+(d.cant_cajas * m.nrelacion ) + d.cant_unid as tunid, E.FENVIO, e.nro_envio,   p.xnombre as xnomb_entr, m.cod_barra,
+d2.xdesc as xdepo_origen, d3.xdesc as xdepo_destino, v.ctipo_docum as cpv,
+v.fact_max as hastacpv, v.fact_min as desdecpv, v2.ctipo_docum as fcr, v2.fact_max as hastafcr,
+v2.fact_min as desdefcr ,e.tot_peso, l.cod_categoria, g.norden_envio
+  FROM
+  envios e INNER JOIN
+  envios_det d ON e.nro_envio = d.nro_envio AND e.cod_empr = d.cod_empr LEFT OUTER JOIN
+  vw_fact_envios v2 ON e.nro_envio = v2.nro_envio AND v2.ctipo_docum = 'FCR' AND e.cod_empr = v2.cod_empr LEFT OUTER JOIN   vw_fact_envios v ON e.nro_envio = v.nro_envio AND v.ctipo_docum = 'FCO' AND e.cod_empr = v.cod_empr INNER JOIN  depositos d2 ON e.depo_origen = d2.cod_depo AND e.cod_empr = d2.cod_empr INNER JOIN  depositos d3 ON e.depo_destino = d3.cod_depo AND e.cod_empr = d3.cod_empr INNER JOIN  empleados p ON e.cod_entregador = p.cod_empleado AND e.cod_empr = p.cod_empr INNER JOIN
+  mercaderias m ON d.cod_merca = m.cod_merca, sublineas s, lineas l, categorias g   WHERE e.cod_empr = 2
+  AND e.nro_envio >=  $P{desde}
+ AND e.nro_envio <= $P{hasta}
+ AND l.cod_categoria = g.cod_categoria
+ AND m.cod_sublinea = s.cod_sublinea
+ AND s.cod_linea = l.cod_linea
+ and e.mestado ='A'
+ORDER BY e.nro_envio, g.norden_envio, l.cod_categoria,  d.cod_merca]]>
+	</queryString>
+	<field name="cod_merca" class="java.lang.String"/>
+	<field name="xdesc" class="java.lang.String"/>
+	<field name="CANT_CAJAS" class="java.math.BigDecimal"/>
+	<field name="cant_unid" class="java.math.BigDecimal"/>
+	<field name="tunid" class="java.math.BigDecimal"/>
+	<field name="FENVIO" class="java.sql.Timestamp"/>
+	<field name="nro_envio" class="java.math.BigDecimal"/>
+	<field name="xnomb_entr" class="java.lang.String"/>
+	<field name="cod_barra" class="java.lang.String"/>
+	<field name="xdepo_origen" class="java.lang.String"/>
+	<field name="xdepo_destino" class="java.lang.String"/>
+	<field name="cpv" class="java.lang.String"/>
+	<field name="hastacpv" class="java.math.BigDecimal"/>
+	<field name="desdecpv" class="java.math.BigDecimal"/>
+	<field name="fcr" class="java.lang.String"/>
+	<field name="hastafcr" class="java.math.BigDecimal"/>
+	<field name="desdefcr" class="java.math.BigDecimal"/>
+	<field name="tot_peso" class="java.math.BigDecimal"/>
+	<field name="cod_categoria" class="java.lang.Short"/>
+	<field name="norden_envio" class="java.lang.Short"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="467" y="39" width="85" height="15" uuid="0918aa04-6570-4eab-916a-34db17196cb8"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nro_envio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="102" splitType="Stretch">
+			<staticText>
+				<reportElement x="30" y="19" width="70" height="15" uuid="612c455a-843f-4b82-a7ff-b00d192b0620"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Asunción,]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="102" y="19" width="100" height="15" uuid="03903625-bfc6-41a6-98dd-3612b2af202e"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FENVIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="34" width="196" height="13" uuid="d347c6df-4b33-4371-9be3-b1fa72622fc4"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdepo_destino}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="47" width="196" height="13" uuid="e166b8de-2b71-4278-84c9-0b9d9bc755f9"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdepo_origen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="60" width="159" height="13" uuid="36e34de8-c1d9-413b-8e5d-eb9ab7a3d43f"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desdecpv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="73" width="159" height="11" uuid="9bf18518-8144-415e-aee1-f724085fcf6a"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{desdefcr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="45" width="111" height="12" uuid="38bb364f-f102-4435-8fe5-79e920f58ed0"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hastacpv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="57" width="111" height="12" uuid="650ec91f-3e99-4922-9a4b-e06e5f1c4fff"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hastafcr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="48" height="13" uuid="fefebf5e-3945-46e0-8367-74d59b368a34"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_merca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="0" width="37" height="13" uuid="949dc3d1-55db-4c46-830d-1c52d6331d39"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANT_CAJAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="165" y="0" width="56" height="13" uuid="ca0041b5-ba6f-4129-881e-a0828bd28c4b"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cant_unid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="236" y="0" width="170" height="13" uuid="d166491c-e8a5-4b6a-8825-5253ed3ef493"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xdesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="411" y="0" width="61" height="13" uuid="ab950378-6346-4a30-88d9-a6952edb1e3d"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_barra}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="0" width="65" height="13" uuid="fc1512e5-ba8f-4e65-a4ef-bada52f09a70"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tunid}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="55" splitType="Stretch">
+			<textField>
+				<reportElement x="167" y="11" width="189" height="15" uuid="90e3d8ef-ea50-4e07-af2b-e0cb2302352d"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{xnomb_entr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="40" width="98" height="13" uuid="36ec4591-bdbb-44b3-89ed-0f73e28d5e09"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Peso de las mercaderias: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="40" width="57" height="13" uuid="de85917f-99a8-4a13-b055-e535969b93b0"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tot_peso}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="167" y="40" width="31" height="13" uuid="d353e0a6-60fb-472e-8687-2feaa6abecbc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kgs.]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="3" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="2" splitType="Stretch"/>
+	</summary>
+</jasperReport>
