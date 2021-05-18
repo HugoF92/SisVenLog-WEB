@@ -313,30 +313,21 @@ public class ComprasFacade extends AbstractFacade<Compras> {
         return listadoCompras;
     }
 
-    public List<Compras> comprasPorCodEmprMaxFfacturCtipoDocumCodProveed(short codEmpr, String ctipoDocum, short codProveed) {
-        String sql = "SELECT * FROM compras WHERE cod_empr = :cod_empr "
-                + "AND ffactur = (SELECT MAX(ffactur) FROM compras WHERE cod_empr = :cod_empr "
-                + "AND ctipo_docum = :ctipo_docum AND cod_proveed = :cod_proveed) "
-                + "AND ctipo_docum = :ctipo_docum AND cod_proveed = :cod_proveed "
-                + "AND isaldo > 0 ORDER BY ffactur";
-        TypedQuery<Compras> query = em.createQuery(
-                sql, Compras.class);
-        query.setParameter("cod_empr", codEmpr);
-        query.setParameter("ctipo_docum", ctipoDocum);
-        query.setParameter("cod_proveed", codProveed);
-        return query.getResultList();
-    }
-
-    public List<Compras> comprasPorCodEmprFfacturCtipoDocumCodProveed(short codEmpr, Date ffactur, String ctipoDocum, short codProveed) {
-        String sql = "SELECT * FROM compras WHERE cod_empr = :cod_empr "
-                + "AND ffactur = :ffactur AND ctipo_docum = :ctipo_docum "
-                + "AND cod_proveed = :cod_proveed AND isaldo > 0 ORDER BY ffactur";
-        TypedQuery<Compras> query = em.createQuery(
-                sql, Compras.class);
-        query.setParameter("cod_empr", codEmpr);
-        query.setParameter("ffactur", ffactur);
-        query.setParameter("ctipo_docum", ctipoDocum);
-        query.setParameter("cod_proveed", codProveed);
+    public List<Compras> comprasPorCodEmprFfacturCtipoDocumCodProveed(
+            short codEmpr, Date ffactur, String ctipoDocum, short codProveed) {
+        String sql = "SELECT c FROM Compras c WHERE c.comprasPK.codEmpr = ?1 "
+                + "AND c.comprasPK.ctipoDocum = ?2 AND c.comprasPK.codProveed = ?3 "
+                + "AND c.comprasPK.ffactur = " + (ffactur != null ? "?4 "
+                        : "(SELECT MAX(c2.comprasPK.ffactur) FROM Compras c2 WHERE c2.comprasPK.codEmpr = ?1 "
+                        + "AND c2.comprasPK.ctipoDocum = ?2 AND c2.comprasPK.codProveed = ?3) ")
+                + "AND c.isaldo > 0 ORDER BY c.comprasPK.ffactur";
+        TypedQuery<Compras> query = em.createQuery(sql, Compras.class);
+        query.setParameter(1, codEmpr);
+        query.setParameter(2, ctipoDocum);
+        query.setParameter(3, codProveed);
+        if (ffactur != null) {
+            query.setParameter(4, ffactur);
+        }
         return query.getResultList();
     }
 }
