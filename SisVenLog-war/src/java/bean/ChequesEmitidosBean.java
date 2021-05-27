@@ -85,7 +85,7 @@ public class ChequesEmitidosBean implements Serializable {
     private Compras compras;
 
     private String titulo;
-    private boolean visualizar, modificar, deshabilitarBotonModificar = true, deshabilitarBotonEliminar = true;
+    private boolean visualizar, modificar, eliminar, deshabilitarBotonModificar = true, deshabilitarBotonEliminar = true;
     private Long icheque, isaldo, ipagado;
 
     @PostConstruct
@@ -109,12 +109,14 @@ public class ChequesEmitidosBean implements Serializable {
             public List<ChequesEmitidos> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
                 String xdesc = filters.get("bancos.xdesc") != null ? filters.get("bancos.xdesc").toString() : null;
                 String xnombre = filters.get("codProveed.xnombre") != null ? filters.get("codProveed.xnombre").toString() : null;
-                long icheque = filters.get("icheque") != null ? (Long) filters.get("icheque") : -1;
+                String nroCheque = filters.get("chequesEmitidosPK.nroCheque") != null ? filters.get("chequesEmitidosPK.nroCheque").toString() : null;
+                long icheque = filters.get("icheque") != null ? Long.parseLong(filters.get("icheque").toString()) : -1;
                 Date fcheque = filters.get("fcheque") != null ? (Date) filters.get("fcheque") : null;
                 this.setRowCount(chequesEmitidosFacade.countChequesEmitidos(
                         Short.parseShort("2"),
                         xdesc,
                         xnombre,
+                        nroCheque,
                         icheque,
                         fcheque
                 ).intValue());
@@ -122,6 +124,7 @@ public class ChequesEmitidosBean implements Serializable {
                         Short.parseShort("2"),
                         xdesc,
                         xnombre,
+                        nroCheque,
                         icheque,
                         fcheque,
                         sortField,
@@ -164,7 +167,9 @@ public class ChequesEmitidosBean implements Serializable {
             titulo = "Nuevo cheque emitido";
             modificar = false;
             visualizar = false;
+            eliminar = false;
             chequesEmitidos = new ChequesEmitidos();
+            icheque = null;
             chequesEmitidos.setChequesEmitidosPK(new ChequesEmitidosPK());
             chequesEmitidos.getChequesEmitidosPK().setCodEmpr(codEmpr);
             chequesEmitidos.setFcheque(new Date());
@@ -175,6 +180,23 @@ public class ChequesEmitidosBean implements Serializable {
             titulo = "Modificar cheque emitido";
             modificar = true;
             visualizar = false;
+            eliminar = false;
+            chequesEmitidos = chequesEmitidosSeleccionado;
+            icheque = chequesEmitidos.getIcheque();
+            chequesEmitidosDets = chequesEmitidosDetFacade.chequesEmitidosDetPorChequesEmitidos(chequesEmitidos);
+        } else if (operacion.equalsIgnoreCase("vi")) {
+            titulo = "Visualizar cheque emitido";
+            modificar = false;
+            visualizar = true;
+            eliminar = false;
+            chequesEmitidos = chequesEmitidosSeleccionado;
+            icheque = chequesEmitidos.getIcheque();
+            chequesEmitidosDets = chequesEmitidosDetFacade.chequesEmitidosDetPorChequesEmitidos(chequesEmitidos);
+        } else if (operacion.equalsIgnoreCase("el")) {
+            titulo = "Eliminar cheque emitido";
+            modificar = false;
+            visualizar = true;
+            eliminar = true;
             chequesEmitidos = chequesEmitidosSeleccionado;
             icheque = chequesEmitidos.getIcheque();
             chequesEmitidosDets = chequesEmitidosDetFacade.chequesEmitidosDetPorChequesEmitidos(chequesEmitidos);
@@ -443,6 +465,10 @@ public class ChequesEmitidosBean implements Serializable {
 
     public boolean isModificar() {
         return modificar;
+    }
+
+    public boolean isEliminar() {
+        return eliminar;
     }
 
     public boolean isDeshabilitarBotonModificar() {

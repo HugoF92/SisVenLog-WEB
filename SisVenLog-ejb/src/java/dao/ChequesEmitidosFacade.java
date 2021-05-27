@@ -23,6 +23,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -220,6 +221,7 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
             short codEmpr,
             String xdesc,
             String xnombre,
+            String nroCheque,
             long icheque,
             Date fcheque,
             String sortField,
@@ -232,14 +234,29 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
         Join<ChequesEmitidos, Bancos> j1 = r.join("bancos");
         Join<ChequesEmitidos, Proveedores> j2 = r.join("codProveed");
         cq.where(builder.equal(r.get("chequesEmitidosPK").get("codEmpr"), codEmpr));
-        if (xdesc != null) {
-            cq.where(builder.like(j1.get("xdesc"), "%" + xdesc + "%"));
+        if (xdesc != null && xnombre != null) {
+            Predicate predicateJ1 = builder.like(j1.get("xdesc"), "%" + xdesc + "%");
+
+            Predicate predicateJ2 = builder.like(j2.get("xnombre"), "%" + xnombre + "%");
+
+            Predicate finalPredicate = builder.and(predicateJ1, predicateJ2);
+            cq.where(finalPredicate);
+        } else {
+            if (xdesc != null) {
+                cq.where(builder.like(j1.get("xdesc"), "%" + xdesc + "%"));
+            }
+            if (xnombre != null) {
+                cq.where(builder.like(j2.get("xnombre"), "%" + xnombre + "%"));
+            }
         }
-        if (xnombre != null) {
-            cq.where(builder.like(j2.get("xnombre"), "%" + xnombre + "%"));
+        if (nroCheque != null) {
+            cq.where(builder.like(r.get("chequesEmitidosPK").get("nroCheque"), "%" + nroCheque + "%"));
+        }
+        if (fcheque != null) {
+            cq.where(builder.equal(r.get("fcheque"), fcheque));
         }
         if (icheque != -1) {
-            cq.where(builder.equal(r.get("icheque"), icheque));
+            cq.where(builder.like(r.get("icheque").as(String.class), "%" + icheque + "%"));
         }
         if (sortOrder.equalsIgnoreCase("descending")) {
             if (sortField.contains(".")) {
@@ -248,6 +265,8 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
                     cq.orderBy(builder.desc(j1.get(field)));
                 } else if (field.equalsIgnoreCase("xnombre")) {
                     cq.orderBy(builder.desc(j2.get(field)));
+                } else if (field.equalsIgnoreCase("nroCheque")) {
+                    cq.orderBy(builder.desc(r.get("chequesEmitidosPK").get(field)));
                 }
             } else {
                 cq.orderBy(builder.desc(r.get(sortField)));
@@ -259,6 +278,8 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
                     cq.orderBy(builder.asc(j1.get(field)));
                 } else if (field.equalsIgnoreCase("xnombre")) {
                     cq.orderBy(builder.asc(j2.get(field)));
+                } else if (field.equalsIgnoreCase("nroCheque")) {
+                    cq.orderBy(builder.asc(r.get("chequesEmitidosPK").get(field)));
                 }
             } else {
                 cq.orderBy(builder.asc(r.get(sortField)));
@@ -275,6 +296,7 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
             short codEmpr,
             String xdesc,
             String xnombre,
+            String nroCheque,
             long icheque,
             Date fcheque
     ) {
@@ -282,16 +304,33 @@ public class ChequesEmitidosFacade extends AbstractFacade<ChequesEmitidos> {
         CriteriaQuery<Long> cq = builder.createQuery(Long.class);
         Root<ChequesEmitidos> r = cq.from(ChequesEmitidos.class);
         cq.where(builder.equal(r.get("chequesEmitidosPK").get("codEmpr"), codEmpr));
-        if (xdesc != null) {
+        if (xdesc != null && xnombre != null) {
             Join<ChequesEmitidos, Bancos> j1 = r.join("bancos");
-            cq.where(builder.like(j1.get("xdesc"), "%" + xdesc + "%"));
-        }
-        if (xnombre != null) {
+            Predicate predicateJ1 = builder.like(j1.get("xdesc"), "%" + xdesc + "%");
+
             Join<ChequesEmitidos, Proveedores> j2 = r.join("codProveed");
-            cq.where(builder.like(j2.get("xnombre"), "%" + xnombre + "%"));
+            Predicate predicateJ2 = builder.like(j2.get("xnombre"), "%" + xnombre + "%");
+
+            Predicate finalPredicate = builder.and(predicateJ1, predicateJ2);
+            cq.where(finalPredicate);
+        } else {
+            if (xdesc != null) {
+                Join<ChequesEmitidos, Bancos> j1 = r.join("bancos");
+                cq.where(builder.like(j1.get("xdesc"), "%" + xdesc + "%"));
+            }
+            if (xnombre != null) {
+                Join<ChequesEmitidos, Proveedores> j2 = r.join("codProveed");
+                cq.where(builder.like(j2.get("xnombre"), "%" + xnombre + "%"));
+            }
+        }
+        if (nroCheque != null) {
+            cq.where(builder.like(r.get("chequesEmitidosPK").get("nroCheque"), "%" + nroCheque + "%"));
+        }
+        if (fcheque != null) {
+            cq.where(builder.equal(r.get("fcheque"), fcheque));
         }
         if (icheque != -1) {
-            cq.where(builder.equal(r.get("icheque"), icheque));
+            cq.where(builder.like(r.get("icheque").as(String.class), "%" + icheque + "%"));
         }
         CriteriaQuery<Long> select = cq.select(builder.count(r));
         TypedQuery<Long> q = em.createQuery(select);

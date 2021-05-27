@@ -58,12 +58,10 @@
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
-                                    update="formDatatable growl"
-                                    action="#{chequesEmitidosBean.eliminarChequeEmitido}"
+                                    update="formDialog"
+                                    oncomplete="PF('dlgAgregar').show()"
+                                    actionListener="#{chequesEmitidosBean.prepararDialog('el')}"
                                     disabled="#{chequesEmitidosBean.deshabilitarBotonEliminar}">
-                                    <p:confirm header="Eliminar" message="¿Desea eliminar el cheque emitido
-                                               '#{chequesEmitidosBean.chequesEmitidosSeleccionado.chequesEmitidosPK.nroCheque}' del banco '#{chequesEmitidosBean.chequesEmitidosSeleccionado.bancos.xdesc}'"
-                                               icon="pi pi-info-circle"/>
                                 </p:commandButton>
 
                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
@@ -83,7 +81,7 @@
                                         <p:dataTable var="itemp" value="#{chequesEmitidosBean.lazyDataModel}"
                                                      selection="#{chequesEmitidosBean.chequesEmitidosSeleccionado}"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
-                                                     emptyMessage="Sin datos para mostrar."
+                                                     emptyMessage="Sin datos para mostrar." widgetVar="chequesTable"
                                                      sortBy="#{itemp.fcheque}" sortOrder="descending"
                                                      selectionMode="single" reflow="true" lazy="true">
 
@@ -91,11 +89,21 @@
                                                     listener="#{chequesEmitidosBean.onRowSelect(event)}"
                                                     update="formBotones"/>
 
+                                            <p:ajax event="rowDblselect"
+                                                    listener="#{chequesEmitidosBean.prepararDialog('vi')}"
+                                                    oncomplete="PF('dlgAgregar').show()"
+                                                    update="formDialog"/>
+
                                             <p:column headerText="Proveedor" filterBy="#{itemp.codProveed.xnombre}" sortBy="#{itemp.codProveed.xnombre}">
                                                 <h:outputText value="#{itemp.codProveed.xnombre}" />
                                             </p:column>
 
                                             <p:column headerText="Fecha" filterBy="#{itemp.fcheque}" sortBy="#{itemp.fcheque}">
+                                                <f:facet name="filter">
+                                                    <p:calendar pattern="dd/MM/yyyy">
+                                                        <p:ajax event="dateSelect" oncomplete="PF('chequesTable').filter()"/>
+                                                    </p:calendar>
+                                                </f:facet>
                                                 <h:outputText value="#{itemp.fcheque}">
                                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                                 </h:outputText>
@@ -103,6 +111,10 @@
 
                                             <p:column headerText="Banco" filterBy="#{itemp.bancos.xdesc}" sortBy="#{itemp.bancos.xdesc}">
                                                 <h:outputText value="#{itemp.bancos.xdesc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Nro Cheque" filterBy="#{itemp.chequesEmitidosPK.nroCheque}" sortBy="#{itemp.chequesEmitidosPK.nroCheque}">
+                                                <h:outputText value="#{itemp.chequesEmitidosPK.nroCheque}"/>
                                             </p:column>
 
                                             <p:column headerText="Monto" filterBy="#{itemp.icheque}">
@@ -189,7 +201,7 @@
                                     </p:panelGrid>
                                 </div>
 
-                                <p:panel header="Detalle" rendered="#{!chequesEmitidosBean.modificar}">
+                                <p:panel header="Detalle">
 
                                     <table width="100%" border="0" cellspacing="0" cellpadding="1">
                                         <tr bgcolor="#3984b8">
@@ -245,6 +257,7 @@
                                                                         icon="fa fa-plus"
                                                                         styleClass="blue-btn raised-btn"
                                                                         action="#{chequesEmitidosBean.agregarChequeEmitidoDetalle}"
+                                                                        rendered="#{!chequesEmitidosBean.visualizar}"
                                                                         update="tablaDet panelGridDetalles growlCabecera"
                                                                         style="margin-left:10px; width: 40px;"/>                   
 
@@ -273,7 +286,7 @@
                                                                          editable="true" editMode="cell"
                                                                          reflow="true" selectionMode="single"
                                                                          rowKey="#{itemd.chequesEmitidosDetPK}"
-                                                                         selection="#{chequesEmitidosBean.chequesEmitidosSeleccionado}"
+                                                                         selection="#{chequesEmitidosBean.chequesEmitidosDetSeleccionado}"
                                                                          style="width: 950px;">
 
                                                                 <!--p:column width="30" rendered="#{pedidosBean.modificar}">
@@ -358,9 +371,24 @@
                                             update="formDatatable growlCabecera cabecera"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn"
+                                            rendered="#{!chequesEmitidosBean.visualizar}"
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
 
+                                        <p:commandButton 
+                                            value="Eliminar"   
+                                            styleClass="red-btn raised-btn" 
+                                            style="margin-bottom:10px; width: 100px;"
+                                            icon="fa fa-ban"
+                                            update="formDatatable growlCabecera cabecera"
+                                            oncomplete="PF('dlgAgregar').hide()"
+                                            action="#{chequesEmitidosBean.eliminarChequeEmitido()}"
+                                            rendered="#{chequesEmitidosBean.eliminar}">
+                                            <p:confirm header="Eliminar" message="¿Desea eliminar este cheque emitido"
+                                                       icon="pi pi-info-circle"/>
+                                        </p:commandButton>
+
                                         <p:commandButton value="Cancelar" onclick="PF('dlgAgregar').hide()"
+                                                         action="#{chequesEmitidosBean.agregarChequeEmitido}"
                                                          styleClass="red-btn raised-btn" icon="fa fa-times" type="button"
                                                          style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
 
