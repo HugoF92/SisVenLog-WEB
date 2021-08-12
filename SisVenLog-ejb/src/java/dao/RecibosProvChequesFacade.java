@@ -29,21 +29,20 @@ public class RecibosProvChequesFacade extends AbstractFacade<RecibosProvCheques>
     public RecibosProvChequesFacade() {
         super(RecibosProvCheques.class);
     }
-    
-    public void insertarChequeReciboProveedor(  short gCodEmpresa,
-                                                Short lCodProveed,
-                                                long lNroRecibo,
-                                                Short lCodbanco,
-                                                String lNroCheque,
-                                                long lIPagado,
-                                                String lFRecibo){
-        String sql =    "INSERT INTO recibos_prov_cheques(cod_empr, cod_proveed, nrecibo, " +
-                        "cod_banco, nro_cheque, ipagado, frecibo) " +
-                        "values ("+gCodEmpresa+", "+lCodProveed+", "+lNroRecibo+", " +
-                        ""+lCodbanco+", '"+lNroCheque+"', "+lIPagado+", '"+lFRecibo+"')";
+
+    public void insertarChequeReciboProveedor(short gCodEmpresa,
+            Short lCodProveed,
+            long lNroRecibo,
+            Short lCodbanco,
+            String lNroCheque,
+            long lIPagado,
+            String lFRecibo) {
+        String sql = "INSERT INTO recibos_prov_cheques(cod_empr, cod_proveed, nrecibo, "
+                + "cod_banco, nro_cheque, ipagado, frecibo) "
+                + "values (" + gCodEmpresa + ", " + lCodProveed + ", " + lNroRecibo + ", "
+                + "" + lCodbanco + ", '" + lNroCheque + "', " + lIPagado + ", '" + lFRecibo + "')";
         System.out.println(sql);
         Query q = getEntityManager().createNativeQuery(sql);
         q.executeUpdate();
     }
-    
 }
