@@ -1,11 +1,8 @@
 /dist
 /build
-/nbproject
 
 /SisVenLog-war/dist
 /SisVenLog-war/build
-/SisVenLog-war/nbproject
 
 /SisVenLog-ejb/dist
 /SisVenLog-ejb/build
-/SisVenLog-ejb/nbproject
