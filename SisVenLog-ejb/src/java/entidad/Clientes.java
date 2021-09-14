@@ -9,17 +9,24 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -31,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "clientes")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Clientes.findAll", query = "SELECT c FROM Clientes c")
+    @NamedQuery(name = "Clientes.findAll", query = "SELECT c FROM Clientes c order by c.falta")
     , @NamedQuery(name = "Clientes.findByCodCliente", query = "SELECT c FROM Clientes c WHERE c.codCliente = :codCliente")
     , @NamedQuery(name = "Clientes.findByXnombre", query = "SELECT c FROM Clientes c WHERE c.xnombre = :xnombre")
     , @NamedQuery(name = "Clientes.findByCodEmpr", query = "SELECT c FROM Clientes c WHERE c.codEmpr = :codEmpr")
@@ -68,14 +75,39 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Clientes.findByXdiasVisita", query = "SELECT c FROM Clientes c WHERE c.xdiasVisita = :xdiasVisita")
     , @NamedQuery(name = "Clientes.findByCcategCliente", query = "SELECT c FROM Clientes c WHERE c.ccategCliente = :ccategCliente")
     , @NamedQuery(name = "Clientes.findByCodCanal", query = "SELECT c FROM Clientes c WHERE c.codCanal = :codCanal")
+    //, @NamedQuery(name = "Clientes.findByMtipoPersona", query = "SELECT c FROM Clientes c WHERE c.mTipoPersona = :mTipoPersona")
     , @NamedQuery(name = "Clientes.findByNplazoImpresion", query = "SELECT c FROM Clientes c WHERE c.nplazoImpresion = :nplazoImpresion")})
 public class Clientes implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientes")
+    private Collection<ClientesDocumentos> clientesDocumentosCollection;
+
+    /**
+     * @return the mtipoPersona
+     */
+    public Character getMtipoPersona() {
+        return mtipoPersona;
+    }
+
+    @Column(name = "mtipo_persona")
+    private Character mtipoPersona;
+    @Column(name = "ilimite_temp")
+    private Long ilimiteTemp;
+    @Column(name = "flimite_temp")
+    private Long flimiteTemp;
+    @JoinTable(name = "clientes_tipo_venta", joinColumns = {
+        @JoinColumn(name = "cod_cliente", referencedColumnName = "cod_cliente")}, inverseJoinColumns = {
+        @JoinColumn(name = "cod_empr", referencedColumnName = "cod_empr")
+        , @JoinColumn(name = "ctipo_venta", referencedColumnName = "ctipo_vta")})
+    @ManyToMany
+    private Collection<TiposVentas> tiposVentasCollection;
 
     
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     //@NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "cod_cliente")
     private Integer codCliente;
     //@Size(max = 50)
@@ -127,6 +159,21 @@ public class Clientes implements Serializable {
     //@Size(max = 2)
     @Column(name = "cod_estado")
     private String codEstado;
+    
+    @JoinColumn(name = "cod_estado", referencedColumnName = "cod_estado", insertable=false, updatable=false)
+    @ManyToOne(optional = false)
+    private EstadosClientes estadoCliente;
+
+    public EstadosClientes getEstadoCliente() {
+        return estadoCliente;
+    }
+
+    public void setEstadoCliente(EstadosClientes estadoCliente) {
+        this.estadoCliente = estadoCliente;
+    }
+
+
+    
     //@Size(max = 150)
     @Column(name = "xrazon_estado")
     private String xrazonEstado;
@@ -179,10 +226,18 @@ public class Clientes implements Serializable {
     private String codCanal;
     @Column(name = "nplazo_impresion")
     private Short nplazoImpresion;
+    
+//    @OneToMany(mappedBy = "codCliente")
+//    private Collection<ClientesCtasBancarias> CtasBancarias;
+    
     @OneToMany(mappedBy = "codCliente")
     private Collection<CuentasCorrientes> cuentasCorrientesCollection;
     @OneToMany(mappedBy = "codCliente")
     private Collection<Cheques> chequesCollection;
+    
+//    @OneToMany(mappedBy = "codCliente")
+//    private Collection<VentasClientes> ventasClientesCollection;
+    
     
     public Clientes() {
     }
@@ -358,6 +413,8 @@ public class Clientes implements Serializable {
     public void setXrazonEstado(String xrazonEstado) {
         this.xrazonEstado = xrazonEstado;
     }
+    
+    
 
     public Date getFprimFact() {
         return fprimFact;
@@ -515,10 +572,16 @@ public class Clientes implements Serializable {
         return true;
     }
 
+//    @Override
+//    public String toString() {
+//        return "entidad.Clientes[ codCliente=" + codCliente + " ]";
+//    }
+
     @Override
     public String toString() {
-        return "entidad.Clientes[ codCliente=" + codCliente + " ]";
+        return "Clientes{" + "codCliente=" + codCliente + ", xnombre=" + xnombre + ", codEmpr=" + codEmpr + ", codRuta=" + codRuta + ", codCiudad=" + codCiudad + ", ctipoCliente=" + ctipoCliente + ", xcedula=" + xcedula + ", xruc=" + xruc + ", xtelef=" + xtelef + ", xfax=" + xfax + ", xdirec=" + xdirec + ", nordenRuta=" + nordenRuta + ", xpropietario=" + xpropietario + ", nplazoCredito=" + nplazoCredito + ", ilimiteCompra=" + ilimiteCompra + ", mformaPago=" + mformaPago + ", nriesgo=" + nriesgo + ", codGrupo=" + codGrupo + ", codEstado=" + codEstado + ", xrazonEstado=" + xrazonEstado + ", fprimFact=" + fprimFact + ", xcontacto=" + xcontacto + ", isaldo=" + isaldo + ", falta=" + falta + ", cusuario=" + cusuario + ", fultimModif=" + fultimModif + ", cusuarioModif=" + cusuarioModif + ", codAnterior=" + codAnterior + ", xobs=" + xobs + ", xemail=" + xemail + ", xctacte=" + xctacte + ", codBanco=" + codBanco + ", nfrec=" + nfrec + ", xdiasVisita=" + xdiasVisita + ", ccategCliente=" + ccategCliente + ", codCanal=" + codCanal + ", nplazoImpresion=" + nplazoImpresion + '}';
     }
+    
 
     @XmlTransient
     public Collection<CuentasCorrientes> getCuentasCorrientesCollection() {
@@ -537,5 +600,118 @@ public class Clientes implements Serializable {
     public void setChequesCollection(Collection<Cheques> chequesCollection) {
         this.chequesCollection = chequesCollection;
     }
+
+//    public String getMtipoPersona() {
+//        return mTipoPersona;
+//    }
+//
+//    public void setMtipoPersona(String mTipoPersona) {
+//        this.mTipoPersona = mTipoPersona;
+//    }
+//    
+//    /**
+//     * @return the iLimiteTemp
+//     */
+//    public Long getiLimiteTemp() {
+//        return iLimiteTemp;
+//    }
+//    
+//    /**
+//     * @param iLimiteTemp the iLimiteTemp to set
+//     */
+//    public void setiLimiteTemp(Long iLimiteTemp) {
+//        this.iLimiteTemp = iLimiteTemp;
+//    }
+//    
+//    /**
+//     * @return the fLimiteTemp
+//     */
+//    public Long getfLimiteTemp() {
+//        return fLimiteTemp;
+//    }
+//    
+//    /**
+//     * @param fLimiteTemp the fLimiteTemp to set
+//     */
+//    public void setfLimiteTemp(Long fLimiteTemp) {
+//        this.fLimiteTemp = fLimiteTemp;
+//    }
+//
+//    public Character getMtipoPersona() {
+//        return mtipoPersona;
+//    }
+
+    public void setMtipoPersona(Character mtipoPersona) {
+        this.mtipoPersona = mtipoPersona;
+    }
+
+    public Long getIlimiteTemp() {
+        return ilimiteTemp;
+    }
+
+    public void setIlimiteTemp(Long ilimiteTemp) {
+        this.ilimiteTemp = ilimiteTemp;
+    }
+
+    public Long getFlimiteTemp() {
+        return flimiteTemp;
+    }
+
+    public void setFlimiteTemp(Long flimiteTemp) {
+        this.flimiteTemp = flimiteTemp;
+    }
+
+    @XmlTransient
+    public Collection<TiposVentas> getTiposVentasCollection() {
+        return tiposVentasCollection;
+    }
+
+    public void setTiposVentasCollection(Collection<TiposVentas> tiposVentasCollection) {
+        this.tiposVentasCollection = tiposVentasCollection;
+    }
+    
+    
+
+//    /**
+//     * @return the clientesCtasBancarias
+//     */
+//    public Collection<ClientesCtasBancarias> getCtasBancarias() {
+//        return CtasBancarias;
+//    }
+//
+//    /**
+//     * @param clientesCtasBancarias the clientesCtasBancarias to set
+//     */
+//    public void setCtasBancarias(Collection<ClientesCtasBancarias> clientesCtasBancarias) {
+//        this.CtasBancarias = clientesCtasBancarias;
+//    }
+
+    @XmlTransient
+    public Collection<ClientesDocumentos> getClientesDocumentosCollection() {
+        return clientesDocumentosCollection;
+    }
+
+    public void setClientesDocumentosCollection(Collection<ClientesDocumentos> clientesDocumentosCollection) {
+        this.clientesDocumentosCollection = clientesDocumentosCollection;
+    }
+
+//    /**
+//     * @return the ventasClientesCollection
+//     */
+//    public Collection<VentasClientes> getVentasClientesCollection() {
+//        return ventasClientesCollection;
+//    }
+
+//    /**
+//     * @param ventasClientesCollection the ventasClientesCollection to set
+//     */
+//    public void setVentasClientesCollection(Collection<VentasClientes> ventasClientesCollection) {
+//        this.ventasClientesCollection = ventasClientesCollection;
+//    }
+    
+    
+    
+    
+    
     
 }

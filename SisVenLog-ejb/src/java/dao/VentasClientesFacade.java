@@ -5,10 +5,13 @@
  */
 package dao;
 
+import entidad.Clientes;
 import entidad.VentasClientes;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -27,6 +30,33 @@ public class VentasClientesFacade extends AbstractFacade<VentasClientes> {
 
     public VentasClientesFacade() {
         super(VentasClientes.class);
+    }
+    
+    public List<VentasClientes> getVentasClientesCodCliente(Clientes cliente){
+    
+        List<VentasClientes> resultado = em
+                .createNamedQuery("VentasClientes.findByCodCliente")
+                .setParameter("codCliente", cliente.getCodCliente())
+                .getResultList();
+        
+        return resultado;
+    
+    }
+
+
+
+    public void guardarVentasClientes(List<VentasClientes> ventasClientesGuardar, Clientes clientes) {
+        
+        Query query = em.createQuery(
+                "DELETE FROM VentasClientes c WHERE c.ventasClientesPK.codCliente = :p");
+        int deletedCount = query.setParameter("p", clientes.getCodCliente()).executeUpdate();
+        
+        for (VentasClientes elemento: ventasClientesGuardar){
+        
+            em.persist(elemento);
+        
+        }
+        
     }
     
 }
