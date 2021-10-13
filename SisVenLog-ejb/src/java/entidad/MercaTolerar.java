@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and open the template in the editor. 
  */
 package entidad;
 
@@ -13,6 +13,8 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -71,10 +73,15 @@ public class MercaTolerar implements Serializable {
     @Column(name = "ffactur")
     @Temporal(TemporalType.TIMESTAMP)
     private Date ffactur;
+   @JoinColumns({
+        @JoinColumn(name = "cod_empr", referencedColumnName = "cod_empr", insertable = false, updatable = false)
+        , @JoinColumn(name = "cod_merca", referencedColumnName = "cod_merca", insertable = false, updatable = false)})
+    @ManyToOne(optional = false)
+    private Mercaderias mercaderias;
     @JoinColumn(name = "cod_proveed", referencedColumnName = "cod_proveed", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Proveedores proveedores;
-
+    
     public MercaTolerar() {
     }
 
@@ -163,6 +170,14 @@ public class MercaTolerar implements Serializable {
         this.proveedores = proveedores;
     }
 
+    public Mercaderias getMercaderias() {
+        return mercaderias;
+    }
+
+    public void setMercaderias(Mercaderias mercaderias) {
+        this.mercaderias = mercaderias;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -187,5 +202,5 @@ public class MercaTolerar implements Serializable {
     public String toString() {
         return "entidad.MercaTolerar[ mercaTolerarPK=" + mercaTolerarPK + " ]";
     }
-    
+
 }
