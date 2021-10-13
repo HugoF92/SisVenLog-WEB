@@ -8,12 +8,15 @@
 
     <ui:define name="content">
 
+
         <h:body>
 
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
-
+                        <!--###############################################################################################################################                        
+                        ########################################          FORMULACION BOTONES         #####################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formBtnTolerancia" prependId="false">  
 
                             <h1 align="center">MANTENIMIENTO DE TOLERANCIA PRECIOS DE MERCADERIA</h1>
@@ -24,9 +27,8 @@
 
                                 <p:commandButton 
                                     value="Agregar"
-                                    actionListener="#{toleranciaBean.instanciar()}"
                                     oncomplete="PF('dlgNuevTolerancia').show()"
-                                    update="formNuevaTolerancia"
+                                    update=""
                                     icon="fa fa-plus"
                                     styleClass="green-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
@@ -38,54 +40,84 @@
                                     oncomplete="PF('dlgEditTolerancia').show()"
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-pencil"
-                                    disabled="#{toleranciaBean.habBtnEdit}"
-                                    update="pnlEditTolerancia"/>
+                                    disabled="#{mercaTolerarBean.habBtnEdit}"/>
 
                                 <p:commandButton 
                                     value="Borrar" 
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
-                                    disabled="#{toleranciaBean.habBtnEdit}"
+                                    disabled="#{mercaTolerarBean.habBtnEdit}"
                                     oncomplete="PF('dlgInacTolerancia').show()"
                                     update="formInacTolerancia"/>
 
                             </center>
 
                         </h:form>
-
+                        <!--###############################################################################################################################                        
+                        ########################################           FORMULACION DATOS        #######################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formTolerancia" prependId="false">  
 
-                                <div class="ui-g">
+                            <div class="ui-g">
                                 <div class="ui-g-12">
                                     <div class="card card-w-title">
                                         <p:dataTable id="tablaTolerancia" var="itemp" selectionMode="single" reflow="true"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
-                                                     value="#{toleranciaBean.listaMercaTolerar}" rowKey="#{itemp.mercaTolerarPK.codMerca}"
-                                                     selection="#{toleranciaBean.listaMercaTolerar}">
+                                                     value="#{mercaTolerarBean.listaMercaTolerar}" 
+                                                     rowKey="#{itemp.mercaTolerarPK.codEmpr}#{itemp.mercaTolerarPK.nrofact}#{itemp.mercaTolerarPK.codMerca}#{itemp.mercaTolerarPK.codProveed}"
+                                                     selection="#{mercaTolerarBean.mercaTolerar}"
+                                                     sortBy="#{itemp.falta}"
+                                                     sortOrder="descending" 
+                                                     >
 
                                             <p:ajax event="rowSelect"
-                                                    listener="#{toleranciaBean.onRowSelect(event)}"
+                                                    listener="#{mercaTolerarBean.onRowSelect(event)}"
                                                     update="formBtnTolerancia"/>
 
-                                            <p:column headerText="Código" filterBy="#{itemp.mercaTolerarPK.codMerca}"
-                                                      sortBy="#{itemp.mercaTolerarPK.codMerca}">
-                                                <h:outputText value="#{itemp.mercaTolerarPK.codMerca}" />
+                                            <p:column headerText="Nro. Factura" filterBy="#{itemp.mercaTolerarPK.nrofact}"
+                                                      sortBy="#{itemp.mercaTolerarPK.nrofact}">
+                                                <h:outputText value="#{itemp.mercaTolerarPK.nrofact}" />
                                             </p:column>
 
-                                            <p:column headerText="Descripción" filterBy="#{itemp.xobs}"
-                                                      sortBy="#{itemp.xobs}">
+                                            <p:column headerText="Cod. Proveedor" sortBy="#{itemp.proveedores.codProveed}">
+                                                <h:outputText value="#{itemp.proveedores.codProveed}" />
+                                            </p:column>
+
+                                            <p:column headerText="Proveedor"  >
+                                                <h:outputText value="#{itemp.proveedores.xnombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Mercaderia" filterBy="#{itemp.mercaderias.xdesc}"
+                                                      filterMatchMode="contains" >
+                                                <h:outputText value="#{itemp.mercaderias.xdesc}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripcion">
                                                 <h:outputText value="#{itemp.xobs}" />
                                             </p:column>
 
+                                            <p:column headerText="Importe Tolerancia" >
+                                                <p:outputLabel value="#{itemp.itolerar}" style="float: right">
+                                                    <f:convertNumber locale="es"/>
+                                                </p:outputLabel>
+                                            </p:column>
+
+                                            <p:column headerText="Fecha" sortBy="#{itemp.falta}">
+                                                <h:outputText value="#{itemp.falta}">
+                                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                                </h:outputText>
+                                            </p:column>                                             
                                         </p:dataTable>
                                     </div>
                                 </div>
                             </div>
 
                         </h:form>
-
+                        <!--###############################################################################################################################                        
+                        ########################################       FORMULACION NUEVO REGISTRO       ###################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formNuevaTolerancia"  prependId="false">
                             <p:growl id="msgAgreTolerancia" showDetail="true"/>
 
@@ -94,41 +126,57 @@
                                       modal="true"
                                       responsive="true"
                                       closeOnEscape="false"
+                                      rendered="#{mercaTolerarBean.mercaTolerar!=null}"
                                       closable="false" resizable="true">
 
-                                <p:ajax event="open" listener="#{toleranciaBean.instanciar()}"/>
-                                <h:panelGrid columns="2">
-
-                                    <p:outputLabel value="Nro de Factura" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="nrofact" value="#{toleranciaBean.mercaTolerar.mercaTolerarPK.nrofact}" 
-                                                 tabindex="1" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
-
+                                <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}" update=":formNuevaTolerancia"/>
+                                <h:panelGrid columns="2">              
+                                    <p:outputLabel value="Nro. Factura:" style="font-weight: bold; text-align: right;"/>    
+                                    <h:panelGrid id="panel_nro_factura" columns="3">
+                                        <p:inputText id="nro_establec_id" value="#{mercaTolerarBean.nroPuntoEstabLbl}" style="width: 50px;"/>
+                                        <p:inputText id="nro_expedic_id" value="#{mercaTolerarBean.nroPuntoExpedLbl}" style="width: 50px;"/>
+                                        <p:inputText id="nro_factura_id" value="#{mercaTolerarBean.nroFactLbl}" style="width: 100px;"/>
+                                    </h:panelGrid>                                    
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="prov" value="#{toleranciaBean.proveedores.xnombre}" 
-                                                 tabindex="2" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
-
-                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="obs" value="#{toleranciaBean.mercaTolerar.xobs}" 
-                                                 tabindex="3" style="width: 400px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
+                                    <h:panelGrid id="panel_cod_proveedor" columns="2">
+                                        <p:inputText id="codproveedor" readonly="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
+                                                     style="width: 55px;"/>                                        
+                                        <p:selectOneMenu value="#{mercaTolerarBean.proveedores.codProveed}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 305px;" converter="#{proveedoresConverter2}">
+                                            <p:ajax event="itemSelect" update="codproveedor" process="@this"/>
+                                            <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                            <f:selectItems value="#{proveedoresBean.listaProveedores}" var="itemp"
+                                                           itemValue="#{itemp.codProveed}"
+                                                           itemLabel="#{itemp.xnombre}"/>
+                                        </p:selectOneMenu>                                           
+                                    </h:panelGrid>                                  
 
                                     <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="merc" value="#{toleranciaBean.mercaderias.xdesc}" 
-                                                 tabindex="4" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                    <h:panelGrid id="panel_cod_mercaderia" columns="2">
+                                        <p:inputText id="codmercaderia" value="#{mercaTolerarBean.mercaderias.mercaderiasPK.codMerca}" 
+                                                     tabindex="2" style="width: 55px;"/>
 
-                                    
+                                        <p:selectOneMenu value="#{mercaTolerarBean.mercaderias.mercaderiasPK.codMerca}" 
+                                                         filterMatchMode="contains" filter="true"
+                                                         style=" width: 305px;" converter="#{mercaderiasConverter2}">
+                                            <p:ajax event="itemSelect" update="codmercaderia" process="@this"/>
+                                            <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
+                                            <f:selectItems value="#{mercaderiasBean.listaMercaderias}" var="item"
+                                                           itemValue="#{item.mercaderiasPK.codMerca}"
+                                                           itemLabel="#{item.xdesc}"/>
+                                        </p:selectOneMenu> 
+                                    </h:panelGrid>
+
                                     <p:outputLabel value="Tolerancia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="tol" value="#{toleranciaBean.mercaTolerar.itolerar}" 
-                                                 tabindex="5" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
 
+                                    <p:inputNumber id="tol" value="#{mercaTolerarBean.mercaTolerar.itolerar}">
+                                        <f:convertNumber locale="es"/>
+                                    </p:inputNumber>
                                     
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
+                                    <p:inputTextarea value="#{mercaTolerarBean.mercaTolerar.xobs}" maxlength="200" 
+                                                     style="max-height: 90px;min-height: 90px;width: 93%"/>                                    
                                 </h:panelGrid>
 
                                 <br></br>
@@ -138,22 +186,28 @@
 
                                         <p:commandButton
                                             value="Guardar"
-                                            actionListener="#{toleranciaBean.insertar()}"
+                                            actionListener="#{mercaTolerarBean.guardar()}"
                                             update="msgAgreTolerancia formTolerancia"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
-                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"/>
+                                            style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                            oncomplete="PF('formNuevaTolerancia').hide();"/>
 
-
-                                        <p:commandButton value="Cancelar" actionListener="#{toleranciaBean.verificarCargaDatos()}"
+                                        <p:commandButton value="Cancelar" oncomplete="PF('formNuevaTolerancia').hide()"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                         icon="fa fa-times"/>
+                                                         icon="fa fa-times"/>   
+                                        
+                                        <p:commandButton value="Cancelar2" actionListener="#{mercaTolerarBean.verificarCargaDatos()}"
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>                                        
                                     </h:panelGrid>
                                 </center>
                             </p:dialog>
 
                         </h:form>
-
+                        <!--###############################################################################################################################                        
+                        ########################################          FORMULACION BORRAR          #####################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formInacTolerancia" prependId="false">
 
                             <p:growl id="msgInacTolerancia" showDetail="true"/>
@@ -177,7 +231,7 @@
 
                                         <p:commandButton
                                             value="Borrar"
-                                            actionListener="#{toleranciaBean.borrar()}"
+                                            actionListener="#{mercaTolerarBean.borrar()}"
                                             update="msgInacTolerancia formBtnTolerancia formTolerancia"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
@@ -192,7 +246,9 @@
                             </p:dialog>
 
                         </h:form>
-
+                        <!--###############################################################################################################################                        
+                        ########################################          FORMULACION EDITAR         ######################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formEditarTolerancia"  prependId="false">
                             <p:growl id="msgEditTolerancia" showDetail="true"/>
 
@@ -203,45 +259,45 @@
                                       closable="false"
                                       closeOnEscape="false">
 
-                                <p:ajax event="close" listener="#{toleranciaBean.instanciar()}"/>
+                                <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}"/>
 
                                 <h:panelGrid id="pnlEditTolerancia" columns="2">
 
                                     <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="codtolEdit" value="#{toleranciaBean.mercaTolerar.mercaTolerarPK}" 
-                                                     tabindex="1" style="width: 50px;" disabled="true"
-                                                     onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
+                                    <p:inputText id="codtolEdit" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK}" 
+                                                 tabindex="1" style="width: 50px;" disabled="true"
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
 
-                                   <p:outputLabel value="Nro de Factura" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="nrofactEdit" value="#{toleranciaBean.mercaTolerar.mercaTolerarPK.nrofact}" 
+
+                                    <p:outputLabel value="Nro de Factura" style="font-weight: bold; float: right;"/>
+                                    <p:inputText id="nrofactEdit" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
                                                  tabindex="2" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
 
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="provEdit" value="#{toleranciaBean.proveedores.xnombre}" 
+                                    <p:inputText id="provEdit" value="#{mercaTolerarBean.proveedores.xnombre}" 
                                                  tabindex="3" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
-.
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
+                                    .
                                     <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="obsEdit" value="#{toleranciaBean.mercaTolerar.xobs}" 
+                                    <p:inputText id="obsEdit" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
                                                  tabindex="4" style="width: 400px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
 
                                     <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="mercEdit" value="#{toleranciaBean.mercaderias.xdesc}" 
+                                    <p:inputText id="mercEdit" value="#{mercaTolerarBean.mercaderias.xdesc}" 
                                                  tabindex="5" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
 
-                                    
+
                                     <p:outputLabel value="Tolerancia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="tolEdit" value="#{toleranciaBean.mercaTolerar.itolerar}" 
+                                    <p:inputText id="tolEdit" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
                                                  tabindex="6" style="width: 200px;"
-                                                 onkeyup="this.value=this.value.toUpperCase()"/>
-                                    
+                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+
                                 </h:panelGrid>
                                 <br></br>
                                 <br></br>
@@ -250,7 +306,7 @@
 
                                         <p:commandButton
                                             value="Guardar"
-                                            actionListener="#{toleranciaBean.editar()}"
+                                            actionListener="#{mercaTolerarBean.editar()}"
                                             update="msgEditTolerancia formBtnTolerancia formTolerancia"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
@@ -265,6 +321,9 @@
                             </p:dialog>
 
                         </h:form>
+                        <!--###############################################################################################################################                        
+                        ########################################       FORMULACION SALIR SIN GUARDAR       ################################################                        
+                        ###############################################################################################################################-->
                         <h:form id="formSinGuardarTolerancia" prependId="false">
                             <p:dialog modal="true" closable="false" closeOnEscape="false"
                                       header="Aviso" width="250" widgetVar="dlgSinGuardarTolerancia">
@@ -277,7 +336,7 @@
 
                                     <p:commandButton
                                         value="Si"
-                                        actionListener="#{toleranciaBean.cerrarDialogosAgregar()}" 
+                                        actionListener="#{mercaTolerarBean.cerrarDialogosAgregar()}" 
                                         update="formTolerancia"
                                         icon="fa fa-check"
                                         styleClass="blue-btn raised-btn" 
