@@ -1,5 +1,5 @@
 package bean;
-//ESTE ES UN COMENTARIO EN LA VERSION 3
+
 import dao.EmpresasFacade;
 import dao.ComprasFacade;
 import dao.MercaderiasFacade;
