@@ -11,6 +11,15 @@
 
         <h:body>
 
+            <style type="text/css">
+                .ui-datatable{
+                    overflow : auto;
+                }
+                body .ui-dialog .ui-resizable-handle {
+                    display: block !important;
+                }
+            </style>
+
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
@@ -27,8 +36,9 @@
 
                                 <p:commandButton 
                                     value="Agregar"
+                                    actionListener="#{mercaTolerarBean.instanciar()}"
                                     oncomplete="PF('dlgNuevTolerancia').show()"
-                                    update=""
+                                    update="formNuevaTolerancia"
                                     icon="fa fa-plus"
                                     styleClass="green-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
@@ -40,6 +50,7 @@
                                     oncomplete="PF('dlgEditTolerancia').show()"
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-pencil"
+                                    update="formEditarTolerancia"
                                     disabled="#{mercaTolerarBean.habBtnEdit}"/>
 
                                 <p:commandButton 
@@ -125,55 +136,81 @@
                                       widgetVar="dlgNuevTolerancia"
                                       modal="true"
                                       responsive="true"
-                                      closeOnEscape="false"
-                                      rendered="#{mercaTolerarBean.mercaTolerar!=null}"
+                                      closeOnEscape="false"                                      
                                       closable="false" resizable="true">
 
-                                <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}" update=":formNuevaTolerancia"/>
+                                <p:ajax event="close" listener="#{mercaTolerarBean.instanciar()}" update="focusEstablecimiento"/>
+                                <p:focus id="focusEstablecimiento" for="nro_establec_id"/>
+                                <p:focus id="focusMercaderia" for="agreMercaCodMercade"/>
+                                <p:focus id="focusPuntoExpe" for="nro_expedic_id"/>
+                                <p:focus id="focusNroFac" for="nro_factura_id"/>
+
                                 <h:panelGrid columns="2">              
                                     <p:outputLabel value="Nro. Factura:" style="font-weight: bold; text-align: right;"/>    
                                     <h:panelGrid id="panel_nro_factura" columns="3">
-                                        <p:inputText id="nro_establec_id" value="#{mercaTolerarBean.nroPuntoEstabLbl}" style="width: 50px;"/>
-                                        <p:inputText id="nro_expedic_id" value="#{mercaTolerarBean.nroPuntoExpedLbl}" style="width: 50px;"/>
-                                        <p:inputText id="nro_factura_id" value="#{mercaTolerarBean.nroFactLbl}" style="width: 100px;"/>
+                                        <p:inputText id="nro_establec_id" value="#{mercaTolerarBean.nroPuntoEstabLbl}" style="width: 50px;">
+                                            <p:ajax event="blur" 
+                                                    update="selectprovee"
+                                                    listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>                                           
+                                        </p:inputText>
+
+                                        <p:inputText id="nro_expedic_id" value="#{mercaTolerarBean.nroPuntoExpedLbl}" style="width: 50px;">
+                                            <p:ajax event="blur" 
+                                                    update="selectprovee"
+                                                    listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>
+                                        </p:inputText>
+                                        <p:inputText id="nro_factura_id" value="#{mercaTolerarBean.nroFactLbl}" style="width: 100px;">
+                                            <p:ajax event="blur" 
+                                                    update="selectprovee"
+                                                    listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>
+                                        </p:inputText>
                                     </h:panelGrid>                                    
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
                                     <h:panelGrid id="panel_cod_proveedor" columns="2">
-                                        <p:inputText id="codproveedor" readonly="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
+                                        <p:inputText id="codproveedor" readonly="true" value="#{mercaTolerarBean.proveedores.codProveed}" 
                                                      style="width: 55px;"/>                                        
-                                        <p:selectOneMenu value="#{mercaTolerarBean.proveedores.codProveed}" 
+                                        <p:selectOneMenu id="selectprovee" value="#{mercaTolerarBean.proveedores.codProveed}" 
+                                                         widgetVar="wdselectprovee"
                                                          filterMatchMode="contains" filter="true"
-                                                         style=" width: 305px;" converter="#{proveedoresConverter2}">
-                                            <p:ajax event="itemSelect" update="codproveedor" process="@this"/>
+                                                         style=" width: 305px;" > 
+                                            <!-- <p:ajax event="itemSelect" update="codproveedor" process="@this"/> -->
+                                            <p:ajax event="itemSelect" listener="#{mercaTolerarBean.obtenerDetalleCompra()}"
+                                            update="selectmerca ffactur codproveedor"/>
                                             <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
-                                            <f:selectItems value="#{proveedoresBean.listaProveedores}" var="itemp"
+                                            <f:selectItems id="boxproveedores" value="#{mercaTolerarBean.listaProveedores}" var="itemp"
                                                            itemValue="#{itemp.codProveed}"
                                                            itemLabel="#{itemp.xnombre}"/>
                                         </p:selectOneMenu>                                           
-                                    </h:panelGrid>                                  
+                                    </h:panelGrid>  
 
                                     <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: right;"/>
-                                    <h:panelGrid id="panel_cod_mercaderia" columns="2">
+                                    <h:panelGrid id="agreMercaCodMercade" columns="2">
                                         <p:inputText id="codmercaderia" value="#{mercaTolerarBean.mercaderias.mercaderiasPK.codMerca}" 
                                                      tabindex="2" style="width: 55px;"/>
 
-                                        <p:selectOneMenu value="#{mercaTolerarBean.mercaderias.mercaderiasPK.codMerca}" 
+                                        <p:selectOneMenu id="selectmerca" value="#{mercaTolerarBean.mercaderias.mercaderiasPK.codMerca}" 
+                                                         widgetVar="wdselectmerca"
                                                          filterMatchMode="contains" filter="true"
-                                                         style=" width: 305px;" converter="#{mercaderiasConverter2}">
+                                                         style=" width: 305px;" >
                                             <p:ajax event="itemSelect" update="codmercaderia" process="@this"/>
                                             <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
-                                            <f:selectItems value="#{mercaderiasBean.listaMercaderias}" var="item"
+                                            <f:selectItems id="boxmercaderia" value="#{mercaTolerarBean.listaMercaderias}" var="item"
                                                            itemValue="#{item.mercaderiasPK.codMerca}"
                                                            itemLabel="#{item.xdesc}"/>
                                         </p:selectOneMenu> 
                                     </h:panelGrid>
+                                    <p:outputLabel value="Fecha Fac. Compra:" style="font-weight: bold; float: right;"/>
 
+                                    <p:inputText id="ffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.ffactur}">
+                                        
+                                    </p:inputText>
+                                    
                                     <p:outputLabel value="Tolerancia:" style="font-weight: bold; float: right;"/>
 
                                     <p:inputNumber id="tol" value="#{mercaTolerarBean.mercaTolerar.itolerar}">
                                         <f:convertNumber locale="es"/>
                                     </p:inputNumber>
-                                    
+
                                     <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
                                     <p:inputTextarea value="#{mercaTolerarBean.mercaTolerar.xobs}" maxlength="200" 
                                                      style="max-height: 90px;min-height: 90px;width: 93%"/>                                    
@@ -191,12 +228,12 @@
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                            oncomplete="PF('formNuevaTolerancia').hide();"/>
+                                            oncomplete="PF('dlgNuevTolerancia').hide();"/>
 
                                         <p:commandButton value="Cancelar" oncomplete="PF('formNuevaTolerancia').hide()"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>   
-                                        
+
                                         <p:commandButton value="Cancelar2" actionListener="#{mercaTolerarBean.verificarCargaDatos()}"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>                                        
