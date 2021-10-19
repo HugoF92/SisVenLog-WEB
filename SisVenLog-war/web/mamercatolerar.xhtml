@@ -28,7 +28,7 @@
                         ###############################################################################################################################-->
                         <h:form id="formBtnTolerancia" prependId="false">  
 
-                            <h1 align="center">MANTENIMIENTO DE TOLERANCIA PRECIOS DE MERCADERIA</h1>
+                            <h1 align="center">MANTENIMIENTO DE TOLERANCIA PRECIO DE MERCADERIA</h1>
 
                             <p:growl id="msgTolerancia" showDetail="true"/>
 
@@ -225,13 +225,13 @@
                                         <p:commandButton
                                             value="Guardar"
                                             actionListener="#{mercaTolerarBean.guardar()}"
-                                            update="msgAgreTolerancia formTolerancia"
+                                            update="msgAgreTolerancia :formTolerancia"
                                             icon="fa fa-check"
                                             styleClass="green-btn raised-btn" 
                                             style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                             oncomplete="PF('dlgNuevTolerancia').hide();"/>
 
-                                        <p:commandButton value="Cancelar" oncomplete="PF('formNuevaTolerancia').hide()"
+                                        <p:commandButton value="Cancelar" oncomplete="PF('dlgNuevTolerancia').hide()"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>   
 
@@ -250,7 +250,7 @@
 
                             <p:growl id="msgInacTolerancia" showDetail="true"/>
 
-                            <p:dialog header="Borrar Tolerancia"
+                            <p:dialog header="Borrar Tolerancia Precio Mercaderia"
                                       widgetVar="dlgInacTolerancia"
                                       modal="true"
                                       responsive="true"
@@ -290,7 +290,7 @@
                         <h:form id="formEditarTolerancia"  prependId="false">
                             <p:growl id="msgEditTolerancia" showDetail="true"/>
 
-                            <p:dialog header="Editar Tolerancia"
+                            <p:dialog header="Editar Tolerancia Precio Mercaderia"
                                       widgetVar="dlgEditTolerancia"
                                       modal="true"
                                       responsive="true"
@@ -299,43 +299,50 @@
 
                                 <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}"/>
 
-                                <h:panelGrid id="pnlEditTolerancia" columns="2">
+                                <h:panelGrid id="pnlEditTolerancia" columns="2" style="width: 550px;">
 
-                                    <p:outputLabel value="Código:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="codtolEdit" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK}" 
-                                                 tabindex="1" style="width: 50px;" disabled="true"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
+                                    <p:outputLabel value="Nro de Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_edit_factura" columns="2">
+                                        <p:inputText id="editfactura" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>
 
+                                    <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_edit_proveedor" columns="2">
+                                        <p:inputText id="editnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="editcodprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.xnombre}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>  
 
-                                    <p:outputLabel value="Nro de Factura" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="nrofactEdit" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
-                                                 tabindex="2" style="width: 200px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
-
-
-                                    <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="provEdit" value="#{mercaTolerarBean.proveedores.xnombre}" 
-                                                 tabindex="3" style="width: 200px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
-
-                                    .
-                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="obsEdit" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
-                                                 tabindex="4" style="width: 400px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
-
-
-                                    <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="mercEdit" value="#{mercaTolerarBean.mercaderias.xdesc}" 
-                                                 tabindex="5" style="width: 200px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
-
-
-                                    <p:outputLabel value="Tolerancia:" style="font-weight: bold; float: right;"/>
-                                    <p:inputText id="tolEdit" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
-                                                 tabindex="6" style="width: 200px;"
-                                                 onkeyup="this.value = this.value.toUpperCase()"/>
-
+                                    <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_edit_mercaderia" columns="2">
+                                        <p:inputText id="editnommerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.mercaderiasPK.codMerca}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="editcodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>    
+                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_edit_ffactur" columns="2">
+                                        <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid>  
+                                   <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_edit_obs" columns="2">
+                                        <p:inputTextarea id="editobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
+                                                     style="width: 400px; color: black;">
+                                    
+                                        </p:inputTextarea>                                          
+                                    </h:panelGrid>                                     
+                                   <p:outputLabel value="Importe Tolerancia:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_edit_importe" columns="2">
+                                        <p:inputText id="editimporte" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                    
+                                        </p:inputText>                                          
+                                    </h:panelGrid>                                                                     
                                 </h:panelGrid>
                                 <br></br>
                                 <br></br>
