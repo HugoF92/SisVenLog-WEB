@@ -220,11 +220,11 @@ public class MercaTolerarBean implements Serializable {
         this.mercaderias = new Mercaderias(new MercaderiasPK());
 
         this.proveedores = new Proveedores();
-        
+
         this.listaProveedores = new ArrayList<>();
         this.listaMercaderias = new ArrayList<>();
         this.listaMercaTolerar = new ArrayList<>();
-        
+
         this.nroPuntoEstabLbl = "0";
         this.nroPuntoExpedLbl = "0";
         this.nroFactLbl = "0";
@@ -320,13 +320,18 @@ public class MercaTolerarBean implements Serializable {
                 mercaTolerar.setCusuario("admin");
                 mercaTolerar.setFfactur(compras.getComprasPK().getFfactur());
                 mercaTolerar.setProveedores(proveedores);
-                //mercaderias.getMercaderiasPK().setCodEmpr(new Short("2"));
-                //mercaTolerar.setMercaderias(mercaderias);
-                MercaderiasPK pkmer = new MercaderiasPK();
-                pkmer.setCodEmpr(new Short("2"));
-                pkmer.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
+                //metodo 1
+                mercaderias.getMercaderiasPK().setCodEmpr(new Short("2"));
+                mercaTolerar.setMercaderias(mercaderias);
 
-                //mercaTolerar.setMercaderias(mercaderiasFacade.buscarPorCodigoMercaderia(mercaderias.getMercaderiasPK().getCodMerca()));
+                //metodo 2
+                //MercaderiasPK pkmer = new MercaderiasPK();
+                //pkmer.setCodEmpr(new Short("2"));
+                //pkmer.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
+                //metodo 3
+                //Mercaderias mercaderiasNew = new Mercaderias();
+                //mercaderiasNew = this.mercaderiasFacade.buscarPorCodigoMercaderia(mercaderias.getMercaderiasPK().getCodMerca());
+                //mercaTolerar.setMercaderias(mercaderiasNew);
                 mercaTolerarFacade.create(mercaTolerar);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
                 //limpiar();
@@ -515,14 +520,18 @@ public class MercaTolerarBean implements Serializable {
     public void editar() {
         try {
 
-            if ("".equals(this.proveedores.getXnombre())) {
+            if ("".equals(this.mercaTolerar.getXobs())) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar una descripcion."));
                 return;
 
-            } else {
+            }
+            if ("".equals(this.mercaTolerar.getItolerar()) || "0".equals(this.mercaTolerar.getItolerar())) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar un importe."));
+                return;
 
-                proveedores.setXnombre(proveedores.getXnombre().toUpperCase());
-                proveedoresFacade.edit(proveedores);
+            } else {
+                
+                mercaTolerarFacade.edit(mercaTolerar);
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Guardado con exito."));
 
@@ -530,7 +539,7 @@ public class MercaTolerarBean implements Serializable {
                 limpiar();
                 listar();
 
-                RequestContext.getCurrentInstance().execute("PF('dlgEditProv').hide();");
+                RequestContext.getCurrentInstance().execute("PF('dlgEditTolerancia').hide();");
 
             }
 
@@ -541,13 +550,12 @@ public class MercaTolerarBean implements Serializable {
 
     public void borrar() {
         try {
-
-            proveedoresFacade.remove(proveedores);
-            this.proveedores = new Proveedores();
+            mercaTolerarFacade.remove(mercaTolerar);
+            this.mercaTolerar = new MercaTolerar(new MercaTolerarPK());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Borrado con éxito."));
             //instanciar();
             limpiar();
-            RequestContext.getCurrentInstance().execute("PF('dlgInacProv').hide();");
+            RequestContext.getCurrentInstance().execute("PF('dlgInacTolerancia').hide();");
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
