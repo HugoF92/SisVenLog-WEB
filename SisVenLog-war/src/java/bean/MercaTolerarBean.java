@@ -329,7 +329,7 @@ public class MercaTolerarBean implements Serializable {
                 //mercaTolerar.setMercaderias(mercaderiasFacade.buscarPorCodigoMercaderia(mercaderias.getMercaderiasPK().getCodMerca()));
                 mercaTolerarFacade.create(mercaTolerar);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
-                limpiar();
+                //limpiar();
                 listar();
                 RequestContext.getCurrentInstance().execute("PF('dlgNuevTolerancia').hide();");
             }
@@ -448,6 +448,8 @@ public class MercaTolerarBean implements Serializable {
         this.mercaTolerar = new MercaTolerar();
         this.proveedores = new Proveedores();
         this.mercaderias = new Mercaderias();
+        this.listaProveedores = new ArrayList<>();
+        this.listaMercaderias = new ArrayList<>();
 
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);
