@@ -149,7 +149,7 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
         }
         return respuesta;
     }
-    
+
     public List<Existencias> listaGrabDetRemision2(Short cod_depo) {
         Query q = getEntityManager().createNativeQuery("SELECT e.*  "
                 + " FROM existencias e, mercaderias m \n"
@@ -164,15 +164,25 @@ public class MercaderiasFacade extends AbstractFacade<Mercaderias> {
 
         return respuesta;
     }
-    
-    public boolean buscarMercaderiaEnCanalDeVenta(String codMerca, String codCanal){
+
+    public boolean buscarMercaderiaEnCanalDeVenta(String codMerca, String codCanal) {
         String sql = "select cod_merca, cod_canal "
-                    + "from merca_canales where upper(cod_merca) like upper('"+codMerca+"') "
-                    + "and upper(cod_canal) like upper('"+codCanal+"')";
+                + "from merca_canales where upper(cod_merca) like upper('" + codMerca + "') "
+                + "and upper(cod_canal) like upper('" + codCanal + "')";
         Query q = em.createNativeQuery(sql);
         System.out.println(q.toString());
         List<Object[]> resultados = q.getResultList();
         return resultados.size() > 0;
     }
 
+    public List<Mercaderias> buscarMercaderiaCompraPorNroFacturaProveedor(long lNrofact, Short lCodProveed) {
+        Query q = getEntityManager().createNativeQuery("SELECT  c.* FROM compras a "
+                + "INNER JOIN compras_det b on "
+                + "a.cod_empr = b.cod_empr and a.ctipo_docum = b.ctipo_docum "
+                + "and a.nrofact = b.nrofact and a.cod_proveed = b.cod_proveed "
+                + "INNER JOIN mercaderias c on "
+                + "c.cod_empr = b.cod_empr and c.cod_merca = b.cod_merca "
+                + "WHERE a.nrofact = "+lNrofact+" and a.cod_proveed = "+lCodProveed, Mercaderias.class);
+        return q.getResultList();
+    }
 }
