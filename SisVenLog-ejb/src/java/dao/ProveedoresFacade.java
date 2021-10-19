@@ -103,4 +103,13 @@ public class ProveedoresFacade extends AbstractFacade<Proveedores> {
         listaProveedores = q.getResultList();
         return listaProveedores;
     }
+    public List<Proveedores> proveedorByIds(String ids) {
+        List<Proveedores> lista = getEntityManager().createNativeQuery("SELECT * FROM proveedores WHERE cod_proveed in ("+ids+")", Proveedores.class).getResultList();
+
+        if (lista.isEmpty()) {//Si no hay elemento
+            return null;
+        } else {
+            return lista;
+        }
+    }    
 }
