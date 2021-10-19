@@ -5,8 +5,10 @@ import dao.ComprasFacade;
 import dao.MercaderiasFacade;
 import dao.ProveedoresFacade;
 import dao.MercaTolerarFacade;
+import dto.CompraDto;
 import entidad.Empresas;
 import entidad.Compras;
+import entidad.ComprasDet;
 import entidad.Mercaderias;
 import entidad.Proveedores;
 import entidad.MercaTolerar;
@@ -14,7 +16,9 @@ import entidad.MercaTolerarPK;
 import entidad.MercaderiasPK;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -23,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
@@ -46,15 +51,22 @@ public class MercaTolerarBean implements Serializable {
     private ProveedoresFacade proveedoresFacade;
 
     private String filtro = "";
-    private Short nroPuntoEstabLbl;
-    private Short nroPuntoExpedLbl;
-    private long nroFactLbl;
-    private MercaTolerar mercaTolerar;
-    private List<MercaTolerar> listaMercaTolerar;
-    private Empresas empresas;
-    private Compras compras;
-    private Mercaderias mercaderias;
-    private Proveedores proveedores;
+    private String nroPuntoEstabLbl = "0";
+    private String nroPuntoExpedLbl = "0";
+    private String nroFactLbl = "0";
+    private long nroFact;
+    private String txtproveedores;
+    private String ffactur;
+
+    private MercaTolerar mercaTolerar = new MercaTolerar();
+    private Mercaderias mercaderias = new Mercaderias();
+    private Proveedores proveedores = new Proveedores();
+    private Compras compras = new Compras();
+    private List<MercaTolerar> listaMercaTolerar = new ArrayList<MercaTolerar>();
+    private List<CompraDto> aux_compras = new ArrayList<CompraDto>();
+    private List<Proveedores> listaProveedores = new ArrayList<Proveedores>();
+    private List<Mercaderias> listaMercaderias = new ArrayList<Mercaderias>();
+    private Collection<ComprasDet> comprasDetCollection;
 
     private boolean habBtnEdit;
     private boolean habBtnAct;
@@ -98,7 +110,7 @@ public class MercaTolerarBean implements Serializable {
     }
 
     public List<MercaTolerar> getListaMercaTolerar() {
-        this.listaMercaTolerar = this.mercaTolerarFacade.findAll();
+        listaMercaTolerar = mercaTolerarFacade.findAll();
         return listaMercaTolerar;
     }
 
@@ -106,16 +118,20 @@ public class MercaTolerarBean implements Serializable {
         this.listaMercaTolerar = listaMercaTolerar;
     }
 
-    public Empresas getEmpresas() {
-        return empresas;
+    public List<Proveedores> getListaProveedores() {
+        return listaProveedores;
     }
 
-    public void setEmpresas(Empresas empresas) {
-        this.empresas = empresas;
+    public void setListaProveedores(List<Proveedores> listaProveedores) {
+        this.listaProveedores = listaProveedores;
     }
 
-    public Compras getCompras() {
-        return compras;
+    public List<Mercaderias> getListaMercaderias() {
+        return listaMercaderias;
+    }
+
+    public void setListaMercaderias(List<Mercaderias> listaMercaderias) {
+        this.listaMercaderias = listaMercaderias;
     }
 
     public Mercaderias getMercaderias() {
@@ -130,28 +146,98 @@ public class MercaTolerarBean implements Serializable {
         this.proveedores = proveedores;
     }
 
-    public Short getNroPuntoEstabLbl() {
+    public String getFfactur() {
+        return ffactur;
+    }
+
+    public void setFfactur(String ffactur) {
+        this.ffactur = ffactur;
+    }
+
+    public Compras getCompras() {
+        return compras;
+    }
+
+    public void setCompras(Compras compras) {
+        this.compras = compras;
+    }
+
+    public String getNroPuntoEstabLbl() {
         return nroPuntoEstabLbl;
     }
 
-    public void setNroPuntoEstabLbl(Short nroPuntoEstabLbl) {
+    public void setNroPuntoEstabLbl(String nroPuntoEstabLbl) {
         this.nroPuntoEstabLbl = nroPuntoEstabLbl;
     }
 
-    public Short getNroPuntoExpedLbl() {
+    public String getNroPuntoExpedLbl() {
         return nroPuntoExpedLbl;
     }
 
-    public void setNroPuntoExpedLbl(Short nroPuntoExpedLbl) {
+    public void setNroPuntoExpedLbl(String nroPuntoExpedLbl) {
         this.nroPuntoExpedLbl = nroPuntoExpedLbl;
     }
 
-    public long getNroFactLbl() {
+    public String getNroFactLbl() {
         return nroFactLbl;
     }
 
-    public void setNroFactLbl(long nroFactLbl) {
+    public void setNroFactLbl(String nroFactLbl) {
         this.nroFactLbl = nroFactLbl;
+    }
+
+    public long getNroFact() {
+        return nroFact;
+    }
+
+    public void setNroFact(long nroFact) {
+        this.nroFact = nroFact;
+    }
+
+    public String getTxtproveedores() {
+        return txtproveedores;
+    }
+
+    public void setTxtproveedores(String txtproveedores) {
+        this.txtproveedores = txtproveedores;
+    }
+
+    public Collection<ComprasDet> getComprasDetCollection() {
+        return comprasDetCollection;
+    }
+
+    public void setComprasDetCollection(Collection<ComprasDet> comprasDetCollection) {
+        this.comprasDetCollection = comprasDetCollection;
+    }
+
+    @PostConstruct
+    public void instanciar() {
+        //new ArrayList<>()
+        listaMercaTolerar = new ArrayList<MercaTolerar>();
+        this.mercaTolerar = new MercaTolerar();
+        this.mercaTolerar.setMercaTolerarPK(new MercaTolerarPK());
+
+        this.mercaderias = new Mercaderias(new MercaderiasPK());
+
+        this.proveedores = new Proveedores();
+        
+        this.listaProveedores = new ArrayList<>();
+        this.listaMercaderias = new ArrayList<>();
+        this.listaMercaTolerar = new ArrayList<>();
+        
+        this.nroPuntoEstabLbl = "0";
+        this.nroPuntoExpedLbl = "0";
+        this.nroFactLbl = "0";
+        this.ffactur = "";
+        this.setHabBtnEdit(true);
+        this.setHabBtnAct(true);
+        this.setHabBtnInac(true);
+
+        this.filtro = "";
+
+        listar();
+
+        //RequestContext.getCurrentInstance().update("formTolerancia");
     }
 
     public String getFiltro() {
@@ -162,62 +248,203 @@ public class MercaTolerarBean implements Serializable {
         this.filtro = filtro;
     }
 
+    public void nuevo() {
+        this.mercaTolerar = new MercaTolerar();
+        listaMercaTolerar = new ArrayList<MercaTolerar>();
+        this.mercaTolerar = new MercaTolerar(new MercaTolerarPK());
+
+        this.mercaderias = new Mercaderias(new MercaderiasPK());
+        this.proveedores = new Proveedores();
+    }
+
     public List<MercaTolerar> listar() {
         listaMercaTolerar = mercaTolerarFacade.findAll();
         return listaMercaTolerar;
-    }    
-//#########################################################################################################
-//#########################################################################################################
-//#########################################################################################################
-    @PostConstruct
-    public void init() {
-        this.mercaTolerar = new MercaTolerar(new MercaTolerarPK());
-        this.proveedores = new Proveedores();
-        MercaderiasPK pk_mercaderia = new MercaderiasPK();
-        this.mercaderias = new Mercaderias(pk_mercaderia);
     }
-    
+
+    public void buscarPorNroFactura(long lNrofact) {
+        try {
+            //this.aux_compras = comprasFacade.buscarFacturaCompraPorNroFactura(lNrofact);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "El numero de factura compra ingresado no existe."));
+        }
+    }
+
+    public Boolean validarMercaTolerar() {
+        boolean valido = true;
+
+        try {
+            if ((nroPuntoEstabLbl.equals(0) || nroPuntoEstabLbl.equals(""))
+                    || (nroPuntoExpedLbl.equals(0) || nroPuntoExpedLbl.equals(""))
+                    || (nroFactLbl.equals(0) || nroFactLbl.equals(""))) {
+                valido = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar todos los campos de la factura"));
+            }
+
+            if ("".equals(this.mercaTolerar.getXobs())) {
+                valido = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar una descripcion."));
+            }
+            if ("".equals(this.mercaTolerar.getItolerar())) {
+                valido = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Campo requerido", "Debe ingresar un importe de tolerancia."));
+            }
+            if (mercaderias == null) {
+                valido = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar una mercaderia"));
+            }
+            if (proveedores == null) {
+                valido = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un proveedor"));
+            }
+        } catch (Exception e) {
+            valido = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al validar los datos."));
+        }
+        return valido;
+    }
+
     public void guardar() {
         try {
 
-            if ((nroPuntoEstabLbl.equals(0) || nroPuntoEstabLbl.equals(""))
-                    || (nroPuntoExpedLbl.equals(0) || nroPuntoExpedLbl.equals(""))
-                    || (nroFactLbl == 0)) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar todos los campos de la factura"));
-                return;
-            }
+            if (validarMercaTolerar()) {
+                MercaTolerarPK pk = new MercaTolerarPK();
+                pk.setCodEmpr(new Short("2"));
+                pk.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
+                pk.setCodProveed(proveedores.getCodProveed());
+                pk.setNrofact(obtenerNroFacturaCompleto());
+                mercaTolerar.setMercaTolerarPK(pk);
+                mercaTolerar.setCusuario("admin");
+                mercaTolerar.setFalta(new Date());
+                mercaTolerar.setFultimModif(new Date());
+                mercaTolerar.setCusuario("admin");
+                mercaTolerar.setFfactur(compras.getComprasPK().getFfactur());
+                mercaTolerar.setProveedores(proveedores);
+                //mercaderias.getMercaderiasPK().setCodEmpr(new Short("2"));
+                //mercaTolerar.setMercaderias(mercaderias);
+                MercaderiasPK pkmer = new MercaderiasPK();
+                pkmer.setCodEmpr(new Short("2"));
+                pkmer.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
 
-            if (mercaderias == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar una mercaderia"));
-                return;
+                //mercaTolerar.setMercaderias(mercaderiasFacade.buscarPorCodigoMercaderia(mercaderias.getMercaderiasPK().getCodMerca()));
+                mercaTolerarFacade.create(mercaTolerar);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
+                limpiar();
+                listar();
+                RequestContext.getCurrentInstance().execute("PF('dlgNuevTolerancia').hide();");
             }
-            if (proveedores == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un proveedor"));
-                return;
-            }
-            MercaTolerarPK pk = new MercaTolerarPK();
-            pk.setCodEmpr(new Short("2"));
-            pk.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
-            pk.setCodProveed(proveedores.getCodProveed());
-            pk.setNrofact(obtenerNroFacturaCompleto());
-            mercaTolerar.setMercaTolerarPK(pk);
-            //mercaTolerar.setCusuario("admin");
-            mercaTolerar.setFalta(new Date());
-
-            mercaTolerarFacade.create(mercaTolerar);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
-            limpiar();
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTolerancia').hide();");
 
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
-    
+
+    private long obtenerNroFacturaCompleto() {
+        //long nroFacturaCompleto = (long) (nroPuntoEstabLbl * 1000000000.00 + nroPuntoExpedLbl * 10000000.00 + nroFactLbl);
+        long nroFacturaCompleto = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+        return nroFacturaCompleto;
+    }
+
+    public void obtenerFacturaCompra() {
+        if ((!nroPuntoEstabLbl.equals("0") && !nroPuntoEstabLbl.equals("") && nroPuntoEstabLbl != null)
+                && (!nroPuntoExpedLbl.equals("0") && !nroPuntoExpedLbl.equals("") && nroPuntoExpedLbl != null)
+                && (!nroFactLbl.equals("0") && !nroFactLbl.equals(""))) {
+            //List<CompraDto> facturaCompra = comprasFacade.comprasByNroFactu(nroPuntoEstabLbl+nroPuntoExpedLbl+nroFactLbl);
+            List<CompraDto> facturaCompra = comprasFacade.buscarFacturaCompraPorNroFactura(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+            this.nroFact = 0;
+
+            if (facturaCompra == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe numero de factura de compra."));
+                //return null;
+            } else {
+                if (facturaCompra.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe numero de factura de compra."));
+                    //return null;
+                } else {
+                    short codProveed;
+                    this.txtproveedores = "";
+                    this.nroFact = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+
+                    for (CompraDto faccom : facturaCompra) {
+                        compras = faccom.getCompra();
+                        this.ffactur = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(compras.getComprasPK().getFfactur());
+                        codProveed = compras.getComprasPK().getCodProveed();
+                        this.txtproveedores = this.txtproveedores + Long.toString(codProveed) + ",";
+                    }
+                    this.txtproveedores = this.txtproveedores.substring(0, this.txtproveedores.length() - 1);
+                    this.setListaProveedores(proveedoresFacade.proveedorByIds(this.txtproveedores));
+                }
+            }
+        }
+
+    }
+
+    public void obtenerDetalleCompra() {
+        if (this.proveedores != null && nroFact != 0) {
+
+            List<Mercaderias> facturaCompraMercaderias = mercaderiasFacade.buscarMercaderiaCompraPorNroFacturaProveedor(nroFact, proveedores.getCodProveed());
+
+            if (facturaCompraMercaderias == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe mercaderias asociadas a la factura de compra."));
+                //return null;
+            } else {
+                if (facturaCompraMercaderias.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atención ", "No existe mercaderias asociadas a la factura de compra."));
+                    //return null;
+                } else {
+                    this.setListaMercaderias(facturaCompraMercaderias);
+                }
+            }
+        }
+    }
+
+//###############################################################################################################    
+//###############################################################################################################    
+//############################################################################################################### 
+    public void insertar() {
+        try {
+            if (validarMercaTolerar().equals(true)) {
+                MercaTolerarPK mpk = null;
+                mpk.setCodEmpr(new Short("2"));
+                mpk.setNrofact(obtenerNroFacturaCompleto());
+                mpk.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
+                mpk.setCodProveed(proveedores.getCodProveed());
+                mercaTolerar.setMercaTolerarPK(mpk);
+                mercaTolerar.setMercaderias(mercaderias);
+                mercaTolerar.setProveedores(proveedores);
+                mercaTolerar.setCusuario("admin");
+                mercaTolerar.setFalta(new Date());
+                mercaTolerarFacade.create(mercaTolerar);
+
+                /*                        
+                mercaTolerar.getMercaTolerarPK().setCodEmpr(new Short("2"));
+                mercaTolerar.getMercaTolerarPK().setNrofact(compras.getComprasPK().getNrofact());
+                mercaTolerar.getMercaTolerarPK().setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
+                mercaTolerar.getMercaTolerarPK().setCodProveed(proveedores.getCodProveed());
+                //mercaTolerar.setCusuario("admin");
+                mercaTolerar.setFalta(new Date());
+
+                mercaTolerarFacade.create(mercaTolerar);
+                 */
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
+                RequestContext.getCurrentInstance().update("formTolerancia");
+                RequestContext.getCurrentInstance().execute("PF('dlgNuevTolerancia').hide();");
+
+                instanciar();
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Atencion", "Error al validar los datos."));
+            }
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
+        }
+    }
+
     public void limpiar() {
-        this.nroPuntoEstabLbl = 0;
-        this.nroPuntoExpedLbl = 0;
-        this.nroFactLbl = 0;
+        this.nroPuntoEstabLbl = "0";
+        this.nroPuntoExpedLbl = "0";
+        this.nroFactLbl = "0";
+        this.listaMercaTolerar = null;
         this.mercaTolerar = new MercaTolerar();
         this.proveedores = new Proveedores();
         this.mercaderias = new Mercaderias();
@@ -227,11 +454,6 @@ public class MercaTolerarBean implements Serializable {
         this.setHabBtnInac(true);
         this.filtro = "";
         RequestContext.getCurrentInstance().update("formTolerancia");
-    }
-    
-    private long obtenerNroFacturaCompleto() {
-        long nroFacturaCompleto = (long) (nroPuntoEstabLbl * 1000000000.00 + nroPuntoExpedLbl * 10000000.00 + nroFactLbl);
-        return nroFacturaCompleto;
     }
 
     private String obtenerNroFacturaCompletoConFormato() {
@@ -249,7 +471,7 @@ public class MercaTolerarBean implements Serializable {
         }
         return ceros + cadena;
     }
-    
+
     public void onRowSelect(SelectEvent event) {
 
         if ("" != this.mercaTolerar.getProveedores().getXnombre()) {
@@ -259,12 +481,12 @@ public class MercaTolerarBean implements Serializable {
         }
 
     }
-    
+
     public void cerrarDialogosAgregar() {
         RequestContext.getCurrentInstance().execute("PF('formSinGuardarTolerancia').hide();");
         RequestContext.getCurrentInstance().execute("PF('formNuevaTolerancia').hide();");
 
-    } 
+    }
 
     public void verificarCargaDatos() {
 
@@ -283,7 +505,7 @@ public class MercaTolerarBean implements Serializable {
             RequestContext.getCurrentInstance().execute("PF('formNuevaTolerancia').hide();");
         }
 
-    }    
+    }
 //#########################################################################################################
 //#########################################################################################################
 //#########################################################################################################
@@ -328,64 +550,4 @@ public class MercaTolerarBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
-
-    //Operaciones
-    //Instanciar objetos
-    //@PostConstruct
-/*    
-    public void instanciar() {
-        mercaTolerar = new MercaTolerar();
-        mercaTolerar.setProveedores(new Proveedores());
-        mercaTolerar.setMercaderias(new Mercaderias());
-        mercaTolerar.setMercaTolerarPK(new MercaTolerarPK());
-        mercaTolerar.setItolerar(BigDecimal.ZERO);
-
-        listaMercaTolerar = new ArrayList<MercaTolerar>();
-        //this.mercaTolerar = new MercaTolerar(new MercaTolerarPK());
-        this.mercaTolerar = new MercaTolerar();
-
-        this.empresas = new Empresas();
-
-        this.mercaderias = new Mercaderias();
-
-        this.proveedores = new Proveedores();
-
-        this.setHabBtnEdit(true);
-        this.setHabBtnAct(true);
-        this.setHabBtnInac(true);
-        this.filtro = "";
-        RequestContext.getCurrentInstance().update("formTolerancia");
-    }
-
-    public void insertar() {
-        try {
-
-            if (mercaderias == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar una mercaderia"));
-                return;
-            }
-            if (proveedores == null) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe seleccionar un proveedor"));
-                return;
-            }
-            mercaTolerar.getMercaTolerarPK().setCodEmpr(new Short("2"));
-            mercaTolerar.getMercaTolerarPK().setNrofact(compras.getComprasPK().getNrofact());
-            mercaTolerar.getMercaTolerarPK().setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
-            mercaTolerar.getMercaTolerarPK().setCodProveed(proveedores.getCodProveed());
-            //mercaTolerar.setCusuario("admin");
-            mercaTolerar.setFalta(new Date());
-
-            mercaTolerarFacade.create(mercaTolerar);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
-
-            RequestContext.getCurrentInstance().execute("PF('dlgNuevTolerancia').hide();");
-
-            instanciar();
-
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
-        }
-    }
-    
-*/
 }
