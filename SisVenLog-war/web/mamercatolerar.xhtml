@@ -141,10 +141,11 @@
 
                                 <p:ajax event="close" listener="#{mercaTolerarBean.instanciar()}" update="focusEstablecimiento"/>
                                 <p:focus id="focusEstablecimiento" for="nro_establec_id"/>
+                                <!--
                                 <p:focus id="focusMercaderia" for="agreMercaCodMercade"/>
                                 <p:focus id="focusPuntoExpe" for="nro_expedic_id"/>
                                 <p:focus id="focusNroFac" for="nro_factura_id"/>
-
+                                -->
                                 <h:panelGrid columns="2">              
                                     <p:outputLabel value="Nro. Factura:" style="font-weight: bold; text-align: right;"/>    
                                     <h:panelGrid id="panel_nro_factura" columns="3">
@@ -175,7 +176,7 @@
                                                          style=" width: 305px;" > 
                                             <!-- <p:ajax event="itemSelect" update="codproveedor" process="@this"/> -->
                                             <p:ajax event="itemSelect" listener="#{mercaTolerarBean.obtenerDetalleCompra()}"
-                                            update="selectmerca ffactur codproveedor"/>
+                                                    update="selectmerca ffactur codproveedor"/>
                                             <f:selectItem itemLabel="SELECCIONE" itemValue="#{null}"/>
                                             <f:selectItems id="boxproveedores" value="#{mercaTolerarBean.listaProveedores}" var="itemp"
                                                            itemValue="#{itemp.codProveed}"
@@ -202,9 +203,9 @@
                                     <p:outputLabel value="Fecha Fac. Compra:" style="font-weight: bold; float: right;"/>
 
                                     <p:inputText id="ffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.ffactur}">
-                                        
+
                                     </p:inputText>
-                                    
+
                                     <p:outputLabel value="Tolerancia:" style="font-weight: bold; float: right;"/>
 
                                     <p:inputNumber id="tol" value="#{mercaTolerarBean.mercaTolerar.itolerar}">
