@@ -403,9 +403,54 @@ public class MercaTolerarBean implements Serializable {
         }
     }
 
+    public void onRowSelect(SelectEvent event) {
+
+        if ("" != this.mercaTolerar.getProveedores().getXnombre()) {
+            this.setHabBtnEdit(false);
+        } else {
+            this.setHabBtnEdit(true);
+        }
+
+    }
+
+    public void onRowDoubleClick2(SelectEvent event) {
+
+        if ("" != this.mercaTolerar.getProveedores().getXnombre()) {
+            this.setHabBtnEdit(false);
+        } else {
+            this.setHabBtnEdit(true);
+        }
+
+    }
+
+    public void onRowDoubleClick(final SelectEvent event) {
+        MercaTolerar obj = (MercaTolerar) event.getObject();
+        //RequestContext.getCurrentInstance().execute("PF('dlgVisuaTolerancia').show();");
+        RequestContext.getCurrentInstance().execute("PF('formVisualizarTolerancia').show();");
+        // rest of your logic
+    }
+
+    public void limpiar() {
+        this.nroPuntoEstabLbl = "0";
+        this.nroPuntoExpedLbl = "0";
+        this.nroFactLbl = "0";
+        this.listaMercaTolerar = null;
+        this.mercaTolerar = new MercaTolerar();
+        this.proveedores = new Proveedores();
+        this.mercaderias = new Mercaderias();
+        this.listaProveedores = new ArrayList<>();
+        this.listaMercaderias = new ArrayList<>();
+
+        this.setHabBtnEdit(true);
+        this.setHabBtnAct(true);
+        this.setHabBtnInac(true);
+        this.filtro = "";
+        RequestContext.getCurrentInstance().update("formTolerancia");
+    }    
 //###############################################################################################################    
 //###############################################################################################################    
 //############################################################################################################### 
+
     public void insertar() {
         try {
             if (validarMercaTolerar().equals(true)) {
@@ -445,23 +490,7 @@ public class MercaTolerarBean implements Serializable {
         }
     }
 
-    public void limpiar() {
-        this.nroPuntoEstabLbl = "0";
-        this.nroPuntoExpedLbl = "0";
-        this.nroFactLbl = "0";
-        this.listaMercaTolerar = null;
-        this.mercaTolerar = new MercaTolerar();
-        this.proveedores = new Proveedores();
-        this.mercaderias = new Mercaderias();
-        this.listaProveedores = new ArrayList<>();
-        this.listaMercaderias = new ArrayList<>();
 
-        this.setHabBtnEdit(true);
-        this.setHabBtnAct(true);
-        this.setHabBtnInac(true);
-        this.filtro = "";
-        RequestContext.getCurrentInstance().update("formTolerancia");
-    }
 
     private String obtenerNroFacturaCompletoConFormato() {
         String puntoEstablec = String.valueOf(nroPuntoEstabLbl);
@@ -477,16 +506,6 @@ public class MercaTolerarBean implements Serializable {
             ceros += "0";
         }
         return ceros + cadena;
-    }
-
-    public void onRowSelect(SelectEvent event) {
-
-        if ("" != this.mercaTolerar.getProveedores().getXnombre()) {
-            this.setHabBtnEdit(false);
-        } else {
-            this.setHabBtnEdit(true);
-        }
-
     }
 
     public void cerrarDialogosAgregar() {
@@ -530,7 +549,7 @@ public class MercaTolerarBean implements Serializable {
                 return;
 
             } else {
-                
+
                 mercaTolerarFacade.edit(mercaTolerar);
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Guardado con exito."));
