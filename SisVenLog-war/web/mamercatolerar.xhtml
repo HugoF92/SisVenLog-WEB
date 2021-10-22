@@ -54,13 +54,21 @@
                                     disabled="#{mercaTolerarBean.habBtnEdit}"/>
 
                                 <p:commandButton 
-                                    value="Borrar" 
+                                    value="Eliminar" 
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
-                                    disabled="#{mercaTolerarBean.habBtnEdit}"
+                                    disabled="# {mercaTolerarBean.habBtnEdit}"
                                     oncomplete="PF('dlgInacTolerancia').show()"
                                     update="formInacTolerancia"/>
+
+                                <p:commandButton 
+                                    value="Visualizar"   
+                                    styleClass="blue-btn raised-btn" 
+                                    oncomplete="PF('dlgVisuaTolerancia').show()"
+                                    style="margin-bottom:10px; width: 100px;"
+                                    icon="fa fa-search"
+                                    update="formVisualizarTolerancia"/>                                
 
                             </center>
 
@@ -73,7 +81,8 @@
                             <div class="ui-g">
                                 <div class="ui-g-12">
                                     <div class="card card-w-title">
-                                        <p:dataTable id="tablaTolerancia" var="itemp" selectionMode="single" reflow="true"
+                                        <p:dataTable id="tablaTolerancia" var="itemp" 
+                                                     selectionMode="single" reflow="true"
                                                      paginator="true" rows="20" paginatorPosition="bottom"
                                                      emptyMessage="Sin datos para mostrar."
                                                      value="#{mercaTolerarBean.listaMercaTolerar}" 
@@ -87,7 +96,14 @@
                                                     listener="#{mercaTolerarBean.onRowSelect(event)}"
                                                     update="formBtnTolerancia"/>
 
+                                            <p:ajax 
+                                                event="rowDblselect" 
+                                                listener="#{mercaTolerarBean.onRowDoubleClick}" 
+                                                update="formBtnTolerancia" 
+                                                global="false" />                                            
+
                                             <p:column headerText="Nro. Factura" filterBy="#{itemp.mercaTolerarPK.nrofact}"
+                                                      filterMatchMode="contains"
                                                       sortBy="#{itemp.mercaTolerarPK.nrofact}">
                                                 <h:outputText value="#{itemp.mercaTolerarPK.nrofact}" />
                                             </p:column>
@@ -100,12 +116,16 @@
                                                 <h:outputText value="#{itemp.proveedores.xnombre}" />
                                             </p:column>
 
-                                            <p:column headerText="Mercaderia" filterBy="#{itemp.mercaderias.xdesc}"
+                                            <p:column headerText="Mercaderia" sortBy="#{itemp.mercaderias.mercaderiasPK.codMerca}">
+                                                <h:outputText value="#{itemp.mercaderias.mercaderiasPK.codMerca}" />
+                                            </p:column>
+
+                                            <p:column headerText="Desc. Mercaderia" filterBy="#{itemp.mercaderias.xdesc}"
                                                       filterMatchMode="contains" >
                                                 <h:outputText value="#{itemp.mercaderias.xdesc}" />
                                             </p:column>
 
-                                            <p:column headerText="Descripcion">
+                                            <p:column headerText="Observaciones">
                                                 <h:outputText value="#{itemp.xobs}" />
                                             </p:column>
 
@@ -234,10 +254,11 @@
                                         <p:commandButton value="Cancelar" oncomplete="PF('dlgNuevTolerancia').hide()"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>   
-
-                                        <p:commandButton value="Cancelar2" actionListener="#{mercaTolerarBean.verificarCargaDatos()}"
+<!--
+                                        <p:commandButton value="Cancelar2" actionListener="# {mercaTolerarBean.verificarCargaDatos()}"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                         icon="fa fa-times"/>                                        
+                                                         icon="fa fa-times"/>        
+                                       --> 
                                     </h:panelGrid>
                                 </center>
                             </p:dialog>
@@ -307,6 +328,14 @@
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
 
+                                    <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_edit_ffactur" columns="2">
+                                        <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid>  
+                                    
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_edit_proveedor" columns="2">
                                         <p:inputText id="editnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
@@ -322,25 +351,18 @@
                                         <p:inputText id="editcodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
                                                      style="width: 450px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>    
-                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
-                                    <h:panelGrid id="panel_edit_ffactur" columns="2">
-                                        <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
-                                                     style="width: 150px; font-weight: bold; color: black;">
-                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
-                                        </p:inputText>                                          
-                                    </h:panelGrid>  
-                                   <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_edit_obs" columns="2">
                                         <p:inputTextarea id="editobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
-                                                     style="width: 400px; color: black;">
-                                    
+                                                         style="width: 400px; color: black;">
+
                                         </p:inputTextarea>                                          
                                     </h:panelGrid>                                     
-                                   <p:outputLabel value="Importe Tolerancia:" style="font-weight: bold; float: left;"/>
+                                    <p:outputLabel value="Importe Tolerancia:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_edit_importe" columns="2">
                                         <p:inputText id="editimporte" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
                                                      style="width: 150px; font-weight: bold; color: black;">
-                                    
+                                            <f:convertNumber locale="es"/>
                                         </p:inputText>                                          
                                     </h:panelGrid>                                                                     
                                 </h:panelGrid>
@@ -366,6 +388,81 @@
                             </p:dialog>
 
                         </h:form>
+                        <!--###############################################################################################################################                        
+                        ########################################          DOBLE CLICK VISUALIZACION         ###############################################                        
+                        ###############################################################################################################################-->
+                        <h:form id="formVisualizarTolerancia"  prependId="false">
+                            <p:growl id="msgVisuaTolerancia" showDetail="true"/>
+
+                            <p:dialog header="Visualizar Tolerancia Precio Mercaderia"
+                                      widgetVar="dlgVisuaTolerancia"
+                                      modal="true"
+                                      responsive="true"
+                                      closable="false"
+                                      closeOnEscape="false">
+
+                                <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}"/>
+
+                                <h:panelGrid id="pnlVisuaTolerancia" columns="2" style="width: 550px;">
+
+                                    <p:outputLabel value="Nro de Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_visua_factura" columns="2">
+                                        <p:inputText id="visuafactura" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>
+
+                                    <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_visua_proveedor" columns="2">
+                                        <p:inputText id="visuanomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="visuacodprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.xnombre}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>  
+
+                                    <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_visua_mercaderia" columns="2">
+                                        <p:inputText id="visuanommerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.mercaderiasPK.codMerca}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="visuacodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>    
+                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_visua_ffactur" columns="2">
+                                        <p:inputText id="visuaffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid>  
+                                    <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_visua_obs" columns="2">
+                                        <p:inputTextarea id="visuaobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
+                                                         style="width: 400px; color: black;"
+                                                         readonly="true" disabled="true">
+
+                                        </p:inputTextarea>                                          
+                                    </h:panelGrid>                                     
+                                    <p:outputLabel value="Importe Tolerancia:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_visua_importe" columns="2">
+                                        <p:inputText id="visuaimporte" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"
+                                                     readonly="true" disabled="true">
+
+                                        </p:inputText>                                          
+                                    </h:panelGrid>                                                                     
+                                </h:panelGrid>
+                                <br></br>
+                                <br></br>
+                                <center>
+                                    <h:panelGrid columns="2">
+
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgVisuaTolerancia').hide();" 
+                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                         icon="fa fa-times"/>
+                                    </h:panelGrid>
+                                </center>
+                            </p:dialog>
+
+                        </h:form>                        
                         <!--###############################################################################################################################                        
                         ########################################       FORMULACION SALIR SIN GUARDAR       ################################################                        
                         ###############################################################################################################################-->
