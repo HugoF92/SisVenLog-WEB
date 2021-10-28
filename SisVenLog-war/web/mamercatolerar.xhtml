@@ -3,6 +3,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 template="/WEB-INF/template.xhtml">
     <ui:define name="title">VenLog S.A.</ui:define>
 
@@ -19,7 +20,11 @@
                     display: block !important;
                 }
             </style>
-
+            <script type="text/javascript">
+                function myFunction() {
+                    alert("Hello World!");
+                }
+            </script>
             <div class="ui-g">
                 <div class="ui-g-12">
                     <div class="card">
@@ -116,12 +121,13 @@
                                                 <h:outputText value="#{itemp.proveedores.xnombre}" />
                                             </p:column>
 
-                                            <p:column headerText="Mercaderia" sortBy="#{itemp.mercaderias.mercaderiasPK.codMerca}">
+                                            <p:column headerText="Mercaderia" sortBy="#{itemp.mercaderias.mercaderiasPK.codMerca}"
+                                                      filterBy="#{itemp.mercaderias.mercaderiasPK.codMerca}"
+                                                      filterMatchMode="contains">
                                                 <h:outputText value="#{itemp.mercaderias.mercaderiasPK.codMerca}" />
                                             </p:column>
 
-                                            <p:column headerText="Desc. Mercaderia" filterBy="#{itemp.mercaderias.xdesc}"
-                                                      filterMatchMode="contains" >
+                                            <p:column headerText="Desc. Mercaderia"  >
                                                 <h:outputText value="#{itemp.mercaderias.xdesc}" />
                                             </p:column>
 
@@ -254,11 +260,11 @@
                                         <p:commandButton value="Cancelar" oncomplete="PF('dlgNuevTolerancia').hide()"
                                                          styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
                                                          icon="fa fa-times"/>   
-<!--
-                                        <p:commandButton value="Cancelar2" actionListener="# {mercaTolerarBean.verificarCargaDatos()}"
-                                                         styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
-                                                         icon="fa fa-times"/>        
-                                       --> 
+                                        <!--
+                                                                                <p:commandButton value="Cancelar2" actionListener="# {mercaTolerarBean.verificarCargaDatos()}"
+                                                                                                 styleClass="red-btn raised-btn" style="margin-bottom:10px; margin-left: 5px; width: 100px;"
+                                                                                                 icon="fa fa-times"/>        
+                                        --> 
                                     </h:panelGrid>
                                 </center>
                             </p:dialog>
@@ -328,6 +334,30 @@
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
 
+                                    <h:panelGrid id="panel_edit2_factura" columns="3">
+                                        <p:inputText id="nro_establec_visua" readonly="true" disabled="true" 
+                                                     value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"
+                                                     onchange="myFunction();">                                          
+                                        </p:inputText>                                       
+                                        <!--                                        
+                                 <h:outputText value="# {fn:substring('My Really Long Display Name', 0, 5)}"/> 
+                                        -->
+                                        <!--                                   
+                                                                            <p:inputText id="nro_establec_visua" readonly="true" disabled="true" 
+                                                                                         value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,0,2)}" 
+                                                                                         style="width: 150px; font-weight: bold; color: black;">                                          
+                                                                            </p:inputText>
+                                     
+                                                                            <p:inputText id="nro_expedic_visua" readonly="true" disabled="true" value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,3,5)}" 
+                                                                                         style="width: 150px; font-weight: bold; color: black;">
+                                                                            </p:inputText>
+                                                                            <p:inputText id="nro_factura_visua" readonly="true" disabled="true" value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,6)}" 
+                                                                                         style="width: 150px; font-weight: bold; color: black;">
+                                                                            </p:inputText>
+                                        -->                                       
+                                    </h:panelGrid>  
+
                                     <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_edit_ffactur" columns="2">
                                         <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
@@ -335,7 +365,7 @@
                                             <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
                                         </p:inputText>                                          
                                     </h:panelGrid>  
-                                    
+
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_edit_proveedor" columns="2">
                                         <p:inputText id="editnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
