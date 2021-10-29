@@ -63,7 +63,7 @@
                                     styleClass="red-btn raised-btn" 
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-ban"
-                                    disabled="# {mercaTolerarBean.habBtnEdit}"
+                                    disabled="#{mercaTolerarBean.habBtnEdit}"
                                     oncomplete="PF('dlgInacTolerancia').show()"
                                     update="formInacTolerancia"/>
 
@@ -281,12 +281,60 @@
                                       widgetVar="dlgInacTolerancia"
                                       modal="true"
                                       responsive="true"
-                                      width="320">
+                                      closable="false"
+                                      closeOnEscape="false">
+                                <p:ajax event="close" listener="#{mercaTolerarBean.limpiar()}"/>
 
+                                <h:panelGrid id="pnlBorrarTolerancia" columns="2" style="width: 550px;">
 
-                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
+                                    <p:outputLabel value="Nro de Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_borrar_factura" columns="2">
+                                        <p:inputText id="borrarfactura" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>
 
+                                    <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_borrar_proveedor" columns="2">
+                                        <p:inputText id="borrarnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="borrarcodprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.xnombre}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>  
+
+                                    <p:outputLabel value="Mercaderia:" style="font-weight: bold; float: left;"/>  
+                                    <h:panelGrid id="panel_borrar_mercaderia" columns="2">
+                                        <p:inputText id="borrarnommerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.mercaderiasPK.codMerca}" 
+                                                     style="width: 50px; font-weight: bold; color: black;"/>                                          
+                                        <p:inputText id="borrarcodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
+                                                     style="width: 450px; font-weight: bold; color: black;"/>                                          
+                                    </h:panelGrid>    
+                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_borrar_ffactur" columns="2">
+                                        <p:inputText id="borrarffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid>  
+                                    <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_borrar_obs" columns="2">
+                                        <p:inputTextarea id="borrarobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
+                                                         style="width: 400px; color: black;"
+                                                         readonly="true" disabled="true">
+
+                                        </p:inputTextarea>                                          
+                                    </h:panelGrid>                                     
+                                    <p:outputLabel value="Importe Tolerancia:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_borrar_importe" columns="2">
+                                        <p:inputText id="borrarimporte" value="#{mercaTolerarBean.mercaTolerar.itolerar}" 
+                                                     style="width: 150px; font-weight: bold; color: black;"
+                                                     readonly="true" disabled="true">
+
+                                        </p:inputText>                                          
+                                    </h:panelGrid>                                                                     
+                                </h:panelGrid>
                                 <br></br>
+                                <br></br>
+                                <p:outputLabel value="Desea borrar el registro seleccionado?" style="font-weight: bold;"/>
                                 <br></br>
                                 <br></br>
                                 <br></br>
