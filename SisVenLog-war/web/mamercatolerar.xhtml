@@ -293,6 +293,14 @@
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
 
+                                   <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_borrar_ffactur" columns="2">
+                                        <p:inputText id="borrarffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid> 
+                                   
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_borrar_proveedor" columns="2">
                                         <p:inputText id="borrarnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
@@ -308,14 +316,8 @@
                                         <p:inputText id="borrarcodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
                                                      style="width: 450px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>    
-                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
-                                    <h:panelGrid id="panel_borrar_ffactur" columns="2">
-                                        <p:inputText id="borrarffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
-                                                     style="width: 150px; font-weight: bold; color: black;">
-                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
-                                        </p:inputText>                                          
-                                    </h:panelGrid>  
-                                    <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+  
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_borrar_obs" columns="2">
                                         <p:inputTextarea id="borrarobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
                                                          style="width: 400px; color: black;"
@@ -381,31 +383,7 @@
                                         <p:inputText id="editfactura" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
-
-                                    <h:panelGrid id="panel_edit2_factura" columns="3">
-                                        <p:inputText id="nro_establec_visua" readonly="true" disabled="true" 
-                                                     value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
-                                                     style="width: 150px; font-weight: bold; color: black;"
-                                                     onchange="myFunction();">                                          
-                                        </p:inputText>                                       
-                                        <!--                                        
-                                 <h:outputText value="# {fn:substring('My Really Long Display Name', 0, 5)}"/> 
-                                        -->
-                                        <!--                                   
-                                                                            <p:inputText id="nro_establec_visua" readonly="true" disabled="true" 
-                                                                                         value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,0,2)}" 
-                                                                                         style="width: 150px; font-weight: bold; color: black;">                                          
-                                                                            </p:inputText>
-                                     
-                                                                            <p:inputText id="nro_expedic_visua" readonly="true" disabled="true" value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,3,5)}" 
-                                                                                         style="width: 150px; font-weight: bold; color: black;">
-                                                                            </p:inputText>
-                                                                            <p:inputText id="nro_factura_visua" readonly="true" disabled="true" value="# {fn:substring(mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact,6)}" 
-                                                                                         style="width: 150px; font-weight: bold; color: black;">
-                                                                            </p:inputText>
-                                        -->                                       
-                                    </h:panelGrid>  
-
+ 
                                     <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_edit_ffactur" columns="2">
                                         <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
@@ -489,6 +467,14 @@
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
 
+                                    <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
+                                    <h:panelGrid id="panel_visua_ffactur" columns="2">
+                                        <p:inputText id="visuaffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
+                                                     style="width: 150px; font-weight: bold; color: black;">
+                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
+                                        </p:inputText>                                          
+                                    </h:panelGrid>  
+                                    
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_visua_proveedor" columns="2">
                                         <p:inputText id="visuanomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
@@ -504,14 +490,8 @@
                                         <p:inputText id="visuacodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
                                                      style="width: 450px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>    
-                                    <p:outputLabel value="Fecha Fact. Compra:" style="font-weight: bold; float: left;"/>
-                                    <h:panelGrid id="panel_visua_ffactur" columns="2">
-                                        <p:inputText id="visuaffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
-                                                     style="width: 150px; font-weight: bold; color: black;">
-                                            <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
-                                        </p:inputText>                                          
-                                    </h:panelGrid>  
-                                    <p:outputLabel value="Descripcion:" style="font-weight: bold; float: left;"/>
+
+                                    <p:outputLabel value="Observaciones:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_visua_obs" columns="2">
                                         <p:inputTextarea id="visuaobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
                                                          style="width: 400px; color: black;"
