@@ -104,8 +104,8 @@
                                             <p:ajax 
                                                 event="rowDblselect" 
                                                 listener="#{mercaTolerarBean.onRowDoubleClick}" 
-                                                update="formBtnTolerancia" 
-                                                global="false" />                                            
+                                                oncomplete="PF('formVisualizarTolerancia').show()"
+                                                update="formVisualizarTolerancia"/>                                            
 
                                             <p:column headerText="Nro. Factura" filterBy="#{itemp.mercaTolerarPK.nrofact}"
                                                       filterMatchMode="contains"
@@ -293,14 +293,14 @@
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
 
-                                   <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
+                                    <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_borrar_ffactur" columns="2">
                                         <p:inputText id="borrarffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
                                                      style="width: 150px; font-weight: bold; color: black;">
                                             <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
                                         </p:inputText>                                          
                                     </h:panelGrid> 
-                                   
+
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_borrar_proveedor" columns="2">
                                         <p:inputText id="borrarnomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
@@ -316,7 +316,7 @@
                                         <p:inputText id="borrarcodmerca" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaderias.xdesc}" 
                                                      style="width: 450px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>    
-  
+
                                     <p:outputLabel value="Observaciones:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_borrar_obs" columns="2">
                                         <p:inputTextarea id="borrarobs" value="#{mercaTolerarBean.mercaTolerar.xobs}" 
@@ -383,7 +383,7 @@
                                         <p:inputText id="editfactura" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.mercaTolerarPK.nrofact}" 
                                                      style="width: 150px; font-weight: bold; color: black;"/>                                          
                                     </h:panelGrid>
- 
+
                                     <p:outputLabel value="Fecha Factura:" style="font-weight: bold; float: left;"/>
                                     <h:panelGrid id="panel_edit_ffactur" columns="2">
                                         <p:inputText id="editffactur" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.ffactur}" 
@@ -426,7 +426,6 @@
                                 <br></br>
                                 <center>
                                     <h:panelGrid columns="2">
-
                                         <p:commandButton
                                             value="Guardar"
                                             actionListener="#{mercaTolerarBean.editar()}"
@@ -474,7 +473,7 @@
                                             <f:convertDateTime pattern="dd/MM/YYYY HH:mm:ss"/>
                                         </p:inputText>                                          
                                     </h:panelGrid>  
-                                    
+
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: left;"/>  
                                     <h:panelGrid id="panel_visua_proveedor" columns="2">
                                         <p:inputText id="visuanomprovee" readonly="true" disabled="true" value="#{mercaTolerarBean.mercaTolerar.proveedores.codProveed}" 
