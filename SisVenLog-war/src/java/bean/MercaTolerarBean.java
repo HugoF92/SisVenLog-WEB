@@ -26,16 +26,26 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.Interceptors;
+import multitenancy.TenantInterceptor;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
+//@Named
+//@ViewScoped
+//@Interceptors(TenantInterceptor.class)
 public class MercaTolerarBean implements Serializable {
 
     @EJB
+    //@Inject
     private MercaTolerarFacade mercaTolerarFacade;
 
     @EJB
@@ -308,16 +318,20 @@ public class MercaTolerarBean implements Serializable {
         try {
 
             if (validarMercaTolerar()) {
+                String usuario = null;
+                if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario") != null) {
+                    usuario = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                }
                 MercaTolerarPK pk = new MercaTolerarPK();
                 pk.setCodEmpr(new Short("2"));
                 pk.setCodMerca(mercaderias.getMercaderiasPK().getCodMerca());
                 pk.setCodProveed(proveedores.getCodProveed());
                 pk.setNrofact(obtenerNroFacturaCompleto());
                 mercaTolerar.setMercaTolerarPK(pk);
-                mercaTolerar.setCusuario("admin");
                 mercaTolerar.setFalta(new Date());
                 mercaTolerar.setFultimModif(new Date());
-                mercaTolerar.setCusuario("admin");
+                mercaTolerar.setCusuario(usuario);
+                mercaTolerar.setCusuarioModif(usuario);
                 mercaTolerar.setFfactur(compras.getComprasPK().getFfactur());
                 mercaTolerar.setProveedores(proveedores);
                 //metodo 1
@@ -333,6 +347,8 @@ public class MercaTolerarBean implements Serializable {
                 //mercaderiasNew = this.mercaderiasFacade.buscarPorCodigoMercaderia(mercaderias.getMercaderiasPK().getCodMerca());
                 //mercaTolerar.setMercaderias(mercaderiasNew);
                 mercaTolerarFacade.create(mercaTolerar);
+
+                //mercaTolerarFacade.newInsertarMercaTolerar(mercaTolerar);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "El registro fue creado con exito."));
                 //limpiar();
                 listar();
@@ -424,10 +440,12 @@ public class MercaTolerarBean implements Serializable {
     }
 
     public void onRowDoubleClick(final SelectEvent event) {
-        MercaTolerar obj = (MercaTolerar) event.getObject();
+        //MercaTolerar obj = (MercaTolerar) event.getObject();
         //RequestContext.getCurrentInstance().execute("PF('dlgVisuaTolerancia').show();");
-        RequestContext.getCurrentInstance().execute("PF('formVisualizarTolerancia').show();");
+        //RequestContext.getCurrentInstance().execute("PF('formVisualizarTolerancia').show();");
         // rest of your logic
+        //PrimeFaces current = PrimeFaces.current();
+        //current.executeScript("PF('formVisualizarTolerancia').show();");
     }
 
     public void limpiar() {
@@ -446,7 +464,7 @@ public class MercaTolerarBean implements Serializable {
         this.setHabBtnInac(true);
         this.filtro = "";
         RequestContext.getCurrentInstance().update("formTolerancia");
-    }    
+    }
 //###############################################################################################################    
 //###############################################################################################################    
 //############################################################################################################### 
@@ -489,8 +507,6 @@ public class MercaTolerarBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error ", e.getMessage()));
         }
     }
-
-
 
     private String obtenerNroFacturaCompletoConFormato() {
         String puntoEstablec = String.valueOf(nroPuntoEstabLbl);
@@ -550,6 +566,12 @@ public class MercaTolerarBean implements Serializable {
 
             } else {
 
+                String usuario = null;
+                if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario") != null) {
+                    usuario = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario").toString();
+                }
+                mercaTolerar.setCusuarioModif(usuario);
+                mercaTolerar.setFultimModif(new Date());
                 mercaTolerarFacade.edit(mercaTolerar);
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Guardado con exito."));
