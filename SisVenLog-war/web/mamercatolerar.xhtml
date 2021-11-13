@@ -66,7 +66,7 @@
                                     disabled="#{mercaTolerarBean.habBtnEdit}"
                                     oncomplete="PF('dlgInacTolerancia').show()"
                                     update="formInacTolerancia"/>
-
+<!--
                                 <p:commandButton 
                                     value="Visualizar"   
                                     styleClass="blue-btn raised-btn" 
@@ -74,7 +74,7 @@
                                     style="margin-bottom:10px; width: 100px;"
                                     icon="fa fa-search"
                                     update="formVisualizarTolerancia"/>                                
-
+--> 
                             </center>
 
                         </h:form>
@@ -100,12 +100,11 @@
                                             <p:ajax event="rowSelect"
                                                     listener="#{mercaTolerarBean.onRowSelect(event)}"
                                                     update="formBtnTolerancia"/>
-
+                                           
                                             <p:ajax 
-                                                event="rowDblselect" 
-                                                listener="#{mercaTolerarBean.onRowDoubleClick}" 
-                                                oncomplete="PF('formVisualizarTolerancia').show()"
-                                                update="formVisualizarTolerancia"/>                                            
+                                                event="rowDblselect" oncomplete= "PF('dlgVisuaTolerancia').show()"
+                                                update="formVisualizarTolerancia"
+                                                global="false" />
 
                                             <p:column headerText="Nro. Factura" filterBy="#{itemp.mercaTolerarPK.nrofact}"
                                                       filterMatchMode="contains"
