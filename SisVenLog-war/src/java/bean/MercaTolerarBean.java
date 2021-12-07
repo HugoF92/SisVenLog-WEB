@@ -362,6 +362,10 @@ public class MercaTolerarBean implements Serializable {
 
     private long obtenerNroFacturaCompleto() {
         //long nroFacturaCompleto = (long) (nroPuntoEstabLbl * 1000000000.00 + nroPuntoExpedLbl * 10000000.00 + nroFactLbl);
+        //while(nroPuntoEstabLbl.length()<3){nroPuntoEstabLbl="0"+nroPuntoEstabLbl;}
+        //while(nroPuntoExpedLbl.length()<3){nroPuntoExpedLbl="0"+nroPuntoExpedLbl;}
+        //while(nroFactLbl.length()<7){nroFactLbl="0"+nroFactLbl;}
+        
         long nroFacturaCompleto = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
         return nroFacturaCompleto;
     }
