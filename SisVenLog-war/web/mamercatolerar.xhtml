@@ -10,7 +10,6 @@
     <ui:define name="content">
 
 
-    
         <h:body>
 
             <style type="text/css">
@@ -175,22 +174,22 @@
                                 <h:panelGrid columns="2">              
                                     <p:outputLabel value="Nro. Factura:" style="font-weight: bold; text-align: right;"/>    
                                     <h:panelGrid id="panel_nro_factura" columns="3">
-                                        <p:inputText id="nro_establec_id" value="#{mercaTolerarBean.nroPuntoEstabLbl}" style="width: 50px;">
+                                        <p:inputNumber id="nro_establec_id" value="#{mercaTolerarBean.nroPuntoEstabLbl}" thousandSeparator="" decimalPlaces="0" emptyValue="always" maxValue="9" style="width:25px; text-align:right;" size="1">
                                             <p:ajax event="blur" 
                                                     update="selectprovee"
                                                     listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>                                           
-                                        </p:inputText>
+                                        </p:inputNumber>
 
-                                        <p:inputText id="nro_expedic_id" value="#{mercaTolerarBean.nroPuntoExpedLbl}" style="width: 50px;">
+                                        <p:inputNumber id="nro_expedic_id" value="#{mercaTolerarBean.nroPuntoExpedLbl}" thousandSeparator="" decimalPlaces="0" emptyValue="always" maxValue="99" style="width:25px; text-align:right;" size="2">
                                             <p:ajax event="blur" 
                                                     update="selectprovee"
                                                     listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>
-                                        </p:inputText>
-                                        <p:inputText id="nro_factura_id" value="#{mercaTolerarBean.nroFactLbl}" style="width: 100px;">
+                                        </p:inputNumber>
+                                        <p:inputNumber id="nro_factura_id" value="#{mercaTolerarBean.nroFactLbl}" thousandSeparator="" decimalPlaces="0" emptyValue="always" maxValue="9999999" style="width:50px; text-align:right;" size="7">
                                             <p:ajax event="blur" 
                                                     update="selectprovee"
                                                     listener="#{mercaTolerarBean.obtenerFacturaCompra()}"/>
-                                        </p:inputText>
+                                        </p:inputNumber>
                                     </h:panelGrid>                                    
                                     <p:outputLabel value="Proveedor:" style="font-weight: bold; float: right;"/>
                                     <h:panelGrid id="panel_cod_proveedor" columns="2">
