@@ -61,9 +61,12 @@ public class MercaTolerarBean implements Serializable {
     private ProveedoresFacade proveedoresFacade;
 
     private String filtro = "";
-    private String nroPuntoEstabLbl = "0";
-    private String nroPuntoExpedLbl = "0";
-    private String nroFactLbl = "0";
+    //private String nroPuntoEstabLbl = "0";
+    //private String nroPuntoExpedLbl = "0";
+    //private String nroFactLbl = "0";
+    private long nroPuntoEstabLbl;
+    private long nroPuntoExpedLbl;
+    private long nroFactLbl;    
     private long nroFact;
     private String txtproveedores;
     private String ffactur;
@@ -81,11 +84,17 @@ public class MercaTolerarBean implements Serializable {
     private boolean habBtnEdit;
     private boolean habBtnAct;
     private boolean habBtnInac;
-
-    public MercaTolerarBean() {
+    
+    //@PostConstruct
+    public void init(){
+        limpiar();
+    }
+    
+ //   public MercaTolerarBean() {
 
         //instanciar();
-    }
+ //       limpiar();
+ //   }
 
     public boolean isHabBtnEdit() {
         return habBtnEdit;
@@ -172,27 +181,27 @@ public class MercaTolerarBean implements Serializable {
         this.compras = compras;
     }
 
-    public String getNroPuntoEstabLbl() {
+    public long getNroPuntoEstabLbl() {
         return nroPuntoEstabLbl;
     }
 
-    public void setNroPuntoEstabLbl(String nroPuntoEstabLbl) {
+    public void setNroPuntoEstabLbl(long nroPuntoEstabLbl) {
         this.nroPuntoEstabLbl = nroPuntoEstabLbl;
     }
 
-    public String getNroPuntoExpedLbl() {
+    public long getNroPuntoExpedLbl() {
         return nroPuntoExpedLbl;
     }
 
-    public void setNroPuntoExpedLbl(String nroPuntoExpedLbl) {
+    public void setNroPuntoExpedLbl(long nroPuntoExpedLbl) {
         this.nroPuntoExpedLbl = nroPuntoExpedLbl;
     }
 
-    public String getNroFactLbl() {
+    public long getNroFactLbl() {
         return nroFactLbl;
     }
 
-    public void setNroFactLbl(String nroFactLbl) {
+    public void setNroFactLbl(long nroFactLbl) {
         this.nroFactLbl = nroFactLbl;
     }
 
@@ -222,6 +231,7 @@ public class MercaTolerarBean implements Serializable {
 
     @PostConstruct
     public void instanciar() {
+        limpiar();
         //new ArrayList<>()
         listaMercaTolerar = new ArrayList<MercaTolerar>();
         this.mercaTolerar = new MercaTolerar();
@@ -235,9 +245,9 @@ public class MercaTolerarBean implements Serializable {
         this.listaMercaderias = new ArrayList<>();
         this.listaMercaTolerar = new ArrayList<>();
 
-        this.nroPuntoEstabLbl = "0";
-        this.nroPuntoExpedLbl = "0";
-        this.nroFactLbl = "0";
+        //this.nroPuntoEstabLbl = 0;
+        //this.nroPuntoExpedLbl = 0;
+        //this.nroFactLbl = 0;
         this.ffactur = "";
         this.setHabBtnEdit(true);
         this.setHabBtnAct(true);
@@ -284,9 +294,9 @@ public class MercaTolerarBean implements Serializable {
         boolean valido = true;
 
         try {
-            if ((nroPuntoEstabLbl.equals(0) || nroPuntoEstabLbl.equals(""))
-                    || (nroPuntoExpedLbl.equals(0) || nroPuntoExpedLbl.equals(""))
-                    || (nroFactLbl.equals(0) || nroFactLbl.equals(""))) {
+            if (nroPuntoEstabLbl == 0
+               || nroPuntoExpedLbl == 0
+               || nroFactLbl == 0) {
                 valido = false;
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención ", "Debe ingresar todos los campos de la factura"));
             }
@@ -361,21 +371,18 @@ public class MercaTolerarBean implements Serializable {
     }
 
     private long obtenerNroFacturaCompleto() {
-        //long nroFacturaCompleto = (long) (nroPuntoEstabLbl * 1000000000.00 + nroPuntoExpedLbl * 10000000.00 + nroFactLbl);
-        //while(nroPuntoEstabLbl.length()<3){nroPuntoEstabLbl="0"+nroPuntoEstabLbl;}
-        //while(nroPuntoExpedLbl.length()<3){nroPuntoExpedLbl="0"+nroPuntoExpedLbl;}
-        //while(nroFactLbl.length()<7){nroFactLbl="0"+nroFactLbl;}
-        
-        long nroFacturaCompleto = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+        long nroFacturaCompleto = (long) (nroPuntoEstabLbl * 1000000000.00 + nroPuntoExpedLbl * 10000000.00 + nroFactLbl);
+        //long nroFacturaCompleto = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
         return nroFacturaCompleto;
     }
 
     public void obtenerFacturaCompra() {
-        if ((!nroPuntoEstabLbl.equals("0") && !nroPuntoEstabLbl.equals("") && nroPuntoEstabLbl != null)
-                && (!nroPuntoExpedLbl.equals("0") && !nroPuntoExpedLbl.equals("") && nroPuntoExpedLbl != null)
-                && (!nroFactLbl.equals("0") && !nroFactLbl.equals(""))) {
+        if (nroPuntoEstabLbl != 0
+           && nroPuntoExpedLbl != 0
+           && nroFactLbl != 0) {
             //List<CompraDto> facturaCompra = comprasFacade.comprasByNroFactu(nroPuntoEstabLbl+nroPuntoExpedLbl+nroFactLbl);
-            List<CompraDto> facturaCompra = comprasFacade.buscarFacturaCompraPorNroFactura(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+            //List<CompraDto> facturaCompra = comprasFacade.buscarFacturaCompraPorNroFactura(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+            List<CompraDto> facturaCompra = comprasFacade.buscarFacturaCompraPorNroFactura(obtenerNroFacturaCompleto());
             this.nroFact = 0;
 
             if (facturaCompra == null) {
@@ -388,7 +395,8 @@ public class MercaTolerarBean implements Serializable {
                 } else {
                     short codProveed;
                     this.txtproveedores = "";
-                    this.nroFact = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+                    //this.nroFact = Long.parseLong(nroPuntoEstabLbl + nroPuntoExpedLbl + nroFactLbl);
+                    this.nroFact = obtenerNroFacturaCompleto();
 
                     for (CompraDto faccom : facturaCompra) {
                         compras = faccom.getCompra();
@@ -453,9 +461,9 @@ public class MercaTolerarBean implements Serializable {
     }
 
     public void limpiar() {
-        this.nroPuntoEstabLbl = "0";
-        this.nroPuntoExpedLbl = "0";
-        this.nroFactLbl = "0";
+        this.nroPuntoEstabLbl = 0;
+        this.nroPuntoExpedLbl = 0;
+        this.nroFactLbl = 0;
         this.listaMercaTolerar = null;
         this.mercaTolerar = new MercaTolerar();
         this.proveedores = new Proveedores();
